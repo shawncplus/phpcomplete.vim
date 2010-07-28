@@ -1,0 +1,12 @@
+Default phpcomplete.vim does not support in-file checking of $var = new Class; so if you don't have a tags file with the variable in it already you have to hack around it by placing the comment `/* @var $yourvar YourClass */` above the line which is really kludgy.
+
+This patch allows for in-file checking so you don't need the comment.
+
+	$instance = new Class;
+	...
+	$instance->Blah(); // <-- complete without comment
+
+It also allows support for singleton instantiations:
+
+	$instance = Class::getInstance();
+	$instance->completeMe(); // sweet completion
