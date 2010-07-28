@@ -1,11 +1,10 @@
 " Vim completion script
 " Language:	PHP
 " Maintainer:	Mikolaj Machowski ( mikmach AT wp DOT pl )
-" Last Change:	2006 May 9
+" Maintainer:	Shawn Biddle ( shawn AT shawnbiddle DOT com )
+" Last Change:	2010 July 28
 "
 "   TODO:
-"   - Class aware completion:
-"      a) caching?
 "   - Switching to HTML (XML?) completion (SQL) inside of phpStrings
 "   - allow also for XML completion <- better do html_flavor for HTML
 "     completion
