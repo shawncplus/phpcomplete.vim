@@ -166,17 +166,14 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let classcontent .= "\n".phpcomplete#GetClassContents(classfile, classname)
 				let sccontent = split(classcontent, "\n")
 
-				" YES, YES, YES! - we have whole content including extends!
-				" Now we need to get two elements: public functions and public
-				" vars
-				" NO, NO, NO! - third separate filtering looking for content
-				" :(, but all of them have differences. To squeeze them into
-				" one implementation would require many additional arguments
-				" and ifs. No good solution
-				" Functions declared with public keyword or without any
-				" keyword are public
-				let functions = filter(deepcopy(sccontent),
-						\ 'v:val =~ "^\\s*\\(static\\s\\+\\|public\\s\\+\\)*function"')
+				" limit based on context to static or normal public methods
+				if scontext =~ '::'
+					let functions = filter(deepcopy(sccontent),
+							\ 'v:val =~ "^\\s*\\(\\(public\\s\\+static\\|static\\)\\s\\+\\)*function"')
+				elseif scontext =~ '->$'
+					let functions = filter(deepcopy(sccontent),
+							\ 'v:val =~ "^\\s*\\(public\\s\\+\\)*function"')
+				endif
 
 				let jfuncs = join(functions, ' ')
 				let sfuncs = split(jfuncs, 'function\s\+')
@@ -589,7 +586,7 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	" line above
 	" or line in tags file
 
-	if a:scontext =~ '\$this->'
+	if a:scontext =~ '\$this->' || a:scontext =~ 'self::'
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
