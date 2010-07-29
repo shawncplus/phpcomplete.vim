@@ -133,7 +133,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 		" few not so subtle differences as not appending of $ and addition
 		" of 'kind' tag (not necessary in regular completion)
 
-		if (scontext =~ '->$' || scontext =~ '::') && scontext !~ '\$this->$'
+		if scontext =~ '->$' || scontext =~ '::' " && scontext !~ '\$this->$'
 
 			" Get name of the class
 			let classname = phpcomplete#GetClassName(scontext)
@@ -589,70 +589,83 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	" line above
 	" or line in tags file
 
-	let object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze->')
-	let i = 1
-	while i < line('.')
-		let line = getline(line('.')-i)
-		if line =~ '^\s*\*\/\?\s*$'
-			let i += 1
-			continue
-		else
-			if line =~ '@var\s\+\$'.object.'\s\+[a-zA-Z_0-9\x7f-\xff]\+'
-				let classname = matchstr(line, '@var\s\+\$'.object.'\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+')
+	if a:scontext =~ '\$this->'
+		let i = 1
+		while i < line('.')
+			let line = getline(line('.')-i)
+			if line !~ '^class'
+				let i += 1
+				continue
+			else
+				let classname = matchstr(line, '^class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+				return classname
+			endif
+		endwhile
+	else
+		let object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze->')
+		let i = 1
+		while i < line('.')
+			let line = getline(line('.')-i)
+			if line =~ '^\s*\*\/\?\s*$'
+				let i += 1
+				continue
+			else
+				if line =~ '@var\s\+\$'.object.'\s\+[a-zA-Z_0-9\x7f-\xff]\+'
+					let classname = matchstr(line, '@var\s\+\$'.object.'\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+')
+					return classname
+				else
+					break
+				endif
+			endif
+		endwhile
+
+		" do in-file lookup of $var = new Class
+		let i = 1
+		while i < line('.')
+			let line = getline(line('.')-i)
+			if line =~ '^\s*\$'.object.'\s*=\s*new\s\+[a-zA-Z_0-9\x7f-\xff]\+'
+
+				let classname = matchstr(line, '\$'.object.'\s*=\s*new \zs[a-zA-Z_0-9\x7f-\xff]\+')
 				return classname
 			else
-				break
+				let i += 1
+				continue
 			endif
+		endwhile
+
+		" do in-file lookup for Class::getInstance()
+		let i = 1
+		while i < line('.')
+			let line = getline(line('.')-i)
+			if line =~ '^\s*\$'.object.'\s*=&\?\s*\s\+[a-zA-Z_0-9\x7f-\xff]\+::getInstance\+'
+
+				let classname = matchstr(line, '\$'.object.'\s*=&\?\s*\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::getInstance\+')
+				return classname
+			else
+				let i += 1
+				continue
+			endif
+		endwhile
+
+		" check Constant lookup
+		let constant_object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::')
+		if constant_object != ''
+			return constant_object
 		endif
-	endwhile
 
-	" do in-file lookup of $var = new Class
-	let i = 1
-	while i < line('.')
-		let line = getline(line('.')-i)
-		if line =~ '^\s*\$'.object.'\s*=\s*new\s\+[a-zA-Z_0-9\x7f-\xff]\+'
-
-			let classname = matchstr(line, '\$'.object.'\s*=\s*new \zs[a-zA-Z_0-9\x7f-\xff]\+')
-			return classname
+		" OK, first way failed, now check tags file(s)
+		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
+		exe 'silent! vimgrep /^'.object.'.*\$'.object.'.*=\s*new\s\+.*\tv\(\t\|$\)/j '.fnames
+		let qflist = getqflist()
+		if len(qflist) == 0
+			return ''
 		else
-			let i += 1
-			continue
-		endif
-	endwhile
-
-	" do in-file lookup for Class::getInstance()
-	let i = 1
-	while i < line('.')
-		let line = getline(line('.')-i)
-		if line =~ '^\s*\$'.object.'\s*=&\?\s*\s\+[a-zA-Z_0-9\x7f-\xff]\+::getInstance\+'
-
-			let classname = matchstr(line, '\$'.object.'\s*=&\?\s*\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::getInstance\+')
+			" In all properly managed projects it should be one item list, even if it
+			" *is* longer we cannot solve conflicts, assume it is first element
+			let classname = matchstr(qflist[0]['text'], '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
 			return classname
-		else
-			let i += 1
-			continue
 		endif
-	endwhile
-
-	" check Constant lookup
-	let constant_object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::')
-	if constant_object != ''
-		return constant_object
 	endif
-
-	" OK, first way failed, now check tags file(s)
-	let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
-	exe 'silent! vimgrep /^'.object.'.*\$'.object.'.*=\s*new\s\+.*\tv\(\t\|$\)/j '.fnames
-	let qflist = getqflist()
-	if len(qflist) == 0
-		return ''
-	else
-		" In all properly managed projects it should be one item list, even if it
-		" *is* longer we cannot solve conflicts, assume it is first element
-		let classname = matchstr(qflist[0]['text'], '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
-		return classname
-	endif
-
 endfunction
 " }}}
 function! phpcomplete#GetClassLocation(classname) " {{{
