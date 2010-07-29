@@ -1,11 +1,10 @@
 " Vim completion script
 " Language:	PHP
 " Maintainer:	Mikolaj Machowski ( mikmach AT wp DOT pl )
-" Last Change:	2006 May 9
+" Maintainer:	Shawn Biddle ( shawn AT shawnbiddle DOT com )
+" Last Change:	2010 July 28
 "
 "   TODO:
-"   - Class aware completion:
-"      a) caching?
 "   - Switching to HTML (XML?) completion (SQL) inside of phpStrings
 "   - allow also for XML completion <- better do html_flavor for HTML
 "     completion
@@ -66,9 +65,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 		call phpcomplete#LoadData()
 	endif
 
-	
 	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
-
 
 	if scontext =~ '\(=\s*new\|extends\)\s\+$'
 		" Complete class name
@@ -136,7 +133,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 		" few not so subtle differences as not appending of $ and addition
 		" of 'kind' tag (not necessary in regular completion)
 
-
 		if (scontext =~ '->$' || scontext =~ '::') && scontext !~ '\$this->$'
 
 			" Get name of the class
@@ -198,7 +194,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 				" public
 				let variables = filter(deepcopy(sccontent),
 						\ 'v:val =~ "^\\s*\\(public\\|var\\)\\s\\+\\$"')
-
 				let jvars = join(variables, ' ')
 				let svars = split(jvars, '\$')
 				let c_variables = {}
@@ -225,7 +220,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 						let c_constants[c_con] = ''
 					endif
 				endfor
-
 
 				let all_values = {}
 				call extend(all_values, c_functions)
@@ -596,7 +590,6 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	" or line in tags file
 
 	let object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze->')
-
 	let i = 1
 	while i < line('.')
 		let line = getline(line('.')-i)
@@ -659,8 +652,6 @@ function! phpcomplete#GetClassName(scontext) " {{{
 		let classname = matchstr(qflist[0]['text'], '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
 		return classname
 	endif
-
-	let
 
 endfunction
 " }}}
