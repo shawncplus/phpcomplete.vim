@@ -10,3 +10,8 @@ It also allows support for singleton instantiations:
 
 	$instance = Class::getInstance();
 	$instance->completeMe(); // sweet completion
+
+Other features:
+ * Correct restriction of static or standard methods based on context ( show only static methods with :: and only standard with ->)
+ * Real support for self:: and $this-> with the aforementioned context restriction
+ * Constant variable completion (not just define(VARIABLE, 1) but const VARIABLE = 1) 
