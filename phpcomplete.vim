@@ -133,7 +133,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 		" few not so subtle differences as not appending of $ and addition
 		" of 'kind' tag (not necessary in regular completion)
 
-		if scontext =~ '->$' || scontext =~ '::' " && scontext !~ '\$this->$'
+		if scontext =~ '->$' || scontext =~ '::'
 
 			" Get name of the class
 			let classname = phpcomplete#GetClassName(scontext)
@@ -590,6 +590,13 @@ function! phpcomplete#GetClassName(scontext) " {{{
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
+
+			" Don't complete self:: or $this if outside of a class
+			" (assumes correct indenting)
+			if line =~ '^}'
+				return ''
+			endif
+
 			if line !~ '^class'
 				let i += 1
 				continue
