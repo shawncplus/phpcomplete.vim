@@ -684,6 +684,19 @@ function! phpcomplete#GetClassLocation(classname) " {{{
 		return 'VIMPHP_BUILTINOBJECT'
 	endif
 
+
+	" do in-file lookup for class definition
+	let i = 1
+	while i < line('.')
+		let line = getline(line('.')-i)
+		if line =~ '^\s*class ' . a:classname  . '\(\s\+\|$\)'
+			return expand('%')
+		else
+			let i += 1
+			continue
+		endif
+	endwhile
+
 	" Get class location
 	for fname in tagfiles()
 		let fhead = fnamemodify(fname, ":h")
