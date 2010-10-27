@@ -2,7 +2,6 @@
 " Language:	PHP
 " Maintainer:	Mikolaj Machowski ( mikmach AT wp DOT pl )
 " Maintainer:	Shawn Biddle ( shawn AT shawnbiddle DOT com )
-" Last Change:	2010 July 28
 "
 "   TODO:
 "   - Switching to HTML (XML?) completion (SQL) inside of phpStrings
