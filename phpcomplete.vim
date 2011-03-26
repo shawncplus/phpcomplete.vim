@@ -714,7 +714,9 @@ function! phpcomplete#GetClassLocation(classname) " {{{
 		endif
 		" And only one class location
 		if classlocation != ''
-			let classlocation = fhead.classlocation
+			if matchstr(classlocation,'^/') != '/'
+				let classlocation = fhead.classlocation
+			endif
 			return classlocation
 		else
 			return ''
@@ -732,19 +734,19 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	" matching {}
 	below 1new
 	0put =cfile
+	let endline = search('{')
 	call search('class\s\+'.a:name)
 	let cfline = line('.')
+	let content = join(getline(cfline, endline),"\n")
 	" Catch extends
-	if getline('.') =~ 'extends'
-		let extends_class = matchstr(getline('.'),
-				\ 'class\s\+'.a:name.'\s\+extends\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+	if content =~ 'extends'
+		let extends_class = matchstr(content, 'class\_s\+'.a:name.'\_s\+extends\_s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
 	else
 		let extends_class = ''
 	endif
 	call search('{')
 	normal! %
 
-	let classc = getline(cfline, ".")
 	let classcontent = cfile
 
 	bw! %
