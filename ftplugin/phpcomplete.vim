@@ -164,14 +164,15 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let classcontent = ''
 				let classcontent .= "\n".phpcomplete#GetClassContents(classfile, classname)
 				let sccontent = split(classcontent, "\n")
+                let classAccess = expand('%:p') == fnamemodify(classlocation, ':p') ? '\\(public\\|private\\|protected\\)' : 'public'
 
 				" limit based on context to static or normal public methods
 				if scontext =~ '::'
 					let functions = filter(deepcopy(sccontent),
-							\ 'v:val =~ "^\\s*\\(\\(public\\s\\+static\\|static\\)\\s\\+\\)*function"')
+							\ 'v:val =~ "^\\s*\\(\\(' . classAccess . '\\s\\+static\\|static\\)\\s\\+\\)*function"')
 				elseif scontext =~ '->$'
 					let functions = filter(deepcopy(sccontent),
-							\ 'v:val =~ "^\\s*\\(public\\s\\+\\)*function"')
+							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\s\\+\\)*function"')
 				endif
 
 				let jfuncs = join(functions, ' ')
@@ -189,7 +190,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				" Variables declared with var or with public keyword are
 				" public
 				let variables = filter(deepcopy(sccontent),
-						\ 'v:val =~ "^\\s*\\(public\\|var\\)\\s\\+\\$"')
+						\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
 				let jvars = join(variables, ' ')
 				let svars = split(jvars, '\$')
 				let c_variables = {}
@@ -596,12 +597,15 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				return ''
 			endif
 
-			if line !~ '^class'
+            if line =~ '^abstract\s*class'
+                let classname = matchstr(line, '^abstract\s*class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+                return classname
+            elseif line =~ '^class'
+                let classname = matchstr(line, '^class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+                return classname
+            else
 				let i += 1
 				continue
-			else
-				let classname = matchstr(line, '^class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
-				return classname
 			endif
 		endwhile
 	else
@@ -689,7 +693,7 @@ function! phpcomplete#GetClassLocation(classname) " {{{
 	while i < line('.')
 		let line = getline(line('.')-i)
 		if line =~ '^\s*class ' . a:classname  . '\(\s\+\|$\)'
-			return expand('%')
+			return expand('%:p')
 		else
 			let i += 1
 			continue
