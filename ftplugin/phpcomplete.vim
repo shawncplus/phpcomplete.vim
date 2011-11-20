@@ -596,12 +596,15 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				return ''
 			endif
 
-			if line !~ '^class'
+            if line =~ '^abstract\s*class'
+                let classname = matchstr(line, '^abstract\s*class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+                return classname
+            elseif line =~ '^class'
+                let classname = matchstr(line, '^class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+                return classname
+            else
 				let i += 1
 				continue
-			else
-				let classname = matchstr(line, '^class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
-				return classname
 			endif
 		endwhile
 	else
