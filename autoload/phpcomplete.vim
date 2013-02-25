@@ -736,6 +736,10 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	" this is the most efficient way. The other way
 	" is to go through the looong string looking for
 	" matching {}
+
+	" remember the window we started at
+	let phpcomplete_original_window = winnr()
+
 	below 1new
 	0put =cfile
 	let endline = search('{')
@@ -754,6 +758,10 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	let classcontent = cfile
 
 	bw! %
+
+	" go back to original window
+	exe phpcomplete_original_window.'wincmd w'
+
 	if extends_class != ''
 		let classlocation = phpcomplete#GetClassLocation(extends_class)
 		if filereadable(classlocation)
