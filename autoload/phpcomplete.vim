@@ -120,7 +120,11 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		let final_menu = []
 		for i in res
-			let final_menu += [{'word':i, 'kind':'c'}]
+            let menu = ''
+            if (has_key(g:php_builtin_object_functions, i.'::__construct('))
+                let menu = g:php_builtin_object_functions[i.'::__construct(']
+            endif
+			let final_menu += [{'word':i, 'kind':'c', 'menu':menu}]
 		endfor
 
 		return final_menu
@@ -151,7 +155,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				for object in keys(g:php_builtin_object_functions)
 					if object =~ '^'.classname
 						let res += [{'word':substitute(object, '.*::', '', ''),
-							   	\    'menu': g:php_builtin_object_functions[object]},
+							   	\    'menu': g:php_builtin_object_functions[object],
 							   	\    'info': g:php_builtin_object_functions[object]}]
 					endif
 				endfor
