@@ -66,7 +66,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
 
-	if scontext =~ '\(=\s*new\|extends\)\s\+$'
+	if scontext =~ '\(\s*new\|extends\)\s\+$'
 		" Complete class name
 		" Internal solution for finding classes in current file.
 		let file = getline(1, '$')
