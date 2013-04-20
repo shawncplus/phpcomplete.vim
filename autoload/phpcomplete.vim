@@ -100,7 +100,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 			endif
 		endif
 
-		" Prepare list of built in classes from g:php_builtin_functions
+		" Prepare list of built in classes from g:php_builtin_object_functions
 		if !exists("g:php_omni_bi_classes")
 			let g:php_omni_bi_classes = {}
 			for i in keys(g:php_builtin_object_functions)
@@ -152,9 +152,11 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 			if classlocation == 'VIMPHP_BUILTINOBJECT'
 
+				" complete for object functions
 				for object in keys(g:php_builtin_object_functions)
 					if object =~ '^'.classname
 						let res += [{'word':substitute(object, '.*::', '', ''),
+							   	\    'kind': 'f',
 							   	\    'menu': g:php_builtin_object_functions[object],
 							   	\    'info': g:php_builtin_object_functions[object]}]
 					endif
