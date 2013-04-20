@@ -11,6 +11,8 @@
  * @author: http://github.com/complex857
  */
 
+main($argv);
+
 function main($argv){
 
     if (count($argv) < 3) {
@@ -51,25 +53,75 @@ function main($argv){
     write_method_signatures_to_vim_hash($signatures, $argv[2].'/misc/php_builtin_object_functions.vim');
     print "extracted ".count($signatures)." built-in class method\n";
 
+    // unfortunately constants are really everywhere, the *constants.html almost where ok but leaves out
+    // pages like filter.filters.sanitize.html
+    $function_files = glob("{$argv[1]}/*.html");
+    $constants = extract_constant_names($function_files);
+    write_constant_names_to_vim_hash($constants, $argv[2].'/misc/php_constants.vim');
+    print "extracted ".count($constants)." built-in constants\n";
+
     return 0;
 }
 
-function usage($argv) {
-    fprintf(STDERR,
-        "USAGE:\n".
-        "\tphp {$argv[0]} <php_doc_path> <plugin_path>\n".
-        "\n".
-        "php_doc_path:\n".
-        "\tPath to a directory containing the\n".
-        "\textracted Many HTML files version of the documentation.\n".
-        "\tDownload from here: http://www.php.net/download-docs.php\n".
-        "\n".
-        "plugin_path:\n".
-        "\tPath to the plugins root, example: ~/.vim/bundle/phpcomplete.vim/\n"
-    );
+function extract_constant_names($files) {
+    $constants = array();
+    foreach ($files as $file) {
+        $doc = new DOMDocument;
+        $doc->loadHTMLFile($file);
+        $xpath = new DOMXpath($doc);
+
+        // Unfortunately, the constatns are not marked with classes in code,
+        // only a <strong><code>UPPERCASE_LETTER</code></strong> seem to be universal among them
+        // xpath1 doesn't have uppercase so but fortunetly the alphabet is pretty limited
+        // so translate() will do for uppercasing content so we only select full uppercased contents
+        $nodes = $xpath->query('//strong/code[translate(text(), "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ") = text()]');
+        foreach ($nodes as $node) {
+            // regexp lifted from http://php.net/manual/en/language.constants.php added ":" so we can pick up class constants
+            if (preg_match('/^[a-zA-Z_\x7f-\xff][:a-zA-Z0-9_\x7f-\xff]*$/', trim($node->textContent))) {
+                $constants[trim($node->textContent)] = true;
+            }
+        }
+        // most class constants are inside the Class synopsis blocks,
+        // written out like they would be in normal code.
+        $class_const_nodes = $xpath->query('//*[@class="classsynopsis"]/*[@class="fieldsynopsis"]/*[@class="modifier" and text() = "const"]/..');
+        foreach ($class_const_nodes as $node) {
+            $class_constant = handle_class_const($xpath, $node, $file);
+            $constants[$class_constant] = true;
+        }
+    }
+    ksort($constants);
+    return $constants;
 }
 
-main($argv);
+function handle_class_const($xpath, $node, $file) {
+    $class = $xpath->query('//div[@class="classsynopsis"]/div[@class="classsynopsisinfo"]/*[@class="ooclass"]/*[@class="classname"]')->item(0);
+    if (!$class) {
+        print $xpath->document->saveHTML($node);
+        fwrite(STDERR, 'extraction error, cant find class name name in '.$file);
+        exit;
+    }
+    $classname = trim($class->textContent);
+
+    $constname = $xpath->query('var//var[@class="varname"]', $node)->item(0);
+    if (!$constname) {
+        print $xpath->document->saveHTML($node);
+        fwrite(STDERR, 'extraction error, cant find const name in '.$file);
+        exit;
+    }
+    $constname = trim($constname->textContent);
+    return $classname."::".$constname;
+}
+
+function write_constant_names_to_vim_hash($constants, $outpath) {
+    $fd = fopen($outpath, 'w');
+
+    fwrite($fd, "let g:php_constants = {\n");
+    foreach ($constants as $constant => $file) {
+        fwrite($fd, "\\ '{$constant}': '',\n");
+    }
+    fwrite($fd, "\\ }\n");
+    fclose($fd);
+}
 
 function extract_function_signatures($files) {
     $signatures = array();
@@ -324,4 +376,19 @@ function array_index_by_col($arr, $col, $overwrite_duplicate = true) {
         }
 	}
 	return $tmp;
+}
+
+function usage($argv) {
+    fprintf(STDERR,
+        "USAGE:\n".
+        "\tphp {$argv[0]} <php_doc_path> <plugin_path>\n".
+        "\n".
+        "php_doc_path:\n".
+        "\tPath to a directory containing the\n".
+        "\textracted Many HTML files version of the documentation.\n".
+        "\tDownload from here: http://www.php.net/download-docs.php\n".
+        "\n".
+        "plugin_path:\n".
+        "\tPath to the plugins root, example: ~/.vim/bundle/phpcomplete.vim/\n"
+    );
 }
