@@ -267,7 +267,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 						let final_list +=
 								\ [{'word':substitute(i, '.*::', '', ''),
 								\   'info':i.all_values[i].')',
-								\   'menu':i.all_values[i].')',
+								\   'menu':all_values[i],
 								\   'kind':'f'}]
 					endif
 				endfor
@@ -383,7 +383,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let final_list +=
 						\ [{'word':substitute(i, '.*::', '', ''),
 						\   'info':i.all_values[i],
-						\   'menu':i.all_values[i],
+						\   'menu':all_values[i],
 						\   'kind':'f'}]
 			endif
 		endfor
@@ -595,7 +595,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let final_list +=
 						\ [{'word':i,
 						\   'info':i.int_functions[i],
-						\   'menu':i.int_functions[i],
+						\   'menu':int_functions[i],
 						\   'kind':'f'}]
 			elseif has_key(int_constants, i)
 				let final_list += [{'word':i, 'kind':'d'}]
