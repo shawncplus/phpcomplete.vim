@@ -66,7 +66,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
 
-	if scontext =~ '\(=\s*new\|extends\)\s\+$'
+	if scontext =~ '\(\s*new\|extends\)\s\+$'
 		" Complete class name
 		" Internal solution for finding classes in current file.
 		let file = getline(1, '$')
@@ -120,7 +120,11 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		let final_menu = []
 		for i in res
-			let final_menu += [{'word':i, 'kind':'c'}]
+			let menu = ''
+			if (has_key(g:php_builtin_object_functions, i.'::__construct('))
+				let menu = g:php_builtin_object_functions[i.'::__construct(']
+			endif
+			let final_menu += [{'word':i, 'kind':'c', 'menu':menu}]
 		endfor
 
 		return final_menu
@@ -151,6 +155,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				for object in keys(g:php_builtin_object_functions)
 					if object =~ '^'.classname
 						let res += [{'word':substitute(object, '.*::', '', ''),
+							   	\    'menu': g:php_builtin_object_functions[object],
 							   	\    'info': g:php_builtin_object_functions[object]}]
 					endif
 				endfor
@@ -243,11 +248,13 @@ function! phpcomplete#CompletePHP(findstart, base)
 						let final_list +=
 								\ [{'word':i,
 								\   'info':class.all_values[i],
+								\   'menu':class.all_values[i],
 								\   'kind':'v'}]
 					else
 						let final_list +=
 								\ [{'word':substitute(i, '.*::', '', ''),
 								\   'info':i.all_values[i].')',
+								\   'menu':i.all_values[i].')',
 								\   'kind':'f'}]
 					endif
 				endfor
@@ -363,6 +370,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let final_list +=
 						\ [{'word':substitute(i, '.*::', '', ''),
 						\   'info':i.all_values[i],
+						\   'menu':i.all_values[i],
 						\   'kind':'f'}]
 			endif
 		endfor
@@ -454,7 +462,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				if int_vars[i] != ''
 					let class = i.' class '
 				endif
-				let int_dict += [{'word':i, 'info':class.int_vars[i], 'kind':'v'}]
+				let int_dict += [{'word':i, 'info':class.int_vars[i], 'menu':class.int_vars[i], 'kind':'v'}]
 			else
 				let int_dict += [{'word':i, 'kind':'v'}]
 			endif
@@ -565,6 +573,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let final_list +=
 						\ [{'word':i,
 						\   'info':i.int_functions[i],
+						\   'menu':i.int_functions[i],
 						\   'kind':'f'}]
 			elseif has_key(int_constants, i)
 				let final_list += [{'word':i, 'kind':'d'}]
