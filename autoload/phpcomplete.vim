@@ -162,6 +162,17 @@ function! phpcomplete#CompletePHP(findstart, base)
 					endif
 				endfor
 
+				" complete for class constants
+				if scontext =~ '::'
+					let object_constants = filter(copy(g:php_constants), 'v:key =~ "'.classname.'::"')
+					for constant in keys(object_constants)
+						let res += [{'word':substitute(constant, '.*::', '', ''),
+								\ 'kind': 'd',
+								\ 'menu': g:php_constants[constant],
+								\ 'info': g:php_constants[constant],
+								\ }]
+					endfor
+				endif
 				return res
 
 			endif
@@ -547,6 +558,14 @@ function! phpcomplete#CompletePHP(findstart, base)
 			endif
 		endif
 
+		" Prepare list of constants from built-in constants
+		let builtin_constants = {}
+		for [constant, info] in items(g:php_constants)
+			if constant =~# '^'.a:base
+				let builtin_constants[constant] = info
+			endif
+		endfor
+
 		" All constants
 		call extend(int_constants, ext_constants)
 		" Treat keywords as constants
@@ -556,10 +575,11 @@ function! phpcomplete#CompletePHP(findstart, base)
 		" One big dictionary of functions
 		call extend(all_values, int_functions)
 
-		" Add constants
+		" Add constants from the current file
 		call extend(all_values, int_constants)
-		" Add keywords
-		call extend(all_values, g:php_keywords)
+
+		" Add builtin constants
+		call extend(all_values, builtin_constants)
 
 		for m in sort(keys(all_values))
 			if m =~ '^'.a:base
@@ -578,6 +598,8 @@ function! phpcomplete#CompletePHP(findstart, base)
 						\   'menu':i.int_functions[i],
 						\   'kind':'f'}]
 			elseif has_key(int_constants, i)
+				let final_list += [{'word':i, 'kind':'d'}]
+			elseif has_key(builtin_constants, i)
 				let final_list += [{'word':i, 'kind':'d'}]
 			else
 				let final_list += [{'word':i}]
@@ -786,7 +808,7 @@ endfunction
 " }}}
 
 function! phpcomplete#LoadData() " {{{
-" Keywords/reserved words, all other special things {{{
+" Keywords/reserved words, all other special things
 " Later it is possible to add some help to values, or type of
 " defined variable
 runtime! misc/php_keywords.vim
@@ -799,6 +821,11 @@ runtime! misc/php_builtin_functions.vim
 " You can regenerate this list with the bin/extract_functions.php
 runtime! misc/php_builtin_object_functions.vim
 
+"
+" Constants defined in PHP and it's extension
+" You can regenerate this list with the bin/extract_functions.php
+runtime! misc/php_constants.vim
+
 
 " Add control structures (they are outside regular pattern of PHP functions)
 let php_control = {
@@ -810,4 +837,4 @@ let php_control = {
 call extend(g:php_builtin_functions, php_control)
 endfunction
 " }}}
-" vim:set foldmethod=marker:
+" vim:set foldmethod=marker:noexpandtabs:ts=4:sts=4:tw=4:
