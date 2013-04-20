@@ -122,13 +122,12 @@ function write_function_signatures_to_vim_hash($signatures, $outpath) {
     fclose($fd);
 }
 
-
 function build_menu_info_string($signature) {
     $optional_depth = 0;
     $istr = '';
     if (empty($signature['params'])) {
         // "__construct"s have no return type, they dont need the " |" at the end
-        return 'void'. $signature['return_type'] ? ' | '.$signature['return_type'] : '';
+        return 'void'.($signature['return_type'] ? ' | '.$signature['return_type'] : '');
     }
     foreach ($signature['params'] as $i => $param) {
         if ($param['optional'] || isset($param['default']) || $optional_depth != 0) {
