@@ -84,10 +84,11 @@ function! phpcomplete#CompletePHP(findstart, base)
 		endfor
 
 		" Prepare list of classes from tags file
+		let ext_classes = {}
 		let tags = taglist('^'.a:base)
 		for tag in tags
 			if tag.kind ==? 'c'
-				let ext_classes[item] = ''
+				let ext_classes[tag.name] = ''
 			endif
 		endfor
 
@@ -447,7 +448,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				if int_vars[i] != ''
 					let class = i.' class '
 				endif
-				let int_dict += [{'word':i, 'info':int_vars[i], 'menu':int_vars[i], 'kind':'v'}]
+				let int_dict += [{'word':i, 'info':class.int_vars[i], 'menu':int_vars[i], 'kind':'v'}]
 			else
 				let int_dict += [{'word':i, 'kind':'v'}]
 			endif
