@@ -720,7 +720,6 @@ function! phpcomplete#GetClassLocation(classname) " {{{
 		return 'VIMPHP_BUILTINOBJECT'
 	endif
 
-
 	" do in-file lookup for class definition
 	let i = 1
 	while i < line('.')
