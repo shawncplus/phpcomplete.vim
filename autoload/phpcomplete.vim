@@ -84,21 +84,12 @@ function! phpcomplete#CompletePHP(findstart, base)
 		endfor
 
 		" Prepare list of classes from tags file
-		let ext_classes = {}
-		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
-		if fnames != ''
-			exe 'silent! vimgrep /^'.a:base.'.*\tc\(\t\|$\)/j '.fnames
-			let qflist = getqflist()
-			if len(qflist) > 0
-				for field in qflist
-					" [:space:] thing: we don't have to be so strict when
-					" dealing with tags files - entries there were already
-					" checked by ctags.
-					let item = matchstr(field['text'], '^[^[:space:]]\+')
-					let ext_classes[item] = ''
-				endfor
+		let tags = taglist('^'.a:base)
+		for tag in tags
+			if tag.kind ==? 'c'
+				let ext_classes[item] = ''
 			endif
-		endif
+		endfor
 
 		" Prepare list of built in classes from g:php_builtin_object_functions
 		if !exists("g:php_omni_bi_classes")
@@ -299,27 +290,28 @@ function! phpcomplete#CompletePHP(findstart, base)
 		endfor
 
 		" ctags has good support for PHP, use tags file for external
-		" variables
-		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
+		" variables and functions
 		let ext_vars = {}
-		if fnames != ''
-			let sbase = substitute(a:base, '^\$', '', '')
-			exe 'silent! vimgrep /^'.sbase.'.*\tv\(\t\|$\)/j '.fnames
-			let qflist = getqflist()
-			if len(qflist) > 0
-				for field in qflist
-					let item = matchstr(field['text'], '^[^[:space:]]\+')
-					" Add -> if it is possible object declaration
-					let classname = ''
-					if field['text'] =~ item.'\s*=\s*new\s\+'
-						let item = item.'->'
-						let classname = matchstr(field['text'],
+		let ext_functions = {}
+		let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
+		for tag in tags
+			if tag.kind ==? 'v'
+				let item = tag.name
+				" Add -> if it is possible object declaration
+				let classname = ''
+				if tag.cmd =~? item.'\s*=\s*new\s\+'
+					let item = item.'->'
+					let classname = matchstr(tag.cmd,
 								\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
-					endif
-					let ext_vars[adddollar.item] = classname
-				endfor
+				endif
+				let ext_vars[adddollar.item] = classname
+			elseif tag.kind ==? 'f'
+				let item = tag.name
+				let prototype = matchstr(tag.cmd,
+						\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+				let ext_functions[item.'('] = prototype.') - '.tag['filename']
 			endif
-		endif
+		endfor
 
 		" Now we have all variables in int_vars dictionary
 		call extend(int_vars, ext_vars)
@@ -328,7 +320,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 		let file = getline(1, '$')
 		call filter(file,
 				\ 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
-		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
 		let jfile = join(file, ' ')
 		let int_values = split(jfile, 'function\s\+')
 		let int_functions = {}
@@ -339,23 +330,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*{')
 			let int_functions[f_name.'('] = f_args.')'
 		endfor
-
-		" Prepare list of functions from tags file
-		let ext_functions = {}
-		if fnames != ''
-			exe 'silent! vimgrep /^'.a:base.'.*\tf\(\t\|$\)/j '.fnames
-			let qflist = getqflist()
-			if len(qflist) > 0
-				for field in qflist
-					" File name
-					let item = matchstr(field['text'], '^[^[:space:]]\+')
-					let fname = matchstr(field['text'], '\t\zs\f\+\ze')
-					let prototype = matchstr(field['text'],
-							\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
-					let ext_functions[item.'('] = prototype.') - '.fname
-				endfor
-			endif
-		endif
 
 		let all_values = {}
 		call extend(all_values, int_functions)
@@ -435,30 +409,28 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		call extend(int_vars,g:php_builtin_vars)
 
-		" ctags has support for PHP, use tags file for external variables
-		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
-		let ext_vars = {}
-		if fnames != ''
-			let sbase = substitute(a:base, '^\$', '', '')
-			exe 'silent! vimgrep /^'.sbase.'.*\tv\(\t\|$\)/j '.fnames
-			let qflist = getqflist()
-			if len(qflist) > 0
-				for field in qflist
-					let item = '$'.matchstr(field['text'], '^[^[:space:]]\+')
-					let m_menu = ''
-					" Add -> if it is possible object declaration
-					if field['text'] =~ item.'\s*=\s*new\s\+'
-						let item = item.'->'
-						let m_menu = matchstr(field['text'],
-								\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
-					endif
-					let ext_vars[item] = m_menu
-				endfor
-			endif
+		if a:base =~ '^\$'
+			let adddollar = '$'
+		else
+			let adddollar = ''
 		endif
+		" ctags has support for PHP, use tags file for external variables
+		let ext_vars = {}
+		let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
+		for tag in tags
+			if tag.kind ==? 'v'
+				let item = tag.name
+				let m_menu = ''
+				if tag.cmd =~ tag['name'].'\s*=\s*new\s\+'
+					let item = item.'->'
+					let m_menu = matchstr(tag.cmd,
+							\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+				endif
+				let ext_vars[adddollar.item] = m_menu
+			endif
+		endfor
 
 		call extend(int_vars, ext_vars)
-		let g:a0 = keys(int_vars)
 
 		for m in sort(keys(int_vars))
 			if m =~ '^\'.a:base
@@ -475,7 +447,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				if int_vars[i] != ''
 					let class = i.' class '
 				endif
-				let int_dict += [{'word':i, 'info':class.int_vars[i], 'menu':class.int_vars[i], 'kind':'v'}]
+				let int_dict += [{'word':i, 'info':int_vars[i], 'menu':int_vars[i], 'kind':'v'}]
 			else
 				let int_dict += [{'word':i, 'kind':'v'}]
 			endif
@@ -496,7 +468,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 		let file = getline(1, '$')
 		call filter(file,
 				\ 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
-		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
 		let jfile = join(file, ' ')
 		let int_values = split(jfile, 'function\s\+')
 		let int_functions = {}
@@ -508,22 +479,21 @@ function! phpcomplete#CompletePHP(findstart, base)
 			let int_functions[f_name.'('] = f_args.')'
 		endfor
 
+
 		" Prepare list of functions from tags file
 		let ext_functions = {}
-		if fnames != ''
-			exe 'silent! vimgrep /^'.a:base.'.*\tf\(\t\|$\)/j '.fnames
-			let qflist = getqflist()
-			if len(qflist) > 0
-				for field in qflist
-					" File name
-					let item = matchstr(field['text'], '^[^[:space:]]\+')
-					let fname = matchstr(field['text'], '\t\zs\f\+\ze')
-					let prototype = matchstr(field['text'],
-							\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
-					let ext_functions[item.'('] = prototype.') - '.fname
-				endfor
+		let ext_constants = {}
+		let tags = taglist('^'.a:base)
+		for tag in tags
+			if tag.kind ==? 'f'
+				let item = tag.name
+				let prototype = matchstr(tag.cmd,
+						\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+				let ext_functions[item.'('] = prototype.') - '.tag['filename']
+			elseif tag.kind ==? 'd'
+				let ext_constants[tag.name] = ''
 			endif
-		endif
+		endfor
 
 		" All functions
 		call extend(int_functions, ext_functions)
@@ -543,20 +513,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let int_constants[c_name] = '' " c_value
 			endif
 		endfor
-
-		" Prepare list of constants from tags file
-		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
-		let ext_constants = {}
-		if fnames != ''
-			exe 'silent! vimgrep /^'.a:base.'.*\td\(\t\|$\)/j '.fnames
-			let qflist = getqflist()
-			if len(qflist) > 0
-				for field in qflist
-					let item = matchstr(field['text'], '^[^[:space:]]\+')
-					let ext_constants[item] = ''
-				endfor
-			endif
-		endif
 
 		" Prepare list of constants from built-in constants
 		let builtin_constants = {}
@@ -694,16 +650,16 @@ function! phpcomplete#GetClassName(scontext) " {{{
 		endif
 
 		" OK, first way failed, now check tags file(s)
-		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
-		exe 'silent! vimgrep /^'.object.'.*\$'.object.'.*=\s*new\s\+.*\tv\(\t\|$\)/j '.fnames
-		let qflist = getqflist()
-		if len(qflist) == 0
-			return ''
+		let tags = taglist('^'.substitute(object, '^\$', '', ''))
+		if len(tags) == 0
+			return
 		else
-			" In all properly managed projects it should be one item list, even if it
-			" *is* longer we cannot solve conflicts, assume it is first element
-			let classname = matchstr(qflist[0]['text'], '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
-			return classname
+			for tag in tags
+				if tag.kind ==? 'v' && tag.cmd =~# '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze'
+					let classname = matchstr(tag.cmd, '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+					return classname
+				endif
+			endfor
 		endif
 	endif
 endfunction
@@ -731,31 +687,11 @@ function! phpcomplete#GetClassLocation(classname) " {{{
 			continue
 		endif
 	endwhile
-
 	" Get class location
-	for fname in tagfiles()
-		let fhead = fnamemodify(fname, ":h")
-		if fhead != ''
-			let psep = '/' " Note: slash is potential problem!
-			let fhead .= psep
-		endif
-		let fname = escape(fname, " \\")
-		exe 'silent! vimgrep /^'.a:classname.'.*\tc\(\t\|$\)/j '.fname
-		let qflist = getqflist()
-		" As in GetClassName we can manage only one element if it exists
-		if len(qflist) > 0
-			let classlocation = matchstr(qflist[0]['text'], '\t\zs\f\+\ze\t')
-		else
-			return ''
-		endif
-		" And only one class location
-		if classlocation != ''
-			if matchstr(classlocation,'^/') != '/'
-				let classlocation = fhead.classlocation
-			endif
-			return classlocation
-		else
-			return ''
+	let tags = taglist('^'.a:classname.'$')
+	for tag in tags
+		if tag.kind ==? 'c'
+			return tag.filename
 		endif
 	endfor
 
