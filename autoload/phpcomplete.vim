@@ -434,7 +434,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				if int_vars[i] != ''
 					let class = i.' class '
 				endif
-				let int_dict += [{'word':i, 'info':int_vars[i], 'menu':int_vars[i], 'kind':'v'}]
+				let int_dict += [{'word':i, 'info':class.int_vars[i], 'menu':int_vars[i], 'kind':'v'}]
 			else
 				let int_dict += [{'word':i, 'kind':'v'}]
 			endif
