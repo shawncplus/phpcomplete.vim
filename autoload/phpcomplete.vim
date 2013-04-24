@@ -84,10 +84,11 @@ function! phpcomplete#CompletePHP(findstart, base)
 		endfor
 
 		" Prepare list of classes from tags file
+		let ext_classes = {}
 		let tags = taglist('^'.a:base)
 		for tag in tags
 			if tag.kind ==? 'c'
-				let ext_classes[item] = ''
+				let ext_classes[tag.name] = ''
 			endif
 		endfor
 
