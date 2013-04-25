@@ -163,10 +163,10 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let sccontent = split(classcontent, "\n")
                 let classAccess = expand('%:p') == fnamemodify(classlocation, ':p') ? '\\(public\\|private\\|protected\\)' : 'public'
 
-				" limit based on context to static or normal public methods
+				" limit based on context to static or normal methods
 				if scontext =~ '::'
 					let functions = filter(deepcopy(sccontent),
-							\ 'v:val =~ "^\\s*\\(\\(' . classAccess . '\\s\\+static\\|static\\)\\s\\+\\)*function"')
+							\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . classAccess . '\\)*\\|\\(' . classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
 				elseif scontext =~ '->$'
 					let functions = filter(deepcopy(sccontent),
 							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\s\\+\\)*function"')
@@ -184,10 +184,15 @@ function! phpcomplete#CompletePHP(findstart, base)
 						let c_functions[f_name.'('] = f_args
 					endif
 				endfor
-				" Variables declared with var or with public keyword are
-				" public
-				let variables = filter(deepcopy(sccontent),
-						\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
+
+				" limit based on context to static or normal attributes
+				if scontext =~ '::'
+					let variables = filter(deepcopy(sccontent),
+							\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(' . classAccess . '\\|var\\)\\|\\(' . classAccess . '\\|var\\)\\s\\+static\\)\\s\\+\\$"')
+				elseif scontext =~ '->$'
+					let variables = filter(deepcopy(sccontent),
+							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
+				endif
 				let jvars = join(variables, ' ')
 				let svars = split(jvars, '\$')
 				let c_variables = {}
