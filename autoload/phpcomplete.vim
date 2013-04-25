@@ -575,7 +575,7 @@ function! phpcomplete#GetClassName(scontext) " {{{
 			endif
 		endwhile
 	else
-		let object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze->')
+		let object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze\(::\|->\)')
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
