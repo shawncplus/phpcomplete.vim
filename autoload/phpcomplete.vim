@@ -554,6 +554,7 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	" Get class name
 	" Class name can be detected in few ways:
 	" @var $myVar class
+	" in the same line (php 5.4 (new Class)-> syntax)
 	" line above
 	" or line in tags file
 
@@ -579,6 +580,9 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				continue
 			endif
 		endwhile
+	elseif a:scontext =~? '(\s*new\s\+[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*)->'
+		let classname = matchstr(a:scontext, 'new\s\+\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+		return classname
 	else
 		let object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze\(::\|->\)')
 		let i = 1
