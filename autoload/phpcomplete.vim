@@ -67,6 +67,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
 
 	if scontext =~ '\(\s*new\|extends\)\s\+$'
+        " {{{
 		" Complete class name
 		" Internal solution for finding classes in current file.
 		let file = getline(1, '$')
@@ -92,17 +93,9 @@ function! phpcomplete#CompletePHP(findstart, base)
 			endif
 		endfor
 
-		" Prepare list of built in classes from g:php_builtin_object_functions
-		if !exists("g:php_omni_bi_classes")
-			let g:php_omni_bi_classes = {}
-			for i in keys(g:php_builtin_object_functions)
-				let g:php_omni_bi_classes[substitute(i, '::.*$', '', '')] = ''
-			endfor
-		endif
-
 		let classes = sort(keys(int_classes))
 		let classes += sort(keys(ext_classes))
-		let classes += sort(keys(g:php_omni_bi_classes))
+		let classes += keys(g:php_builtin_classes)
 
 		for m in classes
 			if m =~ '^'.a:base
@@ -113,63 +106,77 @@ function! phpcomplete#CompletePHP(findstart, base)
 		let final_menu = []
 		for i in res
             let menu = ''
-            if (has_key(g:php_builtin_object_functions, i.'::__construct('))
-                let menu = g:php_builtin_object_functions[i.'::__construct(']
+            if (has_key(g:php_builtin_classes, i) && has_key(g:php_builtin_classes[i].methods, '__construct'))
+                let menu = g:php_builtin_classes[i]['methods']['__construct']['signature']
             endif
 			let final_menu += [{'word':i, 'kind':'c', 'menu':menu}]
 		endfor
 
 		return final_menu
-
-	elseif scontext =~ '\(->\|::\)$'
+        " }}}
+	elseif scontext =~ '\(->\|::\)'
+        " {{{
 		" Complete user functions and variables
 		" Internal solution for current file.
-		" That seems as unnecessary repeating of functions but there are
-		" few not so subtle differences as not appending of $ and addition
-		" of 'kind' tag (not necessary in regular completion)
 
-		if scontext =~ '->$' || scontext =~ '::'
+        " Get name of the class
+        let classname = phpcomplete#GetClassName(scontext)
 
-			" Get name of the class
-			let classname = phpcomplete#GetClassName(scontext)
+        " Get location of class definition, we have to iterate through all
+        " tags files separately because we need relative path from current
+        " file to the exact file (tags file can be in different dir)
+        if classname != ''
+			let classlocation = phpcomplete#GetClassLocation(classname)
+        else
+			let classlocation = ''
+		endif
 
-			" Get location of class definition, we have to iterate through all
-			" tags files separately because we need relative path from current
-			" file to the exact file (tags file can be in different dir)
-			if classname != ''
-				let classlocation = phpcomplete#GetClassLocation(classname)
-			else
-				let classlocation = ''
-			endif
+		if classlocation != ''
+			if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, classname)
+				" {{{
+				let class_info = g:php_builtin_classes[classname]
+				let res = []
 
-			if classlocation == 'VIMPHP_BUILTINOBJECT'
-
-				" complete for object functions
-				for object in keys(g:php_builtin_object_functions)
-					if object =~ '^'.classname
-						let res += [{'word':substitute(object, '.*::', '', ''),
-							   	\    'kind': 'f',
-							   	\    'menu': g:php_builtin_object_functions[object],
-							   	\    'info': g:php_builtin_object_functions[object]}]
-					endif
-				endfor
-
-				" complete for class constants
-				if scontext =~ '::'
-					let object_constants = filter(copy(g:php_constants), 'v:key =~ "'.classname.'::"')
-					for constant in keys(object_constants)
-						let res += [{'word':substitute(constant, '.*::', '', ''),
-								\ 'kind': 'd',
-								\ 'menu': g:php_constants[constant],
-								\ 'info': g:php_constants[constant],
-								\ }]
+				let search = matchstr(a:base, '\(->\|::\)\zs.*$\ze')
+				if scontext =~ '->.*$' " complete for everything instance related
+					" methods
+					for [method_name, method_info] in items(class_info.methods)
+						if a:base == '' || method_name =~? '^'.a:base
+							call add(res, {'word':method_name.'(', 'kind': 'f', 'menu': method_info.signature, 'info': method_info.signature })
+						endif
+					endfor
+					" properties
+					for [property_name, property_info] in items(class_info.properties)
+						if a:base == '' || property_name =~? '^'.a:base
+							call add(res, {'word':property_name, 'kind': 'v', 'menu': property_info.type, 'info': property_info.type })
+						endif
+					endfor
+				elseif scontext =~ '::.*$' " complete for everything static
+					" methods
+					for [method_name, method_info] in items(class_info.static_methods)
+						if a:base == '' || method_name =~? '^'.a:base
+							call add(res, {'word':method_name.'(', 'kind': 'f', 'menu': method_info.signature, 'info': method_info.signature })
+						endif
+					endfor
+					" properties
+					for [property_name, property_info] in items(class_info.static_properties)
+						if a:base == '' || property_name =~? '^'.a:base
+							call add(res, {'word':property_name, 'kind': 'v', 'menu': property_info.type, 'info': property_info.type })
+						endif
+					endfor
+					" constants
+					for [constant_name, constant_info] in items(class_info.constants)
+						if a:base == '' || constant_name =~? '^'.a:base
+							call add(res, {'word':constant_name, 'kind': 'd', 'menu': constant_info, 'info': constant_info})
+						endif
 					endfor
 				endif
 				return res
-
+				" }}}
 			endif
 
 			if filereadable(classlocation)
+                " {{{
 				let classfile = readfile(classlocation)
 				let classcontent = ''
 				let classcontent .= "\n".phpcomplete#GetClassContents(classfile, classname)
@@ -271,6 +278,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 				return final_list
 
+                " }}}
 			endif
 
 		endif
@@ -369,6 +377,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 		endfor
 
 		return final_list
+        " }}}
 	endif
 
 	if a:base =~ '^\$'
@@ -676,13 +685,7 @@ endfunction
 " }}}
 function! phpcomplete#GetClassLocation(classname) " {{{
 	" Check classname may be name of built in object
-	if !exists("g:php_omni_bi_classes")
-		let g:php_omni_bi_classes = {}
-		for i in keys(g:php_builtin_object_functions)
-			let g:php_omni_bi_classes[substitute(i, '::.*$', '', '')] = ''
-		endfor
-	endif
-	if has_key(g:php_omni_bi_classes, a:classname)
+	if has_key(g:php_builtin_classes, a:classname)
 		return 'VIMPHP_BUILTINOBJECT'
 	endif
 
@@ -764,9 +767,22 @@ runtime! misc/php_builtin_functions.vim
 
 " Built in class methods
 " You can regenerate this list with the bin/extract_functions.php
-runtime! misc/php_builtin_object_functions.vim
+runtime! misc/php_builtin_classes.vim
 
-"
+" when the classname not found or found but the tags dosen't contain that
+" class we will try to complate any method of any builtin class. To speed up
+" that lookup we compile a 'ClassName::MethodName':'info' dictionary from the
+" builtin class informations
+let g:php_builtin_object_functions = {}
+for [classname, class_info] in items(g:php_builtin_classes)
+    for [method_name, method_info] in items(class_info.methods)
+        let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
+    endfor
+    for [method_name, method_info] in items(class_info.static_methods)
+        let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
+    endfor
+endfor
+
 " Constants defined in PHP and it's extension
 " You can regenerate this list with the bin/extract_functions.php
 runtime! misc/php_constants.vim
@@ -782,4 +798,4 @@ let php_control = {
 call extend(g:php_builtin_functions, php_control)
 endfunction
 " }}}
-" vim:set foldmethod=marker:noexpandtabs:ts=4:sts=4:tw=4:
+" vim: set foldmethod=marker:noexpandtabs:ts=4:sts=4:tw=4
