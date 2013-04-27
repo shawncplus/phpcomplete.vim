@@ -34,13 +34,13 @@ function format_method_signature($signature) {
 
 
 function array_index_by_col($arr, $col, $overwrite_duplicate = true) {
-	$tmp = array();
-	foreach ($arr as $i) {
+    $tmp = array();
+    foreach ($arr as $i) {
         if (!isset($tmp[$i[$col]]) || $overwrite_duplicate) {
             $tmp[$i[$col]] = $i;
         }
-	}
-	return $tmp;
+    }
+    return $tmp;
 }
 
 function vimstring_escape($str) {
