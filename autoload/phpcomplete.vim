@@ -3,14 +3,14 @@
 " Maintainer:	Mikolaj Machowski ( mikmach AT wp DOT pl )
 " Maintainer:	Shawn Biddle ( shawn AT shawnbiddle DOT com )
 "
-"   TODO:
-"   - Switching to HTML (XML?) completion (SQL) inside of phpStrings
-"   - allow also for XML completion <- better do html_flavor for HTML
-"     completion
-"   - outside of <?php?> getting parent tag may cause problems. Heh, even in
-"     perfect conditions GetLastOpenTag doesn't cooperate... Inside of
-"     phpStrings this can be even a bonus but outside of <?php?> it is not the
-"     best situation
+"	TODO:
+"	- Switching to HTML (XML?) completion (SQL) inside of phpStrings
+"	- allow also for XML completion <- better do html_flavor for HTML
+"	  completion
+"	- outside of <?php?> getting parent tag may cause problems. Heh, even in
+"	  perfect conditions GetLastOpenTag doesn't cooperate... Inside of
+"	  phpStrings this can be even a bonus but outside of <?php?> it is not the
+"	  best situation
 
 function! phpcomplete#CompletePHP(findstart, base)
 	if a:findstart
@@ -67,7 +67,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
 
 	if scontext =~ '\(\s*new\|extends\)\s\+$'
-        " {{{
+		" {{{
 		" Complete class name
 		" Internal solution for finding classes in current file.
 		let file = getline(1, '$')
@@ -105,29 +105,29 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		let final_menu = []
 		for i in res
-            let menu = ''
-            if (has_key(g:php_builtin_classes, i) && has_key(g:php_builtin_classes[i].methods, '__construct'))
-                let menu = g:php_builtin_classes[i]['methods']['__construct']['signature']
-            endif
+			let menu = ''
+			if (has_key(g:php_builtin_classes, i) && has_key(g:php_builtin_classes[i].methods, '__construct'))
+				let menu = g:php_builtin_classes[i]['methods']['__construct']['signature']
+			endif
 			let final_menu += [{'word':i, 'kind':'c', 'menu':menu}]
 		endfor
 
 		return final_menu
-        " }}}
+		" }}}
 	elseif scontext =~ '\(->\|::\)'
-        " {{{
+		" {{{
 		" Complete user functions and variables
 		" Internal solution for current file.
 
-        " Get name of the class
-        let classname = phpcomplete#GetClassName(scontext)
+		" Get name of the class
+		let classname = phpcomplete#GetClassName(scontext)
 
-        " Get location of class definition, we have to iterate through all
-        " tags files separately because we need relative path from current
-        " file to the exact file (tags file can be in different dir)
-        if classname != ''
+		" Get location of class definition, we have to iterate through all
+		" tags files separately because we need relative path from current
+		" file to the exact file (tags file can be in different dir)
+		if classname != ''
 			let classlocation = phpcomplete#GetClassLocation(classname)
-        else
+		else
 			let classlocation = ''
 		endif
 
@@ -176,12 +176,12 @@ function! phpcomplete#CompletePHP(findstart, base)
 			endif
 
 			if filereadable(classlocation)
-                " {{{
+				" {{{
 				let classfile = readfile(classlocation)
 				let classcontent = ''
 				let classcontent .= "\n".phpcomplete#GetClassContents(classfile, classname)
 				let sccontent = split(classcontent, "\n")
-                let classAccess = expand('%:p') == fnamemodify(classlocation, ':p') ? '\\(public\\|private\\|protected\\)' : 'public'
+				let classAccess = expand('%:p') == fnamemodify(classlocation, ':p') ? '\\(public\\|private\\|protected\\)' : 'public'
 
 				" limit based on context to static or normal methods
 				if scontext =~ '::'
@@ -264,21 +264,21 @@ function! phpcomplete#CompletePHP(findstart, base)
 						endif
 						let final_list +=
 								\ [{'word':i,
-								\   'info':class.all_values[i],
-								\   'menu':class.all_values[i],
-								\   'kind':'v'}]
+								\	'info':class.all_values[i],
+								\	'menu':class.all_values[i],
+								\	'kind':'v'}]
 					else
 						let final_list +=
 								\ [{'word':substitute(i, '.*::', '', ''),
-								\   'info':i.all_values[i].')',
-								\   'menu':all_values[i],
-								\   'kind':'f'}]
+								\	'info':i.all_values[i].')',
+								\	'menu':all_values[i],
+								\	'kind':'f'}]
 					endif
 				endfor
 
 				return final_list
 
-                " }}}
+				" }}}
 			endif
 
 		endif
@@ -370,14 +370,14 @@ function! phpcomplete#CompletePHP(findstart, base)
 			else
 				let final_list +=
 						\ [{'word':substitute(i, '.*::', '', ''),
-						\   'info':i.all_values[i],
-						\   'menu':all_values[i],
-						\   'kind':'f'}]
+						\	'info':i.all_values[i],
+						\	'menu':all_values[i],
+						\	'kind':'f'}]
 			endif
 		endfor
 
 		return final_list
-        " }}}
+		" }}}
 	endif
 
 	if a:base =~ '^\$'
@@ -565,9 +565,9 @@ function! phpcomplete#CompletePHP(findstart, base)
 			if has_key(int_functions, i)
 				let final_list +=
 						\ [{'word':i,
-						\   'info':i.int_functions[i],
-						\   'menu':int_functions[i],
-						\   'kind':'f'}]
+						\	'info':i.int_functions[i],
+						\	'menu':int_functions[i],
+						\	'kind':'f'}]
 			elseif has_key(int_constants, i)
 				let final_list += [{'word':i, 'kind':'d'}]
 			elseif has_key(builtin_constants, i)
@@ -602,13 +602,13 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				return ''
 			endif
 
-            if line =~ '^abstract\s*class'
-                let classname = matchstr(line, '^abstract\s*class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
-                return classname
-            elseif line =~ '^class'
-                let classname = matchstr(line, '^class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
-                return classname
-            else
+			if line =~ '^abstract\s*class'
+				let classname = matchstr(line, '^abstract\s*class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+				return classname
+			elseif line =~ '^class'
+				let classname = matchstr(line, '^class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+				return classname
+			else
 				let i += 1
 				continue
 			endif
@@ -775,12 +775,12 @@ runtime! misc/php_builtin_classes.vim
 " builtin class informations
 let g:php_builtin_object_functions = {}
 for [classname, class_info] in items(g:php_builtin_classes)
-    for [method_name, method_info] in items(class_info.methods)
-        let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
-    endfor
-    for [method_name, method_info] in items(class_info.static_methods)
-        let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
-    endfor
+	for [method_name, method_info] in items(class_info.methods)
+		let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
+	endfor
+	for [method_name, method_info] in items(class_info.static_methods)
+		let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
+	endfor
 endfor
 
 " Constants defined in PHP and it's extension
