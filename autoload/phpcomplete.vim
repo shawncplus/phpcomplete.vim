@@ -550,7 +550,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		" Treat keywords as constants
 		for [constant, info] in items(g:php_keywords)
-			if constant =~# '^'.a:base
+			if constant =~? '^'.a:base
 				let ext_constants[constant] = info
 			endif
 		endfor
