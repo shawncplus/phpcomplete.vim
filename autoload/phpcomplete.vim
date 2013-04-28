@@ -498,6 +498,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 		" Prepare list of functions from tags file
 		let ext_functions = {}
 		let ext_constants = {}
+		let ext_classes   = {}
 		let tags = taglist('^'.a:base)
 		for tag in tags
 			if tag.kind ==? 'f'
@@ -507,6 +508,8 @@ function! phpcomplete#CompletePHP(findstart, base)
 				let ext_functions[item.'('] = prototype.') - '.tag['filename']
 			elseif tag.kind ==? 'd'
 				let ext_constants[tag.name] = ''
+			elseif tag.kind ==? 'c'
+				let ext_classes[tag.name] = ''
 			endif
 		endfor
 
@@ -537,9 +540,15 @@ function! phpcomplete#CompletePHP(findstart, base)
 			endif
 		endfor
 
+		" Treat keywords as constants
+		for [constant, info] in items(g:php_keywords)
+			if constant =~# '^'.a:base
+				let ext_constants[constant] = info
+			endif
+		endfor
+
 		" All constants
 		call extend(int_constants, ext_constants)
-		" Treat keywords as constants
 
 		let all_values = {}
 
@@ -551,6 +560,9 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		" Add builtin constants
 		call extend(all_values, builtin_constants)
+
+		" Add external classes
+		call extend(all_values, ext_classes)
 
 		for m in sort(keys(all_values))
 			if m =~ '^'.a:base
@@ -568,6 +580,8 @@ function! phpcomplete#CompletePHP(findstart, base)
 						\	'info':i.int_functions[i],
 						\	'menu':int_functions[i],
 						\	'kind':'f'}]
+			elseif has_key(ext_classes, i)
+				let final_list += [{'word':i, 'kind':'c'}]
 			elseif has_key(int_constants, i)
 				let final_list += [{'word':i, 'kind':'d'}]
 			elseif has_key(builtin_constants, i)
