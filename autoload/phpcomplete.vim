@@ -187,7 +187,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				if scontext =~ '::'
 					let functions = filter(deepcopy(sccontent),
 							\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . classAccess . '\\)*\\|\\(' . classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
-				elseif scontext =~ '->$'
+				elseif scontext =~ '->'
 					let functions = filter(deepcopy(sccontent),
 							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\s\\+\\)*function"')
 				endif
@@ -209,7 +209,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 				if scontext =~ '::'
 					let variables = filter(deepcopy(sccontent),
 							\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(' . classAccess . '\\|var\\)\\|\\(' . classAccess . '\\|var\\)\\s\\+static\\)\\s\\+\\$"')
-				elseif scontext =~ '->$'
+				elseif scontext =~ '->'
 					let variables = filter(deepcopy(sccontent),
 							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
 				endif
