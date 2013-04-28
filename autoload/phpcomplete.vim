@@ -779,7 +779,7 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	call search('{')
 	normal! %
 
-	let classcontent = cfile
+	let classcontent = join(getline(cfline, line('.')), "\n")
 
 	bw! %
 
