@@ -688,6 +688,24 @@ function! phpcomplete#GetClassName(scontext) " {{{
 			endif
 		endwhile
 
+		" do in-file lookup for static method invocation of a built-in class, like: $d = DateTime::createFromFormat()
+		let i = 1
+		while i < line('.')
+			let line = getline(line('.')-i)
+			if line =~? '^\s*\$'.object.'\s*=&\?\s*\s\+[a-zA-Z_0-9\x7f-\xff]\+::[a-zA-Z_0-9\x7f-\xff]\+('
+				let classname  = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
+				let methodname = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+[a-zA-Z_0-9\x7f-\xff]\+::\zs[a-zA-Z_0-9\x7f-\xff]\+\ze(')
+				if has_key(g:php_builtin_classes, classname) && has_key(g:php_builtin_classes[classname].static_methods, methodname)
+					return g:php_builtin_classes[classname].static_methods[methodname].return_type)
+				else
+					break
+				endif
+			else
+				let i += 1
+				continue
+			endif
+		endwhile
+
 		" check Constant lookup
 		let constant_object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::')
 		if constant_object != ''
@@ -709,6 +727,7 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	endif
 endfunction
 " }}}
+
 function! phpcomplete#GetClassLocation(classname) " {{{
 	" Check classname may be name of built in object
 	if has_key(g:php_builtin_classes, a:classname)
