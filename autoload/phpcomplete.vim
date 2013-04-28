@@ -192,7 +192,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 					let f_name = matchstr(i,
 							\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 					let f_args = matchstr(i,
-							\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*{')
+							\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
 					if f_name != ''
 						let c_functions[f_name.'('] = f_args
 					endif
