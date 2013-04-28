@@ -572,6 +572,11 @@ function! phpcomplete#CompletePHP(findstart, base)
 		" Add external classes
 		call extend(all_values, ext_classes)
 
+		for classname in keys(g:php_builtin_classes)
+			let all_values[classname] = ''
+		endfor
+
+
 		for m in sort(keys(all_values))
 			if m =~ '^'.a:base
 				call add(res, m)
