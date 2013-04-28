@@ -798,4 +798,4 @@ let php_control = {
 call extend(g:php_builtin_functions, php_control)
 endfunction
 " }}}
-" vim: set foldmethod=marker:noexpandtabs:ts=4:sts=4:tw=4
+" vim: set foldmethod=marker:noexpandtab:ts=4:sts=4:tw=4
