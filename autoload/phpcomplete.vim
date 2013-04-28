@@ -263,15 +263,21 @@ function! phpcomplete#CompletePHP(findstart, base)
 							let class = i.' class '
 						endif
 						let final_list +=
-								\ [{'word':i,
+								\ [{'word': scontext =~ '::' ? '$'.i : i,
 								\	'info':class.all_values[i],
 								\	'menu':class.all_values[i],
 								\	'kind':'v'}]
+					elseif has_key(c_constants, i)
+						let final_list +=
+								\ [{'word':i,
+								\	'info':i.all_values[i],
+								\	'menu':all_values[i],
+								\	'kind':'d'}]
 					else
 						let final_list +=
 								\ [{'word':substitute(i, '.*::', '', ''),
 								\	'info':i.all_values[i].')',
-								\	'menu':all_values[i],
+								\	'menu':all_values[i].')',
 								\	'kind':'f'}]
 					endif
 				endfor
@@ -381,6 +387,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 	endif
 
 	if a:base =~ '^\$'
+		" {{{
 		" Complete variables
 		" Built-in variables {{{
 		let g:php_builtin_vars = {'$GLOBALS':'',
@@ -469,8 +476,9 @@ function! phpcomplete#CompletePHP(findstart, base)
 		endfor
 
 		return int_dict
-
+		" }}}
 	else
+		" {{{
 		" Complete everything else -
 		"  + functions,  DONE
 		"  + keywords of language DONE
@@ -582,9 +590,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 						\	'kind':'f'}]
 			elseif has_key(ext_classes, i)
 				let final_list += [{'word':i, 'kind':'c'}]
-			elseif has_key(int_constants, i)
-				let final_list += [{'word':i, 'kind':'d'}]
-			elseif has_key(builtin_constants, i)
+			elseif has_key(int_constants, i) || has_key(builtin_constants, i)
 				let final_list += [{'word':i, 'kind':'d'}]
 			else
 				let final_list += [{'word':i}]
@@ -593,6 +599,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		return final_list
 
+		" }}}
 	endif
 
 endfunction
