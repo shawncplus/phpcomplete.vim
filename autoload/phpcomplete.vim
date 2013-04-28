@@ -566,16 +566,14 @@ function! phpcomplete#CompletePHP(findstart, base)
 		" Add constants from the current file
 		call extend(all_values, int_constants)
 
-		" Add builtin constants
+		" Add built-in constants
 		call extend(all_values, builtin_constants)
 
 		" Add external classes
 		call extend(all_values, ext_classes)
 
-		for classname in keys(g:php_builtin_classes)
-			let all_values[classname] = ''
-		endfor
-
+		"add built-in classes
+		call extend(all_values, g:php_builtin_classnames)
 
 		for m in sort(keys(all_values))
 			if m =~ '^'.a:base
@@ -814,12 +812,17 @@ runtime! misc/php_builtin_functions.vim
 " You can regenerate this list with the bin/extract_functions.php
 runtime! misc/php_builtin_classes.vim
 
-" when the classname not found or found but the tags dosen't contain that
+" When the classname not found or found but the tags dosen't contain that
 " class we will try to complate any method of any builtin class. To speed up
 " that lookup we compile a 'ClassName::MethodName':'info' dictionary from the
 " builtin class informations
 let g:php_builtin_object_functions = {}
+" When completing for 'everyting imaginable' (no class context, not a
+" variable) we need a list of built-in classes in a format of {'classname':''}
+" for performance reasons we precompile this too
+let g:php_builtin_classnames = {}
 for [classname, class_info] in items(g:php_builtin_classes)
+	let g:php_builtin_classnames[classname] = ''
 	for [method_name, method_info] in items(class_info.methods)
 		let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
 	endfor
