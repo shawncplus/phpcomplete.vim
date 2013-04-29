@@ -347,7 +347,8 @@ function! phpcomplete#CompletePHP(findstart, base)
 			let f_name = matchstr(i,
 					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 			let f_args = matchstr(i,
-					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*{')
+					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+
 			let int_functions[f_name.'('] = f_args.')'
 		endfor
 
@@ -498,7 +499,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 			let f_name = matchstr(i,
 					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 			let f_args = matchstr(i,
-					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\s*\zs.\{-}\ze\s*)\_s*{')
+					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
 			let int_functions[f_name.'('] = f_args.')'
 		endfor
 
@@ -846,4 +847,4 @@ let php_control = {
 call extend(g:php_builtin_functions, php_control)
 endfunction
 " }}}
-" vim: set foldmethod=marker:noexpandtab:ts=4:sts=4:tw=4
+" vim: foldmethod=marker:noexpandtab:ts=4:sts=4:tw=4
