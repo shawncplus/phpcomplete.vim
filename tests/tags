@@ -1,0 +1,23 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BarClass	fixtures/GetClassContents/extends/bar.class.php	/^class BarClass { }$/;"	c
+BarClass2	fixtures/GetClassContents/extends_extends/bar2_extends_baz.class.php	/^class BarClass2 extends BazClass { }$/;"	c
+BazClass	fixtures/GetClassContents/extends_extends/baz.class.php	/^class BazClass { }$/;"	c
+FooClass	fixtures/GetClassContents/extends/foo_extends_bar.class.php	/^class FooClass extends BarClass { }$/;"	c
+FooClass	fixtures/GetClassContents/foo.class.php	/^class FooClass {$/;"	c
+FooClass	fixtures/GetClassContents/foo_with_extra_content.class.php	/^class FooClass {$/;"	c
+FooClass2	fixtures/GetClassContents/extends_extends/foo2_extends_bar2.class.php	/^class FooClass2 extends BarClass2 { }$/;"	c
+TestCase_only_reads_in_the_class_content	GetClassContents_test.vim	/^fun! TestCase_only_reads_in_the_class_content()$/;"	f
+TestCase_only_reads_in_the_extended_class_content	GetClassContents_test.vim	/^fun! TestCase_only_reads_in_the_extended_class_content()$/;"	f
+TestCase_only_reads_in_the_extended_classes_recursive	GetClassContents_test.vim	/^fun! TestCase_only_reads_in_the_extended_classes_recursive()$/;"	f
+TestCase_reads_in_the_class_from_the_list_of_lines	GetClassContents_test.vim	/^fun! TestCase_reads_in_the_class_from_the_list_of_lines()$/;"	f
+bar	fixtures/GetClassContents/foo.class.php	/^    public function bar( $baz = 'foo') {$/;"	f
+bar	fixtures/GetClassContents/foo_with_extra_content.class.php	/^    public function bar( $baz = 'foo') {$/;"	f
+bar	fixtures/GetClassContents/foo_with_extra_content.class.php	/^function bar() {$/;"	f
+baz	fixtures/GetClassContents/foo.class.php	/^    public function bar( $baz = 'foo') {$/;"	v
+baz	fixtures/GetClassContents/foo_with_extra_content.class.php	/^    public function bar( $baz = 'foo') {$/;"	v
+foo	fixtures/GetClassContents/foo_with_extra_content.class.php	/^function foo() {$/;"	f
