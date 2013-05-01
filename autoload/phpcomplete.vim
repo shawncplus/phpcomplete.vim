@@ -114,7 +114,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		return final_menu
 		" }}}
-	elseif scontext =~ '\(->\|::\)'
+	elseif scontext =~ '\(->\|::\)$'
 		" {{{
 		" Complete user functions and variables
 		" Internal solution for current file.
