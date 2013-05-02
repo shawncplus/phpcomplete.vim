@@ -616,6 +616,8 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	" line above
 	" or line in tags file
 
+
+
 	if a:scontext =~ '\$this->' || a:scontext =~ '\(self\|static\)::'
 		let i = 1
 		while i < line('.')
