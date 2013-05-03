@@ -695,7 +695,7 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				let classname  = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
 				let methodname = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+[a-zA-Z_0-9\x7f-\xff]\+::\zs[a-zA-Z_0-9\x7f-\xff]\+\ze(')
 				if has_key(g:php_builtin_classes, classname) && has_key(g:php_builtin_classes[classname].static_methods, methodname)
-					return g:php_builtin_classes[classname].static_methods[methodname].return_type)
+					return g:php_builtin_classes[classname].static_methods[methodname].return_type
 				else
 					break
 				endif
