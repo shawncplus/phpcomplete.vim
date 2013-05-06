@@ -616,9 +616,7 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	" line above
 	" or line in tags file
 
-
-
-	if a:scontext =~ '\$this->' || a:scontext =~ '\(self\|static\)::'
+	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
@@ -629,11 +627,11 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				return ''
 			endif
 
-			if line =~ '^abstract\s*class'
-				let classname = matchstr(line, '^abstract\s*class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+			if line =~? '^\s*abstract\s*class'
+				let classname = matchstr(line, '^\s*abstract\s*class\s*\zs[a-zA-Z]\w\+\ze')
 				return classname
-			elseif line =~ '^class'
-				let classname = matchstr(line, '^class \zs[a-zA-Z]\w\+\ze\(\s*\|$\)')
+			elseif line =~? '^\s*class'
+				let classname = matchstr(line, '^\s*class\s*\zs[a-zA-Z]\w\+\ze')
 				return classname
 			else
 				let i += 1

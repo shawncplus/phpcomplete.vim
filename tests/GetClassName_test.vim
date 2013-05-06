@@ -12,6 +12,22 @@ fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
     call VUAssertEquals('FooClass', classname)
 
     bw! %
+
+    " detection should work with extra whitespace
+    " around keywords or uppercase keywords
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_with_whitespace.class.php"
+    below 1new
+    exe ":edit ".path
+    exe ':10'
+
+    let classname = phpcomplete#GetClassName('$this->')
+    call VUAssertEquals('FooClass', classname)
+
+    exe ':11'
+    let classname = phpcomplete#GetClassName('self::')
+    call VUAssertEquals('FooClass', classname)
+
+    bw! %
 endf
 
 fun! TestCase_returns_empty_when_sees_curlyclose_on_line_start()
@@ -40,6 +56,22 @@ fun! TestCase_finds_abstract_classes()
     call VUAssertEquals('FooAbstract', classname)
 
     exe ':7'
+    let classname = phpcomplete#GetClassName('self::')
+    call VUAssertEquals('FooAbstract', classname)
+
+    bw! %
+
+    " detection should work with extra whitespace
+    " around keywords or uppercase keywords
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_abstract_with_whitespace.class.php"
+    below 1new
+    exe ":edit ".path
+    exe ':10'
+
+    let classname = phpcomplete#GetClassName('$this->')
+    call VUAssertEquals('FooAbstract', classname)
+
+    exe ':11'
     let classname = phpcomplete#GetClassName('self::')
     call VUAssertEquals('FooAbstract', classname)
 
