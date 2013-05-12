@@ -616,6 +616,8 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	" line above
 	" or line in tags file
 
+	let class_name_pattern = '[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*'
+
 	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
 		let i = 1
 		while i < line('.')
@@ -628,88 +630,65 @@ function! phpcomplete#GetClassName(scontext) " {{{
 			endif
 
 			if line =~? '^\s*abstract\s*class'
-				let classname = matchstr(line, '^\s*abstract\s*class\s*\zs[a-zA-Z]\w\+\ze')
+				let classname = matchstr(line, '^\s*abstract\s*class\s*\zs'.class_name_pattern.'\ze')
 				return classname
 			elseif line =~? '^\s*class'
-				let classname = matchstr(line, '^\s*class\s*\zs[a-zA-Z]\w\+\ze')
+				let classname = matchstr(line, '^\s*class\s*\zs'.class_name_pattern.'\ze')
 				return classname
 			else
 				let i += 1
 				continue
 			endif
 		endwhile
-	elseif a:scontext =~? '(\s*new\s\+[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*)->'
-		let classname = matchstr(a:scontext, 'new\s\+\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+	elseif a:scontext =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
+		let classname = matchstr(a:scontext, 'new\s\+\zs'.class_name_pattern.'\ze')
 		return classname
 	else
-		let object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze\(::\|->\)')
+		" check Constant lookup
+		let constant_object = matchstr(a:scontext, '\zs'.class_name_pattern.'\ze::')
+		if constant_object != ''
+			return constant_object
+		endif
+
+		"extract the variable name from the context
+		let object = matchstr(a:scontext, '\zs'.class_name_pattern.'\ze\(::\|->\)')
+
+		" scan the file backwards from the current line
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
-			if line =~ '^\s*\*\/\?\s*$'
-				let i += 1
-				continue
-			else
-				if line =~ '@var\s\+\$'.object.'\s\+[a-zA-Z_0-9\x7f-\xff]\+'
-					let classname = matchstr(line, '@var\s\+\$'.object.'\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+')
-					return classname
-				else
-					break
-				endif
-			endif
-		endwhile
 
-		" do in-file lookup of $var = new Class
-		let i = 1
-		while i < line('.')
-			let line = getline(line('.')-i)
-			if line =~ '^\s*\$'.object.'\s*=\s*new\s\+[a-zA-Z_0-9\x7f-\xff]\+'
-
-				let classname = matchstr(line, '\$'.object.'\s*=\s*new \zs[a-zA-Z_0-9\x7f-\xff]\+')
+			" do in-file lookup of $var = new Class
+			if line =~# '^\s*\$'.object.'\s*=\s*new\s\+'.class_name_pattern
+				let classname = matchstr(line, '\$'.object.'\s*=\s*new \zs'.class_name_pattern.'\ze')
 				return classname
-			else
-				let i += 1
-				continue
 			endif
-		endwhile
 
-		" do in-file lookup for Class::getInstance()
-		let i = 1
-		while i < line('.')
-			let line = getline(line('.')-i)
-			if line =~ '^\s*\$'.object.'\s*=&\?\s*\s\+[a-zA-Z_0-9\x7f-\xff]\+::getInstance\+'
-
-				let classname = matchstr(line, '\$'.object.'\s*=&\?\s*\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::getInstance\+')
+			" in file lookup for /* @var $foo Class */
+			if line =~# '@var\s\+\$'.object.'\s\+'.class_name_pattern
+				let classname = matchstr(line, '@var\s\+\$'.object.'\s\+\zs'.class_name_pattern.'\ze')
 				return classname
-			else
-				let i += 1
-				continue
 			endif
-		endwhile
 
-		" do in-file lookup for static method invocation of a built-in class, like: $d = DateTime::createFromFormat()
-		let i = 1
-		while i < line('.')
-			let line = getline(line('.')-i)
-			if line =~? '^\s*\$'.object.'\s*=&\?\s*\s\+[a-zA-Z_0-9\x7f-\xff]\+::[a-zA-Z_0-9\x7f-\xff]\+('
-				let classname  = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
-				let methodname = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+[a-zA-Z_0-9\x7f-\xff]\+::\zs[a-zA-Z_0-9\x7f-\xff]\+\ze(')
+			" in-file lookup for Class::getInstance()
+			if line =~# '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::getInstance\+'
+				let classname = matchstr(line, '\$'.object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze::getInstance\+')
+				return classname
+			endif
+
+			" do in-file lookup for static method invocation of a built-in class, like: $d = DateTime::createFromFormat()
+			if line =~# '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::[a-zA-Z_0-9\x7f-\xff]\+('
+				let classname  = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+\zs'.class_name_pattern.'\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
+				let methodname = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::\zs[a-zA-Z_0-9\x7f-\xff]\+\ze(')
 				if has_key(g:php_builtin_classes, classname) && has_key(g:php_builtin_classes[classname].static_methods, methodname)
 					return g:php_builtin_classes[classname].static_methods[methodname].return_type
 				else
 					break
 				endif
-			else
-				let i += 1
-				continue
 			endif
-		endwhile
 
-		" check Constant lookup
-		let constant_object = matchstr(a:scontext, '\zs[a-zA-Z_0-9\x7f-\xff]\+\ze::')
-		if constant_object != ''
-			return constant_object
-		endif
+			let i += 1
+		endwhile
 
 		" OK, first way failed, now check tags file(s)
 		let tags = taglist('^'.substitute(object, '^\$', '', ''))
@@ -717,8 +696,8 @@ function! phpcomplete#GetClassName(scontext) " {{{
 			return
 		else
 			for tag in tags
-				if tag.kind ==? 'v' && tag.cmd =~# '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze'
-					let classname = matchstr(tag.cmd, '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+				if tag.kind ==? 'v' && tag.cmd =~? '=\s*new\s\+\zs'.class_name_pattern.'\ze'
+					let classname = matchstr(tag.cmd, '=\s*new\s\+\zs'.class_name_pattern.'\ze')
 					return classname
 				endif
 			endfor
