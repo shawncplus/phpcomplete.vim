@@ -13,7 +13,7 @@
 "	  best situation
 
 if !exists('g:relax_static_constraint')
-	let g:relax_static_constraint = 1
+	let g:relax_static_constraint = 0
 endif
 
 function! phpcomplete#CompletePHP(findstart, base)
