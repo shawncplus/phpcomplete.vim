@@ -3,6 +3,13 @@
 " Maintainer:	Mikolaj Machowski ( mikmach AT wp DOT pl )
 " Maintainer:	Shawn Biddle ( shawn AT shawnbiddle DOT com )
 "
+"	OPTIONS:
+"
+"		let g:phpcomplete_relax_static_constraint = 1/0  [default 0]
+"			Enables completion for non-static methods and properties when completing for static context (::).
+"			This generates E_STRICT level warning, but php calls these methods nontheless.
+"
+"
 "	TODO:
 "	- Switching to HTML (XML?) completion (SQL) inside of phpStrings
 "	- allow also for XML completion <- better do html_flavor for HTML
@@ -12,8 +19,8 @@
 "	  phpStrings this can be even a bonus but outside of <?php?> it is not the
 "	  best situation
 
-if !exists('g:relax_static_constraint')
-	let g:relax_static_constraint = 0
+if !exists('g:phpcomplete_relax_static_constraint')
+	let g:phpcomplete_relax_static_constraint = 0
 endif
 
 function! phpcomplete#CompletePHP(findstart, base)
@@ -189,7 +196,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 				" limit based on context to static or normal methods
 				if scontext =~ '::'
-					if g:relax_static_constraint == 1
+					if g:phpcomplete_relax_static_constraint == 1
 						let functions = filter(deepcopy(sccontent),
 								\ 'v:val =~ "^\\s*\\(' . classAccess . '\\s\\+\\)*function"')
 					else
@@ -216,7 +223,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 				" limit based on context to static or normal attributes
 				if scontext =~ '::'
-					if g:relax_static_constraint == 1
+					if g:phpcomplete_relax_static_constraint == 1
 						let variables = filter(deepcopy(sccontent),
 								\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
 					else

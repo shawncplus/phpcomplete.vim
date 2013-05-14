@@ -29,3 +29,9 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
          Bundle 'shawncplus/phpcomplete.vim'
  3. Source your `.vimrc` with `:so %` or otherwise reload your vim
  4. Run the `:BundleInstall` commmand
+
+## Options
+
+**let g:phpcomplete\_relax\_static\_constraint = 1/0  [default 0]** <br>
+Enables completion for non-static methods and properties when completing for static context (`::`).
+This generates `E_STRICT` level warning, but php calls these methods nontheless.
