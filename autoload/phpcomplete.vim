@@ -12,6 +12,10 @@
 "	  phpStrings this can be even a bonus but outside of <?php?> it is not the
 "	  best situation
 
+if !exists('g:relax_static_constraint')
+	let g:relax_static_constraint = 1
+endif
+
 function! phpcomplete#CompletePHP(findstart, base)
 	if a:findstart
 		unlet! b:php_menu
@@ -185,8 +189,13 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 				" limit based on context to static or normal methods
 				if scontext =~ '::'
-					let functions = filter(deepcopy(sccontent),
-							\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . classAccess . '\\)*\\|\\(' . classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
+					if g:relax_static_constraint == 1
+						let functions = filter(deepcopy(sccontent),
+								\ 'v:val =~ "^\\s*\\(' . classAccess . '\\s\\+\\)*function"')
+					else
+						let functions = filter(deepcopy(sccontent),
+								\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . classAccess . '\\)*\\|\\(' . classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
+					endif
 				elseif scontext =~ '->'
 					let functions = filter(deepcopy(sccontent),
 							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\s\\+\\)*function"')
@@ -207,8 +216,13 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 				" limit based on context to static or normal attributes
 				if scontext =~ '::'
-					let variables = filter(deepcopy(sccontent),
-							\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(' . classAccess . '\\|var\\)\\|\\(' . classAccess . '\\|var\\)\\s\\+static\\)\\s\\+\\$"')
+					if g:relax_static_constraint == 1
+						let variables = filter(deepcopy(sccontent),
+								\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
+					else
+						let variables = filter(deepcopy(sccontent),
+								\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(' . classAccess . '\\|var\\)\\|\\(' . classAccess . '\\|var\\)\\s\\+static\\)\\s\\+\\$"')
+					endif
 				elseif scontext =~ '->'
 					let variables = filter(deepcopy(sccontent),
 							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
