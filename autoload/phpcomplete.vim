@@ -697,6 +697,12 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				return classname
 			endif
 
+			" do in-file lookup for Class::getClass()
+			if line =~# '^\s*\$'.object.'\s*=&\?\s*\s\+\('.class_name_pattern.'\)::get\1'
+				let classname = matchlist(line, '\$'.object.'\s*=&\?\s*\s\+\('.class_name_pattern.'\)::get\1')[1]
+				return classname
+			endif
+
 			" do in-file lookup for static method invocation of a built-in class, like: $d = DateTime::createFromFormat()
 			if line =~# '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::[a-zA-Z_0-9\x7f-\xff]\+('
 				let classname  = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+\zs'.class_name_pattern.'\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
