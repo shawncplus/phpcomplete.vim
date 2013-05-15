@@ -223,13 +223,8 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 				" limit based on context to static or normal attributes
 				if scontext =~ '::'
-					if g:phpcomplete_relax_static_constraint == 1
-						let variables = filter(deepcopy(sccontent),
-								\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
-					else
-						let variables = filter(deepcopy(sccontent),
-								\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(' . classAccess . '\\|var\\)\\|\\(' . classAccess . '\\|var\\)\\s\\+static\\)\\s\\+\\$"')
-					endif
+					let variables = filter(deepcopy(sccontent),
+							\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(' . classAccess . '\\|var\\)\\|\\(' . classAccess . '\\|var\\)\\s\\+static\\)\\s\\+\\$"')
 				elseif scontext =~ '->'
 					let variables = filter(deepcopy(sccontent),
 							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
