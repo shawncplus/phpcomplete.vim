@@ -157,3 +157,44 @@ fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_
     " call VUAssertEquals('FooClass', classname)
     bw! %
 endf
+
+fun! TestCase_extract_typehint_from_function_calls()
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/typehinted_functions.php"
+    below 1new
+    exe ":edit ".path
+    exe ':4'
+
+    call phpcomplete#LoadData()
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass1', classname)
+
+    exe ':8'
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass2', classname)
+
+    exe ':12'
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass3', classname)
+
+    exe ':16'
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass4', classname)
+
+    exe ':20'
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass5', classname)
+
+    exe ':24'
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass6', classname)
+
+    exe ':28'
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass7', classname)
+
+    exe ':33'
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass8', classname)
+
+    bw! %
+endf

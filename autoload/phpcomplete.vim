@@ -703,6 +703,18 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				endif
 			endif
 
+			" in-file lookup for typehinted function arguments
+			if line =~# '[fF][uU][nN][cC][tT][iI][oO][nN]\s*[^(]\+\s*(.\{-}'.class_name_pattern.'\s\+\$'.object
+				let f_args = matchstr(line, '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+				let args = split(f_args, '\s*\zs,\ze\s*')
+				for arg in args
+					if arg =~# '\$'.object.'\(,\|$\)'
+						let classname = matchstr(arg, '\s*\zs'.class_name_pattern.'\ze\s\+\$'.object)
+						return classname
+					endif
+				endfor
+			endif
+
 			let i += 1
 		endwhile
 
