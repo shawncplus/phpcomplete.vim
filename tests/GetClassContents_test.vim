@@ -1,12 +1,12 @@
 fun! TestCase_reads_in_the_class_from_the_list_of_lines()
-    let location = 'fixtures/GetClassContents/foo.class.php'
+    let location =  expand('%:p:h')."/".'fixtures/GetClassContents/foo.class.php'
     let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
     let expected = join(readfile(location)[1:], "\n")
     call VUAssertEquals(expected, contents)
 endf
 
 fun! TestCase_only_reads_in_the_class_content()
-    let location = 'fixtures/GetClassContents/foo_with_extra_content.class.php'
+    let location =  expand('%:p:h')."/".'fixtures/GetClassContents/foo_with_extra_content.class.php'
     let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
     let expected = join(readfile(location)[5:8], "\n")
     call VUAssertEquals(expected, contents)
@@ -14,8 +14,8 @@ endf
 
 fun! TestCase_only_reads_in_the_extended_class_content()
     let g:php_builtin_classes = {}
-    let location         = 'fixtures/GetClassContents/extends/foo_extends_bar.class.php'
-    let extends_location = 'fixtures/GetClassContents/extends/bar.class.php'
+    let location         =  expand('%:p:h')."/".'fixtures/GetClassContents/extends/foo_extends_bar.class.php'
+    let extends_location =  expand('%:p:h')."/".'fixtures/GetClassContents/extends/bar.class.php'
 
     let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
 
@@ -27,9 +27,9 @@ endf
 
 fun! TestCase_only_reads_in_the_extended_classes_recursive()
     let g:php_builtin_classes = {}
-    let location                 = 'fixtures/GetClassContents/extends_extends/foo2_extends_bar2.class.php'
-    let extends_location         = 'fixtures/GetClassContents/extends_extends/bar2_extends_baz.class.php'
-    let extends_extends_location = 'fixtures/GetClassContents/extends_extends/baz.class.php'
+    let location                 =  expand('%:p:h')."/".'fixtures/GetClassContents/extends_extends/foo2_extends_bar2.class.php'
+    let extends_location         =  expand('%:p:h')."/".'fixtures/GetClassContents/extends_extends/bar2_extends_baz.class.php'
+    let extends_extends_location =  expand('%:p:h')."/".'fixtures/GetClassContents/extends_extends/baz.class.php'
 
     let expected  = readfile(location)[2]."\n"
     let expected .= readfile(extends_location)[2]."\n"
