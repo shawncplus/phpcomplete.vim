@@ -6,7 +6,7 @@
 "	OPTIONS:
 "
 "		let g:phpcomplete_relax_static_constraint = 1/0  [default 0]
-"			Enables completion for non-static methods and properties when completing for static context (::).
+"			Enables completion for non-static methods when completing for static context (::).
 "			This generates E_STRICT level warning, but php calls these methods nontheless.
 "
 "
