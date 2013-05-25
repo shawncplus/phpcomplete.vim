@@ -78,53 +78,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
 
 	if scontext =~ '\(\s*new\|extends\)\s\+$'
-		" {{{
-		" Complete class name
-		" Internal solution for finding classes in current file.
-		let file = getline(1, '$')
-		call filter(file,
-				\ 'v:val =~ "class\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
-		let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
-		let jfile = join(file, ' ')
-		let int_values = split(jfile, 'class\s\+')
-		let int_classes = {}
-		for i in int_values
-			let c_name = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
-			if c_name != ''
-				let int_classes[c_name] = ''
-			endif
-		endfor
-
-		" Prepare list of classes from tags file
-		let ext_classes = {}
-		let tags = taglist('^'.a:base)
-		for tag in tags
-			if tag.kind ==? 'c'
-				let ext_classes[tag.name] = ''
-			endif
-		endfor
-
-		let classes = sort(keys(int_classes))
-		let classes += sort(keys(ext_classes))
-		let classes += keys(g:php_builtin_classes)
-
-		for m in classes
-			if m =~ '^'.a:base
-				call add(res, m)
-			endif
-		endfor
-
-		let final_menu = []
-		for i in res
-			let menu = ''
-			if (has_key(g:php_builtin_classes, i) && has_key(g:php_builtin_classes[i].methods, '__construct'))
-				let menu = g:php_builtin_classes[i]['methods']['__construct']['signature']
-			endif
-			let final_menu += [{'word':i, 'kind':'c', 'menu':menu}]
-		endfor
-
-		return final_menu
-		" }}}
+		return phpcomplete#CompleteClassName(a:base)
 	elseif scontext =~ '\(->\|::\)$'
 		" {{{
 		" Complete user functions and variables
@@ -156,7 +110,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 				return phpcomplete#CompleteUserClass(scontext, a:base, sccontent, classAccess)
 			endif
-
 		endif
 
 		if a:base =~ '^\$'
@@ -477,6 +430,57 @@ function! phpcomplete#CompletePHP(findstart, base)
 	endif
 
 endfunction
+
+function! phpcomplete#CompleteClassName(base) " {{{
+	let res = []
+	" Complete class name
+	" Internal solution for finding classes in current file.
+	let file = getline(1, '$')
+	call filter(file,
+			\ 'v:val =~? "class\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*"')
+
+	let fnames = join(map(tagfiles(), 'escape(v:val, " \\#%")'))
+	let jfile = join(file, ' ')
+	let int_values = split(jfile, 'class\s\+')
+	let int_classes = {}
+	for i in int_values
+		let c_name = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
+		if c_name != ''
+			let int_classes[c_name] = ''
+		endif
+	endfor
+
+	" Prepare list of classes from tags file
+	let ext_classes = {}
+	let tags = taglist('^'.a:base)
+	for tag in tags
+		if tag.kind ==? 'c'
+			let ext_classes[tag.name] = ''
+		endif
+	endfor
+
+	let classes = sort(keys(int_classes))
+	let classes += sort(keys(ext_classes))
+	let classes += keys(g:php_builtin_classes)
+
+	for m in classes
+		if m =~ '^'.a:base
+			call add(res, m)
+		endif
+	endfor
+
+	let final_menu = []
+	for i in res
+		let menu = ''
+		if (has_key(g:php_builtin_classes, i) && has_key(g:php_builtin_classes[i].methods, '__construct'))
+			let menu = g:php_builtin_classes[i]['methods']['__construct']['signature']
+		endif
+		let final_menu += [{'word':i, 'kind':'c', 'menu':menu}]
+	endfor
+
+	return final_menu
+endfunction
+" }}}
 
 function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) " {{{
 	let final_list = []
