@@ -144,46 +144,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 		if classlocation != ''
 			if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, classname)
-				" {{{
-				let class_info = g:php_builtin_classes[classname]
-				let res = []
-
-				let search = matchstr(a:base, '\(->\|::\)\zs.*$\ze')
-				if scontext =~ '->.*$' " complete for everything instance related
-					" methods
-					for [method_name, method_info] in items(class_info.methods)
-						if a:base == '' || method_name =~? '^'.a:base
-							call add(res, {'word':method_name.'(', 'kind': 'f', 'menu': method_info.signature, 'info': method_info.signature })
-						endif
-					endfor
-					" properties
-					for [property_name, property_info] in items(class_info.properties)
-						if a:base == '' || property_name =~? '^'.a:base
-							call add(res, {'word':property_name, 'kind': 'v', 'menu': property_info.type, 'info': property_info.type })
-						endif
-					endfor
-				elseif scontext =~ '::.*$' " complete for everything static
-					" methods
-					for [method_name, method_info] in items(class_info.static_methods)
-						if a:base == '' || method_name =~? '^'.a:base
-							call add(res, {'word':method_name.'(', 'kind': 'f', 'menu': method_info.signature, 'info': method_info.signature })
-						endif
-					endfor
-					" properties
-					for [property_name, property_info] in items(class_info.static_properties)
-						if a:base == '' || property_name =~? '^'.a:base
-							call add(res, {'word':property_name, 'kind': 'v', 'menu': property_info.type, 'info': property_info.type })
-						endif
-					endfor
-					" constants
-					for [constant_name, constant_info] in items(class_info.constants)
-						if a:base == '' || constant_name =~? '^'.a:base
-							call add(res, {'word':constant_name, 'kind': 'd', 'menu': constant_info, 'info': constant_info})
-						endif
-					endfor
-				endif
-				return res
-				" }}}
+				return phpcomplete#CompleteBuiltInClass(scontext, classname, a:base)
 			endif
 
 			if filereadable(classlocation)
@@ -623,6 +584,47 @@ function! phpcomplete#CompletePHP(findstart, base)
 	endif
 
 endfunction
+
+function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
+	let class_info = g:php_builtin_classes[a:classname]
+	let res = []
+	let search = matchstr(a:base, '\(->\|::\)\zs.*$\ze')
+	if a:scontext =~ '->$' " complete for everything instance related
+		" methods
+		for [method_name, method_info] in items(class_info.methods)
+			if a:base == '' || method_name =~? '^'.a:base
+				call add(res, {'word':method_name.'(', 'kind': 'f', 'menu': method_info.signature, 'info': method_info.signature })
+			endif
+		endfor
+		" properties
+		for [property_name, property_info] in items(class_info.properties)
+			if a:base == '' || property_name =~? '^'.a:base
+				call add(res, {'word':property_name, 'kind': 'v', 'menu': property_info.type, 'info': property_info.type })
+			endif
+		endfor
+	elseif a:scontext =~ '::$' " complete for everything static
+		" methods
+		for [method_name, method_info] in items(class_info.static_methods)
+			if a:base == '' || method_name =~? '^'.a:base
+				call add(res, {'word':method_name.'(', 'kind': 'f', 'menu': method_info.signature, 'info': method_info.signature })
+			endif
+		endfor
+		" properties
+		for [property_name, property_info] in items(class_info.static_properties)
+			if a:base == '' || property_name =~? '^'.a:base
+				call add(res, {'word':property_name, 'kind': 'v', 'menu': property_info.type, 'info': property_info.type })
+			endif
+		endfor
+		" constants
+		for [constant_name, constant_info] in items(class_info.constants)
+			if a:base == '' || constant_name =~? '^'.a:base
+				call add(res, {'word':constant_name, 'kind': 'd', 'menu': constant_info, 'info': constant_info})
+			endif
+		endfor
+	endif
+	return res
+endfunction
+" }}}
 
 function! phpcomplete#GetClassName(scontext) " {{{
 	" Get class name
