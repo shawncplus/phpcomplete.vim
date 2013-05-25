@@ -142,7 +142,7 @@ fun! TestCase_returns_class_from_static_method_call()
 endf
 
 fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_cmd()
-    " see TAGS file in the tests/ directory
+    " see TAGS file in the tests/fixtures/GetClassName directory
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_only_from_tags.php"
     below 1new
     exe ":edit ".path

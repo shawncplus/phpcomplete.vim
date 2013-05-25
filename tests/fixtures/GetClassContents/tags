@@ -1,0 +1,17 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BarClass	extends/bar.class.php	/^class BarClass { }$/;"	c
+BarClass2	extends_extends/bar2_extends_baz.class.php	/^class BarClass2 extends BazClass { }$/;"	c
+BazClass	extends_extends/baz.class.php	/^class BazClass { }$/;"	c
+FooClass	extends/foo_extends_bar.class.php	/^class FooClass extends BarClass { }$/;"	c
+FooClass	foo.class.php	/^class FooClass {$/;"	c
+FooClass	foo_with_extra_content.class.php	/^class FooClass {$/;"	c
+FooClass2	extends_extends/foo2_extends_bar2.class.php	/^class FooClass2 extends BarClass2 { }$/;"	c
+bar	foo.class.php	/^    public function bar( $baz = 'foo') {$/;"	f
+bar	foo_with_extra_content.class.php	/^    public function bar( $baz = 'foo') {$/;"	f
+bar	foo_with_extra_content.class.php	/^function bar() {$/;"	f
+foo	foo_with_extra_content.class.php	/^function foo() {$/;"	f

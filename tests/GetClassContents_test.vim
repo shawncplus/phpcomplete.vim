@@ -13,6 +13,8 @@ fun! TestCase_only_reads_in_the_class_content()
 endf
 
 fun! TestCase_only_reads_in_the_extended_class_content()
+    " tags used to find the extended classes
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/tags'
     let g:php_builtin_classes = {}
     let location         =  expand('%:p:h')."/".'fixtures/GetClassContents/extends/foo_extends_bar.class.php'
     let extends_location =  expand('%:p:h')."/".'fixtures/GetClassContents/extends/bar.class.php'
@@ -26,6 +28,8 @@ fun! TestCase_only_reads_in_the_extended_class_content()
 endf
 
 fun! TestCase_only_reads_in_the_extended_classes_recursive()
+    " tags used to find the extended classes
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/tags'
     let g:php_builtin_classes = {}
     let location                 =  expand('%:p:h')."/".'fixtures/GetClassContents/extends_extends/foo2_extends_bar2.class.php'
     let extends_location         =  expand('%:p:h')."/".'fixtures/GetClassContents/extends_extends/bar2_extends_baz.class.php'
