@@ -148,120 +148,13 @@ function! phpcomplete#CompletePHP(findstart, base)
 			endif
 
 			if filereadable(classlocation)
-				" {{{
 				let classfile = readfile(classlocation)
 				let classcontent = ''
 				let classcontent .= "\n".phpcomplete#GetClassContents(classfile, classname)
 				let sccontent = split(classcontent, "\n")
 				let classAccess = expand('%:p') == fnamemodify(classlocation, ':p') ? '\\(public\\|private\\|protected\\)' : 'public'
 
-				" limit based on context to static or normal methods
-				if scontext =~ '::'
-					if g:phpcomplete_relax_static_constraint == 1
-						let functions = filter(deepcopy(sccontent),
-								\ 'v:val =~ "^\\s*\\(' . classAccess . '\\s\\+\\)*function"')
-					else
-						let functions = filter(deepcopy(sccontent),
-								\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . classAccess . '\\)*\\|\\(' . classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
-					endif
-				elseif scontext =~ '->'
-					let functions = filter(deepcopy(sccontent),
-							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\s\\+\\)*function"')
-				endif
-
-				let jfuncs = join(functions, ' ')
-				let sfuncs = split(jfuncs, 'function\s\+')
-				let c_functions = {}
-				for i in sfuncs
-					let f_name = matchstr(i,
-							\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
-					let f_args = matchstr(i,
-							\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
-					if f_name != ''
-						let c_functions[f_name.'('] = f_args
-					endif
-				endfor
-
-				" limit based on context to static or normal attributes
-				if scontext =~ '::'
-					let variables = filter(deepcopy(sccontent),
-							\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(' . classAccess . '\\|var\\)\\|\\(' . classAccess . '\\|var\\)\\s\\+static\\)\\s\\+\\$"')
-				elseif scontext =~ '->'
-					let variables = filter(deepcopy(sccontent),
-							\ 'v:val =~ "^\\s*\\(' . classAccess . '\\|var\\)\\s\\+\\$"')
-				endif
-				let jvars = join(variables, ' ')
-				let svars = split(jvars, '\$')
-				let c_variables = {}
-				for i in svars
-					let c_var = matchstr(i,
-							\ '^\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
-					if c_var != ''
-						let c_variables[c_var] = ''
-					endif
-				endfor
-
-
-				let constants = filter(deepcopy(sccontent),
-						\ 'v:val =~ "^\\s*const\\s\\+"')
-
-				let jcons = join(constants, ' ')
-				let scons = split(jcons, 'const')
-
-				let c_constants = {}
-				for i in scons
-					let c_con = matchstr(i,
-							\ '^\s*\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
-					if c_con != ''
-						let c_constants[c_con] = ''
-					endif
-				endfor
-
-				let all_values = {}
-				call extend(all_values, c_functions)
-				call extend(all_values, c_variables)
-				call extend(all_values, c_constants)
-
-				for m in sort(keys(all_values))
-					if m =~ '^'.a:base && m !~ '::'
-						call add(res, m)
-					elseif m =~ '::'.a:base
-						call add(res2, m)
-					endif
-				endfor
-
-				let start_list = res + res2
-
-				let final_list = []
-				for i in start_list
-					if has_key(c_variables, i)
-						let class = ' '
-						if all_values[i] != ''
-							let class = i.' class '
-						endif
-						let final_list +=
-								\ [{'word': scontext =~ '::' ? '$'.i : i,
-								\	'info':class.all_values[i],
-								\	'menu':class.all_values[i],
-								\	'kind':'v'}]
-					elseif has_key(c_constants, i)
-						let final_list +=
-								\ [{'word':i,
-								\	'info':i.all_values[i],
-								\	'menu':all_values[i],
-								\	'kind':'d'}]
-					else
-						let final_list +=
-								\ [{'word':substitute(i, '.*::', '', ''),
-								\	'info':i.all_values[i].')',
-								\	'menu':all_values[i].')',
-								\	'kind':'f'}]
-					endif
-				endfor
-
-				return final_list
-
-				" }}}
+				return phpcomplete#CompleteUserClass(scontext, a:base, sccontent, classAccess)
 			endif
 
 		endif
@@ -584,6 +477,119 @@ function! phpcomplete#CompletePHP(findstart, base)
 	endif
 
 endfunction
+
+function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) " {{{
+	let final_list = []
+	let res  = []
+	let res2 = []
+
+	" limit based on context to static or normal methods
+	if a:scontext =~ '::'
+		if g:phpcomplete_relax_static_constraint == 1
+			let functions = filter(deepcopy(a:sccontent),
+						\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . a:classAccess . '\\)*\\|\\(' . a:classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
+			let functions += filter(deepcopy(a:sccontent),
+						\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\s\\+\\)*function"')
+		else
+			let functions = filter(deepcopy(a:sccontent),
+						\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . a:classAccess . '\\)*\\|\\(' . a:classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
+		endif
+	elseif a:scontext =~ '->'
+		let functions = filter(deepcopy(a:sccontent),
+					\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\s\\+\\)*function"')
+	endif
+
+	let sfuncs = split(join(functions, ' '), 'function\s\+')
+	let c_functions = {}
+	for i in sfuncs
+		let f_name = matchstr(i,
+					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+		let f_args = matchstr(i,
+					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+		if f_name != ''
+			let c_functions[f_name.'('] = f_args
+		endif
+	endfor
+
+	" limit based on context to static or normal attributes
+	if a:scontext =~ '::'
+		let variables = filter(deepcopy(a:sccontent),
+					\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(' . a:classAccess . '\\|var\\)\\|\\(' . a:classAccess . '\\|var\\)\\s\\+static\\)\\s\\+\\$"')
+	elseif a:scontext =~ '->'
+		let variables = filter(deepcopy(a:sccontent),
+					\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\|var\\)\\s\\+\\$"')
+	endif
+	let jvars = join(variables, ' ')
+	let svars = split(jvars, '\$')
+	let c_variables = {}
+	for i in svars
+		let c_var = matchstr(i,
+					\ '^\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+		if c_var != ''
+			let c_variables[c_var] = ''
+		endif
+	endfor
+
+	let constants = filter(deepcopy(a:sccontent),
+				\ 'v:val =~ "^\\s*const\\s\\+"')
+
+	let jcons = join(constants, ' ')
+	let scons = split(jcons, 'const')
+
+	let c_constants = {}
+	for i in scons
+		let c_con = matchstr(i,
+					\ '^\s*\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+		if c_con != ''
+			let c_constants[c_con] = ''
+		endif
+	endfor
+
+	let all_values = {}
+	call extend(all_values, c_functions)
+	call extend(all_values, c_variables)
+	call extend(all_values, c_constants)
+
+	for m in sort(keys(all_values))
+		if m =~ '^'.a:base && m !~ '::'
+			call add(res, m)
+		elseif m =~ '::'.a:base
+			call add(res2, m)
+		endif
+	endfor
+
+	let start_list = res + res2
+
+	let final_list = []
+	for i in start_list
+		if has_key(c_variables, i)
+			let class = ' '
+			if all_values[i] != ''
+				let class = i.' class '
+			endif
+			let final_list +=
+						\ [{'word': a:scontext =~ '::' ? '$'.i : i,
+						\	'info':class.all_values[i],
+						\	'menu':class.all_values[i],
+						\	'kind':'v'}]
+		elseif has_key(c_constants, i)
+			let final_list +=
+						\ [{'word':i,
+						\	'info':i.all_values[i],
+						\	'menu':all_values[i],
+						\	'kind':'d'}]
+		else
+			let final_list +=
+						\ [{'word':substitute(i, '.*::', '', ''),
+						\	'info':i.all_values[i].')',
+						\	'menu':all_values[i].')',
+						\	'kind':'f'}]
+		endif
+	endfor
+
+	return final_list
+endfunction
+" }}}
 
 function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
 	let class_info = g:php_builtin_classes[a:classname]
