@@ -117,104 +117,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 			endif
 		endif
 
-		if g:phpcomplete_complete_for_unknown_classes == 1
-			" {{{
-			if a:base =~ '^\$'
-				let adddollar = '$'
-			else
-				let adddollar = ''
-			endif
-			let file = getline(1, '$')
-			let jfile = join(file, ' ')
-			let sfile = split(jfile, '\$')
-			let int_vars = {}
-			for i in sfile
-				if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
-					let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
-				else
-					let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
-				endif
-				if val !~ ''
-					let int_vars[adddollar.val] = ''
-				endif
-			endfor
-
-			" ctags has good support for PHP, use tags file for external
-			" variables and functions
-			let ext_vars = {}
-			let ext_functions = {}
-			let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
-			for tag in tags
-				if tag.kind ==? 'v'
-					let item = tag.name
-					let classname = ''
-					if tag.cmd =~? item.'\s*=\s*new\s\+'
-						let classname = matchstr(tag.cmd,
-									\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
-					endif
-					let ext_vars[adddollar.item] = classname
-				elseif tag.kind ==? 'f'
-					let item = tag.name
-					let prototype = matchstr(tag.cmd,
-							\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
-					let ext_functions[item.'('] = prototype.') - '.tag['filename']
-				endif
-			endfor
-
-			" Now we have all variables in int_vars dictionary
-			call extend(int_vars, ext_vars)
-
-			" Internal solution for finding functions in current file.
-			let file = getline(1, '$')
-			call filter(file,
-					\ 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
-			let jfile = join(file, ' ')
-			let int_values = split(jfile, 'function\s\+')
-			let int_functions = {}
-			for i in int_values
-				let f_name = matchstr(i,
-						\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
-				let f_args = matchstr(i,
-						\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
-
-				let int_functions[f_name.'('] = f_args.')'
-			endfor
-
-			let all_values = {}
-			call extend(all_values, int_functions)
-			call extend(all_values, ext_functions)
-			call extend(all_values, int_vars) " external variables are already in
-			call extend(all_values, g:php_builtin_object_functions)
-
-			for m in sort(keys(all_values))
-				if m =~ '\(^\|::\)'.a:base
-					call add(res, m)
-				endif
-			endfor
-
-			let start_list = res
-
-			let final_list = []
-			for i in start_list
-				if has_key(int_vars, i)
-					let class = ' '
-					if all_values[i] != ''
-						let class = i.' class '
-					endif
-					let final_list += [{'word':i, 'info':class.all_values[i], 'kind':'v'}]
-				else
-					let final_list +=
-							\ [{'word':substitute(i, '.*::', '', ''),
-							\	'info':i.all_values[i],
-							\	'menu':all_values[i],
-							\	'kind':'f'}]
-				endif
-			endfor
-			return final_list
-		else
-			return []
-		endif
-		" }}}
+		return phpcomplete#CompleteUnknownClass(a:base, scontext)
 	 " }}}
 	endif
 
@@ -349,6 +252,101 @@ function! phpcomplete#CompletePHP(findstart, base)
 	endif
 
 endfunction
+
+function! phpcomplete#CompleteUnknownClass(base, scontext) " {{{
+	let res = []
+
+	if g:phpcomplete_complete_for_unknown_classes != 1
+		return []
+	endif
+
+	if a:base =~ '^\$'
+		let adddollar = '$'
+	else
+		let adddollar = ''
+	endif
+
+	let file = getline(1, '$')
+
+	" Internal solution for finding object properties in current file.
+	if a:scontext =~ '::'
+		let variables = filter(deepcopy(file),
+					\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(public\\|var\\)\\|\\(public\\|var\\)\\s\\+static\\)\\s\\+\\$"')
+	elseif a:scontext =~ '->'
+		let variables = filter(deepcopy(file),
+					\ 'v:val =~ "^\\s*\\(public\\|var\\)\\s\\+\\$"')
+	endif
+	let jvars = join(variables, ' ')
+	let svars = split(jvars, '\$')
+	let int_vars = {}
+	for i in svars
+		let c_var = matchstr(i,
+					\ '^\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+		if c_var != ''
+			let int_vars[adddollar.c_var] = ''
+		endif
+	endfor
+
+	" Internal solution for finding functions in current file.
+	call filter(deepcopy(file),
+			\ 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
+	let jfile = join(file, ' ')
+	let int_values = split(jfile, 'function\s\+')
+	let int_functions = {}
+	for i in int_values
+		let f_name = matchstr(i,
+				\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+		let f_args = matchstr(i,
+				\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+
+		let int_functions[f_name.'('] = f_args.')'
+	endfor
+
+	" collect external functions from tags
+	let ext_functions = {}
+	let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
+	for tag in tags
+		if tag.kind ==? 'f'
+			let item = tag.name
+			let prototype = matchstr(tag.cmd,
+					\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+			let ext_functions[item.'('] = prototype.') - '.tag['filename']
+		endif
+	endfor
+
+	let all_values = {}
+	call extend(all_values, int_functions)
+	call extend(all_values, ext_functions)
+	call extend(all_values, int_vars) " external variables are already in
+	call extend(all_values, g:php_builtin_object_functions)
+
+	for m in sort(keys(all_values))
+		if m =~ '\(^\|::\)'.a:base
+			call add(res, m)
+		endif
+	endfor
+
+	let start_list = res
+
+	let final_list = []
+	for i in start_list
+		if has_key(int_vars, i)
+			let class = ' '
+			if all_values[i] != ''
+				let class = i.' class '
+			endif
+			let final_list += [{'word':i, 'info':class.all_values[i], 'kind':'v'}]
+		else
+			let final_list +=
+					\ [{'word':substitute(i, '.*::', '', ''),
+					\	'info':i.all_values[i],
+					\	'menu':all_values[i],
+					\	'kind':'f'}]
+		endif
+	endfor
+	return final_list
+endfunction
+" }}}
 
 function! phpcomplete#CompleteVariable(base) " {{{
 	let res = []
@@ -828,10 +826,10 @@ let g:php_builtin_classnames = {}
 for [classname, class_info] in items(g:php_builtin_classes)
 	let g:php_builtin_classnames[classname] = ''
 	for [method_name, method_info] in items(class_info.methods)
-		let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
+		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
 	endfor
 	for [method_name, method_info] in items(class_info.static_methods)
-		let g:php_builtin_object_functions[classname.'::'.method_name] = method_info.signature
+		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
 	endfor
 endfor
 

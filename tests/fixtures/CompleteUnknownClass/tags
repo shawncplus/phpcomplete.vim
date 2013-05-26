@@ -1,0 +1,10 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+function1	irrelevant.php	/^    public function function1($baz = 'foo') {$/;"	f
+function2	irrelevant.php	/^    private function function2($baz = 'foo') {$/;"	f
+function3	irrelevant.php	/^    protected function function3() {$/;"	f
+function4	irrelevant.php	/^function function4() {$/;"	f
