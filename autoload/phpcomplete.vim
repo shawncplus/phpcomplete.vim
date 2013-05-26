@@ -123,7 +123,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 		let int_vars = {}
 		for i in sfile
 			if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
-				let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*').'->'
+				let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
 			else
 				let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
 			endif
@@ -140,10 +140,8 @@ function! phpcomplete#CompletePHP(findstart, base)
 		for tag in tags
 			if tag.kind ==? 'v'
 				let item = tag.name
-				" Add -> if it is possible object declaration
 				let classname = ''
 				if tag.cmd =~? item.'\s*=\s*new\s\+'
-					let item = item.'->'
 					let classname = matchstr(tag.cmd,
 								\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
 				endif
@@ -354,7 +352,7 @@ function! phpcomplete#CompleteVariable(base) " {{{
 	for i in int_vals
 		if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
 			let val = matchstr(i,
-						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*').'->'
+						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
 		else
 			let val = matchstr(i,
 						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
@@ -374,7 +372,6 @@ function! phpcomplete#CompleteVariable(base) " {{{
 			let item = tag.name
 			let m_menu = ''
 			if tag.cmd =~ tag['name'].'\s*=\s*new\s\+'
-				let item = item.'->'
 				let m_menu = matchstr(tag.cmd,
 							\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
 			endif

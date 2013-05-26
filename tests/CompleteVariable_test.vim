@@ -15,8 +15,8 @@ fun! TestCase_complete_variables_from_current_file()
     call VUAssertEquals([
                 \ {'word': '$find_me', 'kind': 'v'},
                 \ {'word': '$find_me2', 'kind': 'v'},
-                \ {'word': '$find_me3->', 'kind': 'v'},
-                \ {'word': '$find_me4->', 'kind': 'v'}
+                \ {'word': '$find_me3', 'kind': 'v'},
+                \ {'word': '$find_me4', 'kind': 'v'}
                 \],
                 \ res)
     bw! %
@@ -61,7 +61,7 @@ fun! TestCase_complete_variables_from_tags()
 
     let res = phpcomplete#CompleteVariable('$find_')
     call VUAssertEquals([
-                \ {'word': '$find_instance_in_tags->', 'info': '$find_instance_in_tags-> class foo', 'menu': 'foo', 'kind': 'v'},
+                \ {'word': '$find_instance_in_tags', 'info': '$find_instance_in_tags class foo', 'menu': 'foo', 'kind': 'v'},
                 \ {'word': '$find_variable_in_tags', 'kind': 'v'}],
                 \ res)
     bw! %
