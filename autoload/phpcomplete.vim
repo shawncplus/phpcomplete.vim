@@ -9,6 +9,12 @@
 "			Enables completion for non-static methods when completing for static context (::).
 "			This generates E_STRICT level warning, but php calls these methods nontheless.
 "
+"		let g:phpcomplete_complete_for_unknown_classes = 1/0 [default 1]
+"			Enables completion of variables and functions in "everything under the sun" fassion
+"			when completing for an instance or static class context but the code can't tell the class
+"			or locate the file that it lives in.
+"			The completion list generated this way is only filtered by the completion base
+"			and generally not much more accurate then simple keyword completion.
 "
 "	TODO:
 "	- Switching to HTML (XML?) completion (SQL) inside of phpStrings
@@ -21,6 +27,10 @@
 
 if !exists('g:phpcomplete_relax_static_constraint')
 	let g:phpcomplete_relax_static_constraint = 0
+endif
+
+if !exists('g:phpcomplete_complete_for_unknown_classes')
+	let g:phpcomplete_complete_for_unknown_classes = 1
 endif
 
 function! phpcomplete#CompletePHP(findstart, base)
@@ -81,15 +91,10 @@ function! phpcomplete#CompletePHP(findstart, base)
 		return phpcomplete#CompleteClassName(a:base)
 	elseif scontext =~ '\(->\|::\)$'
 		" {{{
-		" Complete user functions and variables
-		" Internal solution for current file.
-
 		" Get name of the class
 		let classname = phpcomplete#GetClassName(scontext)
 
 		" Get location of class definition, we have to iterate through all
-		" tags files separately because we need relative path from current
-		" file to the exact file (tags file can be in different dir)
 		if classname != ''
 			let classlocation = phpcomplete#GetClassLocation(classname)
 		else
@@ -112,100 +117,105 @@ function! phpcomplete#CompletePHP(findstart, base)
 			endif
 		endif
 
-		if a:base =~ '^\$'
-			let adddollar = '$'
+		if g:phpcomplete_complete_for_unknown_classes == 1
+			" {{{
+			if a:base =~ '^\$'
+				let adddollar = '$'
+			else
+				let adddollar = ''
+			endif
+			let file = getline(1, '$')
+			let jfile = join(file, ' ')
+			let sfile = split(jfile, '\$')
+			let int_vars = {}
+			for i in sfile
+				if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
+					let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
+				else
+					let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
+				endif
+				if val !~ ''
+					let int_vars[adddollar.val] = ''
+				endif
+			endfor
+
+			" ctags has good support for PHP, use tags file for external
+			" variables and functions
+			let ext_vars = {}
+			let ext_functions = {}
+			let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
+			for tag in tags
+				if tag.kind ==? 'v'
+					let item = tag.name
+					let classname = ''
+					if tag.cmd =~? item.'\s*=\s*new\s\+'
+						let classname = matchstr(tag.cmd,
+									\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+					endif
+					let ext_vars[adddollar.item] = classname
+				elseif tag.kind ==? 'f'
+					let item = tag.name
+					let prototype = matchstr(tag.cmd,
+							\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+					let ext_functions[item.'('] = prototype.') - '.tag['filename']
+				endif
+			endfor
+
+			" Now we have all variables in int_vars dictionary
+			call extend(int_vars, ext_vars)
+
+			" Internal solution for finding functions in current file.
+			let file = getline(1, '$')
+			call filter(file,
+					\ 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
+			let jfile = join(file, ' ')
+			let int_values = split(jfile, 'function\s\+')
+			let int_functions = {}
+			for i in int_values
+				let f_name = matchstr(i,
+						\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+				let f_args = matchstr(i,
+						\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+
+				let int_functions[f_name.'('] = f_args.')'
+			endfor
+
+			let all_values = {}
+			call extend(all_values, int_functions)
+			call extend(all_values, ext_functions)
+			call extend(all_values, int_vars) " external variables are already in
+			call extend(all_values, g:php_builtin_object_functions)
+
+			for m in sort(keys(all_values))
+				if m =~ '\(^\|::\)'.a:base
+					call add(res, m)
+				endif
+			endfor
+
+			let start_list = res
+
+			let final_list = []
+			for i in start_list
+				if has_key(int_vars, i)
+					let class = ' '
+					if all_values[i] != ''
+						let class = i.' class '
+					endif
+					let final_list += [{'word':i, 'info':class.all_values[i], 'kind':'v'}]
+				else
+					let final_list +=
+							\ [{'word':substitute(i, '.*::', '', ''),
+							\	'info':i.all_values[i],
+							\	'menu':all_values[i],
+							\	'kind':'f'}]
+				endif
+			endfor
+			return final_list
 		else
-			let adddollar = ''
+			return []
 		endif
-		let file = getline(1, '$')
-		let jfile = join(file, ' ')
-		let sfile = split(jfile, '\$')
-		let int_vars = {}
-		for i in sfile
-			if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
-				let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
-			else
-				let val = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
-			endif
-			if val !~ ''
-				let int_vars[adddollar.val] = ''
-			endif
-		endfor
-
-		" ctags has good support for PHP, use tags file for external
-		" variables and functions
-		let ext_vars = {}
-		let ext_functions = {}
-		let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
-		for tag in tags
-			if tag.kind ==? 'v'
-				let item = tag.name
-				let classname = ''
-				if tag.cmd =~? item.'\s*=\s*new\s\+'
-					let classname = matchstr(tag.cmd,
-								\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
-				endif
-				let ext_vars[adddollar.item] = classname
-			elseif tag.kind ==? 'f'
-				let item = tag.name
-				let prototype = matchstr(tag.cmd,
-						\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
-				let ext_functions[item.'('] = prototype.') - '.tag['filename']
-			endif
-		endfor
-
-		" Now we have all variables in int_vars dictionary
-		call extend(int_vars, ext_vars)
-
-		" Internal solution for finding functions in current file.
-		let file = getline(1, '$')
-		call filter(file,
-				\ 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
-		let jfile = join(file, ' ')
-		let int_values = split(jfile, 'function\s\+')
-		let int_functions = {}
-		for i in int_values
-			let f_name = matchstr(i,
-					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
-			let f_args = matchstr(i,
-					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
-
-			let int_functions[f_name.'('] = f_args.')'
-		endfor
-
-		let all_values = {}
-		call extend(all_values, int_functions)
-		call extend(all_values, ext_functions)
-		call extend(all_values, int_vars) " external variables are already in
-		call extend(all_values, g:php_builtin_object_functions)
-
-		for m in sort(keys(all_values))
-			if m =~ '\(^\|::\)'.a:base
-				call add(res, m)
-			endif
-		endfor
-
-		let start_list = res
-
-		let final_list = []
-		for i in start_list
-			if has_key(int_vars, i)
-				let class = ' '
-				if all_values[i] != ''
-					let class = i.' class '
-				endif
-				let final_list += [{'word':i, 'info':class.all_values[i], 'kind':'v'}]
-			else
-				let final_list +=
-						\ [{'word':substitute(i, '.*::', '', ''),
-						\	'info':i.all_values[i],
-						\	'menu':all_values[i],
-						\	'kind':'f'}]
-			endif
-		endfor
-
-		return final_list
 		" }}}
+	 " }}}
 	endif
 
 	if a:base =~ '^\$'
@@ -340,7 +350,6 @@ function! phpcomplete#CompletePHP(findstart, base)
 
 endfunction
 
-" Complete variables
 function! phpcomplete#CompleteVariable(base) " {{{
 	let res = []
 
@@ -362,7 +371,7 @@ function! phpcomplete#CompleteVariable(base) " {{{
 		endif
 	endfor
 
-	call extend(int_vars,g:php_builtin_vars)
+	call extend(int_vars, g:php_builtin_vars)
 
 	" ctags has support for PHP, use tags file for external variables
 	let ext_vars = {}

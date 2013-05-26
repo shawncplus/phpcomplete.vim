@@ -36,3 +36,10 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
 **let g:phpcomplete\_relax\_static\_constraint = 1/0  [default 0]** <br>
 Enables completion for non-static methods when completing for static context (`::`).
 This generates `E_STRICT` level warning, but php calls these methods nontheless.
+
+**let g:phpcomplete\_complete\_for\_unknown\_classes = 1/0 [default 1]** <br>
+Enables completion of variables and functions in "everything under the sun" fassion
+when completing for an instance or static class context but the code can't tell the class
+or locate the file that it lives in.
+The completion list generated this way is only filtered by the completion base
+and generally not much more accurate then simple keyword completion.
