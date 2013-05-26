@@ -211,96 +211,7 @@ function! phpcomplete#CompletePHP(findstart, base)
 	endif
 
 	if a:base =~ '^\$'
-		" {{{
-		" Complete variables
-		" Built-in variables {{{
-		let g:php_builtin_vars = {'$GLOBALS':'',
-								\ '$_SERVER':'',
-								\ '$_GET':'',
-								\ '$_POST':'',
-								\ '$_COOKIE':'',
-								\ '$_FILES':'',
-								\ '$_ENV':'',
-								\ '$_REQUEST':'',
-								\ '$_SESSION':'',
-								\ '$HTTP_SERVER_VARS':'',
-								\ '$HTTP_ENV_VARS':'',
-								\ '$HTTP_COOKIE_VARS':'',
-								\ '$HTTP_GET_VARS':'',
-								\ '$HTTP_POST_VARS':'',
-								\ '$HTTP_POST_FILES':'',
-								\ '$HTTP_SESSION_VARS':'',
-								\ '$php_errormsg':'',
-								\ '$this':''
-								\ }
-		" }}}
-
-		" Internal solution for current file.
-		let file = getline(1, '$')
-		let jfile = join(file, ' ')
-		let int_vals = split(jfile, '\ze\$')
-		let int_vars = {}
-		for i in int_vals
-			if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
-				let val = matchstr(i,
-						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*').'->'
-			else
-				let val = matchstr(i,
-						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
-			endif
-			if val != ''
-				let int_vars[val] = ''
-			endif
-		endfor
-
-		call extend(int_vars,g:php_builtin_vars)
-
-		if a:base =~ '^\$'
-			let adddollar = '$'
-		else
-			let adddollar = ''
-		endif
-		" ctags has support for PHP, use tags file for external variables
-		let ext_vars = {}
-		let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
-		for tag in tags
-			if tag.kind ==? 'v'
-				let item = tag.name
-				let m_menu = ''
-				if tag.cmd =~ tag['name'].'\s*=\s*new\s\+'
-					let item = item.'->'
-					let m_menu = matchstr(tag.cmd,
-							\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
-				endif
-				let ext_vars[adddollar.item] = m_menu
-			endif
-		endfor
-
-		call extend(int_vars, ext_vars)
-
-		for m in sort(keys(int_vars))
-			if m =~ '^\'.a:base
-				call add(res, m)
-			endif
-		endfor
-
-		let int_list = res
-
-		let int_dict = []
-		for i in int_list
-			if int_vars[i] != ''
-				let class = ' '
-				if int_vars[i] != ''
-					let class = i.' class '
-				endif
-				let int_dict += [{'word':i, 'info':class.int_vars[i], 'menu':int_vars[i], 'kind':'v'}]
-			else
-				let int_dict += [{'word':i, 'kind':'v'}]
-			endif
-		endfor
-
-		return int_dict
-		" }}}
+		return phpcomplete#CompleteVariable(a:base)
 	else
 		" {{{
 		" Complete everything else -
@@ -430,6 +341,73 @@ function! phpcomplete#CompletePHP(findstart, base)
 	endif
 
 endfunction
+
+" Complete variables
+function! phpcomplete#CompleteVariable(base) " {{{
+	let res = []
+
+	" Internal solution for current file.
+	let file = getline(1, '$')
+	let jfile = join(file, ' ')
+	let int_vals = split(jfile, '\ze\$')
+	let int_vars = {}
+	for i in int_vals
+		if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
+			let val = matchstr(i,
+						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*').'->'
+		else
+			let val = matchstr(i,
+						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
+		endif
+		if val != ''
+			let int_vars[val] = ''
+		endif
+	endfor
+
+	call extend(int_vars,g:php_builtin_vars)
+
+	" ctags has support for PHP, use tags file for external variables
+	let ext_vars = {}
+	let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
+	for tag in tags
+		if tag.kind ==? 'v'
+			let item = tag.name
+			let m_menu = ''
+			if tag.cmd =~ tag['name'].'\s*=\s*new\s\+'
+				let item = item.'->'
+				let m_menu = matchstr(tag.cmd,
+							\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+			endif
+			let ext_vars['$'.item] = m_menu
+		endif
+	endfor
+
+	call extend(int_vars, ext_vars)
+
+	for m in sort(keys(int_vars))
+		if m =~ '^\'.a:base
+			call add(res, m)
+		endif
+	endfor
+
+	let int_list = res
+
+	let int_dict = []
+	for i in int_list
+		if int_vars[i] != ''
+			let class = ' '
+			if int_vars[i] != ''
+				let class = i.' class '
+			endif
+			let int_dict += [{'word':i, 'info':class.int_vars[i], 'menu':int_vars[i], 'kind':'v'}]
+		else
+			let int_dict += [{'word':i, 'kind':'v'}]
+		endif
+	endfor
+
+	return int_dict
+endfunction
+" }}}
 
 function! phpcomplete#CompleteClassName(base) " {{{
 	let res = []
@@ -864,6 +842,31 @@ let php_control = {
 			\ 'require_once(': 'string filename | resource',
 			\ }
 call extend(g:php_builtin_functions, php_control)
+
+
+" Built-in variables " {{{
+let g:php_builtin_vars ={
+			\ '$GLOBALS':'',
+			\ '$_SERVER':'',
+			\ '$_GET':'',
+			\ '$_POST':'',
+			\ '$_COOKIE':'',
+			\ '$_FILES':'',
+			\ '$_ENV':'',
+			\ '$_REQUEST':'',
+			\ '$_SESSION':'',
+			\ '$HTTP_SERVER_VARS':'',
+			\ '$HTTP_ENV_VARS':'',
+			\ '$HTTP_COOKIE_VARS':'',
+			\ '$HTTP_GET_VARS':'',
+			\ '$HTTP_POST_VARS':'',
+			\ '$HTTP_POST_FILES':'',
+			\ '$HTTP_SESSION_VARS':'',
+			\ '$php_errormsg':'',
+			\ '$this':'',
+			\ }
+" }}}
+
 endfunction
 " }}}
 " vim: foldmethod=marker:noexpandtab:ts=4:sts=4:tw=4
