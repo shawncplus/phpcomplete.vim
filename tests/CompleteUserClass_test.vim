@@ -1,7 +1,11 @@
-let g:fixture_class_content = readfile(expand('%:p:h').'/'.'fixtures/CompleteUserClass/user.class.php')[2:]
+fun! SetUp()
+    let g:fixture_class_content = readfile(expand('%:p:h').'/'.'fixtures/CompleteUserClass/user.class.php')[2:]
+    let g:phpcomplete_relax_static_constraint = 0
+endf
 
 fun! TestCase_returns_everyting_instance_related_when_scope_is_in_class()
-    let g:phpcomplete_relax_static_constraint = 0
+    call SetUp()
+
     let ret = phpcomplete#CompleteUserClass('$u->', '', g:fixture_class_content, '\\(public\\|private\\|protected\\)')
     call VUAssertEquals([
                 \{'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
@@ -17,7 +21,8 @@ fun! TestCase_returns_everyting_instance_related_when_scope_is_in_class()
 endfun
 
 fun! TestCase_returns_everyting_instance_related_when_scope_is_out_of_class()
-    let g:phpcomplete_relax_static_constraint = 0
+    call SetUp()
+
     let ret = phpcomplete#CompleteUserClass('$u->', '', g:fixture_class_content, 'public')
     call VUAssertEquals([
                 \{'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
@@ -29,7 +34,8 @@ fun! TestCase_returns_everyting_instance_related_when_scope_is_out_of_class()
 endfun
 
 fun! TestCase_returns_everyting_static_when_scope_is_in_class()
-    let g:phpcomplete_relax_static_constraint = 0
+    call SetUp()
+
     let ret = phpcomplete#CompleteUserClass('UserClass::', '', g:fixture_class_content, '\\(public\\|private\\|protected\\)')
     call VUAssertEquals([
                 \ {'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
@@ -44,7 +50,8 @@ fun! TestCase_returns_everyting_static_when_scope_is_in_class()
 endfun
 
 fun! TestCase_returns_everyting_static_when_scope_is_out_of_class()
-    let g:phpcomplete_relax_static_constraint = 0
+    call SetUp()
+
     let ret = phpcomplete#CompleteUserClass('UserClass::', '', g:fixture_class_content, 'public')
     call VUAssertEquals([
                 \ {'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
@@ -55,6 +62,7 @@ fun! TestCase_returns_everyting_static_when_scope_is_out_of_class()
 endfun
 
 fun! TestCase_returns_non_explicit_static_methods_when_phpcomplete_relax_static_constraint_enabled()
+    call SetUp()
     let g:phpcomplete_relax_static_constraint = 1
     let ret = phpcomplete#CompleteUserClass('UserClass::', '', g:fixture_class_content, 'public')
     call VUAssertEquals([

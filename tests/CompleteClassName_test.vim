@@ -1,8 +1,12 @@
-fun! TestCase_complete_classes_from_current_file()
+fun! SetUp()
     " disable builtin information
     let g:php_builtin_classes = { }
     " disable tag files
     exe ':set tags='
+endf
+
+fun! TestCase_complete_classes_from_current_file()
+    call SetUp()
 
     let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/foo.class.php'
     below 1new
@@ -17,11 +21,10 @@ fun! TestCase_complete_classes_from_current_file()
 endf
 
 fun! TestCase_complete_classes_from_tags()
+    call SetUp()
+
     " set tags to a fixture
     exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteClassName/TAGS'
-
-    " disable builtin information
-    let g:php_builtin_classes = { }
 
     " open an empty file so no 'local' class will be picked up
     let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/empty.php'
@@ -37,8 +40,7 @@ fun! TestCase_complete_classes_from_tags()
 endf
 
 fun! TestCase_complete_classes_from_built_in_classes()
-    " disable tags
-    exe ':set tags='
+    call SetUp()
 
     " open an empty file so no 'local' class will be picked up
     let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/empty.php'
@@ -61,8 +63,7 @@ fun! TestCase_complete_classes_from_built_in_classes()
 endf
 
 fun! TestCase_adds_arguments_of_constructors_for_built_in_classes()
-    " disable tags
-    exe ':set tags='
+    call SetUp()
 
     " open an empty file so no 'local' class will be picked up
     let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/empty.php'

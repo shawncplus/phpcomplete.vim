@@ -1,9 +1,13 @@
-fun! TestCase_complete_variables_from_current_file()
+fun! SetUp()
     " disable tag files
     exe ':set tags='
 
     " disable builtin variables
     let g:php_builtin_vars = {}
+endf
+
+fun! TestCase_complete_variables_from_current_file()
+    call SetUp()
 
     let path =  expand('%:p:h')."/".'fixtures/CompleteVariable/local_variables.php'
     below 1new
@@ -23,8 +27,7 @@ fun! TestCase_complete_variables_from_current_file()
 endf
 
 fun! TestCase_complete_variables_built_in_global_variable()
-    " disable tag files
-    exe ':set tags='
+    call SetUp()
 
     " disable local variables from current file
     let path =  expand('%:p:h')."/".'fixtures/CompleteVariable/empty.php'
@@ -48,8 +51,7 @@ fun! TestCase_complete_variables_built_in_global_variable()
 endf
 
 fun! TestCase_complete_variables_from_tags()
-    " disable builtin variables
-    let g:php_builtin_vars = {}
+    call SetUp()
 
     " set tags to a fixture
     exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteVariable/tags'
