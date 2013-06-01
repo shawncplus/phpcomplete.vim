@@ -93,10 +93,9 @@ fun! TestCase_completes_builtin_constants()
                 \ 'FILE_TEXT': '',
                 \ 'FILE_USE_INCLUDE_PATH': '',
                 \ 'FILTER_CALLBACK': '',
-                \ 'FILTER_DEFAULT': 'some info',
+                \ 'FILTER_DEFAULT': '',
                 \ }
 
-    " TODO make info picked up
     let res = phpcomplete#CompleteGeneral('FILTER_')
     call VUAssertEquals([
                 \ {'word': 'FILTER_CALLBACK', 'kind': 'd'},
@@ -132,8 +131,7 @@ fun! TestCase_completes_builtin_class_names()
                 \ }
 
     let res = phpcomplete#CompleteGeneral('date')
-    " TODO: add kind: 'c' for the output
     call VUAssertEquals([
-                \ {'word': 'DateTime'}],
+                \ {'word': 'DateTime', 'kind': 'c'}],
                 \ res)
 endf

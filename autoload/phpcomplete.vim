@@ -239,10 +239,10 @@ function! phpcomplete#CompleteGeneral(base) " {{{
 						\	'info':i.int_functions[i],
 						\	'menu':int_functions[i],
 						\	'kind':'f'}]
-		elseif has_key(ext_classes, i)
+		elseif has_key(ext_classes, i) || has_key(g:php_builtin_classnames, i)
 			let final_list += [{'word':i, 'kind':'c'}]
 		elseif has_key(int_constants, i) || has_key(builtin_constants, i)
-			let final_list += [{'word':i, 'kind':'d'}]
+			let final_list += [{'word':i, 'kind': 'd'}]
 		else
 			let final_list += [{'word':i}]
 		endif
