@@ -31,6 +31,12 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
  3. Source your `.vimrc` with `:so %` or otherwise reload your vim
  4. Run the `:BundleInstall` commmand
 
+## ctags
+In order to support some php features introduced in PHP 5.3 you will have to use
+a ctags binary that can generate the appropriate tags files. At this moment there's no
+offical build of ctags that would do the job, so you will have to build one for yourself.<br>
+Check out the **[wiki page about the patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Patched-ctags)** for more information.
+
 ## Options
 
 **let g:phpcomplete\_relax\_static\_constraint = 1/0  [default 0]** <br>
@@ -43,3 +49,10 @@ when completing for an instance or static class context but the code can't tell 
 or locate the file that it lives in.
 The completion list generated this way is only filtered by the completion base
 and generally not much more accurate then simple keyword completion.
+
+**let g:phpcomplete\_min\_num\_of\_chars\_for\_namespace\_completion = n [default 1]** *Requires [patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Patched-ctags)* <br>
+This option controls the number of characters the user needs to type before
+the tags will be searched for namespaces and classes in typed out namespaces in
+"use ..." context. Setting this to 0 is not recommended because that means the code
+have to scan every tag, and vim's taglist() function runs extremly slow with a
+"match everything" pattern.<br>

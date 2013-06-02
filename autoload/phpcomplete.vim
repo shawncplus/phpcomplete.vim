@@ -16,6 +16,13 @@
 "			The completion list generated this way is only filtered by the completion base
 "			and generally not much more accurate then simple keyword completion.
 "
+"		let g:phpcomplete_min_num_of_chars_for_namespace_completion = n [default 1]
+"			This option controls the number of characters the user needs to type before
+"			the tags will be searched for namespaces and classes in typed out namespaces in
+"			"use ..." context. Setting this to 0 is not recommended because that means the code
+"			have to scan every tag, and vim's taglist() function runs extremly slow with a
+"			"match everything" pattern.
+"
 "	TODO:
 "	- Switching to HTML (XML?) completion (SQL) inside of phpStrings
 "	- allow also for XML completion <- better do html_flavor for HTML
@@ -31,6 +38,10 @@ endif
 
 if !exists('g:phpcomplete_complete_for_unknown_classes')
 	let g:phpcomplete_complete_for_unknown_classes = 1
+endif
+
+if !exists('g:phpcomplete_min_num_of_chars_for_namespace_completion')
+	let g:phpcomplete_min_num_of_chars_for_namespace_completion = 1
 endif
 
 function! phpcomplete#CompletePHP(findstart, base) " {{{
@@ -56,7 +67,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 			let start = col('.') - 1
 			let curline = line('.')
 			let compl_begin = col('.') - 2
-			while start >= 0 && line[start - 1] =~ '[a-zA-Z_0-9\x7f-\xff$]'
+			while start >= 0 && line[start - 1] =~ '[\\a-zA-Z_0-9\x7f-\xff$]'
 				let start -= 1
 			endwhile
 			let b:compl_context = getline('.')[0:compl_begin]
@@ -84,6 +95,10 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	endif
 
 	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
+
+	if context =~? '^\s*use\s\+'
+		return phpcomplete#CompleteUse(a:base)
+	endif
 
 	if scontext =~ '\(\s*new\|extends\)\s\+$'
 		return phpcomplete#CompleteClassName(a:base)
@@ -124,6 +139,51 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	else
 		return phpcomplete#CompleteGeneral(a:base)
 	endif
+endfunction
+" }}}
+
+function! phpcomplete#CompleteUse(base) " {{{
+	" completes builtin class names regadless of g:phpcomplete_min_num_of_chars_for_namespace_completion
+	" completes namespaces from tags
+	"   * requires patched ctags
+	" completes classnames from tags within the already typed out namespace using the "namespace" field of tags
+	"   * requires patched ctags
+
+	let res = []
+	if a:base =~? '^\'
+		let leading_slash = '\'
+		let base = substitute(a:base, '^\', '', '')
+	else
+		let leading_slash = ''
+		let base = a:base
+	endif
+
+	let namespace_match_pattern  = substitute(base, '\\', '\\\\', 'g')
+	let classname_match_pattern = matchstr(base, '[^\\]\+$')
+	let namespace_for_class = substitute(substitute(namespace_match_pattern, '\\\\', '\\', 'g'), '\\*'.classname_match_pattern.'$', '', '')
+
+	if len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+		if len(classname_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+			let tags = taglist('^\('.namespace_match_pattern.'\|'.classname_match_pattern.'\)')
+		else
+			let tags = taglist('^'.namespace_match_pattern)
+		endif
+
+		for tag in tags
+			if tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+				call add(res, {'word': leading_slash.tag.name, 'kind': 'n', 'menu': tag.filename, 'info': tag.filename })
+			elseif has_key(tag, 'namespace') && tag.kind ==? 'c' && tag.namespace ==? namespace_for_class
+				call add(res, {'word': leading_slash.namespace_for_class.'\'.tag.name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
+			endif
+		endfor
+	endif
+
+	let builtin_classnames = filter(keys(copy(g:php_builtin_classnames)), 'v:val =~? "^'.classname_match_pattern.'"')
+	for classname in builtin_classnames
+		call add(res, {'word': '\'.classname, 'kind': 'c'})
+	endfor
+
+	return res
 endfunction
 " }}}
 
