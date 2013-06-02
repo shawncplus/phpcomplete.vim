@@ -221,8 +221,12 @@ function! phpcomplete#CompleteGeneral(base) " {{{
 	for tag in tags
 		if tag.kind ==? 'f'
 			let item = tag.name
-			let prototype = matchstr(tag.cmd,
-						\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+			if has_key(tag, 'signature')
+				let prototype = tag.signature[1:-2]
+			else
+				let prototype = matchstr(tag.cmd,
+							\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+			endif
 			let ext_functions[item.'('] = prototype.') - '.tag['filename']
 		elseif tag.kind ==? 'd'
 			let ext_constants[tag.name] = ''
@@ -367,8 +371,12 @@ function! phpcomplete#CompleteUnknownClass(base, scontext) " {{{
 	for tag in tags
 		if tag.kind ==? 'f'
 			let item = tag.name
-			let prototype = matchstr(tag.cmd,
-					\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+			if has_key(tag, 'signature')
+				let prototype = tag.signature[1:-2]
+			else
+				let prototype = matchstr(tag.cmd,
+						\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+			endif
 			let ext_functions[item.'('] = prototype.') - '.tag['filename']
 		endif
 	endfor

@@ -46,6 +46,28 @@ fun! TestCase_returns_functions_from_current_file()
     bw! %
 endf
 
+fun! TestCase_completes_function_signature_from_tags_if_field_available()
+    call SetUp()
+
+    " disable tags
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/CompleteUnknownClass/patched_tags'
+
+    " load an empty fixture so no local functions / variables show up
+    let path =  expand('%:p:h')."/".'fixtures/CompleteUnknownClass/empty.php'
+    below 1new
+    exe ":edit ".path
+
+    let res = phpcomplete#CompleteUnknownClass("method_with_", "$a->")
+
+    " TODO: At this moment, the code finds functions that are not in a class
+    " (so they are no methods)
+    " TODO: At this moment, the code doesn't take filter for staticness
+    call VUAssertEquals([
+                \ {'word': 'method_with_arguments(', 'info': "method_with_arguments($bar = 42, $foo = '') - fixtures/CompleteUnknownClass/irrelevant.class.php", 'menu': "$bar = 42, $foo = '') - fixtures/CompleteUnknownClass/irrelevant.class.php", 'kind': 'f'}],
+                \ res)
+    bw! %
+endf
+
 fun! TestCase_returns_functions_from_tags()
     call SetUp()
 

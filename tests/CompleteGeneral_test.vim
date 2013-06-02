@@ -53,6 +53,16 @@ fun! TestCase_completes_functions_classes_constants_from_tags()
                 \ res)
 endf
 
+fun! TestCase_completes_function_signature_from_tags_if_field_available()
+    call SetUp()
+    exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteGeneral/patched_tags'
+    let res = phpcomplete#CompleteGeneral('common_plain_old_function_with_')
+
+    call VUAssertEquals([
+                \ {'word': 'common_plain_old_function_with_arguments(', 'info': "common_plain_old_function_with_arguments($a, $b = '') - fixtures/CompleteGeneral/functions.php", 'menu': "$a, $b = '') - fixtures/CompleteGeneral/functions.php", 'kind': 'f'}],
+                \ res)
+endf
+
 fun! TestCase_completes_builtin_functions()
     call SetUp()
 
