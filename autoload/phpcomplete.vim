@@ -44,6 +44,84 @@ if !exists('g:phpcomplete_min_num_of_chars_for_namespace_completion')
 	let g:phpcomplete_min_num_of_chars_for_namespace_completion = 1
 endif
 
+
+" compile regexes for phpdoc parsing - declared as globals
+python << EOF
+import vim
+import re
+regex_desc = re.compile(r"\*(?P<desc>.+?)(?:@param|@return|\*/)", re.MULTILINE|re.DOTALL)
+regex_params = re.compile(r"@param\s+?(?P<type>.+?)\s+(?P<var>.+?)\s+(?P<desc>.+?)\n", re.MULTILINE|re.DOTALL)
+regex_return = re.compile(r"@return\s+?(?P<type>.+?)\s+(?P<desc>.+?)\n", re.MULTILINE|re.DOTALL)
+regex_throws = re.compile(r"@throws\s+?(?P<exc>.+?)\s*\n", re.MULTILINE|re.DOTALL)
+EOF
+
+function! phpcomplete#GetPhpDoc(sccontent,f_args) " {{{
+python << EOF
+content = vim.eval("a:sccontent") 
+func = vim.eval("a:f_args") 
+line = 0
+phpdoc = ''
+
+#vim.current.buffer.append('searching for: '+func)
+for l in content:
+    if func in l:
+
+        #vim.current.buffer.append('found "'+func+'"at line: '+str(line))
+        commentParseStatus = 0
+        for i in range(line,line-15,-1):
+            #vim.current.buffer.append('line: '+str(i))
+            if commentParseStatus == 2:
+                break
+            if '*/' in content[i]:
+                commentParseStatus = 1
+            else:
+                if commentParseStatus == 1:
+                    # read until you have close comment
+                    phpdoc=content[i]+"\n"+phpdoc
+                    if '/*' in content[i]:
+                        commentParseStatus = 2
+
+                else:
+                    continue
+
+        break
+    line+=1
+# parse phpdoc for different items
+
+readableDesc = ''
+m = regex_desc.search(phpdoc)
+if m:
+    desc = m.groupdict()['desc'].replace('*','').strip()
+    if desc != '':
+        readableDesc += '\nDescription:\n'+desc
+
+params = tuple(regex_params.finditer(phpdoc))
+
+if len(params) >0:
+    readableDesc += '\n\nArguments:\n'
+    for match in params:
+        readableDesc+= match.groupdict()['var']+' '+match.groupdict()['type']+': '+match.groupdict()['desc']+"\n"
+
+m = regex_return.search(phpdoc)
+if m:
+    readableDesc += '\n\nReturn:\n'+m.groupdict()['type']+' '+m.groupdict()['desc']
+
+m = regex_throws.search(phpdoc)
+if m:
+    readableDesc += '\nThrows:\n'+m.groupdict()['exc']
+
+phpdoc = readableDesc.replace('"','\"').replace('\'','\'\'')
+vim.command('let return2=\''+str(phpdoc)+'\'')
+
+EOF
+return return2
+endfunction
+" }}}
+
+
+
+
+
 function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if a:findstart
 		unlet! b:php_menu
@@ -554,12 +632,15 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 
 	let sfuncs = split(join(functions, ' '), 'function\s\+')
 	let c_functions = {}
+	let c_doc = {}
 	for i in sfuncs
 		let f_name = matchstr(i,
 					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		let f_args = matchstr(i,
 					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
 		if f_name != ''
+            let phpdoc = phpcomplete#GetPhpDoc(a:sccontent,f_name) 
+			let c_doc[f_name.'('] = phpdoc
 			let c_functions[f_name.'('] = f_args
 		endif
 	endfor
@@ -634,7 +715,7 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 		else
 			let final_list +=
 						\ [{'word':substitute(i, '.*::', '', ''),
-						\	'info':i.all_values[i].')',
+						\ 'info':i.all_values[i].')'.c_doc[i],
 						\	'menu':all_values[i].')',
 						\	'kind':'f'}]
 		endif
