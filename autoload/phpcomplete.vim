@@ -23,6 +23,11 @@
 "			have to scan every tag, and vim's taglist() function runs extremly slow with a
 "			"match everything" pattern.
 "
+"		let g:phpcomplete_parse_docblock_comments = 1/0 [default 0]
+"			When enabled the preview window's content will include information
+"			extracted from docblock comments of the completions.
+"			Enabling this option will add return types to the completion menu for functions too.
+"
 "	TODO:
 "	- Switching to HTML (XML?) completion (SQL) inside of phpStrings
 "	- allow also for XML completion <- better do html_flavor for HTML
@@ -42,6 +47,10 @@ endif
 
 if !exists('g:phpcomplete_min_num_of_chars_for_namespace_completion')
 	let g:phpcomplete_min_num_of_chars_for_namespace_completion = 1
+endif
+
+if !exists('g:phpcomplete_parse_docblock_comments')
+	let g:phpcomplete_parse_docblock_comments = 0
 endif
 
 function! phpcomplete#CompletePHP(findstart, base) " {{{
@@ -554,6 +563,7 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 
 	let sfuncs = split(join(functions, ' '), 'function\s\+')
 	let c_functions = {}
+	let c_doc = {}
 	for i in sfuncs
 		let f_name = matchstr(i,
 					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
@@ -561,6 +571,9 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
 		if f_name != ''
 			let c_functions[f_name.'('] = f_args
+			if g:phpcomplete_parse_docblock_comments
+				let c_doc[f_name.'('] = phpcomplete#GetDocBlock(a:sccontent, 'function\s*\<'.f_name.'\>')
+			endif
 		endif
 	endfor
 
@@ -575,11 +588,17 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 	let jvars = join(variables, ' ')
 	let svars = split(jvars, '\$')
 	let c_variables = {}
+
+	let var_index = 0
 	for i in svars
 		let c_var = matchstr(i,
 					\ '^\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		if c_var != ''
 			let c_variables[c_var] = ''
+			if g:phpcomplete_parse_docblock_comments && len(get(variables, var_index)) > 0
+				let c_doc[c_var] = phpcomplete#GetDocBlock(a:sccontent, variables[var_index])
+			endif
+			let var_index += 1
 		endif
 	endfor
 
@@ -590,11 +609,16 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 	let scons = split(jcons, 'const')
 
 	let c_constants = {}
+	let const_index = 0
 	for i in scons
 		let c_con = matchstr(i,
 					\ '^\s*\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		if c_con != ''
 			let c_constants[c_con] = ''
+			if g:phpcomplete_parse_docblock_comments && len(get(constants, const_index)) > 0
+				let c_doc[c_con] = phpcomplete#GetDocBlock(a:sccontent, constants[const_index])
+			endif
+			let const_index += 1
 		endif
 	endfor
 
@@ -615,27 +639,36 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 
 	let final_list = []
 	for i in start_list
+		let docblock = phpcomplete#ParseDocBlock(get(c_doc, i, ''))
 		if has_key(c_variables, i)
-			let class = ' '
-			if all_values[i] != ''
-				let class = i.' class '
-			endif
 			let final_list +=
 						\ [{'word': a:scontext =~ '::' ? '$'.i : i,
-						\	'info':class.all_values[i],
-						\	'menu':class.all_values[i],
+						\	'info':phpcomplete#FormatDocBlock(docblock),
+						\	'menu':get(docblock.var, 'type', ''),
 						\	'kind':'v'}]
 		elseif has_key(c_constants, i)
+			let info = phpcomplete#FormatDocBlock(docblock)
+			if info != ''
+				let info = "\n".info
+			endif
 			let final_list +=
 						\ [{'word':i,
-						\	'info':i.all_values[i],
+						\	'info':i.info,
 						\	'menu':all_values[i],
 						\	'kind':'d'}]
 		else
+			let return_type = get(docblock.return, 'type', '')
+			if return_type != ''
+				let return_type = ' | '.return_type
+			endif
+			let info = phpcomplete#FormatDocBlock(docblock)
+			if info != ''
+				let info = "\n".info
+			endif
 			let final_list +=
 						\ [{'word':substitute(i, '.*::', '', ''),
-						\	'info':i.all_values[i].')',
-						\	'menu':all_values[i].')',
+						\	'info':i.all_values[i].')'.info,
+						\	'menu':all_values[i].')'.return_type,
 						\	'kind':'f'}]
 		endif
 	endfor
@@ -865,6 +898,153 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 
 	return classcontent
 endfunction
+" }}}
+
+function! phpcomplete#GetDocBlock(sccontent, search) " {{{
+	let i = 0
+	let l = 0
+	let comment_start = -1
+	let comment_end = -1
+	let sccontent_len = len(a:sccontent)
+
+	while (i < sccontent_len)
+		let line = a:sccontent[i]
+		" search for a function declaration
+		if line =~? a:search
+			let l = i - 1
+			" start backward serch for the comment block
+			while l != 0
+				let line = a:sccontent[l]
+				" if comment end found save line position and end search
+				if line =~? '^\s*\*/'
+					let comment_end = l
+					break
+				" ... or the line doesn't blank (only whitespace or nothing) end search
+				elseif line !~? '^\s*$'
+					break
+				endif
+				let l -= 1
+			endwhile
+			" no comment found
+			if comment_end == -1
+				return ''
+			end
+
+			while l != 0
+				let line = a:sccontent[l]
+				if line =~? '^\s*/\*\*'
+					let comment_start = l
+					break
+				endif
+				let l -= 1
+			endwhile
+			" no docblock comment start found
+			if comment_start == -1
+				return ''
+			end
+
+			let comment_start += 1 " we dont need the /**
+			let comment_end   -= 1 " we dont need the */
+
+			" remove leading whitespace and '*'s
+			let docblock = join(map(copy(a:sccontent[comment_start :comment_end]), 'substitute(v:val, "^\\s*\\*\\s*", "", "")'), "\n")
+			return docblock
+		endif
+		let i += 1
+	endwhile
+	return ''
+endfunction
+" }}}
+
+function! phpcomplete#ParseDocBlock(docblock) " {{{
+	let res = {
+		\ 'description': '',
+		\ 'params': [],
+		\ 'return': {},
+		\ 'throws': [],
+		\ 'var': {},
+		\ }
+
+	let res.description = substitute(matchstr(a:docblock, '\zs\_.\{-}\ze\(@var\|@param\|@return\|$\)'), '\(^\_s*\|\_s*$\)', '', 'g')
+	let docblock_lines = split(a:docblock, "\n")
+
+	let param_lines = filter(copy(docblock_lines), 'v:val =~? "^@param"')
+	for param_line in param_lines
+		let parts = matchlist(param_line, '@param\s\+\(\S\+\)\s\+\(\S\+\)\s*\(.*\)')
+		if len(parts) > 0
+			call add(res.params, {'line': parts[0], 'type': get(parts, 1, ''), 'name': get(parts, 2, ''), 'description': get(parts, 3, '')})
+		endif
+	endfor
+
+	let return_line = filter(copy(docblock_lines), 'v:val =~? "^@return"')
+	if len(return_line) > 0
+		let return_parts = matchlist(return_line[0], '@return\s\+\(\S\+\)\s*\(.*\)')
+		let res['return'] = {'line': return_parts[0], 'type': get(return_parts, 1, ''), 'description': get(return_parts, 2, '')}
+	endif
+
+	let exception_lines = filter(copy(docblock_lines), 'v:val =~? "^\\(@throws\\|@exception\\)"')
+	for exception_line in exception_lines
+		let parts = matchlist(exception_line, '^\(@throws\|@exception\)\s\+\(\S\+\)\s*\(.*\)')
+		if len(parts) > 0
+			call add(res.throws, {'line': parts[0], 'type': get(parts, 2, ''), 'description': get(parts, 3, '')})
+		endif
+	endfor
+
+	let var_line = filter(copy(docblock_lines), 'v:val =~? "^@var"')
+	if len(var_line) > 0
+		let var_parts = matchlist(var_line[0], '@var\s\+\(\S\+\)\s*\(.*\)')
+		let res['var'] = {'line': var_parts[0], 'type': get(var_parts, 1, ''), 'description': get(var_parts, 2, '')}
+	endif
+
+	return res
+endfunction
+" }}}
+
+function! phpcomplete#FormatDocBlock(info) " {{{
+	let res = ''
+	if len(a:info.description)
+		let res .= "Description:\n".join(map(split(a:info['description'], "\n"), '"\t".v:val'), "\n")."\n"
+	endif
+
+	if len(a:info.params)
+		let res .= "\nArguments:\n"
+		for arginfo in a:info.params
+			let res .= "\t".arginfo['name'].' '.arginfo['type']
+			if len(arginfo.description) > 0
+				let res .= ': '.arginfo['description']
+			endif
+			let res .= "\n"
+		endfor
+	endif
+
+	if has_key(a:info.return, 'type')
+		let res .= "\nReturn:\n\t".a:info['return']['type']
+		if len(a:info.return.description) > 0
+			let res .= ": ".a:info['return']['description']
+		endif
+		let res .= "\n"
+	endif
+
+	if len(a:info.throws)
+		let res .= "\nThrows:\n"
+		for excinfo in a:info.throws
+			let res .= "\t".excinfo['type']
+			if len(excinfo['description']) > 0
+				let res .= ": ".excinfo['description']
+			endif
+			let res .= "\n"
+		endfor
+	endif
+
+	if has_key(a:info.var, 'type')
+		let res .= "Type:\n\t".a:info['var']['type']."\n"
+		if len(a:info['var']['description']) > 0
+			let res .= ': '.a:info['var']['description']
+		endif
+	endif
+
+	return res
+endfunction!
 " }}}
 
 function! phpcomplete#LoadData() " {{{

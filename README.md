@@ -10,6 +10,7 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
 	 - Recognize `$instance = Class::getInstance();` singleton instances.
 	 - Recognize `$date = DateTime::createFromFormat(...)` built-in class return types.
 	 - Recognize type hinting in function prototypes.
+ * Displays docblock info in the preview for methods and properties
  * Updated built-in class support with constants, methods and properties
  * Updated list of PHP constants
  * Updated list of built-in PHP functions
@@ -56,3 +57,8 @@ the tags will be searched for namespaces and classes in typed out namespaces in
 "use ..." context. Setting this to 0 is not recommended because that means the code
 have to scan every tag, and vim's taglist() function runs extremly slow with a
 "match everything" pattern.<br>
+
+**let g:phpcomplete\_parse\_docblock\_comments = 1/0 [default 0]**<br>
+When enabled the preview window's content will include information
+extracted from docblock comments of the completions.
+Enabling this option will add return types to the completion menu for functions too.
