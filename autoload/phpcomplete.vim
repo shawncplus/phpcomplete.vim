@@ -543,7 +543,6 @@ endfunction
 function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) " {{{
 	let final_list = []
 	let res  = []
-	let res2 = []
 
 	" limit based on context to static or normal methods
 	if a:scontext =~ '::'
@@ -594,6 +593,9 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 		let c_var = matchstr(i,
 					\ '^\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		if c_var != ''
+			if a:scontext =~ '::'
+				let c_var = '$'.c_var
+			endif
 			let c_variables[c_var] = ''
 			if g:phpcomplete_parse_docblock_comments && len(get(variables, var_index)) > 0
 				let c_doc[c_var] = phpcomplete#GetDocBlock(a:sccontent, variables[var_index])
@@ -628,21 +630,19 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 	call extend(all_values, c_constants)
 
 	for m in sort(keys(all_values))
-		if m =~ '^'.a:base && m !~ '::'
+		if m =~ '^'.a:base
 			call add(res, m)
-		elseif m =~ '::'.a:base
-			call add(res2, m)
 		endif
 	endfor
 
-	let start_list = res + res2
+	let start_list = res
 
 	let final_list = []
 	for i in start_list
 		let docblock = phpcomplete#ParseDocBlock(get(c_doc, i, ''))
 		if has_key(c_variables, i)
 			let final_list +=
-						\ [{'word': a:scontext =~ '::' ? '$'.i : i,
+						\ [{'word': i,
 						\	'info':phpcomplete#FormatDocBlock(docblock),
 						\	'menu':get(docblock.var, 'type', ''),
 						\	'kind':'v'}]
