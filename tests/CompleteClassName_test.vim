@@ -27,7 +27,7 @@ fun! TestCase_complete_classes_from_tags()
     exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteClassName/TAGS'
 
     " open an empty file so no 'local' class will be picked up
-    let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/empty.php'
+    let path = expand('%:p:h')."/".'fixtures/CompleteClassName/empty.php'
     below 1new
     exe ":edit ".path
 

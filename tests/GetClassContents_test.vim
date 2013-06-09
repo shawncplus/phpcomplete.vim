@@ -12,7 +12,7 @@ fun! TestCase_only_reads_in_the_class_content()
     call VUAssertEquals(expected, contents)
 endf
 
-fun! TestCase_only_reads_in_the_extended_class_content()
+fun! TestCase_reads_in_the_extended_class_content()
     " tags used to find the extended classes
     exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/tags'
     let g:php_builtin_classes = {}
@@ -27,7 +27,7 @@ fun! TestCase_only_reads_in_the_extended_class_content()
     call VUAssertEquals(expected, contents)
 endf
 
-fun! TestCase_only_reads_in_the_extended_classes_recursive()
+fun! TestCase_reads_in_the_extended_classes_recursive()
     " tags used to find the extended classes
     exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/tags'
     let g:php_builtin_classes = {}
@@ -41,6 +41,19 @@ fun! TestCase_only_reads_in_the_extended_classes_recursive()
     call VULog(expected)
 
     let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass2')
+    call VUAssertEquals(expected, contents)
+endf
 
+fun! TestCase_reads_in_the_extended_classes_recursive_with_namespaces()
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/tags'
+    let g:php_builtin_classes = {}
+    let location         =  expand('%:p:h')."/".'fixtures/GetClassContents/ns1_foo2.php'
+    let extends_location =  expand('%:p:h')."/".'fixtures/GetClassContents/ns2_foo.php'
+
+    let expected  = readfile(location)[3]."\n"
+    let expected .= readfile(extends_location)[3]
+    call VULog(expected)
+
+    let contents = phpcomplete#GetClassContents(readfile(location), 'NamespacedFoo2')
     call VUAssertEquals(expected, contents)
 endf

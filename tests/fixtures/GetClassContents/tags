@@ -3,15 +3,21 @@
 !_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.8	//
+!_TAG_PROGRAM_VERSION	Development	//
 BarClass	extends/bar.class.php	/^class BarClass { }$/;"	c
-BarClass2	extends_extends/bar2_extends_baz.class.php	/^class BarClass2 extends BazClass { }$/;"	c
+BarClass2	extends_extends/bar2_extends_baz.class.php	/^class BarClass2 extends BazClass { }$/;"	c	inherits:BazClass
 BazClass	extends_extends/baz.class.php	/^class BazClass { }$/;"	c
-FooClass	extends/foo_extends_bar.class.php	/^class FooClass extends BarClass { }$/;"	c
+FooClass	extends/foo_extends_bar.class.php	/^class FooClass extends BarClass { }$/;"	c	inherits:BarClass
 FooClass	foo.class.php	/^class FooClass {$/;"	c
 FooClass	foo_with_extra_content.class.php	/^class FooClass {$/;"	c
-FooClass2	extends_extends/foo2_extends_bar2.class.php	/^class FooClass2 extends BarClass2 { }$/;"	c
-bar	foo.class.php	/^    public function bar( $baz = 'foo') {$/;"	f
-bar	foo_with_extra_content.class.php	/^    public function bar( $baz = 'foo') {$/;"	f
-bar	foo_with_extra_content.class.php	/^function bar() {$/;"	f
-foo	foo_with_extra_content.class.php	/^function foo() {$/;"	f
+FooClass2	extends_extends/foo2_extends_bar2.class.php	/^class FooClass2 extends BarClass2 { }$/;"	c	inherits:BarClass2
+NS1	ns1_foo2.php	/^namespace NS1;$/;"	n
+NS2	ns2_foo.php	/^namespace NS2;$/;"	n
+NamespacedFoo	ns2_foo.php	/^class NamespacedFoo {$/;"	c	namespace:NS2
+NamespacedFoo2	ns1_foo2.php	/^class NamespacedFoo2 extends \\NS2\\NamespacedFoo {$/;"	c	namespace:NS1	inherits:NS2,NamespacedFoo
+a	t.php	/^$a = new NamespacedFoo2;$/;"	v
+bar	foo.class.php	/^    public function bar( $baz = 'foo') {$/;"	f	class:FooClass	access:public	signature:($baz = 'foo')
+bar	foo_with_extra_content.class.php	/^    public function bar( $baz = 'foo') {$/;"	f	class:FooClass	access:public	signature:($baz = 'foo')
+bar	foo_with_extra_content.class.php	/^function bar() {$/;"	f	signature:()
+foo	foo_with_extra_content.class.php	/^function foo() {$/;"	f	signature:()
+foo	ns2_foo.php	/^    public function foo(){}$/;"	f	class:NS2::NamespacedFoo	access:public	signature:()
