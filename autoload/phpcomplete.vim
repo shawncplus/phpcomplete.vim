@@ -148,7 +148,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if a:base =~ '^\$'
 		return phpcomplete#CompleteVariable(a:base)
 	else
-		return phpcomplete#CompleteGeneral(a:base)
+		return phpcomplete#CompleteGeneral(a:base, current_namespace)
 	endif
 endfunction
 " }}}
@@ -198,8 +198,7 @@ function! phpcomplete#CompleteUse(base) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#CompleteGeneral(base) " {{{
-	let res = []
+function! phpcomplete#CompleteGeneral(base, current_namespace) " {{{
 	" Complete everything else -
 	"  + functions,  DONE
 	"  + keywords of language DONE
@@ -209,6 +208,13 @@ function! phpcomplete#CompleteGeneral(base) " {{{
 	"  + limit choice after -> and :: to funcs and vars DONE
 
 	" Internal solution for finding functions in current file.
+
+	if a:base =~? '^\'
+		let leading_slash = '\'
+	else
+		let leading_slash = ''
+	endif
+
 	let file = getline(1, '$')
 	call filter(file,
 				\ 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
@@ -218,37 +224,12 @@ function! phpcomplete#CompleteGeneral(base) " {{{
 	for i in int_values
 		let f_name = matchstr(i,
 					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
-		let f_args = matchstr(i,
-					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
-		let int_functions[f_name.'('] = f_args.')'
-	endfor
-
-
-	" Prepare list of functions from tags file
-	let ext_functions = {}
-	let ext_constants = {}
-	let ext_classes   = {}
-	let tags = taglist('^'.a:base)
-	for tag in tags
-		if tag.kind ==? 'f'
-			let item = tag.name
-			if has_key(tag, 'signature')
-				let prototype = tag.signature[1:-2]
-			else
-				let prototype = matchstr(tag.cmd,
-							\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
-			endif
-			let ext_functions[item.'('] = prototype.') - '.tag['filename']
-		elseif tag.kind ==? 'd'
-			let ext_constants[tag.name] = ''
-		elseif tag.kind ==? 'c'
-			let ext_classes[tag.name] = ''
+		if f_name =~? '^'.substitute(a:base, '\\', '\\\\', 'g')
+			let f_args = matchstr(i,
+						\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+			let int_functions[f_name.'('] = f_args.')'
 		endif
 	endfor
-
-	" All functions
-	call extend(int_functions, ext_functions)
-	call extend(int_functions, g:php_builtin_functions)
 
 	" Internal solution for finding constants in current file
 	let file = getline(1, '$')
@@ -258,33 +239,153 @@ function! phpcomplete#CompleteGeneral(base) " {{{
 	let int_constants = {}
 	for i in int_values
 		let c_name = matchstr(i, '\(["'']\)\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze\1')
-		if c_name != ''
-			let int_constants[c_name] = '' " c_value
+		if c_name != '' && c_name =~ '^'.substitute(a:base, '\\', '\\\\', 'g')
+			let int_constants[leading_slash.c_name] = '' " c_value
 		endif
 	endfor
 
-	" Prepare list of constants from built-in constants
-	let builtin_constants = {}
-	for [constant, info] in items(g:php_constants)
-		if constant =~# '^'.a:base
-			let builtin_constants[constant] = info
+	" Prepare list of functions from tags file
+	let ext_functions  = {}
+	let ext_constants  = {}
+	let ext_classes    = {}
+	let ext_namespaces = {}
+
+	let base = substitute(a:base, '^\\', '', '')
+	let namespace_match_pattern  = substitute(base, '\\', '\\\\', 'g')
+	if a:base !~ '^\\' && a:current_namespace != '\'
+		let namespace_match_pattern = substitute(a:current_namespace, '\\', '\\\\', 'g').'\\'.namespace_match_pattern
+	endif
+	let tag_match_pattern = matchstr(base, '[^\\]\+$')
+	let namespace_for_tag = substitute(substitute(namespace_match_pattern, '\\\\', '\\', 'g'), '\\*'.tag_match_pattern.'$', '', '')
+
+	let tags = []
+	if len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && tag_match_pattern != namespace_match_pattern
+		let tags = taglist('^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
+	elseif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+		let tags = taglist('^'.namespace_match_pattern)
+	elseif len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+		let tags = taglist('^'.tag_match_pattern)
+	endif
+
+	for tag in tags
+		if !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+			if has_key(tag, 'namespace')
+				let full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+				let relative_name = substitute(full_name, '^'.substitute(a:current_namespace.'\', '\\', '\\\\', 'g'), '', '') " namespaced name relative to the current namespace
+			endif
+
+			if tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+				" patched ctag provides fully resolved namespace names as tag name, namespace tags dont have namespace fields
+				let full_name = tag.name
+				let relative_name = substitute(full_name, '^'.substitute(a:current_namespace.'\', '\\', '\\\\', 'g'), '', '')
+				let info = ' - '.tag.filename
+
+				if leading_slash == ''
+					let ext_namespaces[relative_name.'\'] = info
+				else
+					let ext_namespaces['\'.full_name.'\'] = info
+				endif
+			elseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+				if has_key(tag, 'signature')
+					let prototype = tag.signature[1:-2] " drop the ()s around the string
+				else
+					let prototype = matchstr(tag.cmd,
+								\ 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+				endif
+				let info = prototype.') - '.tag.filename
+
+				if !has_key(tag, 'namespace')
+					let ext_functions[tag.name.'('] = info
+				else
+					if tag.namespace ==? namespace_for_tag
+						if leading_slash == ''
+							let ext_functions[relative_name.'('] = info
+						else
+							let ext_functions['\'.full_name.'('] = info
+						endif
+					endif
+				endif
+			elseif tag.kind ==? 'd'
+				let info = ' - '.tag.filename
+				if !has_key(tag, 'namespace')
+					let ext_constants[tag.name] = info
+				else
+					if tag.namespace ==? namespace_for_tag
+						if leading_slash == ''
+							let ext_constants[relative_name] = info
+						else
+							let ext_constants['\'.full_name] = info
+						endif
+					endif
+				endif
+			elseif tag.kind ==? 'c'
+				let info = ' - '.tag.filename
+				if !has_key(tag, 'namespace')
+					let ext_classes[tag.name] = info
+				else
+					if tag.namespace ==? namespace_for_tag
+						if leading_slash == ''
+							let ext_classes[relative_name] = info
+						else
+							let ext_classes['\'.full_name] = info
+						endif
+					endif
+				endif
+			endif
 		endif
 	endfor
 
-	" Treat keywords as constants
-	for [constant, info] in items(g:php_keywords)
-		if constant =~? '^'.a:base
-			let ext_constants[constant] = info
+	let builtin_constants  = {}
+	let builtin_classnames = {}
+	let builtin_functions  = {}
+	let builtin_keywords   = {}
+	if a:current_namespace == '\' || (a:base =~ '^\\' && a:base =~ '^\\[^\\]*$')
+		let base = substitute(a:base, '^\', '', '')
+
+		" Prepare list of constants from built-in constants
+		for [constant, info] in items(g:php_constants)
+			if constant =~# '^'.base
+				let builtin_constants[leading_slash.constant] = info
+			endif
+		endfor
+
+		if leading_slash == '' " keywords should not be completed when base starts with '\'
+			" Treat keywords as constants
+			for [constant, info] in items(g:php_keywords)
+				if constant =~? '^'.a:base
+					let builtin_keywords[constant] = info
+				endif
+			endfor
 		endif
-	endfor
+
+		" Add builtin class names
+		for [classname, info] in items(g:php_builtin_classnames)
+			if classname =~? '^'.base
+				let builtin_classnames[leading_slash.classname] = info
+			endif
+		endfor
+
+		for [function_name, info] in items(g:php_builtin_functions)
+			if function_name =~? '^'.base
+				let builtin_functions[leading_slash.function_name] = info
+			endif
+		endfor
+	endif
 
 	" All constants
 	call extend(int_constants, ext_constants)
 
+	" All functions
+	call extend(int_functions, ext_functions)
+	call extend(int_functions, builtin_functions)
+
 	let all_values = {}
 
-	" One big dictionary of functions
+	" Add functions found in this file
 	call extend(all_values, int_functions)
+
+	" Add namespaces from tags
+	call extend(all_values, ext_namespaces)
 
 	" Add constants from the current file
 	call extend(all_values, int_constants)
@@ -295,29 +396,29 @@ function! phpcomplete#CompleteGeneral(base) " {{{
 	" Add external classes
 	call extend(all_values, ext_classes)
 
-	"add built-in classes
-	call extend(all_values, g:php_builtin_classnames)
+	" Add built-in classes
+	call extend(all_values, builtin_classnames)
 
-	for m in sort(keys(all_values))
-		if m =~ '^'.a:base
-			call add(res, m)
-		endif
-	endfor
-
-	let int_list = res
+	" Add php keywords
+	call extend(all_values, builtin_keywords)
 
 	let final_list = []
+	let int_list = sort(keys(all_values))
 	for i in int_list
-		if has_key(int_functions, i)
+		if has_key(ext_namespaces, i)
+			let final_list += [{'word':i, 'kind':'n', 'menu': ext_namespaces[i], 'info': ext_namespaces[i]}]
+		elseif has_key(int_functions, i)
 			let final_list +=
 						\ [{'word':i,
 						\	'info':i.int_functions[i],
 						\	'menu':int_functions[i],
 						\	'kind':'f'}]
-		elseif has_key(ext_classes, i) || has_key(g:php_builtin_classnames, i)
-			let final_list += [{'word':i, 'kind':'c'}]
+		elseif has_key(ext_classes, i) || has_key(g:php_builtin_classnames, substitute(i, "^\\", '', ''))
+			let info = has_key(ext_classes, i) ? ext_classes[i] : ' - builtin'
+			let final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
 		elseif has_key(int_constants, i) || has_key(builtin_constants, i)
-			let final_list += [{'word':i, 'kind': 'd'}]
+			let info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
+			let final_list += [{'word':i, 'kind': 'd', 'menu': info, 'info': i.info}]
 		else
 			let final_list += [{'word':i}]
 		endif
@@ -392,9 +493,11 @@ function! phpcomplete#CompleteUnknownClass(base, scontext) " {{{
 		endif
 	endfor
 
+	" All functions to one hash for later reference when deciding kind
+	call extend(int_functions, ext_functions)
+
 	let all_values = {}
 	call extend(all_values, int_functions)
-	call extend(all_values, ext_functions)
 	call extend(all_values, int_vars) " external variables are already in
 	call extend(all_values, g:php_builtin_object_functions)
 
