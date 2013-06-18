@@ -33,3 +33,16 @@ function (FooClass8 $bar)
     $bar->
 }
 
+class BazClass
+{
+    function bazFunction(FooClass9 $bar)
+    {
+        $bar->
+    }
+
+    function quxFunction(FooClass10 $baz)
+    {
+        $baz->
+    }
+}
+

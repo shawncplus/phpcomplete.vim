@@ -198,5 +198,13 @@ fun! TestCase_extract_typehint_from_function_calls()
     let classname = phpcomplete#GetClassName('$bar->')
     call VUAssertEquals('FooClass8', classname)
 
+    exe ':40'
+    let classname = phpcomplete#GetClassName('$bar->')
+    call VUAssertEquals('FooClass9', classname, 'expect type-hinting from class method to override earlier definitions')
+
+    exe ':45'
+    let classname = phpcomplete#GetClassName('$baz->')
+    call VUAssertEquals('FooClass10', classname, 'expect $baz to use type-hinting from class method')
+
     bw! %
 endf
