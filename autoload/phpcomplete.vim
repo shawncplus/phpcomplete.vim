@@ -851,6 +851,7 @@ function! phpcomplete#GetClassName(scontext) " {{{
 	" or line in tags file
 
 	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
+	let function_name_pattern = '[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*'
 
 	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
 		let i = 1
@@ -922,8 +923,10 @@ function! phpcomplete#GetClassName(scontext) " {{{
 			endif
 
 			" in-file lookup for typehinted function arguments
-			if line =~# '[fF][uU][nN][cC][tT][iI][oO][nN]\s*[^(]\+\s*(.\{-}'.class_name_pattern.'\s\+\$'.object
-				let f_args = matchstr(line, '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+			"   - the function can have a name or be anonymous (e.g., function qux() { ... } vs. function () { ... })
+			"   - the type-hinted argument can be anywhere in the arguments list.
+			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+\$'.object
+				let f_args = matchstr(line, 'function\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
 				let args = split(f_args, '\s*\zs,\ze\s*')
 				for arg in args
 					if arg =~# '\$'.object.'\(,\|$\)'

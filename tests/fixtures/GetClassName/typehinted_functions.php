@@ -4,7 +4,7 @@ function (FooClass1 $bar) {
     $bar->
 }
 
-FuNcTiOn (FooClass2 $bar) {
+FuNcTiOn baz    (  FooClass2 $bar) {
     $bar->
 }
 
@@ -31,5 +31,18 @@ function ($bar2, FooClass7 $bar, BarClass $foo) {
 function (FooClass8 $bar)
 {
     $bar->
+}
+
+class BazClass
+{
+    function bazFunction(FooClass9 $bar)
+    {
+        $bar->
+    }
+
+    public static function quxFunction(FooClass10 $baz)
+    {
+        $baz->
+    }
 }
 
