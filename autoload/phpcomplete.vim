@@ -924,6 +924,10 @@ function! phpcomplete#GetClassName(scontext) " {{{
 			endif
 
 			" in-file lookup for typehinted function arguments
+			"   - the function can be indented, accept whitespace at the start of a line.
+			"   - the function can be part of a class and can have visibility keywords applied, e.g., 'public function ...'
+			"   - the function can have a name or be anonymous (e.g., function qux() { ... } vs. function () { ... })
+			"   - the type-hinted argument can be anywhere in the arguments list.
 			if line =~? '\s*'.visibility_pattern.'function\(\s\+'.function_name_pattern.'\)\?\s*[^(]\+\s*(.\{-}'.class_name_pattern.'\s\+\$'.object
 				let f_args = matchstr(line, '^&\?\s*'.visibility_pattern.'function\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)\_s*\({\|$\)')
 				let args = split(f_args, '\s*\zs,\ze\s*')
