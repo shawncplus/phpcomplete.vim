@@ -40,7 +40,7 @@ class BazClass
         $bar->
     }
 
-    function quxFunction(FooClass10 $baz)
+    public static function quxFunction(FooClass10 $baz)
     {
         $baz->
     }
