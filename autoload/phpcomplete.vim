@@ -1083,9 +1083,11 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 
 	below 1new
 	0put =cfile
-	let endline = search('{')
-	call search('class\s\+'.a:name.'\>')
+	call search('class\s\+'.a:name.'\(\>\|$\)')
 	let cfline = line('.')
+	call search('{')
+	let endline = line('.')
+
 	let content = join(getline(cfline, endline),"\n")
 	" Catch extends
 	if content =~? 'extends'
@@ -1093,7 +1095,6 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	else
 		let extends_class = ''
 	endif
-	call search('{')
 	normal! %
 
 	let classcontent = join(getline(cfline, line('.')), "\n")

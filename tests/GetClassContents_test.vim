@@ -10,6 +10,12 @@ fun! TestCase_reads_in_the_class_from_the_list_of_lines()
     let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
     let expected = join(readfile(location)[1:], "\n")
     call VUAssertEquals(expected, contents)
+
+    let location =  expand('%:p:h')."/".'fixtures/GetClassContents/foo_whitespace.class.php'
+    let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
+    let expected = join(readfile(location)[4:9], "\n")
+    call VUAssertEquals(expected, contents)
+
 endf
 
 fun! TestCase_only_reads_in_the_class_content()
