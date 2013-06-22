@@ -161,11 +161,12 @@ function! phpcomplete#CompleteUse(base) " {{{
 	"   * requires patched ctags
 
 	let res = []
+
+	" class and namespace names are always considered absoltute in use ... expressions, leading slash is not recommended
+	" by the php manual, so we gonna get rid of that
 	if a:base =~? '^\'
-		let leading_slash = '\'
 		let base = substitute(a:base, '^\', '', '')
 	else
-		let leading_slash = ''
 		let base = a:base
 	endif
 
@@ -182,17 +183,19 @@ function! phpcomplete#CompleteUse(base) " {{{
 
 		for tag in tags
 			if tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
-				call add(res, {'word': leading_slash.tag.name, 'kind': 'n', 'menu': tag.filename, 'info': tag.filename })
+				call add(res, {'word': tag.name, 'kind': 'n', 'menu': tag.filename, 'info': tag.filename })
 			elseif has_key(tag, 'namespace') && tag.kind ==? 'c' && tag.namespace ==? namespace_for_class
-				call add(res, {'word': leading_slash.namespace_for_class.'\'.tag.name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
+				call add(res, {'word': namespace_for_class.'\'.tag.name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
 			endif
 		endfor
 	endif
 
-	let builtin_classnames = filter(keys(copy(g:php_builtin_classnames)), 'v:val =~? "^'.classname_match_pattern.'"')
-	for classname in builtin_classnames
-		call add(res, {'word': '\'.classname, 'kind': 'c'})
-	endfor
+	if base !~ '\'
+		let builtin_classnames = filter(keys(copy(g:php_builtin_classnames)), 'v:val =~? "^'.classname_match_pattern.'"')
+		for classname in builtin_classnames
+			call add(res, {'word': classname, 'kind': 'c'})
+		endfor
+	endif
 
 	return res
 endfunction
