@@ -110,9 +110,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		return phpcomplete#CompleteUse(a:base)
 	endif
 
-	if scontext =~? '\(\s*new\|extends\)\s\+'
-		return phpcomplete#CompleteClassName(a:base, current_namespace, imports)
-	elseif scontext =~ '\(->\|::\)$'
+	if scontext =~ '\(->\|::\)$'
 		" {{{
 		" Get name of the class
 		let classname = phpcomplete#GetClassName(scontext, imports)
@@ -143,6 +141,8 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 
 		return phpcomplete#CompleteUnknownClass(a:base, scontext)
 		" }}}
+	elseif scontext =~? '\(\s*new\|extends\)\s\+'
+		return phpcomplete#CompleteClassName(a:base, current_namespace, imports)
 	endif
 
 	if a:base =~ '^\$'
