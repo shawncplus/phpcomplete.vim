@@ -104,22 +104,22 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	endif
 
 	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
-	let current_namespace = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
+	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
 
 	if context =~? '^\s*use\s\+'
 		return phpcomplete#CompleteUse(a:base)
 	endif
 
 	if scontext =~? '\(\s*new\|extends\)\s\+'
-		return phpcomplete#CompleteClassName(a:base, current_namespace)
+		return phpcomplete#CompleteClassName(a:base, current_namespace, imports)
 	elseif scontext =~ '\(->\|::\)$'
 		" {{{
 		" Get name of the class
-		let classname = phpcomplete#GetClassName(scontext)
+		let classname = phpcomplete#GetClassName(scontext, imports)
 
 		" Get location of class definition, we have to iterate through all
 		if classname != ''
-			let [classname, namespace] = phpcomplete#ExpandClassName(classname, current_namespace)
+			let [classname, namespace] = phpcomplete#ExpandClassName(classname, current_namespace, imports)
 			let classlocation = phpcomplete#GetClassLocation(classname, namespace)
 		else
 			let classlocation = ''
@@ -142,13 +142,13 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		endif
 
 		return phpcomplete#CompleteUnknownClass(a:base, scontext)
-	 " }}}
+		" }}}
 	endif
 
 	if a:base =~ '^\$'
 		return phpcomplete#CompleteVariable(a:base)
 	else
-		return phpcomplete#CompleteGeneral(a:base, current_namespace)
+		return phpcomplete#CompleteGeneral(a:base, current_namespace, imports)
 	endif
 endfunction
 " }}}
@@ -198,7 +198,7 @@ function! phpcomplete#CompleteUse(base) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#CompleteGeneral(base, current_namespace) " {{{
+function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 	" Complete everything else -
 	"  + functions,  DONE
 	"  + keywords of language DONE
@@ -251,12 +251,8 @@ function! phpcomplete#CompleteGeneral(base, current_namespace) " {{{
 	let ext_namespaces = {}
 
 	let base = substitute(a:base, '^\\', '', '')
-	let namespace_match_pattern  = substitute(base, '\\', '\\\\', 'g')
-	if a:base !~ '^\\' && a:current_namespace != '\'
-		let namespace_match_pattern = substitute(a:current_namespace, '\\', '\\\\', 'g').'\\'.namespace_match_pattern
-	endif
-	let tag_match_pattern = matchstr(base, '[^\\]\+$')
-	let namespace_for_tag = substitute(substitute(namespace_match_pattern, '\\\\', '\\', 'g'), '\\*'.tag_match_pattern.'$', '', '')
+	let [tag_match_pattern, namespace_for_tag] = phpcomplete#ExpandClassName(a:base, a:current_namespace, a:imports)
+	let namespace_match_pattern  = substitute((namespace_for_tag == '' ? '' : namespace_for_tag.'\').tag_match_pattern, '\\', '\\\\', 'g')
 
 	let tags = []
 	if len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && tag_match_pattern != namespace_match_pattern
@@ -271,14 +267,41 @@ function! phpcomplete#CompleteGeneral(base, current_namespace) " {{{
 		if !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
 			if has_key(tag, 'namespace')
 				let full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
-				let relative_name = substitute(full_name, '^'.substitute(a:current_namespace.'\', '\\', '\\\\', 'g'), '', '') " namespaced name relative to the current namespace
+
+				let base_parts = split(a:base, '\')
+				if len(base_parts) > 1
+					let namespace_part = join(base_parts[0:-2], '\')
+				else
+					let namespace_part = ''
+				endif
+				let relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
 			endif
 
 			if tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
-				" patched ctag provides fully resolved namespace names as tag name, namespace tags dont have namespace fields
+				let info = tag.name.' - '.tag.filename
+				" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
 				let full_name = tag.name
-				let relative_name = substitute(full_name, '^'.substitute(a:current_namespace.'\', '\\', '\\\\', 'g'), '', '')
-				let info = ' - '.tag.filename
+
+				let base_parts = split(a:base, '\')
+				let full_name_parts = split(full_name, '\')
+				if len(base_parts) > 1
+					" the first segment could be a renamed import, take the first segment from the user provided input
+					" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+					" for example:
+					"     you have a namespace NS1\SUBNS as SUB
+					"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+					"     typed in SUB\SU
+					"     the tags will return NS1\SUBNS\SUBSUB
+					"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+					if has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+						let import = a:imports[base_parts[0]]
+						let relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+					else
+						let relative_name = strpart(full_name, stridx(full_name, a:base))
+					endif
+				else
+					let relative_name = strpart(full_name, stridx(full_name, a:base))
+				endif
 
 				if leading_slash == ''
 					let ext_namespaces[relative_name.'\'] = info
@@ -379,6 +402,21 @@ function! phpcomplete#CompleteGeneral(base, current_namespace) " {{{
 	call extend(int_functions, ext_functions)
 	call extend(int_functions, builtin_functions)
 
+	for [imported_name, import] in items(a:imports)
+		if imported_name =~? '^'.base
+			if import.kind == 'c'
+				if import.builtin
+					let builtin_classnames[imported_name] = ' '.import.name
+				else
+					let ext_classes[imported_name] = ' '.import.name' - '.import.filename
+				endif
+			endif
+			if import.kind == 'n'
+				let ext_namespaces[imported_name.'\'] = ' '.import.name.' - '.import.filename
+			endif
+		end
+	endfor
+
 	let all_values = {}
 
 	" Add functions found in this file
@@ -413,8 +451,8 @@ function! phpcomplete#CompleteGeneral(base, current_namespace) " {{{
 						\	'info':i.int_functions[i],
 						\	'menu':int_functions[i],
 						\	'kind':'f'}]
-		elseif has_key(ext_classes, i) || has_key(g:php_builtin_classnames, substitute(i, "^\\", '', ''))
-			let info = has_key(ext_classes, i) ? ext_classes[i] : ' - builtin'
+		elseif has_key(ext_classes, i) || has_key(builtin_classnames, i)
+			let info = has_key(ext_classes, i) ? ext_classes[i] : builtin_classnames[i].' - builtin'
 			let final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
 		elseif has_key(int_constants, i) || has_key(builtin_constants, i)
 			let info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
@@ -594,7 +632,7 @@ function! phpcomplete#CompleteVariable(base) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#CompleteClassName(base, current_namespace) " {{{
+function! phpcomplete#CompleteClassName(base, current_namespace, imports) " {{{
 	" Complete class name
 	let res = []
 	if a:base =~? '^\'
@@ -620,13 +658,12 @@ function! phpcomplete#CompleteClassName(base, current_namespace) " {{{
 		endif
 	endfor
 
-	let namespace_match_pattern = substitute((a:current_namespace != '\' && leading_slash != '\' ? a:current_namespace.'\' : '').base, '\\', '\\\\', 'g')
-	let classname_match_pattern = matchstr((a:current_namespace != '\' && leading_slash != '\' ? a:current_namespace.'\' : '').base, '[^\\]\+$')
-	let namespace_for_class = substitute(substitute(namespace_match_pattern, '\\\\', '\\', 'g'), '\\*'.classname_match_pattern.'$', '', '')
+	" resolve the typed in part with namespaces (if theres a \ in it)
+	let [tag_match_pattern, namespace_for_class] = phpcomplete#ExpandClassName(a:base, a:current_namespace, a:imports)
 
 	let tags = []
-	if len(classname_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = taglist('^'.classname_match_pattern)
+	if len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+		let tags = taglist('^'.tag_match_pattern)
 	endif
 
 	if len(tags)
@@ -635,24 +672,41 @@ function! phpcomplete#CompleteClassName(base, current_namespace) " {{{
 				call add(res, {'word': leading_slash.tag.name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
 			endif
 			if has_key(tag, 'namespace') && tag.kind ==? 'c' && tag.namespace ==? namespace_for_class
-				let namespace_prefix = leading_slash.namespace_for_class
-				let namespace_prefix = substitute(namespace_prefix, '^'.substitute(leading_slash, '\\', '\\\\', '').a:current_namespace.'\\\?', '', '')
-				call add(res, {'word': namespace_prefix.(len(namespace_prefix) > 0 ? '\' : '').tag.name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
+				let full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+
+				let base_parts = split(a:base, '\')
+				if len(base_parts) > 1
+					let namespace_part = join(base_parts[0:-2], '\')
+				else
+					let namespace_part = ''
+				endif
+				let relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+
+				call add(res, {'word': leading_slash == '\' ? leading_slash.full_name : relative_name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
 			endif
 		endfor
 	endif
 
+	" look for built in classnames
 	let base_parts = split(base, '\')
 	if a:current_namespace == '\' || (leading_slash == '\' && len(base_parts) < 2)
 		let builtin_classnames = filter(keys(copy(g:php_builtin_classes)), 'v:val =~? "^'.substitute(a:base, '\\', '', 'g').'"')
 		for classname in builtin_classnames
 			let menu = ''
+			" if we have a constructor for this class, add parameters as to the info
 			if has_key(g:php_builtin_classes[classname].methods, '__construct')
 				let menu = g:php_builtin_classes[classname]['methods']['__construct']['signature']
 			endif
 			call add(res, {'word': leading_slash.classname, 'kind': 'c', 'menu': menu})
 		endfor
 	endif
+
+	" add matching imported things
+	for [imported_name, import] in items(a:imports)
+		if imported_name =~? '^'.base && import.kind == 'c'
+			call add(res, {'word': imported_name, 'kind': import.kind, 'menu': ''})
+		endif
+	endfor
 
 	let res = sort(res, 'phpcomplete#CompareCompletionRow')
 	return res
@@ -842,7 +896,7 @@ function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#GetClassName(scontext) " {{{
+function! phpcomplete#GetClassName(scontext, imports) " {{{
 	" Get class name
 	" Class name can be detected in few ways:
 	" @var $myVar class
@@ -852,6 +906,8 @@ function! phpcomplete#GetClassName(scontext) " {{{
 
 	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
 	let function_name_pattern = '[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*'
+
+	let classname_candidate = ''
 
 	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
 		let i = 1
@@ -876,13 +932,17 @@ function! phpcomplete#GetClassName(scontext) " {{{
 			endif
 		endwhile
 	elseif a:scontext =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
-		let classname = matchstr(a:scontext, 'new\s\+\zs'.class_name_pattern.'\ze')
-		return classname
+		let classname_candidate = matchstr(a:scontext, '\cnew\s\+\zs'.class_name_pattern.'\ze')
+		if has_key(a:imports, classname_candidate) && a:imports[classname_candidate].kind == 'c'
+			return a:imports[classname_candidate].name
+		else
+			return classname_candidate
+		endif
 	else
 		" check Constant lookup
 		let constant_object = matchstr(a:scontext, '\zs'.class_name_pattern.'\ze::')
 		if constant_object != ''
-			return constant_object
+			let classname_candidate = constant_object
 		endif
 
 		"extract the variable name from the context
@@ -895,29 +955,33 @@ function! phpcomplete#GetClassName(scontext) " {{{
 
 			" do in-file lookup of $var = new Class
 			if line =~# '^\s*\$'.object.'\s*=\s*new\s\+'.class_name_pattern
-				let classname = matchstr(line, '\$'.object.'\s*=\s*new \zs'.class_name_pattern.'\ze')
-				return classname
+				let classname_candidate = matchstr(line, '\$'.object.'\s*=\s*new \zs'.class_name_pattern.'\ze')
+				break
 			endif
 
 			" in file lookup for /* @var $foo Class */
 			if line =~# '@var\s\+\$'.object.'\s\+'.class_name_pattern
-				let classname = matchstr(line, '@var\s\+\$'.object.'\s\+\zs'.class_name_pattern.'\ze')
-				return classname
+				let classname_candidate = matchstr(line, '@var\s\+\$'.object.'\s\+\zs'.class_name_pattern.'\ze')
+				break
 			endif
 
 			" in-file lookup for Class::getInstance()
 			if line =~# '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::getInstance\+'
-				let classname = matchstr(line, '\$'.object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze::getInstance\+')
-				return classname
+				let classname_candidate = matchstr(line, '\$'.object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze::getInstance\+')
+				break
 			endif
 
 			" do in-file lookup for static method invocation of a built-in class, like: $d = DateTime::createFromFormat()
 			if line =~# '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::[a-zA-Z_0-9\x7f-\xff]\+('
 				let classname  = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+\zs'.class_name_pattern.'\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
 				let methodname = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::\zs[a-zA-Z_0-9\x7f-\xff]\+\ze(')
+				if has_key(a:imports, classname) && a:imports[classname].kind == 'c'
+					let classname = a:imports[classname].name
+				endif
 				if has_key(g:php_builtin_classes, classname) && has_key(g:php_builtin_classes[classname].static_methods, methodname)
 					return g:php_builtin_classes[classname].static_methods[methodname].return_type
 				else
+					" TODO: try getting the static class's docblock for return type
 					break
 				endif
 			endif
@@ -930,16 +994,28 @@ function! phpcomplete#GetClassName(scontext) " {{{
 				let args = split(f_args, '\s*\zs,\ze\s*')
 				for arg in args
 					if arg =~# '\$'.object.'\(,\|$\)'
-						let classname = matchstr(arg, '\s*\zs'.class_name_pattern.'\ze\s\+\$'.object)
-						return classname
+						let classname_candidate = matchstr(arg, '\s*\zs'.class_name_pattern.'\ze\s\+\$'.object)
+						break
 					endif
 				endfor
+				if classname_candidate != ''
+					break
+				endif
 			endif
 
 			let i += 1
 		endwhile
+		if classname_candidate != ''
+			if has_key(a:imports, classname_candidate) && a:imports[classname_candidate].kind == 'c'
+				return a:imports[classname_candidate].name
+			else
+				return classname_candidate
+			endif
+		endif
 
 		" OK, first way failed, now check tags file(s)
+		" This method is useless when local variables are not indexed by ctags and
+		" pretty inaccurate even if it is
 		let tags = taglist('^'.substitute(object, '^\$', '', ''))
 		if len(tags) == 0
 			return
@@ -1008,7 +1084,7 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	below 1new
 	0put =cfile
 	let endline = search('{')
-	call search('class\s\+'.a:name)
+	call search('class\s\+'.a:name.'\>')
 	let cfline = line('.')
 	let content = join(getline(cfline, endline),"\n")
 	" Catch extends
@@ -1021,14 +1097,14 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	normal! %
 
 	let classcontent = join(getline(cfline, line('.')), "\n")
-	let current_namespace = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
+	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
 	bw! %
 
 	" go back to original window
 	exe phpcomplete_original_window.'wincmd w'
 
 	if extends_class != ''
-		let [extends_class, namespace] = phpcomplete#ExpandClassName(extends_class, current_namespace)
+		let [extends_class, namespace] = phpcomplete#ExpandClassName(extends_class, current_namespace, imports)
 		let classlocation = phpcomplete#GetClassLocation(extends_class, namespace)
 		if filereadable(classlocation)
 			let classfile = readfile(classlocation)
@@ -1191,18 +1267,124 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 	let namespace_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
 	let file_lines = reverse(a:file_lines)
 	let i = 0
-	while i < len(file_lines)
+	let file_length = len(file_lines)
+	let imports = {}
+
+	let current_namespace = '\'
+
+	while i < file_length
 		let line = file_lines[i]
+
 		if line =~? '^\s*namespace\s*'.namespace_name_pattern
-			return matchstr(line, '^\s*namespace\s*\zs'.namespace_name_pattern.'\ze')
+			let current_namespace = matchstr(line, '^\s*namespace\s*\zs'.namespace_name_pattern.'\ze')
+			break
+		endif
+
+		if line =~? '^\s*use\>'
+			if line =~? ';'
+				let use_line = line
+			else
+				" try to find the next line containing ';'
+				let l = i
+				let search_line = line
+				let use_line = line
+
+				" add lines from the file until theres no ';' in them
+				while search_line !~? ';' && l > 0
+					" file lines are reversed so we need to go backwards
+					let l -= 1
+					let search_line = file_lines[l]
+					let use_line .= ' '.substitute(search_line, '\(^\s\+\|\s\+$\)', '', 'g')
+				endwhile
+			endif
+			let use_expression = matchstr(use_line, '^\s*use\s\+\zs.\{-}\ze;')
+			let use_parts = map(split(use_expression, '\s*,\s*'), 'substitute(v:val, "\\s+", " ", "g")')
+			for part in use_parts
+				if part =~? '\s\+as\s\+'
+					let [object, name] = split(part, '\s\+as\s\+')
+					let object = substitute(object, '^\\', '', '')
+					let name   = substitute(name, '^\\', '', '')
+				else
+					let object = part
+					let name = part
+					let object = substitute(object, '^\\', '', '')
+					let name   = substitute(name, '^\\', '', '')
+					if name =~? '\\'
+						let	name = matchstr(name, '\\\zs[^\\]\+\ze$')
+					endif
+				endif
+				" leading slash is not required use imports are always absolute
+				let imports[name] = {'name': object, 'kind': ''}
+			endfor
+
+			" find kind flags from tags or built in methods for the objects we extracted
+			" they can be either classes, interfaces or namespaces, no other thing is importable in php
+			for [key, import] in items(imports)
+				" if theres a \ in the name we have it's definetly not a built in thing, look for tags
+				if import.name =~ '\\'
+					let [classname, namespace_for_classes] = phpcomplete#ExpandClassName(import.name, '\', {})
+					let namespace_name_candidate = substitute(import.name, '\\', '\\\\', 'g')
+					" can be a namespace name as is, or can be a tagname at the end with a namespace
+					let tags = taglist('^\('.namespace_name_candidate.'\|'.classname.'\)$')
+					for tag in tags
+						" if there's a namespace with the name of the import
+						if tag.kind == 'n' && tag.name == import.name
+							call extend(import, tag)
+							let import['builtin'] = 0
+						endif
+						" if the name matches with the extracted classname and namespace
+						if (tag.kind == 'c' || tag.kind == 'i') && tag.name == classname && has_key(tag, 'namespace') && tag.namespace == namespace_for_classes
+							call extend(import, tag)
+							let import['builtin'] = 0
+						endif
+						break
+					endfor
+				else
+					" if no \ in the name, it can be a built in class
+					if has_key(g:php_builtin_classnames, import.name)
+						let import['kind'] = 'c'
+						let import['builtin'] = 1
+					else
+						" or can be a tag with exactly matchign name
+						let tags = taglist('^'.import['name'].'$')
+						for tag in tags
+							" search for the first matchin namespace, class, interface with no namespace
+							if !has_key(tag, 'namespace') && (tag.kind == 'n' || tag.kind == 'c' || tag.kind == 'i')
+								call extend(import, tag)
+								let import['builtin'] = 0
+								break
+							endif
+						endfor
+					endif
+				endif
+			endfor
 		endif
 		let i += 1
 	endwhile
-	return '\'
+	return [current_namespace, imports]
 endfunction
 " }}}
 
-function! phpcomplete#ExpandClassName(classname, current_namespace) " {{{
+function! phpcomplete#ExpandClassName(classname, current_namespace, imports) " {{{
+	" if there's an imported class, just use that class's information
+	if has_key(a:imports, a:classname) && a:imports[a:classname].kind == 'c'
+		let namespace = has_key(a:imports[a:classname], 'namespace') ? a:imports[a:classname].namespace : ''
+		return [a:classname, namespace]
+	endif
+
+	" try to find relative namespace in imports, imported names takes precedence over
+	" current namespace when resolving relative namespaced class names
+	if a:classname !~ '^\' && a:classname =~ '\\'
+		let classname_parts = split(a:classname, '\\\+')
+		if has_key(a:imports, classname_parts[0]) && a:imports[classname_parts[0]].kind == 'n'
+			let classname_parts[0] = a:imports[classname_parts[0]].name
+			let namespace = join(classname_parts[0:-2], '\')
+			let classname = classname_parts[-1]
+			return [classname, namespace]
+		endif
+	endif
+
+	" no imported class or namespace matched, expand with the current namespace
 	let namespace = ''
 	let classname = a:classname
 	" if the classname have namespaces in in or we are in a namespace
@@ -1216,8 +1398,10 @@ function! phpcomplete#ExpandClassName(classname, current_namespace) " {{{
 		endif
 		" split classname to classname and namespace
 		let classname_parts = split(classname, '\\\+')
-		let namespace = join(classname_parts[0:-2], '\')
-		let classname = classname_parts[-1]
+		if len(classname_parts) > 1
+			let namespace = join(classname_parts[0:-2], '\')
+			let classname = classname_parts[-1]
+		endif
 	endif
 	return [classname, namespace]
 endfunction

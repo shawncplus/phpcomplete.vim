@@ -46,3 +46,6 @@ class BazClass
     }
 }
 
+function baz2(RenamedFoo $bar) {
+    $bar->
+}
