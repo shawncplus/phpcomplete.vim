@@ -35,7 +35,7 @@ fun! TestCase_matches_classname_from_imported_names()
 
     " imported builtin
     let [classname, namespace] = phpcomplete#ExpandClassName('AO', 'Mahou', {'AO': {'name': 'ArrayObject', 'kind': 'c', 'builtin': 1,}})
-    call VUAssertEquals(['AO', ''], [classname, namespace])
+    call VUAssertEquals(['ArrayObject', ''], [classname, namespace])
 
     " imported user class
     let [classname, namespace] = phpcomplete#ExpandClassName('Foo', 'Mahou', {'Foo': {'name': 'Foo', 'kind': 'c', 'builtin': 0, 'namespace': 'NS1'}})
