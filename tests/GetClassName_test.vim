@@ -232,3 +232,23 @@ fun! TestCase_extract_typehint_from_function_calls()
 
     bw! %
 endf
+
+fun! TestCase_extract_parameter_type_from_docblock()
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/function_docblock.php"
+    below 1new
+    exe ":edit ".path
+
+    exe ':11'
+    let classname = phpcomplete#GetClassName('$bar1->', {})
+    call VUAssertEquals('BarClass1', classname)
+
+    exe ':27'
+    let classname = phpcomplete#GetClassName('$bar2->', {})
+    call VUAssertEquals('BarClass2', classname)
+
+    exe ':39'
+    let classname = phpcomplete#GetClassName('$bar3->', {})
+    call VUAssertEquals('BarClass3', classname)
+
+    bw! %
+endf

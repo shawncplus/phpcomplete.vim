@@ -1006,6 +1006,25 @@ function! phpcomplete#GetClassName(scontext, imports) " {{{
 				endif
 			endif
 
+			" if we see a function declaration, try loading the docblock for it and look for matching @params
+			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}\$'.object
+				let match_line = substitute(line, '\\', '\\\\', 'g')
+				let sccontent = getline(0, line('.') - i)
+				let doc_str = phpcomplete#GetDocBlock(sccontent, match_line)
+				if doc_str != ''
+					let docblock = phpcomplete#ParseDocBlock(doc_str)
+					for param in docblock.params
+						if param.name =~? '\$\?'.object
+							let classname_candidate = param.type
+							break
+						endif
+					endfor
+					if classname_candidate != ''
+						break
+					endif
+				endif
+			endif
+
 			let i += 1
 		endwhile
 		if classname_candidate != ''
