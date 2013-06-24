@@ -2,13 +2,16 @@ fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo.class.php"
     below 1new
     exe ":silent! edit ".path
-    exe ':6'
 
-    let classname = phpcomplete#GetClassName('$this->', {})
+    exe ':6'
+    let classname = phpcomplete#GetClassName('$this->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
+    let classname = phpcomplete#GetClassName('$this->', 'Foo', {})
+    call VUAssertEquals('Foo\FooClass', classname)
+
     exe ':7'
-    let classname = phpcomplete#GetClassName('self::', {})
+    let classname = phpcomplete#GetClassName('self::', '\', {})
     call VUAssertEquals('FooClass', classname)
 
     silent! bw! %
@@ -20,11 +23,11 @@ fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
     exe ":silent! edit ".path
     exe ':10'
 
-    let classname = phpcomplete#GetClassName('$this->', {})
+    let classname = phpcomplete#GetClassName('$this->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
     exe ':11'
-    let classname = phpcomplete#GetClassName('self::', {})
+    let classname = phpcomplete#GetClassName('self::', '\', {})
     call VUAssertEquals('FooClass', classname)
 
     silent! bw! %
@@ -36,11 +39,11 @@ fun! TestCase_returns_empty_when_sees_curlyclose_on_line_start()
     exe ":silent! edit ".path
     exe ':6'
 
-    let classname = phpcomplete#GetClassName('$this->', {})
+    let classname = phpcomplete#GetClassName('$this->', '\', {})
     call VUAssertEquals('', classname)
 
     exe ':7'
-    let classname = phpcomplete#GetClassName('self::', {})
+    let classname = phpcomplete#GetClassName('self::', '\', {})
     call VUAssertEquals('', classname)
 
     silent! bw! %
@@ -52,11 +55,11 @@ fun! TestCase_finds_abstract_classes()
     exe ":silent! edit ".path
     exe ':6'
 
-    let classname = phpcomplete#GetClassName('$this->', {})
+    let classname = phpcomplete#GetClassName('$this->', '\', {})
     call VUAssertEquals('FooAbstract', classname)
 
     exe ':7'
-    let classname = phpcomplete#GetClassName('self::', {})
+    let classname = phpcomplete#GetClassName('self::', '\', {})
     call VUAssertEquals('FooAbstract', classname)
 
     silent! bw! %
@@ -68,19 +71,25 @@ fun! TestCase_finds_abstract_classes()
     exe ":silent! edit ".path
     exe ':10'
 
-    let classname = phpcomplete#GetClassName('$this->', {})
+    let classname = phpcomplete#GetClassName('$this->', '\', {})
     call VUAssertEquals('FooAbstract', classname)
 
     exe ':11'
-    let classname = phpcomplete#GetClassName('self::', {})
+    let classname = phpcomplete#GetClassName('self::', '\', {})
     call VUAssertEquals('FooAbstract', classname)
 
     silent! bw! %
 endf
 
 fun! TestCase_finds_new_keyword_instantiations_in_parentheses_from_php5_4()
-    let classname = phpcomplete#GetClassName('$a = (new FooClass)->', {})
+    let classname = phpcomplete#GetClassName('$a = (new FooClass)->', '\', {})
     call VUAssertEquals('FooClass', classname)
+
+    let classname = phpcomplete#GetClassName('$a = (new \Foo\FooClass)->', 'Bar', {})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    let classname = phpcomplete#GetClassName('$a = (new FooClass)->', 'Bar', {})
+    call VUAssertEquals('Bar\FooClass', classname)
 endf
 
 fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
@@ -89,15 +98,18 @@ fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
     exe ":silent! edit ".path
     exe ':3'
 
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
     exe ':7'
-    let classname = phpcomplete#GetClassName('$bar2->', {})
+    let classname = phpcomplete#GetClassName('$bar2->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
+    let classname = phpcomplete#GetClassName('$bar2->', 'Bar', {})
+    call VUAssertEquals('Bar\FooClass', classname)
+
     exe ':9'
-    let classname = phpcomplete#GetClassName('$bar3->', {'Renamed': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
+    let classname = phpcomplete#GetClassName('$bar3->', '\', {'Renamed': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
     silent! bw! %
@@ -109,11 +121,15 @@ fun! TestCase_finds_classes_from_variable_equals_new_class_lines()
     exe ":silent! edit ".path
 
     exe ':4'
-    let classname = phpcomplete#GetClassName('$foo->', {})
+    let classname = phpcomplete#GetClassName('$foo->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
+    exe ':4'
+    let classname = phpcomplete#GetClassName('$foo->', 'Bar', {})
+    call VUAssertEquals('Bar\FooClass', classname)
+
     exe ':8'
-    let classname = phpcomplete#GetClassName('$foo->', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
+    let classname = phpcomplete#GetClassName('$foo->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
     silent! bw! %
@@ -125,11 +141,15 @@ fun! TestCase_finds_common_singleton_getInstance_calls()
     exe ":silent! edit ".path
 
     exe ':4'
-    let classname = phpcomplete#GetClassName('$foo->', {})
+    let classname = phpcomplete#GetClassName('$foo->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
+    exe ':4'
+    let classname = phpcomplete#GetClassName('$foo->', 'Bar', {})
+    call VUAssertEquals('Bar\FooClass', classname)
+
     exe ':8'
-    let classname = phpcomplete#GetClassName('$foo->', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
+    let classname = phpcomplete#GetClassName('$foo->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
     silent! bw! %
@@ -142,22 +162,31 @@ fun! TestCase_returns_return_type_of_built_in_objects_static_methods()
 
     exe ':4'
     call phpcomplete#LoadData()
-    let classname = phpcomplete#GetClassName('$d->', {})
+    let classname = phpcomplete#GetClassName('$d->', '\', {})
+    call VUAssertEquals('DateTime', classname)
+
+    " built in class return values should not be affected by current namespace
+    exe ':4'
+    call phpcomplete#LoadData()
+    let classname = phpcomplete#GetClassName('$d->', 'Bar', {})
     call VUAssertEquals('DateTime', classname)
 
     exe ':7'
     call phpcomplete#LoadData()
-    let classname = phpcomplete#GetClassName('$d->', {'DT': {'name': 'DateTime', 'kind': 'c', 'builtin':1,}})
+    let classname = phpcomplete#GetClassName('$d->', '\', {'DT': {'name': 'DateTime', 'kind': 'c', 'builtin':1,}})
     call VUAssertEquals('DateTime', classname)
 
     silent! bw! %
 endf
 
 fun! TestCase_returns_class_from_static_method_call()
-    let classname = phpcomplete#GetClassName('FooClass::', {})
+    let classname = phpcomplete#GetClassName('FooClass::', '\', {})
     call VUAssertEquals('FooClass', classname)
 
-    let classname = phpcomplete#GetClassName('RenamedFoo::', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
+    let classname = phpcomplete#GetClassName('FooClass::', 'Bar', {})
+    call VUAssertEquals('Bar\FooClass', classname)
+
+    let classname = phpcomplete#GetClassName('RenamedFoo::', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 endf
 
@@ -170,7 +199,7 @@ fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_
     exe ":silent! edit ".path
     exe ':3'
 
-    let classname = phpcomplete#GetClassName('$foo_only_in_tags->', {})
+    let classname = phpcomplete#GetClassName('$foo_only_in_tags->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
     " TODO
@@ -181,53 +210,57 @@ fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_
 endf
 
 fun! TestCase_extract_typehint_from_function_calls()
+    call phpcomplete#LoadData()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/typehinted_functions.php"
     below 1new
     exe ":silent! edit ".path
-    exe ':4'
 
-    call phpcomplete#LoadData()
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    exe ':4'
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass1', classname)
 
+    " typehinds are affected by current namespace as everyting else
+    let classname = phpcomplete#GetClassName('$bar->', 'Bar', {})
+    call VUAssertEquals('Bar\FooClass1', classname)
+
     exe ':8'
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass2', classname)
 
     exe ':12'
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass3', classname)
 
     exe ':16'
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass4', classname)
 
     exe ':20'
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass5', classname)
 
     exe ':24'
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass6', classname)
 
     exe ':28'
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass7', classname)
 
     exe ':33'
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass8', classname)
 
     exe ':40'
-    let classname = phpcomplete#GetClassName('$bar->', {})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass9', classname, 'expect $baz to use type-hinting from class method')
 
     exe ':45'
-    let classname = phpcomplete#GetClassName('$baz->', {})
+    let classname = phpcomplete#GetClassName('$baz->', '\', {})
     call VUAssertEquals('FooClass10', classname, 'expect $baz to use type-hinting from class method')
 
     exe ':50'
-    let classname = phpcomplete#GetClassName('$bar->', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
+    let classname = phpcomplete#GetClassName('$bar->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
     silent! bw! %
@@ -239,15 +272,19 @@ fun! TestCase_extract_parameter_type_from_docblock()
     exe ":silent! edit ".path
 
     exe ':11'
-    let classname = phpcomplete#GetClassName('$bar1->', {})
+    let classname = phpcomplete#GetClassName('$bar1->', '\', {})
     call VUAssertEquals('BarClass1', classname)
 
+    exe ':11'
+    let classname = phpcomplete#GetClassName('$bar1->', 'Bar', {})
+    call VUAssertEquals('Bar\BarClass1', classname)
+
     exe ':27'
-    let classname = phpcomplete#GetClassName('$bar2->', {})
+    let classname = phpcomplete#GetClassName('$bar2->', '\', {})
     call VUAssertEquals('BarClass2', classname)
 
     exe ':39'
-    let classname = phpcomplete#GetClassName('$bar3->', {})
+    let classname = phpcomplete#GetClassName('$bar3->', '\', {})
     call VUAssertEquals('BarClass3', classname)
 
     silent! bw! %

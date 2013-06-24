@@ -113,11 +113,18 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if scontext =~ '\(->\|::\)$'
 		" {{{
 		" Get name of the class
-		let classname = phpcomplete#GetClassName(scontext, imports)
+		let classname = phpcomplete#GetClassName(scontext, current_namespace, imports)
 
 		" Get location of class definition, we have to iterate through all
 		if classname != ''
-			let [classname, namespace] = phpcomplete#ExpandClassName(classname, current_namespace, imports)
+			if classname =~ '\'
+				" split the last \ segment as a classname, everything else is the namespace
+				let classname_parts = split(classname, '\')
+				let namespace = join(classname_parts[0:-2], '\')
+				let classname = classname_parts[-1]
+			else
+				let = namespace = '\'
+			endif
 			let classlocation = phpcomplete#GetClassLocation(classname, namespace)
 		else
 			let classlocation = ''
@@ -899,7 +906,7 @@ function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#GetClassName(scontext, imports) " {{{
+function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	" Get class name
 	" Class name can be detected in few ways:
 	" @var $myVar class
@@ -911,6 +918,8 @@ function! phpcomplete#GetClassName(scontext, imports) " {{{
 	let function_name_pattern = '[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*'
 
 	let classname_candidate = ''
+	let class_candidate_namespace = a:current_namespace
+	let class_candidate_imports = a:imports
 
 	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
 		let i = 1
@@ -924,23 +933,25 @@ function! phpcomplete#GetClassName(scontext, imports) " {{{
 			endif
 
 			if line =~? '^\s*abstract\s*class'
-				let classname = matchstr(line, '^\s*abstract\s*class\s*\zs'.class_name_pattern.'\ze')
-				return classname
+				let classname_candidate = matchstr(line, '^\s*abstract\s*class\s*\zs'.class_name_pattern.'\ze')
 			elseif line =~? '^\s*class'
-				let classname = matchstr(line, '^\s*class\s*\zs'.class_name_pattern.'\ze')
-				return classname
+				let classname_candidate = matchstr(line, '^\s*class\s*\zs'.class_name_pattern.'\ze')
 			else
 				let i += 1
 				continue
 			endif
+
+			if classname_candidate != ''
+				let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, class_candidate_imports)
+				" return absolute classname, without leading \
+				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
+			endif
 		endwhile
 	elseif a:scontext =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
 		let classname_candidate = matchstr(a:scontext, '\cnew\s\+\zs'.class_name_pattern.'\ze')
-		if has_key(a:imports, classname_candidate) && a:imports[classname_candidate].kind == 'c'
-			return a:imports[classname_candidate].name
-		else
-			return classname_candidate
-		endif
+		let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, class_candidate_imports)
+		" return absolute classname, without leading \
+		return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 	else
 		" check Constant lookup
 		let constant_object = matchstr(a:scontext, '\zs'.class_name_pattern.'\ze::')
@@ -1028,11 +1039,9 @@ function! phpcomplete#GetClassName(scontext, imports) " {{{
 			let i += 1
 		endwhile
 		if classname_candidate != ''
-			if has_key(a:imports, classname_candidate) && a:imports[classname_candidate].kind == 'c'
-				return a:imports[classname_candidate].name
-			else
-				return classname_candidate
-			endif
+			let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, class_candidate_imports)
+			" return absolute classname, without leading \
+			return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 		endif
 
 		" OK, first way failed, now check tags file(s)
