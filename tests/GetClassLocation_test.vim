@@ -23,13 +23,13 @@ fun! TestCase_return_current_file_path_when_classname_found_in_previous_lines_of
 
     let path = expand('%:p:h').'/'.'fixtures/GetClassLocation/foo.class.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':6'
 
     let res = phpcomplete#GetClassLocation('Foo', '')
     call VUAssertEquals(path, res)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_return_class_location_from_tags()
@@ -38,11 +38,11 @@ fun! TestCase_return_class_location_from_tags()
 
     let path = expand('%:p:h').'/'.'fixtures/GetClassLocation/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':3'
 
     let res = phpcomplete#GetClassLocation('Foo', '')
     call VUAssertEquals('fixtures/GetClassLocation/foo.class.php', res)
 
-    bw! %
+    silent! bw! %
 endf

@@ -1,7 +1,7 @@
 fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo.class.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':6'
 
     let classname = phpcomplete#GetClassName('$this->', {})
@@ -11,13 +11,13 @@ fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
     let classname = phpcomplete#GetClassName('self::', {})
     call VUAssertEquals('FooClass', classname)
 
-    bw! %
+    silent! bw! %
 
     " detection should work with extra whitespace
     " around keywords or uppercase keywords
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_with_whitespace.class.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':10'
 
     let classname = phpcomplete#GetClassName('$this->', {})
@@ -27,13 +27,13 @@ fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
     let classname = phpcomplete#GetClassName('self::', {})
     call VUAssertEquals('FooClass', classname)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_returns_empty_when_sees_curlyclose_on_line_start()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_outside.class.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':6'
 
     let classname = phpcomplete#GetClassName('$this->', {})
@@ -43,13 +43,13 @@ fun! TestCase_returns_empty_when_sees_curlyclose_on_line_start()
     let classname = phpcomplete#GetClassName('self::', {})
     call VUAssertEquals('', classname)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_finds_abstract_classes()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_abstract.class.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':6'
 
     let classname = phpcomplete#GetClassName('$this->', {})
@@ -59,13 +59,13 @@ fun! TestCase_finds_abstract_classes()
     let classname = phpcomplete#GetClassName('self::', {})
     call VUAssertEquals('FooAbstract', classname)
 
-    bw! %
+    silent! bw! %
 
     " detection should work with extra whitespace
     " around keywords or uppercase keywords
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_abstract_with_whitespace.class.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':10'
 
     let classname = phpcomplete#GetClassName('$this->', {})
@@ -75,7 +75,7 @@ fun! TestCase_finds_abstract_classes()
     let classname = phpcomplete#GetClassName('self::', {})
     call VUAssertEquals('FooAbstract', classname)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_finds_new_keyword_instantiations_in_parentheses_from_php5_4()
@@ -86,7 +86,7 @@ endf
 fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/var_comment_mark.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':3'
 
     let classname = phpcomplete#GetClassName('$bar->', {})
@@ -100,13 +100,13 @@ fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
     let classname = phpcomplete#GetClassName('$bar3->', {'Renamed': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_finds_classes_from_variable_equals_new_class_lines()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_equals_new_foo.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     exe ':4'
     let classname = phpcomplete#GetClassName('$foo->', {})
@@ -116,13 +116,13 @@ fun! TestCase_finds_classes_from_variable_equals_new_class_lines()
     let classname = phpcomplete#GetClassName('$foo->', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_finds_common_singleton_getInstance_calls()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/singleton_getinstance.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     exe ':4'
     let classname = phpcomplete#GetClassName('$foo->', {})
@@ -132,13 +132,13 @@ fun! TestCase_finds_common_singleton_getInstance_calls()
     let classname = phpcomplete#GetClassName('$foo->', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_returns_return_type_of_built_in_objects_static_methods()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/builtin_static_return_type.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     exe ':4'
     call phpcomplete#LoadData()
@@ -150,7 +150,7 @@ fun! TestCase_returns_return_type_of_built_in_objects_static_methods()
     let classname = phpcomplete#GetClassName('$d->', {'DT': {'name': 'DateTime', 'kind': 'c', 'builtin':1,}})
     call VUAssertEquals('DateTime', classname)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_returns_class_from_static_method_call()
@@ -167,7 +167,7 @@ fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_
 
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_only_from_tags.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':3'
 
     let classname = phpcomplete#GetClassName('$foo_only_in_tags->', {})
@@ -177,13 +177,13 @@ fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_
     " exe ':5'
     " let classname = phpcomplete#GetClassName('$foo_only_in_tags::')
     " call VUAssertEquals('FooClass', classname)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_extract_typehint_from_function_calls()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/typehinted_functions.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
     exe ':4'
 
     call phpcomplete#LoadData()
@@ -230,13 +230,13 @@ fun! TestCase_extract_typehint_from_function_calls()
     let classname = phpcomplete#GetClassName('$bar->', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_extract_parameter_type_from_docblock()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/function_docblock.php"
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     exe ':11'
     let classname = phpcomplete#GetClassName('$bar1->', {})
@@ -250,5 +250,5 @@ fun! TestCase_extract_parameter_type_from_docblock()
     let classname = phpcomplete#GetClassName('$bar3->', {})
     call VUAssertEquals('BarClass3', classname)
 
-    bw! %
+    silent! bw! %
 endf

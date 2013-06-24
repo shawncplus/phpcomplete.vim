@@ -12,7 +12,7 @@ fun! TestCase_returns_class_properties_from_current_file()
     " load fixture with variables in it
     let path =  expand('%:p:h')."/".'fixtures/CompleteUnknownClass/foo_properties.class.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteUnknownClass("prop", "$a->")
 
@@ -20,7 +20,7 @@ fun! TestCase_returns_class_properties_from_current_file()
                 \ {'word': 'property1', 'info': ' ', 'kind': 'v'},
                 \ {'word': 'property2', 'info': ' ', 'kind': 'v'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_returns_functions_from_current_file()
@@ -29,7 +29,7 @@ fun! TestCase_returns_functions_from_current_file()
     " load fixture with methods and functions in it
     let path =  expand('%:p:h')."/".'fixtures/CompleteUnknownClass/foo_methods.class.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteUnknownClass("met", "$a->")
 
@@ -43,7 +43,7 @@ fun! TestCase_returns_functions_from_current_file()
                 \ {'word': 'method5(', 'info': 'method5($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \ {'word': 'method6(', 'info': 'method6($foo)', 'menu': '$foo)', 'kind': 'f'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_completes_function_signature_from_tags_if_field_available()
@@ -55,7 +55,7 @@ fun! TestCase_completes_function_signature_from_tags_if_field_available()
     " load an empty fixture so no local functions / variables show up
     let path =  expand('%:p:h')."/".'fixtures/CompleteUnknownClass/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteUnknownClass("method_with_", "$a->")
 
@@ -65,7 +65,7 @@ fun! TestCase_completes_function_signature_from_tags_if_field_available()
     call VUAssertEquals([
                 \ {'word': 'method_with_arguments(', 'info': "method_with_arguments($bar = 42, $foo = '') - fixtures/CompleteUnknownClass/irrelevant.class.php", 'menu': "$bar = 42, $foo = '') - fixtures/CompleteUnknownClass/irrelevant.class.php", 'kind': 'f'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_returns_functions_from_tags()
@@ -77,7 +77,7 @@ fun! TestCase_returns_functions_from_tags()
     " load an empty fixture so no local functions / variables show up
     let path =  expand('%:p:h')."/".'fixtures/CompleteUnknownClass/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteUnknownClass("fun", "$a->")
 
@@ -90,7 +90,7 @@ fun! TestCase_returns_functions_from_tags()
                 \ {'word': 'function3(', 'info': 'function3() - fixtures/CompleteUnknownClass/irrelevant.php', 'menu': ') - fixtures/CompleteUnknownClass/irrelevant.php', 'kind': 'f'},
                 \ {'word': 'function4(', 'info': 'function4() - fixtures/CompleteUnknownClass/irrelevant.php', 'menu': ') - fixtures/CompleteUnknownClass/irrelevant.php', 'kind': 'f'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_returns_built_in_object_functions()
@@ -99,7 +99,7 @@ fun! TestCase_returns_built_in_object_functions()
     " load an empty fixture so no local functions / variables show up
     let path =  expand('%:p:h')."/".'fixtures/CompleteUnknownClass/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     " disable built-in functions
     let g:php_builtin_object_functions = {
@@ -116,7 +116,7 @@ fun! TestCase_returns_built_in_object_functions()
                 \ 'menu': 'int $year, int $month, int $day | DateTime',
                 \ 'kind': 'f'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_returns_empty_list_when_unknown_class_completion_disabled()

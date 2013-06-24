@@ -1103,8 +1103,8 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	" remember the window we started at
 	let phpcomplete_original_window = winnr()
 
-	below 1new
-	0put =cfile
+	silent! below 1new
+	silent! 0put =cfile
 	call search('class\s\+'.a:name.'\(\>\|$\)')
 	let cfline = line('.')
 	call search('{')
@@ -1121,7 +1121,7 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 
 	let classcontent = join(getline(cfline, line('.')), "\n")
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
-	bw! %
+	silent! bw! %
 
 	" go back to original window
 	exe phpcomplete_original_window.'wincmd w'

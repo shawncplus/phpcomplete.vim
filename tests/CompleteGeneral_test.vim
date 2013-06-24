@@ -18,7 +18,7 @@ fun! TestCase_completes_functions_from_local_file() " {{{
     " load fixture with methods and functions in it
     let path =  expand('%:p:h').'/'.'fixtures/CompleteGeneral/functions.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteGeneral('common_', '\', {})
 
@@ -33,7 +33,7 @@ fun! TestCase_completes_functions_from_local_file() " {{{
                 \ {'word': 'common_public_static_method('             , 'info': 'common_public_static_method($foo)'                    , 'menu': '$foo)',      'kind': 'f'},
                 \ {'word': 'common_static_public_method('             , 'info': 'common_static_public_method($foo)'                    , 'menu': '$foo)',      'kind': 'f'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf " }}}
 
 fun! TestCase_completes_functions_classes_constants_from_tags() " {{{
@@ -71,14 +71,14 @@ fun! TestCase_completes_constants_from_local_file() " {{{
     " load fixture with methods and functions in it
     let path =  expand('%:p:h').'/'.'fixtures/CompleteGeneral/constants.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteGeneral('find', '\', {})
 
     call VUAssertEquals([
                 \ {'word': 'FINDME_FOO', 'kind': 'd', 'menu': '', 'info': 'FINDME_FOO'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf " }}}
 
 fun! TestCase_completes_builtin_functions() " {{{

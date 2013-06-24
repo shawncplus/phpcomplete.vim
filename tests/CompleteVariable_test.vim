@@ -11,7 +11,7 @@ fun! TestCase_complete_variables_from_current_file()
 
     let path =  expand('%:p:h')."/".'fixtures/CompleteVariable/local_variables.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteVariable('$find')
 
@@ -23,7 +23,7 @@ fun! TestCase_complete_variables_from_current_file()
                 \ {'word': '$find_me4', 'kind': 'v'}
                 \],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_complete_variables_built_in_global_variable()
@@ -32,7 +32,7 @@ fun! TestCase_complete_variables_built_in_global_variable()
     " disable local variables from current file
     let path =  expand('%:p:h')."/".'fixtures/CompleteVariable/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     " fill with test data '$this' is in the list to test that filtering
     " actually happens to the '$_' base
@@ -47,7 +47,7 @@ fun! TestCase_complete_variables_built_in_global_variable()
                 \ {'word': '$_GET', 'kind': 'v'},
                 \ {'word': '$_POST', 'kind': 'v'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_complete_variables_from_tags()
@@ -59,12 +59,12 @@ fun! TestCase_complete_variables_from_tags()
     " disable local variables from current file
     let path =  expand('%:p:h')."/".'fixtures/CompleteVariable/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteVariable('$find_')
     call VUAssertEquals([
                 \ {'word': '$find_instance_in_tags', 'info': '$find_instance_in_tags class foo', 'menu': 'foo', 'kind': 'v'},
                 \ {'word': '$find_variable_in_tags', 'kind': 'v'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf

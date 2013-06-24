@@ -11,14 +11,14 @@ fun! TestCase_complete_classes_from_current_file()
 
     let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/foo.class.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     let res = phpcomplete#CompleteClassName('', '\', {})
     call VUAssertEquals([
                 \ {'word': 'BarClass', 'kind': 'c'},
                 \ {'word': 'FooClass', 'kind': 'c'}],
                 \ res)
-    bw! %
+    silent! silent! bw! %
 endf
 
 fun! TestCase_complete_classes_from_tags()
@@ -30,14 +30,14 @@ fun! TestCase_complete_classes_from_tags()
     " open an empty file so no 'local' class will be picked up
     let path = expand('%:p:h')."/".'fixtures/CompleteClassName/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
 
     let res = phpcomplete#CompleteClassName('T', '\', {})
     call VUAssertEquals([
                 \ {'word': 'TagClass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_complete_classes_from_built_in_classes()
@@ -46,7 +46,7 @@ fun! TestCase_complete_classes_from_built_in_classes()
     " open an empty file so no 'local' class will be picked up
     let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     " set up example built-in list
     let g:php_builtin_classes = {
@@ -66,7 +66,7 @@ fun! TestCase_complete_classes_from_built_in_classes()
     call VUAssertEquals([
                 \ {'word': '\Datetime', 'menu': '', 'kind': 'c'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_adds_arguments_of_constructors_for_built_in_classes()
@@ -75,7 +75,7 @@ fun! TestCase_adds_arguments_of_constructors_for_built_in_classes()
     " open an empty file so no 'local' class will be picked up
     let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/empty.php'
     below 1new
-    exe ":edit ".path
+    exe ":silent! edit ".path
 
     " set up example built-in list
     let g:php_builtin_classes = {
@@ -90,7 +90,7 @@ fun! TestCase_adds_arguments_of_constructors_for_built_in_classes()
     call VUAssertEquals([
                 \ {'word': 'Datetime', 'menu': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'kind': 'c'}],
                 \ res)
-    bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_filters_class_names_with_the_namespaces_typed_in_base()
