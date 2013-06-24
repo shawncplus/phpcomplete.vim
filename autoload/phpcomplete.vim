@@ -1288,7 +1288,7 @@ endfunction!
 
 function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 	let namespace_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
-	let file_lines = reverse(a:file_lines)
+	let file_lines = reverse(copy(a:file_lines))
 	let i = 0
 	let file_length = len(file_lines)
 	let imports = {}
