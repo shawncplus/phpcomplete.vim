@@ -289,3 +289,56 @@ fun! TestCase_extract_parameter_type_from_docblock()
 
     silent! bw! %
 endf
+
+fun! TestCase_returns_static_function_calls_return_type()
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassName/static_docblock_return_tags'
+    let path = expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_return.php'
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':15'
+    let classname = phpcomplete#GetClassName('$u->', '\', {})
+    call VUAssertEquals('User', classname)
+
+    silent! bw! %
+endf
+
+fun! TestCase_returns_static_function_calls_retun_type_with_namespaces()
+    let imports = {'P':{'name': 'Foo\Page', 'builtin': 0, 'kind': 'c'}, 'RenamedFoo':{'name': 'Foo', 'kind': 'n', 'builtin': 0, }}
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
+    exe 'set tags='.expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_return_tags'
+    let path = expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_namespaced.php'
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':32'
+    let classname = phpcomplete#GetClassName('$p->', 'Foo', imports)
+    call VUAssertEquals('Foo\Page', classname)
+
+    exe ':35'
+    let classname = phpcomplete#GetClassName('$p->', 'Foo', imports)
+    call VUAssertEquals('Foo\Page', classname)
+
+    exe ':38'
+    let classname = phpcomplete#GetClassName('$p->', 'Foo', imports)
+    call VUAssertEquals('Foo\Page', classname)
+
+    exe ':41'
+    let classname = phpcomplete#GetClassName('$p->', 'Foo', imports)
+    call VUAssertEquals('Foo\Page', classname)
+
+    exe ':44'
+    let classname = phpcomplete#GetClassName('$p->', 'Foo', imports)
+    call VUAssertEquals('Foo\Page', classname)
+
+    exe ':47'
+    let classname = phpcomplete#GetClassName('$p->', 'Foo', imports)
+    call VUAssertEquals('Foo\Page', classname)
+
+    exe ':50'
+    let classname = phpcomplete#GetClassName('$p->', 'Foo', imports)
+    call VUAssertEquals('Foo\Page', classname)
+
+    silent! bw! %
+endf

@@ -995,7 +995,25 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 				if has_key(g:php_builtin_classes, classname) && has_key(g:php_builtin_classes[classname].static_methods, methodname)
 					return g:php_builtin_classes[classname].static_methods[methodname].return_type
 				else
-					" TODO: try getting the static class's docblock for return type
+					" try to get the class name from the static method's docblock
+					let [classname, namespace_for_class] = phpcomplete#ExpandClassName(classname, a:current_namespace, a:imports)
+					let classlocation = phpcomplete#GetClassLocation(classname, namespace_for_class)
+					if filereadable(classlocation)
+						let file_contents = readfile(classlocation)
+						" types in the docblock should be resolved as according to the namespace and import inside it's class's file
+						let [class_namespace, class_imports] = phpcomplete#GetCurrentNameSpace(file_contents)
+						let doc_str = phpcomplete#GetDocBlock(file_contents, 'function\s\+'.methodname)
+						if doc_str != ''
+							let docblock = phpcomplete#ParseDocBlock(doc_str)
+							if has_key(docblock.return, 'type')
+								" the class name in the comment can contain namespaces, so we have to resolve that string too
+								let [classname, namespace_for_class] = phpcomplete#ExpandClassName(docblock.return.type, class_namespace, class_imports)
+								let classname_candidate = classname
+								let class_candidate_namespace = class_namespace
+								let class_candidate_imports = class_imports
+							endif
+						endif
+					endif
 					break
 				endif
 			endif
