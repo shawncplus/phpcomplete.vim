@@ -123,7 +123,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 				let namespace = join(classname_parts[0:-2], '\')
 				let classname = classname_parts[-1]
 			else
-				let = namespace = '\'
+				let namespace = '\'
 			endif
 			let classlocation = phpcomplete#GetClassLocation(classname, namespace)
 		else
@@ -1056,6 +1056,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 
 			let i += 1
 		endwhile
+
 		if classname_candidate != ''
 			let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, class_candidate_imports)
 			" return absolute classname, without leading \
