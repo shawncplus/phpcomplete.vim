@@ -18,7 +18,7 @@ fun! TestCase_complete_classes_from_current_file()
                 \ {'word': 'BarClass', 'kind': 'c'},
                 \ {'word': 'FooClass', 'kind': 'c'}],
                 \ res)
-    silent! silent! bw! %
+    silent! bw! %
 endf
 
 fun! TestCase_complete_classes_from_tags()

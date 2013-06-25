@@ -79,9 +79,8 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 			while start >= 0 && line[start - 1] =~ '[\\a-zA-Z_0-9\x7f-\xff$]'
 				let start -= 1
 			endwhile
-			let b:compl_context = getline('.')[0:compl_begin]
+			let b:compl_context = phpcomplete#GetCurrentInstruction(phpbegin)
 			return start
-
 			" We can be also inside of phpString with HTML tags. Deal with
 			" it later (time, not lines).
 		endif
@@ -906,6 +905,46 @@ function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
 endfunction
 " }}}
 
+" locate the current instruction (up until the previous non comment or string ";" or php region start (<?php or <?) without newlines
+function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
+	let line = getline('.')
+	let col_number = col('.') - 1
+	let line_number = line('.')
+	let instruction = ''
+
+	let phpbegin_length = len(matchstr(getline(a:phpbegin[0]), '\zs<?\(php\)\?\ze'))
+	let phpbegin_end = [a:phpbegin[0], a:phpbegin[1] - 1 + phpbegin_length]
+
+	while !(line_number == 1 && col_number == 1)
+		let current_char = line[col_number]
+		let synIDName = synIDattr(synID(line_number, col_number + 1, 0), 'name')
+
+		" skip comments
+		if synIDName =~? 'comment'
+			let current_char = ''
+		endif
+		" break if we are reached the previous statemenet
+		if current_char == ';' && synIDName !~? 'comment\|string'
+			break
+		endif
+		" break if we are reached the php block start (<?php or <?)
+		if [line_number, col_number] == phpbegin_end
+			break
+		endif
+
+		let instruction = current_char.instruction
+
+		" step a char or a line back if we are on the first column of the line already
+		let col_number -= 1
+		if col_number == -1
+			let line_number -= 1
+			let line = getline(line_number)
+			let col_number = strlen(line)
+		endif
+	endwhile
+	return instruction
+endf " }}}
+
 function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	" Get class name
 	" Class name can be detected in few ways:
@@ -960,7 +999,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 		endif
 
 		"extract the variable name from the context
-		let object = matchstr(a:scontext, '\zs'.class_name_pattern.'\ze\(::\|->\)')
+		let object = matchstr(a:scontext, '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
 
 		" scan the file backwards from the current line
 		let i = 1
