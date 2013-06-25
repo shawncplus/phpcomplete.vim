@@ -26,5 +26,11 @@ fun! TestCase_returns_instuction_string()
                 \ res,
                 \ 'semicolons in comments or string should be ignored')
 
+    call cursor(37, 6)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '$some->foo = $some_long_variable->love()->me()->love()->me()->say()->that()->you()->love',
+                \ res)
+
     silent! bw! %
 endf

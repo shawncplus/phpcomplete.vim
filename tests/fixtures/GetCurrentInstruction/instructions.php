@@ -23,3 +23,15 @@ array_merge(
     $some_variable,
     $object->call // cursor just before the comment
 );
+
+
+
+$some->foo = $some_long_variable
+->love()
+->me()
+->love()
+->me()
+->say()
+->that()
+->you()
+->love // cursor just before comment

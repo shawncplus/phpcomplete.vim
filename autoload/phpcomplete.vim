@@ -102,7 +102,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		unlet! b:compl_context
 	endif
 
-	let scontext = substitute(context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
+	let scontext = phpcomplete#GetSubContext(context)
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
 
 	if context =~? '^\s*use\s\+'
@@ -905,8 +905,8 @@ function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
 endfunction
 " }}}
 
-" locate the current instruction (up until the previous non comment or string ";" or php region start (<?php or <?) without newlines
 function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
+	" locate the current instruction (up until the previous non comment or string ";" or php region start (<?php or <?) without newlines
 	let line = getline('.')
 	let col_number = col('.') - 1
 	let line_number = line('.')
@@ -943,7 +943,31 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 		endif
 	endwhile
 	return instruction
-endf " }}}
+endfunction " }}}
+
+function! phpcomplete#GetSubContext(context) " {{{
+	" chop down the last part of the context, this is basically the completion base
+	let scontext = substitute(a:context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
+
+	" normalize context for the first variable
+	let i = len(scontext) + 1
+	let re = ''
+	while i > 0
+		let i -= 1
+		let char = scontext[i]
+		" ignore whitespace
+		if char =~ '\s'
+			continue
+		endif
+		" chars that should stop the variable search
+		if char == '=' || char == ','
+			break
+		endif
+
+		let re = char.re
+	endwhile
+	return re
+endfunction " }}}
 
 function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	" Get class name
