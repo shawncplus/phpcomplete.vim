@@ -5,15 +5,18 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
  * Real support for `self::` and `$this->` with the aforementioned context restriction
  * Constant variable completion (not just `define(VARIABLE, 1)` but `const VARIABLE = 1`)
  * Better class detection:
-	 - Recognize `/* @var $yourvar YourClass */` type mark comments.
-	 - Recognize `$instance = new Class;` class instantiations.
-	 - Recognize `$instance = Class::getInstance();` singleton instances.
-	 - Recognize `$date = DateTime::createFromFormat(...)` built-in class return types.
-	 - Recognize type hinting in function prototypes.
+	 - Recognize `/* @var $yourvar YourClass */` type mark comments
+	 - Recognize `$instance = new Class;` class instantiations
+	 - Recognize `$instance = Class::getInstance();` singleton instances
+	 - Recognize `$date = DateTime::createFromFormat(...)` built-in class return types
+	 - Recognize type hinting in function prototypes
+     - Recognize types in `@param` lines in function docblocks
+     - Recognize `$object = SomeClass::staticCall(...)` return types from docblocks
  * Displays docblock info in the preview for methods and properties
  * Updated built-in class support with constants, methods and properties
  * Updated list of PHP constants
  * Updated list of built-in PHP functions
+ * Namespace support (**Requires** [patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Patched-ctags))
 
 ## Install
 
