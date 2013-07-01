@@ -955,8 +955,8 @@ function! phpcomplete#GetSubContext(context) " {{{
 	while i > 0
 		let i -= 1
 		let char = scontext[i]
-		" ignore whitespace
-		if char =~ '\s'
+		" ignore newlines
+		if char == "\n"
 			continue
 		endif
 		" chars that should stop the variable search
@@ -966,7 +966,7 @@ function! phpcomplete#GetSubContext(context) " {{{
 
 		let re = char.re
 	endwhile
-	return re
+	return substitute(re, '^\s\+\|\s\+$', '', 'g')
 endfunction " }}}
 
 function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
