@@ -5,4 +5,5 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	Development	//
 Foo	foo.class.php	/^class Foo {$/;"	c
+FooInterface	foo.class.php	/^interface Foo {$/;"	i
 bar	foo.class.php	/^    public function bar() {$/;"	f	class:Foo	access:public	signature:()

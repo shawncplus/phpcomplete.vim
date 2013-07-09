@@ -5,6 +5,8 @@ class Foo {
 const ZAP = '';
 function bar(){}
 
+interface FooInterface {
+}
 
 
 namespace NS1\SUBNS;

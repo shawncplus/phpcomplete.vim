@@ -44,5 +44,8 @@ fun! TestCase_return_class_location_from_tags()
     let res = phpcomplete#GetClassLocation('Foo', '')
     call VUAssertEquals('fixtures/GetClassLocation/foo.class.php', res)
 
+    let res = phpcomplete#GetClassLocation('FooInterface', '')
+    call VUAssertEquals('fixtures/GetClassLocation/foo.class.php', res)
+
     silent! bw! %
 endf

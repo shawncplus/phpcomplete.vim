@@ -1166,7 +1166,7 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 	let no_namespace_candidate = ''
 	let tags = taglist('^'.a:classname.'$')
 	for tag in tags
-		if tag.kind ==? 'c'
+		if tag.kind == 'c' || tag.kind == 'i'
 			if !has_key(tag, 'namespace')
 				let no_namespace_candidate = tag.filename
 			else
@@ -1196,7 +1196,7 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 
 	silent! below 1new
 	silent! 0put =cfile
-	call search('class\s\+'.a:name.'\(\>\|$\)')
+	call search('\(class\|interface\)\s\+'.a:name.'\(\>\|$\)')
 	let cfline = line('.')
 	call search('{')
 	let endline = line('.')
@@ -1481,7 +1481,7 @@ endfunction
 
 function! phpcomplete#ExpandClassName(classname, current_namespace, imports) " {{{
 	" if there's an imported class, just use that class's information
-	if has_key(a:imports, a:classname) && a:imports[a:classname].kind == 'c'
+	if has_key(a:imports, a:classname) && (a:imports[a:classname].kind == 'c' || a:imports[a:classname].kind == 'i')
 		let namespace = has_key(a:imports[a:classname], 'namespace') ? a:imports[a:classname].namespace : ''
 		return [a:imports[a:classname].name, namespace]
 	endif
