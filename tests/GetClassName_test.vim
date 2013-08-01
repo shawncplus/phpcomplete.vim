@@ -96,8 +96,8 @@ fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/var_comment_mark.php"
     below 1new
     exe ":silent! edit ".path
-    exe ':3'
 
+    exe ':3'
     let classname = phpcomplete#GetClassName('$bar->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
@@ -111,6 +111,10 @@ fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
     exe ':9'
     let classname = phpcomplete#GetClassName('$bar3->', '\', {'Renamed': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
+
+    exe ':13'
+    let classname = phpcomplete#GetClassName('$foo_conflicting_sources->', '\', {})
+    call VUAssertEquals('Foo', classname, 'when multiple sources available for the class name, explicit marker takes precedence')
 
     silent! bw! %
 endf
