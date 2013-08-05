@@ -969,6 +969,42 @@ function! phpcomplete#GetSubContext(context) " {{{
 	return substitute(re, '^\s\+\|\s\+$', '', 'g')
 endfunction " }}}
 
+function! phpcomplete#ResolveNestedReturnValue(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
+	let classname_candidate = a:classname_candidate 
+	let class_candidate_namespace = a:class_candidate_namespace 
+	if (len(a:methodstack) == 1) 
+		let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(a:classname_candidate, a:class_candidate_namespace, a:imports)
+		return [classname_candidate, class_candidate_namespace]
+	else 
+		" Remove the first item from the stack
+		call remove(a:methodstack, 0)
+
+		let classlocation = phpcomplete#GetClassLocation(a:classname_candidate, a:class_candidate_namespace)
+		if filereadable(classlocation)
+			let classfile = readfile(classlocation)
+			let classcontent = "\n".phpcomplete#GetClassContents(classfile, a:classname_candidate)
+
+			" Read the next method from the stack and extract only the name
+			let method = matchstr(a:methodstack[0], '\zs\a\+\ze')
+
+			" try to find the method's return type in docblock comment
+			let doc_str = phpcomplete#GetDocBlock(split(classcontent, "\n"), 'function\s*\<' . method . '\>')
+
+			if doc_str != ''
+				let docblock = phpcomplete#ParseDocBlock(doc_str)
+				if has_key(docblock.return, 'type')
+					" Get the full namespace of the return type
+					let fullnamespace = matchstr(classcontent, 'use\s\+\zs[A-Za-z0-9\\]\+\ze\\' . docblock.return.type . ';')
+					let [classname_candiate, class_candidate_namespace] = phpcomplete#ExpandClassName(docblock.return.type, fullnamespace, a:imports)
+				endif
+			endif
+			return phpcomplete#ResolveNestedReturnValue(classname_candiate, class_candidate_namespace, a:imports, a:methodstack)					
+		endif
+	endif
+
+endfunction " }}}
+
+
 function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	" Get class name
 	" Class name can be detected in few ways:
@@ -983,6 +1019,8 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	let classname_candidate = ''
 	let class_candidate_namespace = a:current_namespace
 	let class_candidate_imports = a:imports
+
+	let methodstack = split(a:scontext, '->')
 
 	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
 		let i = 1
@@ -1005,7 +1043,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 			endif
 
 			if classname_candidate != ''
-				let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, class_candidate_imports)
+				let [classname_candidate, class_candidate_namespace] = phpcomplete#ResolveNestedReturnValue(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
 				" return absolute classname, without leading \
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
@@ -1222,7 +1260,8 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	endif
 	normal! %
 
-	let classcontent = join(getline(cfline, line('.')), "\n")
+	" Getting classcontent from line 0, to also include the namspace and use statements
+	let classcontent = join(getline(0, line('.')), "\n")
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
 	silent! bw! %
 
@@ -1457,13 +1496,14 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 						if tag.kind == 'n' && tag.name == import.name
 							call extend(import, tag)
 							let import['builtin'] = 0
+							break
 						endif
 						" if the name matches with the extracted classname and namespace
 						if (tag.kind == 'c' || tag.kind == 'i') && tag.name == classname && has_key(tag, 'namespace') && tag.namespace == namespace_for_classes
 							call extend(import, tag)
 							let import['builtin'] = 0
+							break
 						endif
-						break
 					endfor
 				else
 					" if no \ in the name, it can be a built in class
