@@ -1020,8 +1020,6 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	let class_candidate_namespace = a:current_namespace
 	let class_candidate_imports = a:imports
 
-	let methodstack = split(a:scontext, '->')
-
 	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
 		let i = 1
 		while i < line('.')
@@ -1043,7 +1041,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 			endif
 
 			if classname_candidate != ''
-				let [classname_candidate, class_candidate_namespace] = phpcomplete#ResolveNestedReturnValue(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
+				let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, class_candidate_imports)
 				" return absolute classname, without leading \
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
@@ -1260,8 +1258,7 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	endif
 	normal! %
 
-	" Getting classcontent from line 0, to also include the namspace and use statements
-	let classcontent = join(getline(0, line('.')), "\n")
+	let classcontent = join(getline(cfline, line('.')), "\n")
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
 	silent! bw! %
 
