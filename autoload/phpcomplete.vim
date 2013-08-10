@@ -248,8 +248,8 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 	let int_constants = {}
 	for i in int_values
 		let c_name = matchstr(i, '\(["'']\)\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze\1')
-		if c_name != '' && c_name =~ '^'.substitute(a:base, '\\', '\\\\', 'g')
-			let int_constants[leading_slash.c_name] = '' " c_value
+		if c_name != '' && c_name =~# '^'.substitute(a:base, '\\', '\\\\', 'g')
+			let int_constants[leading_slash.c_name] = ''
 		endif
 	endfor
 
@@ -265,11 +265,11 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 
 	let tags = []
 	if len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && tag_match_pattern != namespace_match_pattern
-		let tags = taglist('^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
+		let tags = taglist('\c^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
 	elseif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = taglist('^'.namespace_match_pattern)
+		let tags = taglist('\c^'.namespace_match_pattern)
 	elseif len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = taglist('^'.tag_match_pattern)
+		let tags = taglist('\c^'.tag_match_pattern)
 	endif
 
 	for tag in tags
@@ -585,7 +585,7 @@ function! phpcomplete#CompleteVariable(base) " {{{
 	let int_vals = split(jfile, '\ze\$')
 	let int_vars = {}
 	for i in int_vals
-		if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
+		if i =~? '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
 			let val = matchstr(i,
 						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
 		else
@@ -601,14 +601,14 @@ function! phpcomplete#CompleteVariable(base) " {{{
 
 	" ctags has support for PHP, use tags file for external variables
 	let ext_vars = {}
-	let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
+	let tags = taglist('\C^'.substitute(a:base, '^\$', '', ''))
 	for tag in tags
 		if tag.kind ==? 'v'
 			let item = tag.name
 			let m_menu = ''
-			if tag.cmd =~ tag['name'].'\s*=\s*new\s\+'
+			if tag.cmd =~? tag['name'].'\s*=\s*new\s\+'
 				let m_menu = matchstr(tag.cmd,
-							\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+							\ '\c=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
 			endif
 			let ext_vars['$'.item] = m_menu
 		endif
@@ -617,7 +617,7 @@ function! phpcomplete#CompleteVariable(base) " {{{
 	call extend(int_vars, ext_vars)
 
 	for m in sort(keys(int_vars))
-		if m =~ '^\'.a:base
+		if m =~# '^\'.a:base
 			call add(res, m)
 		endif
 	endfor
@@ -1034,9 +1034,9 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 			endif
 
 			if line =~? '^\s*abstract\s*class'
-				let classname_candidate = matchstr(line, '^\s*abstract\s*class\s*\zs'.class_name_pattern.'\ze')
+				let classname_candidate = matchstr(line, '\c^\s*abstract\s*class\s*\zs'.class_name_pattern.'\ze')
 			elseif line =~? '^\s*class'
-				let classname_candidate = matchstr(line, '^\s*class\s*\zs'.class_name_pattern.'\ze')
+				let classname_candidate = matchstr(line, '\c^\s*class\s*\zs'.class_name_pattern.'\ze')
 			else
 				let i += 1
 				continue
@@ -1135,7 +1135,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 			"   - the function can have a name or be anonymous (e.g., function qux() { ... } vs. function () { ... })
 			"   - the type-hinted argument can be anywhere in the arguments list.
 			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+\$'.object
-				let f_args = matchstr(line, 'function\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
+				let f_args = matchstr(line, '\cfunction\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
 				let args = split(f_args, '\s*\zs,\ze\s*')
 				for arg in args
 					if arg =~# '\$'.object.'\(,\|$\)'
