@@ -751,9 +751,9 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 	let c_doc = {}
 	for i in functions
 		let f_name = matchstr(i,
-					\ '^&\?\s*\(\(static\|public\|protected\|private\)\s*\)*function\s*\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+					\ 'function\s*&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		let f_args = matchstr(i,
-					\ '^&\?\s*\(\(static\|public\|protected\|private\)\s*\)*function\s*[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|\_$\)')
+					\ 'function\s*&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|\_$\)')
 		if f_name != ''
 			let c_functions[f_name.'('] = f_args
 			if g:phpcomplete_parse_docblock_comments
