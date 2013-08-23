@@ -732,20 +732,19 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 	let res  = []
 
 	" limit based on context to static or normal methods
+    let static_con = ''
 	if a:scontext =~ '::'
 		if g:phpcomplete_relax_static_constraint == 1
-			let functions = filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . a:classAccess . '\\)*\\|\\(' . a:classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
-			let functions += filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\s\\+\\)*function"')
-		else
-			let functions = filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . a:classAccess . '\\)*\\|\\(' . a:classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
+            let static_con = ''
+        else
+            let static_con = '\\(.*\\<static\\>\\)\\@='
 		endif
 	elseif a:scontext =~ '->'
-		let functions = filter(deepcopy(a:sccontent),
-					\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\s\\+\\)*function"')
+        let static_con = '\\(.*\\<static\\>\\)\\@!'
 	endif
+
+    let functions = filter(deepcopy(a:sccontent),
+                \ 'v:val =~ "^\\s*\\(.*\\<' . a:classAccess . '\\>\\)\\@=' . static_con . '\\(public\\|protected\\|private\\|static\\|final\\|abstract\\|\\s\\)\\+function"')
 
 	let c_functions = {}
 	let c_doc = {}
