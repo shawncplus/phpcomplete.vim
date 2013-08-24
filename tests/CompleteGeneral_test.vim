@@ -39,7 +39,7 @@ endf " }}}
 fun! TestCase_completes_functions_classes_constants_from_tags() " {{{
     call SetUp()
     exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteGeneral/tags'
-    let res = phpcomplete#CompleteGeneral('common_', '\', {})
+    let res = phpcomplete#CompleteGeneral('COMMON_', '\', {})
 
     call VUAssertEquals([
                 \ {'word': 'COMMON_FOO',                                'info': 'COMMON_FOO - fixtures/CompleteGeneral/foo.php',                                          'menu': ' - fixtures/CompleteGeneral/foo.php',           'kind': 'd'},
@@ -73,7 +73,7 @@ fun! TestCase_completes_constants_from_local_file() " {{{
     below 1new
     exe ":silent! edit ".path
 
-    let res = phpcomplete#CompleteGeneral('find', '\', {})
+    let res = phpcomplete#CompleteGeneral('FIND', '\', {})
 
     call VUAssertEquals([
                 \ {'word': 'FINDME_FOO', 'kind': 'd', 'menu': '', 'info': 'FINDME_FOO'}],

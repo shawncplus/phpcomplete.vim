@@ -19,7 +19,22 @@ class UserClass {
     public function public_method($foo) {
     }
 
+    public function &public_method_with_amp($foo)
+    {
+
+    }
+
+    public final function public_final_method($foo, $anotherfoo = '')
+    {
+
+    }
+
     private function private_method($foo) {
+    }
+
+    final private function final_private_method($foo = null)
+    {
+
     }
 
     protected function protected_method($foo) {
@@ -31,9 +46,25 @@ class UserClass {
     static public function static_public_method($foo) {
     }
 
+    public final static function public_final_static_method( $foo, $anotherfoo = array() )
+    {
+
+    }
+
+    final static public function final_static_public_method()
+    {
+
+    }
+
     private static function private_static_method($foo) {
     }
 
     protected static function protected_static_method($foo) {
     }
+
+    static final protected function static_final_protected_method()
+    {
+
+    }
 }
+

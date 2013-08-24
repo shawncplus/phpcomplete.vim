@@ -4,6 +4,6 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+dont_find_variable_in_tags	irrelevant.php	/^$dont_find_variable_in_tags = 42;$/;"	v
 find_instance_in_tags	irrelevant.php	/^$find_instance_in_tags = new foo;$/;"	v
 find_variable_in_tags	irrelevant.php	/^$find_variable_in_tags = 42;$/;"	v
-dont_find_variable_in_tags	irrelevant.php	/^$dont_find_variable_in_tags = 42;$/;"	v

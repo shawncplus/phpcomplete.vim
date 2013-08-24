@@ -346,3 +346,53 @@ fun! TestCase_returns_static_function_calls_retun_type_with_namespaces()
 
     silent! bw! %
 endf
+
+fun! TestCase_returns_nested_returntypes_from_this()
+
+	let g:php_builtin_classes = {}
+	let g:php_builtin_classnames = {}
+
+	let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_method_chains.php"
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':89'
+    let classname = phpcomplete#GetClassName('$this->', 'FooNS', {})
+    call VUAssertEquals('FooNS\Foo', classname)
+
+    exe ':85'
+    let classname = phpcomplete#GetClassName('$this->getSomething()->', 'FooNS', {})
+    call VUAssertEquals('FooNS\SomethingNS\Something', classname)
+
+    exe ':53'
+    let classname = phpcomplete#GetClassName('$this->getSomething()->', 'FooNS\SubNameSpace', {})
+    call VUAssertEquals('FooNS\SomethingNS\Something', classname)
+
+    silent! bw! %
+endf
+
+fun! TestCase_returns_nested_returntypes_from_this_with_tags()
+
+	let g:php_builtin_classes = {}
+	let g:php_builtin_classnames = {}
+
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassName/tags_inheritance'
+	let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_inheritance_level1.php"
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':13'
+    let classname = phpcomplete#GetClassName('$this->', 'NS1\SubNS2', {})
+    call VUAssertEquals('NS1\SubNS2\Level1', classname)
+
+    exe ':14'
+    let classname = phpcomplete#GetClassName('$this->getLevel31Instance()->', 'NS1\SubNS2', {})
+    call VUAssertEquals('NS31\SubNS\Level31', classname)
+
+    exe ':15'
+    let classname = phpcomplete#GetClassName('$this->getAnother31Instance()->', 'NS1\SubNS2', {})
+    call VUAssertEquals('NS31\SubNS\Level31', classname)
+
+    silent! bw! %
+endf
+
