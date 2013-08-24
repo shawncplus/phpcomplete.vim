@@ -732,29 +732,27 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 	let res  = []
 
 	" limit based on context to static or normal methods
+    let static_con = ''
 	if a:scontext =~ '::'
 		if g:phpcomplete_relax_static_constraint == 1
-			let functions = filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . a:classAccess . '\\)*\\|\\(' . a:classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
-			let functions += filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\s\\+\\)*function"')
-		else
-			let functions = filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . a:classAccess . '\\)*\\|\\(' . a:classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
+            let static_con = ''
+        else
+            let static_con = '\\(.*\\<static\\>\\)\\@='
 		endif
 	elseif a:scontext =~ '->'
-		let functions = filter(deepcopy(a:sccontent),
-					\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\s\\+\\)*function"')
+        let static_con = '\\(.*\\<static\\>\\)\\@!'
 	endif
 
-	let sfuncs = split(join(functions, ' '), 'function\s\+')
+    let functions = filter(deepcopy(a:sccontent),
+                \ 'v:val =~ "^\\s*\\(.*\\<' . a:classAccess . '\\>\\)\\@=' . static_con . '\\(public\\|protected\\|private\\|static\\|final\\|abstract\\|\\s\\)\\+function"')
+
 	let c_functions = {}
 	let c_doc = {}
-	for i in sfuncs
+	for i in functions
 		let f_name = matchstr(i,
-					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+					\ 'function\s*&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		let f_args = matchstr(i,
-					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+					\ 'function\s*&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|\_$\)')
 		if f_name != ''
 			let c_functions[f_name.'('] = f_args
 			if g:phpcomplete_parse_docblock_comments
