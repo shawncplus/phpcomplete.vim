@@ -1,0 +1,3261 @@
+
+line 29: ^I^I^I^I^Icall {sFoo}()
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces()
+
+line 1:     call SetUp()
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..SetUp()
+
+line 1:     " disable built-in functions
+line 2:     let g:php_builtin_classnames = {}
+line 3:     " disable built-in functions
+line 4:     let g:php_builtin_functions = {}
+line 5:     " disable built-in constants
+line 6:     let g:php_constants = {}
+line 7:     " disable php keywords
+line 8:     let g:php_keywords = {}
+line 9:     " disable tags
+line 10:     exe ':set tags='
+line 10: :set tags=
+line 11:     " set related options to it's default
+line 12:     let g:phpcomplete_min_num_of_chars_for_namespace_completion = 1
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..SetUp returning #0
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces
+
+line 2:     exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteGeneral/namespaced_tags'
+line 2: :set tags=/Users/oliver/.vim/bundle/phpcomplete.vim/tests/fixtures/CompleteGeneral/namespaced_tags
+line 3: 
+line 4:     " this is where class name part must have at least the configured amount
+line 5:     " of letters to start matching
+line 6:     let g:phpcomplete_min_num_of_chars_for_namespace_completion = 1
+line 7: 
+line 8:     let res = phpcomplete#CompleteGeneral('F', 'NS1', {})
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral('F', 'NS1', {})
+
+line 1: ^I" Complete everything else -
+line 2: ^I"  + functions,  DONE
+line 3: ^I"  + keywords of language DONE
+line 4: ^I"  + defines (constant definitions), DONE
+line 5: ^I"  + extend keywords for predefined constants, DONE
+line 6: ^I"  + classes (after new), DONE
+line 7: ^I"  + limit choice after -> and :: to funcs and vars DONE
+line 8: 
+line 9: ^I" Internal solution for finding functions in current file.
+line 10: 
+line 11: ^Iif a:base =~? '^\'
+line 12: ^I^Ilet leading_slash = '\'
+line 13: ^Ielse
+line 14: ^I^Ilet leading_slash = ''
+line 15: ^Iendif
+line 16: 
+line 17: ^Ilet file = getline(1, '$')
+line 18: ^Icall filter(file, 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
+line 20: ^Ilet jfile = join(file, ' ')
+line 21: ^Ilet int_values = split(jfile, 'function\s\+')
+line 22: ^Ilet int_functions = {}
+line 23: ^Ifor i in int_values
+line 24: ^I^Ilet f_name = matchstr(i, '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+line 26: ^I^Iif f_name =~? '^'.substitute(a:base, '\\', '\\\\', 'g')
+line 27: ^I^I^Ilet f_args = matchstr(i, '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+line 29: ^I^I^Ilet int_functions[f_name.'('] = f_args.')'
+line 30: ^I^Iendif
+line 31: ^Iendfor
+line 32: 
+line 33: ^I" Internal solution for finding constants in current file
+line 34: ^Ilet file = getline(1, '$')
+line 35: ^Icall filter(file, 'v:val =~ "define\\s*("')
+line 36: ^Ilet jfile = join(file, ' ')
+line 37: ^Ilet int_values = split(jfile, 'define\s*(\s*')
+line 38: ^Ilet int_constants = {}
+line 39: ^Ifor i in int_values
+line 40: ^I^Ilet c_name = matchstr(i, '\(["'']\)\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze\1')
+line 41: ^I^Iif c_name != '' && c_name =~# '^'.substitute(a:base, '\\', '\\\\', 'g')
+line 42: ^I^I^Ilet int_constants[leading_slash.c_name] = ''
+line 43: ^I^Iendif
+line 44: ^Iendfor
+line 45: 
+line 46: ^I" Prepare list of functions from tags file
+line 47: ^Ilet ext_functions  = {}
+line 48: ^Ilet ext_constants  = {}
+line 49: ^Ilet ext_classes    = {}
+line 50: ^Ilet ext_namespaces = {}
+line 51: 
+line 52: ^Ilet base = substitute(a:base, '^\\', '', '')
+line 53: ^Ilet [tag_match_pattern, namespace_for_tag] = phpcomplete#ExpandClassName(a:base, a:current_namespace, a:imports)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#ExpandClassName('F', 'NS1', {})
+
+line 1: ^I" if there's an imported class, just use that class's information
+line 2: ^Iif has_key(a:imports, a:classname) && (a:imports[a:classname].kind == 'c' || a:imports[a:classname].kind == 'i')
+line 3: ^I^Ilet namespace = has_key(a:imports[a:classname], 'namespace') ? a:imports[a:classname].namespace : ''
+line 4: ^I^Ireturn [a:imports[a:classname].name, namespace]
+line 5: ^Iendif
+line 6: 
+line 7: ^I" try to find relative namespace in imports, imported names takes precedence over
+line 8: ^I" current namespace when resolving relative namespaced class names
+line 9: ^Iif a:classname !~ '^\' && a:classname =~ '\\'
+line 10: ^I^Ilet classname_parts = split(a:classname, '\\\+')
+line 11: ^I^Iif has_key(a:imports, classname_parts[0]) && a:imports[classname_parts[0]].kind == 'n'
+line 12: ^I^I^Ilet classname_parts[0] = a:imports[classname_parts[0]].name
+line 13: ^I^I^Ilet namespace = join(classname_parts[0:-2], '\')
+line 14: ^I^I^Ilet classname = classname_parts[-1]
+line 15: ^I^I^Ireturn [classname, namespace]
+line 16: ^I^Iendif
+line 17: ^Iendif
+line 18: 
+line 19: ^I" no imported class or namespace matched, expand with the current namespace
+line 20: ^Ilet namespace = ''
+line 21: ^Ilet classname = a:classname
+line 22: ^I" if the classname have namespaces in in or we are in a namespace
+line 23: ^Iif a:classname =~ '\\' || a:current_namespace != '\'
+line 24: ^I^I" add current namespace to the a:classname
+line 25: ^I^Iif a:classname !~ '^\'
+line 26: ^I^I^Ilet classname = a:current_namespace.'\'.substitute(a:classname, '^\\', '', '')
+line 27: ^I^Ielse
+line 28: ^I^I^I" remove leading \, tag files doesn't have those
+line 29: ^I^I^Ilet classname = substitute(a:classname, '^\\', '', '')
+line 30: ^I^Iendif
+line 31: ^I^I" split classname to classname and namespace
+line 32: ^I^Ilet classname_parts = split(classname, '\\\+')
+line 33: ^I^Iif len(classname_parts) > 1
+line 34: ^I^I^Ilet namespace = join(classname_parts[0:-2], '\')
+line 35: ^I^I^Ilet classname = classname_parts[-1]
+line 36: ^I^Iendif
+line 37: ^Iendif
+line 38: ^Ireturn [classname, namespace]
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#ExpandClassName returning ['F', 'NS1']
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral
+
+line 54: ^Ilet namespace_match_pattern  = substitute((namespace_for_tag == '' ? '' : namespace_for_tag.'\').tag_match_pattern, '\\', '\\\\', 'g')
+line 55: 
+line 56: ^Ilet tags = []
+line 57: ^Iif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && tag_match_pattern != namespace_match_pattern
+line 58: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#GetCachedTaglist('\c^\(F\|NS1\\F\)')
+
+line 1: ^Iif has_key(s:cache_tags, a:pattern)
+line 2: ^I^Ilet tags = s:cache_tags[a:pattern]
+line 3: ^Ielse
+line 4: ^I^Ilet tags = taglist(a:pattern)
+Searching tags file fixtures/CompleteGeneral/namespaced_tags
+line 5: ^I^Ilet s:cache_tags[a:pattern] = tags
+line 6: ^Iendif
+line 7: ^Ireturn tags
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#GetCachedTaglist returning [{'cmd': '/^class Foo {$/', 'static':...es/CompleteGeneral/namespaced_foo.php'}]
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral
+
+line 59: ^Ielseif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+line 60: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^'.namespace_match_pattern)
+line 61: ^Ielseif len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+line 62: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^'.tag_match_pattern)
+line 63: ^Iendif
+line 64: 
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 159: 
+line 160: ^Ilet builtin_constants  = {}
+line 161: ^Ilet builtin_classnames = {}
+line 162: ^Ilet builtin_functions  = {}
+line 163: ^Ilet builtin_keywords   = {}
+line 164: ^Iif a:current_namespace == '\' || (a:base =~ '^\\' && a:base =~ '^\\[^\\]*$')
+line 165: ^I^Ilet base = substitute(a:base, '^\', '', '')
+line 166: 
+line 167: ^I^I" Prepare list of constants from built-in constants
+line 168: ^I^Ifor [constant, info] in items(g:php_constants)
+line 169: ^I^I^Iif constant =~# '^'.base
+line 170: ^I^I^I^Ilet builtin_constants[leading_slash.constant] = info
+line 171: ^I^I^Iendif
+line 172: ^I^Iendfor
+line 173: 
+line 174: ^I^Iif leading_slash == '' " keywords should not be completed when base starts with '\'
+line 175: ^I^I^I" Treat keywords as constants
+line 176: ^I^I^Ifor [constant, info] in items(g:php_keywords)
+line 177: ^I^I^I^Iif constant =~? '^'.a:base
+line 178: ^I^I^I^I^Ilet builtin_keywords[constant] = info
+line 179: ^I^I^I^Iendif
+line 180: ^I^I^Iendfor
+line 181: ^I^Iendif
+line 182: 
+line 183: ^I^I" Add builtin class names
+line 184: ^I^Ifor [classname, info] in items(g:php_builtin_classnames)
+line 185: ^I^I^Iif classname =~? '^'.base
+line 186: ^I^I^I^Ilet builtin_classnames[leading_slash.classname] = info
+line 187: ^I^I^Iendif
+line 188: ^I^Iendfor
+line 189: 
+line 190: ^I^Ifor [function_name, info] in items(g:php_builtin_functions)
+line 191: ^I^I^Iif function_name =~? '^'.base
+line 192: ^I^I^I^Ilet builtin_functions[leading_slash.function_name] = info
+line 193: ^I^I^Iendif
+line 194: ^I^Iendfor
+line 195: ^Iendif
+line 196: 
+line 197: ^I" All constants
+line 198: ^Icall extend(int_constants, ext_constants)
+line 199: 
+line 200: ^I" All functions
+line 201: ^Icall extend(int_functions, ext_functions)
+line 202: ^Icall extend(int_functions, builtin_functions)
+line 203: 
+line 204: ^Ifor [imported_name, import] in items(a:imports)
+line 205: ^I^Iif imported_name =~? '^'.base
+line 206: ^I^I^Iif import.kind == 'c'
+line 207: ^I^I^I^Iif import.builtin
+line 208: ^I^I^I^I^Ilet builtin_classnames[imported_name] = ' '.import.name
+line 209: ^I^I^I^Ielse
+line 210: ^I^I^I^I^Ilet ext_classes[imported_name] = ' '.import.name' - '.import.filename
+line 211: ^I^I^I^Iendif
+line 212: ^I^I^Iendif
+line 213: ^I^I^Iif import.kind == 'n'
+line 214: ^I^I^I^Ilet ext_namespaces[imported_name.'\'] = ' '.import.name.' - '.import.filename
+line 215: ^I^I^Iendif
+line 216: ^I^Iend
+line 217: ^Iendfor
+line 218: 
+line 219: ^Ilet all_values = {}
+line 220: 
+line 221: ^I" Add functions found in this file
+line 222: ^Icall extend(all_values, int_functions)
+line 223: 
+line 224: ^I" Add namespaces from tags
+line 225: ^Icall extend(all_values, ext_namespaces)
+line 226: 
+line 227: ^I" Add constants from the current file
+line 228: ^Icall extend(all_values, int_constants)
+line 229: 
+line 230: ^I" Add built-in constants
+line 231: ^Icall extend(all_values, builtin_constants)
+line 232: 
+line 233: ^I" Add external classes
+line 234: ^Icall extend(all_values, ext_classes)
+line 235: 
+line 236: ^I" Add built-in classes
+line 237: ^Icall extend(all_values, builtin_classnames)
+line 238: 
+line 239: ^I" Add php keywords
+line 240: ^Icall extend(all_values, builtin_keywords)
+line 241: 
+line 242: ^Ilet final_list = []
+line 243: ^Ilet int_list = sort(keys(all_values))
+line 244: ^Ifor i in int_list
+line 245: ^I^Iif has_key(ext_namespaces, i)
+line 246: ^I^I^Ilet final_list += [{'word':i, 'kind':'n', 'menu': ext_namespaces[i], 'info': ext_namespaces[i]}]
+line 247: ^I^Ielseif has_key(int_functions, i)
+line 248: ^I^I^Ilet final_list += [{'word':i,^I'info':i.int_functions[i],^I'menu':int_functions[i],^I'kind':'f'}]
+line 253: ^I^Ielseif has_key(ext_classes, i) || has_key(builtin_classnames, i)
+line 254: ^I^I^Ilet info = has_key(ext_classes, i) ? ext_classes[i] : builtin_classnames[i].' - builtin'
+line 255: ^I^I^Ilet final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
+line 256: ^I^Ielseif has_key(int_constants, i) || has_key(builtin_constants, i)
+line 257: ^I^I^Ilet info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
+line 258: ^I^I^Ilet final_list += [{'word':i, 'kind': 'd', 'menu': info, 'info': i.info}]
+line 259: ^I^Ielse
+line 260: ^I^I^Ilet final_list += [{'word':i}]
+line 261: ^I^Iendif
+line 262: ^Iendfor
+line 244: ^Ifor i in int_list
+line 245: ^I^Iif has_key(ext_namespaces, i)
+line 246: ^I^I^Ilet final_list += [{'word':i, 'kind':'n', 'menu': ext_namespaces[i], 'info': ext_namespaces[i]}]
+line 247: ^I^Ielseif has_key(int_functions, i)
+line 248: ^I^I^Ilet final_list += [{'word':i,^I'info':i.int_functions[i],^I'menu':int_functions[i],^I'kind':'f'}]
+line 253: ^I^Ielseif has_key(ext_classes, i) || has_key(builtin_classnames, i)
+line 254: ^I^I^Ilet info = has_key(ext_classes, i) ? ext_classes[i] : builtin_classnames[i].' - builtin'
+line 255: ^I^I^Ilet final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
+line 256: ^I^Ielseif has_key(int_constants, i) || has_key(builtin_constants, i)
+line 257: ^I^I^Ilet info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
+line 258: ^I^I^Ilet final_list += [{'word':i, 'kind': 'd', 'menu': info, 'info': i.info}]
+line 259: ^I^Ielse
+line 260: ^I^I^Ilet final_list += [{'word':i}]
+line 261: ^I^Iendif
+line 262: ^Iendfor
+line 263: 
+line 264: ^Ireturn final_list
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral returning [{'word': 'Foo', 'menu': ' - fixtures...neral/namespaced_foo.php', 'kind': 'c'}]
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces
+
+line 9:     call VUAssertEquals([{'word': 'Foo', 'kind': 'c', 'menu': ' - fixtures/CompleteGeneral/namespaced_foo.php', 'info': 'Foo - fixtures/CompleteGeneral/namespaced_foo.php'}], res)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals([{'word': 'Foo', 'menu': ' - fixtures...neral/namespaced_foo.php', 'kind': 'c'}], [{'word': 'Foo', 'menu': ' - fixtures...neral/namespaced_foo.php', 'kind': 'c'}])
+
+line 1: ^Ilet diffs = vimunit#util#diff(a:arg1,a:arg2)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff([{'word': 'Foo', 'menu': ' - fixtures...neral/namespaced_foo.php', 'kind': 'c'}], [{'word': 'Foo', 'menu': ' - fixtures...neral/namespaced_foo.php', 'kind': 'c'}])
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff({'word': 'Foo', 'menu': ' - fixtures/...eneral/namespaced_foo.php', 'kind': 'c'}, {'word': 'Foo', 'menu': ' - fixtures/...eneral/namespaced_foo.php', 'kind': 'c'})
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('Foo', 'Foo')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff(' - fixtures/CompleteGeneral/namespaced_foo.php', ' - fixtures/CompleteGeneral/namespaced_foo.php')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('Foo - fixtures/CompleteGeneral/namespaced_foo.php', 'Foo - fixtures/CompleteGeneral/namespaced_foo.php')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('c', 'c')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff
+
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+line 2: ^Ilet s:testRunCount = s:testRunCount + 1
+line 3: ^I" check the types..."
+line 4: ^Iif len(diffs) == 0
+line 5: ^I^Ilet s:testRunSuccessCount = s:testRunSuccessCount + 1
+line 6: ^I^Ilet bFoo = TRUE()
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..TRUE()
+
+line 1: ^I^Ilet sFoo = (1 == 1)
+line 2: ^I^Ireturn sFoo
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..TRUE returning #1
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+line 7: ^Ielse
+line 8: ^I^Ilet s:testRunFailureCount = s:testRunFailureCount + 1
+line 9: ^I^Ilet bFoo = FALSE()
+line 10: ^I^Ilet arg1text = s:str(a:arg1)
+line 11: ^I^Ilet arg2text = s:str(a:arg2)
+line 12: ^I^Ilet msg = ''
+line 13: ^I^Iif (exists('a:1'))
+line 14: ^I^I^Ilet msg = " MSG: ". a:1
+line 15: ^I^Iendif
+line 16: ^I^I" TODO provide some 'verbose' option that prints out all the differences
+line 17: ^I^I" between the objects.
+line 18: ^I^Icall s:MsgSink('AssertEquals', arg1text .'!='. arg2text . msg)
+line 19: ^Iendif
+line 20: ^Ilet s:lastAssertionResult = bFoo
+line 21: ^Ireturn bFoo
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals returning #1
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces
+
+line 10: 
+line 11:     " leaves typed in namespace even when its the same we are in
+line 12:     let res = phpcomplete#CompleteGeneral('\NS1\F', 'NS1', {})
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral('\NS1\F', 'NS1', {})
+
+line 1: ^I" Complete everything else -
+line 2: ^I"  + functions,  DONE
+line 3: ^I"  + keywords of language DONE
+line 4: ^I"  + defines (constant definitions), DONE
+line 5: ^I"  + extend keywords for predefined constants, DONE
+line 6: ^I"  + classes (after new), DONE
+line 7: ^I"  + limit choice after -> and :: to funcs and vars DONE
+line 8: 
+line 9: ^I" Internal solution for finding functions in current file.
+line 10: 
+line 11: ^Iif a:base =~? '^\'
+line 12: ^I^Ilet leading_slash = '\'
+line 13: ^Ielse
+line 14: ^I^Ilet leading_slash = ''
+line 15: ^Iendif
+line 16: 
+line 17: ^Ilet file = getline(1, '$')
+line 18: ^Icall filter(file, 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
+line 20: ^Ilet jfile = join(file, ' ')
+line 21: ^Ilet int_values = split(jfile, 'function\s\+')
+line 22: ^Ilet int_functions = {}
+line 23: ^Ifor i in int_values
+line 24: ^I^Ilet f_name = matchstr(i, '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+line 26: ^I^Iif f_name =~? '^'.substitute(a:base, '\\', '\\\\', 'g')
+line 27: ^I^I^Ilet f_args = matchstr(i, '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+line 29: ^I^I^Ilet int_functions[f_name.'('] = f_args.')'
+line 30: ^I^Iendif
+line 31: ^Iendfor
+line 32: 
+line 33: ^I" Internal solution for finding constants in current file
+line 34: ^Ilet file = getline(1, '$')
+line 35: ^Icall filter(file, 'v:val =~ "define\\s*("')
+line 36: ^Ilet jfile = join(file, ' ')
+line 37: ^Ilet int_values = split(jfile, 'define\s*(\s*')
+line 38: ^Ilet int_constants = {}
+line 39: ^Ifor i in int_values
+line 40: ^I^Ilet c_name = matchstr(i, '\(["'']\)\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze\1')
+line 41: ^I^Iif c_name != '' && c_name =~# '^'.substitute(a:base, '\\', '\\\\', 'g')
+line 42: ^I^I^Ilet int_constants[leading_slash.c_name] = ''
+line 43: ^I^Iendif
+line 44: ^Iendfor
+line 45: 
+line 46: ^I" Prepare list of functions from tags file
+line 47: ^Ilet ext_functions  = {}
+line 48: ^Ilet ext_constants  = {}
+line 49: ^Ilet ext_classes    = {}
+line 50: ^Ilet ext_namespaces = {}
+line 51: 
+line 52: ^Ilet base = substitute(a:base, '^\\', '', '')
+line 53: ^Ilet [tag_match_pattern, namespace_for_tag] = phpcomplete#ExpandClassName(a:base, a:current_namespace, a:imports)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#ExpandClassName('\NS1\F', 'NS1', {})
+
+line 1: ^I" if there's an imported class, just use that class's information
+line 2: ^Iif has_key(a:imports, a:classname) && (a:imports[a:classname].kind == 'c' || a:imports[a:classname].kind == 'i')
+line 3: ^I^Ilet namespace = has_key(a:imports[a:classname], 'namespace') ? a:imports[a:classname].namespace : ''
+line 4: ^I^Ireturn [a:imports[a:classname].name, namespace]
+line 5: ^Iendif
+line 6: 
+line 7: ^I" try to find relative namespace in imports, imported names takes precedence over
+line 8: ^I" current namespace when resolving relative namespaced class names
+line 9: ^Iif a:classname !~ '^\' && a:classname =~ '\\'
+line 10: ^I^Ilet classname_parts = split(a:classname, '\\\+')
+line 11: ^I^Iif has_key(a:imports, classname_parts[0]) && a:imports[classname_parts[0]].kind == 'n'
+line 12: ^I^I^Ilet classname_parts[0] = a:imports[classname_parts[0]].name
+line 13: ^I^I^Ilet namespace = join(classname_parts[0:-2], '\')
+line 14: ^I^I^Ilet classname = classname_parts[-1]
+line 15: ^I^I^Ireturn [classname, namespace]
+line 16: ^I^Iendif
+line 17: ^Iendif
+line 18: 
+line 19: ^I" no imported class or namespace matched, expand with the current namespace
+line 20: ^Ilet namespace = ''
+line 21: ^Ilet classname = a:classname
+line 22: ^I" if the classname have namespaces in in or we are in a namespace
+line 23: ^Iif a:classname =~ '\\' || a:current_namespace != '\'
+line 24: ^I^I" add current namespace to the a:classname
+line 25: ^I^Iif a:classname !~ '^\'
+line 26: ^I^I^Ilet classname = a:current_namespace.'\'.substitute(a:classname, '^\\', '', '')
+line 27: ^I^Ielse
+line 28: ^I^I^I" remove leading \, tag files doesn't have those
+line 29: ^I^I^Ilet classname = substitute(a:classname, '^\\', '', '')
+line 30: ^I^Iendif
+line 31: ^I^I" split classname to classname and namespace
+line 32: ^I^Ilet classname_parts = split(classname, '\\\+')
+line 33: ^I^Iif len(classname_parts) > 1
+line 34: ^I^I^Ilet namespace = join(classname_parts[0:-2], '\')
+line 35: ^I^I^Ilet classname = classname_parts[-1]
+line 36: ^I^Iendif
+line 37: ^Iendif
+line 38: ^Ireturn [classname, namespace]
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#ExpandClassName returning ['F', 'NS1']
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral
+
+line 54: ^Ilet namespace_match_pattern  = substitute((namespace_for_tag == '' ? '' : namespace_for_tag.'\').tag_match_pattern, '\\', '\\\\', 'g')
+line 55: 
+line 56: ^Ilet tags = []
+line 57: ^Iif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && tag_match_pattern != namespace_match_pattern
+line 58: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#GetCachedTaglist('\c^\(F\|NS1\\F\)')
+
+line 1: ^Iif has_key(s:cache_tags, a:pattern)
+line 2: ^I^Ilet tags = s:cache_tags[a:pattern]
+line 3: ^Ielse
+line 4: ^I^Ilet tags = taglist(a:pattern)
+line 5: ^I^Ilet s:cache_tags[a:pattern] = tags
+line 6: ^Iendif
+line 7: ^Ireturn tags
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#GetCachedTaglist returning [{'cmd': '/^class Foo {$/', 'static':...es/CompleteGeneral/namespaced_foo.php'}]
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral
+
+line 59: ^Ielseif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+line 60: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^'.namespace_match_pattern)
+line 61: ^Ielseif len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+line 62: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^'.tag_match_pattern)
+line 63: ^Iendif
+line 64: 
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 159: 
+line 160: ^Ilet builtin_constants  = {}
+line 161: ^Ilet builtin_classnames = {}
+line 162: ^Ilet builtin_functions  = {}
+line 163: ^Ilet builtin_keywords   = {}
+line 164: ^Iif a:current_namespace == '\' || (a:base =~ '^\\' && a:base =~ '^\\[^\\]*$')
+line 165: ^I^Ilet base = substitute(a:base, '^\', '', '')
+line 166: 
+line 167: ^I^I" Prepare list of constants from built-in constants
+line 168: ^I^Ifor [constant, info] in items(g:php_constants)
+line 169: ^I^I^Iif constant =~# '^'.base
+line 170: ^I^I^I^Ilet builtin_constants[leading_slash.constant] = info
+line 171: ^I^I^Iendif
+line 172: ^I^Iendfor
+line 173: 
+line 174: ^I^Iif leading_slash == '' " keywords should not be completed when base starts with '\'
+line 175: ^I^I^I" Treat keywords as constants
+line 176: ^I^I^Ifor [constant, info] in items(g:php_keywords)
+line 177: ^I^I^I^Iif constant =~? '^'.a:base
+line 178: ^I^I^I^I^Ilet builtin_keywords[constant] = info
+line 179: ^I^I^I^Iendif
+line 180: ^I^I^Iendfor
+line 181: ^I^Iendif
+line 182: 
+line 183: ^I^I" Add builtin class names
+line 184: ^I^Ifor [classname, info] in items(g:php_builtin_classnames)
+line 185: ^I^I^Iif classname =~? '^'.base
+line 186: ^I^I^I^Ilet builtin_classnames[leading_slash.classname] = info
+line 187: ^I^I^Iendif
+line 188: ^I^Iendfor
+line 189: 
+line 190: ^I^Ifor [function_name, info] in items(g:php_builtin_functions)
+line 191: ^I^I^Iif function_name =~? '^'.base
+line 192: ^I^I^I^Ilet builtin_functions[leading_slash.function_name] = info
+line 193: ^I^I^Iendif
+line 194: ^I^Iendfor
+line 195: ^Iendif
+line 196: 
+line 197: ^I" All constants
+line 198: ^Icall extend(int_constants, ext_constants)
+line 199: 
+line 200: ^I" All functions
+line 201: ^Icall extend(int_functions, ext_functions)
+line 202: ^Icall extend(int_functions, builtin_functions)
+line 203: 
+line 204: ^Ifor [imported_name, import] in items(a:imports)
+line 205: ^I^Iif imported_name =~? '^'.base
+line 206: ^I^I^Iif import.kind == 'c'
+line 207: ^I^I^I^Iif import.builtin
+line 208: ^I^I^I^I^Ilet builtin_classnames[imported_name] = ' '.import.name
+line 209: ^I^I^I^Ielse
+line 210: ^I^I^I^I^Ilet ext_classes[imported_name] = ' '.import.name' - '.import.filename
+line 211: ^I^I^I^Iendif
+line 212: ^I^I^Iendif
+line 213: ^I^I^Iif import.kind == 'n'
+line 214: ^I^I^I^Ilet ext_namespaces[imported_name.'\'] = ' '.import.name.' - '.import.filename
+line 215: ^I^I^Iendif
+line 216: ^I^Iend
+line 217: ^Iendfor
+line 218: 
+line 219: ^Ilet all_values = {}
+line 220: 
+line 221: ^I" Add functions found in this file
+line 222: ^Icall extend(all_values, int_functions)
+line 223: 
+line 224: ^I" Add namespaces from tags
+line 225: ^Icall extend(all_values, ext_namespaces)
+line 226: 
+line 227: ^I" Add constants from the current file
+line 228: ^Icall extend(all_values, int_constants)
+line 229: 
+line 230: ^I" Add built-in constants
+line 231: ^Icall extend(all_values, builtin_constants)
+line 232: 
+line 233: ^I" Add external classes
+line 234: ^Icall extend(all_values, ext_classes)
+line 235: 
+line 236: ^I" Add built-in classes
+line 237: ^Icall extend(all_values, builtin_classnames)
+line 238: 
+line 239: ^I" Add php keywords
+line 240: ^Icall extend(all_values, builtin_keywords)
+line 241: 
+line 242: ^Ilet final_list = []
+line 243: ^Ilet int_list = sort(keys(all_values))
+line 244: ^Ifor i in int_list
+line 245: ^I^Iif has_key(ext_namespaces, i)
+line 246: ^I^I^Ilet final_list += [{'word':i, 'kind':'n', 'menu': ext_namespaces[i], 'info': ext_namespaces[i]}]
+line 247: ^I^Ielseif has_key(int_functions, i)
+line 248: ^I^I^Ilet final_list += [{'word':i,^I'info':i.int_functions[i],^I'menu':int_functions[i],^I'kind':'f'}]
+line 253: ^I^Ielseif has_key(ext_classes, i) || has_key(builtin_classnames, i)
+line 254: ^I^I^Ilet info = has_key(ext_classes, i) ? ext_classes[i] : builtin_classnames[i].' - builtin'
+line 255: ^I^I^Ilet final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
+line 256: ^I^Ielseif has_key(int_constants, i) || has_key(builtin_constants, i)
+line 257: ^I^I^Ilet info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
+line 258: ^I^I^Ilet final_list += [{'word':i, 'kind': 'd', 'menu': info, 'info': i.info}]
+line 259: ^I^Ielse
+line 260: ^I^I^Ilet final_list += [{'word':i}]
+line 261: ^I^Iendif
+line 262: ^Iendfor
+line 244: ^Ifor i in int_list
+line 245: ^I^Iif has_key(ext_namespaces, i)
+line 246: ^I^I^Ilet final_list += [{'word':i, 'kind':'n', 'menu': ext_namespaces[i], 'info': ext_namespaces[i]}]
+line 247: ^I^Ielseif has_key(int_functions, i)
+line 248: ^I^I^Ilet final_list += [{'word':i,^I'info':i.int_functions[i],^I'menu':int_functions[i],^I'kind':'f'}]
+line 253: ^I^Ielseif has_key(ext_classes, i) || has_key(builtin_classnames, i)
+line 254: ^I^I^Ilet info = has_key(ext_classes, i) ? ext_classes[i] : builtin_classnames[i].' - builtin'
+line 255: ^I^I^Ilet final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
+line 256: ^I^Ielseif has_key(int_constants, i) || has_key(builtin_constants, i)
+line 257: ^I^I^Ilet info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
+line 258: ^I^I^Ilet final_list += [{'word':i, 'kind': 'd', 'menu': info, 'info': i.info}]
+line 259: ^I^Ielse
+line 260: ^I^I^Ilet final_list += [{'word':i}]
+line 261: ^I^Iendif
+line 262: ^Iendfor
+line 263: 
+line 264: ^Ireturn final_list
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral returning [{'word': '\NS1\Foo', 'menu': ' - fix...neral/namespaced_foo.php', 'kind': 'c'}]
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces
+
+line 13:     call VUAssertEquals([{'word': '\NS1\Foo', 'kind': 'c', 'menu': ' - fixtures/CompleteGeneral/namespaced_foo.php', 'info': '\NS1\Foo - fixtures/CompleteGeneral/namespaced_foo.php'}], res)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals([{'word': '\NS1\Foo', 'menu': ' - fix...neral/namespaced_foo.php', 'kind': 'c'}], [{'word': '\NS1\Foo', 'menu': ' - fix...neral/namespaced_foo.php', 'kind': 'c'}])
+
+line 1: ^Ilet diffs = vimunit#util#diff(a:arg1,a:arg2)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff([{'word': '\NS1\Foo', 'menu': ' - fix...neral/namespaced_foo.php', 'kind': 'c'}], [{'word': '\NS1\Foo', 'menu': ' - fix...neral/namespaced_foo.php', 'kind': 'c'}])
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff({'word': '\NS1\Foo', 'menu': ' - fixt...eneral/namespaced_foo.php', 'kind': 'c'}, {'word': '\NS1\Foo', 'menu': ' - fixt...eneral/namespaced_foo.php', 'kind': 'c'})
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('\NS1\Foo', '\NS1\Foo')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff(' - fixtures/CompleteGeneral/namespaced_foo.php', ' - fixtures/CompleteGeneral/namespaced_foo.php')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('\NS1\Foo - fixtures/CompleteGeneral/namespaced_foo.php', '\NS1\Foo - fixtures/CompleteGeneral/namespaced_foo.php')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('c', 'c')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff
+
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+line 2: ^Ilet s:testRunCount = s:testRunCount + 1
+line 3: ^I" check the types..."
+line 4: ^Iif len(diffs) == 0
+line 5: ^I^Ilet s:testRunSuccessCount = s:testRunSuccessCount + 1
+line 6: ^I^Ilet bFoo = TRUE()
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..TRUE()
+
+line 1: ^I^Ilet sFoo = (1 == 1)
+line 2: ^I^Ireturn sFoo
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..TRUE returning #1
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+line 7: ^Ielse
+line 8: ^I^Ilet s:testRunFailureCount = s:testRunFailureCount + 1
+line 9: ^I^Ilet bFoo = FALSE()
+line 10: ^I^Ilet arg1text = s:str(a:arg1)
+line 11: ^I^Ilet arg2text = s:str(a:arg2)
+line 12: ^I^Ilet msg = ''
+line 13: ^I^Iif (exists('a:1'))
+line 14: ^I^I^Ilet msg = " MSG: ". a:1
+line 15: ^I^Iendif
+line 16: ^I^I" TODO provide some 'verbose' option that prints out all the differences
+line 17: ^I^I" between the objects.
+line 18: ^I^Icall s:MsgSink('AssertEquals', arg1text .'!='. arg2text . msg)
+line 19: ^Iendif
+line 20: ^Ilet s:lastAssertionResult = bFoo
+line 21: ^Ireturn bFoo
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals returning #1
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces
+
+line 14: 
+line 15:     let res = phpcomplete#CompleteGeneral('\NS1\SUBNS\F', 'NS1', {})
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral('\NS1\SUBNS\F', 'NS1', {})
+
+line 1: ^I" Complete everything else -
+line 2: ^I"  + functions,  DONE
+line 3: ^I"  + keywords of language DONE
+line 4: ^I"  + defines (constant definitions), DONE
+line 5: ^I"  + extend keywords for predefined constants, DONE
+line 6: ^I"  + classes (after new), DONE
+line 7: ^I"  + limit choice after -> and :: to funcs and vars DONE
+line 8: 
+line 9: ^I" Internal solution for finding functions in current file.
+line 10: 
+line 11: ^Iif a:base =~? '^\'
+line 12: ^I^Ilet leading_slash = '\'
+line 13: ^Ielse
+line 14: ^I^Ilet leading_slash = ''
+line 15: ^Iendif
+line 16: 
+line 17: ^Ilet file = getline(1, '$')
+line 18: ^Icall filter(file, 'v:val =~ "function\\s\\+&\\?[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*("')
+line 20: ^Ilet jfile = join(file, ' ')
+line 21: ^Ilet int_values = split(jfile, 'function\s\+')
+line 22: ^Ilet int_functions = {}
+line 23: ^Ifor i in int_values
+line 24: ^I^Ilet f_name = matchstr(i, '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+line 26: ^I^Iif f_name =~? '^'.substitute(a:base, '\\', '\\\\', 'g')
+line 27: ^I^I^Ilet f_args = matchstr(i, '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+line 29: ^I^I^Ilet int_functions[f_name.'('] = f_args.')'
+line 30: ^I^Iendif
+line 31: ^Iendfor
+line 32: 
+line 33: ^I" Internal solution for finding constants in current file
+line 34: ^Ilet file = getline(1, '$')
+line 35: ^Icall filter(file, 'v:val =~ "define\\s*("')
+line 36: ^Ilet jfile = join(file, ' ')
+line 37: ^Ilet int_values = split(jfile, 'define\s*(\s*')
+line 38: ^Ilet int_constants = {}
+line 39: ^Ifor i in int_values
+line 40: ^I^Ilet c_name = matchstr(i, '\(["'']\)\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze\1')
+line 41: ^I^Iif c_name != '' && c_name =~# '^'.substitute(a:base, '\\', '\\\\', 'g')
+line 42: ^I^I^Ilet int_constants[leading_slash.c_name] = ''
+line 43: ^I^Iendif
+line 44: ^Iendfor
+line 45: 
+line 46: ^I" Prepare list of functions from tags file
+line 47: ^Ilet ext_functions  = {}
+line 48: ^Ilet ext_constants  = {}
+line 49: ^Ilet ext_classes    = {}
+line 50: ^Ilet ext_namespaces = {}
+line 51: 
+line 52: ^Ilet base = substitute(a:base, '^\\', '', '')
+line 53: ^Ilet [tag_match_pattern, namespace_for_tag] = phpcomplete#ExpandClassName(a:base, a:current_namespace, a:imports)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#ExpandClassName('\NS1\SUBNS\F', 'NS1', {})
+
+line 1: ^I" if there's an imported class, just use that class's information
+line 2: ^Iif has_key(a:imports, a:classname) && (a:imports[a:classname].kind == 'c' || a:imports[a:classname].kind == 'i')
+line 3: ^I^Ilet namespace = has_key(a:imports[a:classname], 'namespace') ? a:imports[a:classname].namespace : ''
+line 4: ^I^Ireturn [a:imports[a:classname].name, namespace]
+line 5: ^Iendif
+line 6: 
+line 7: ^I" try to find relative namespace in imports, imported names takes precedence over
+line 8: ^I" current namespace when resolving relative namespaced class names
+line 9: ^Iif a:classname !~ '^\' && a:classname =~ '\\'
+line 10: ^I^Ilet classname_parts = split(a:classname, '\\\+')
+line 11: ^I^Iif has_key(a:imports, classname_parts[0]) && a:imports[classname_parts[0]].kind == 'n'
+line 12: ^I^I^Ilet classname_parts[0] = a:imports[classname_parts[0]].name
+line 13: ^I^I^Ilet namespace = join(classname_parts[0:-2], '\')
+line 14: ^I^I^Ilet classname = classname_parts[-1]
+line 15: ^I^I^Ireturn [classname, namespace]
+line 16: ^I^Iendif
+line 17: ^Iendif
+line 18: 
+line 19: ^I" no imported class or namespace matched, expand with the current namespace
+line 20: ^Ilet namespace = ''
+line 21: ^Ilet classname = a:classname
+line 22: ^I" if the classname have namespaces in in or we are in a namespace
+line 23: ^Iif a:classname =~ '\\' || a:current_namespace != '\'
+line 24: ^I^I" add current namespace to the a:classname
+line 25: ^I^Iif a:classname !~ '^\'
+line 26: ^I^I^Ilet classname = a:current_namespace.'\'.substitute(a:classname, '^\\', '', '')
+line 27: ^I^Ielse
+line 28: ^I^I^I" remove leading \, tag files doesn't have those
+line 29: ^I^I^Ilet classname = substitute(a:classname, '^\\', '', '')
+line 30: ^I^Iendif
+line 31: ^I^I" split classname to classname and namespace
+line 32: ^I^Ilet classname_parts = split(classname, '\\\+')
+line 33: ^I^Iif len(classname_parts) > 1
+line 34: ^I^I^Ilet namespace = join(classname_parts[0:-2], '\')
+line 35: ^I^I^Ilet classname = classname_parts[-1]
+line 36: ^I^Iendif
+line 37: ^Iendif
+line 38: ^Ireturn [classname, namespace]
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#ExpandClassName returning ['F', 'NS1\SUBNS']
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral
+
+line 54: ^Ilet namespace_match_pattern  = substitute((namespace_for_tag == '' ? '' : namespace_for_tag.'\').tag_match_pattern, '\\', '\\\\', 'g')
+line 55: 
+line 56: ^Ilet tags = []
+line 57: ^Iif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && tag_match_pattern != namespace_match_pattern
+line 58: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#GetCachedTaglist('\c^\(F\|NS1\\SUBNS\\F\)')
+
+line 1: ^Iif has_key(s:cache_tags, a:pattern)
+line 2: ^I^Ilet tags = s:cache_tags[a:pattern]
+line 3: ^Ielse
+line 4: ^I^Ilet tags = taglist(a:pattern)
+line 5: ^I^Ilet s:cache_tags[a:pattern] = tags
+line 6: ^Iendif
+line 7: ^Ireturn tags
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral..phpcomplete#GetCachedTaglist returning [{'cmd': '/^class Foo {$/', 'static':...: 'fixtures/common/namespaced_foo.php'}]
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral
+
+line 59: ^Ielseif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+line 60: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^'.namespace_match_pattern)
+line 61: ^Ielseif len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
+line 62: ^I^Ilet tags = phpcomplete#GetCachedTaglist('\c^'.tag_match_pattern)
+line 63: ^Iendif
+line 64: 
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 65: ^Ifor tag in tags
+line 66: ^I^Iif !has_key(tag, 'namespace') || tag.namespace ==? a:current_namespace || tag.namespace ==? namespace_for_tag
+line 67: ^I^I^Iif has_key(tag, 'namespace')
+line 68: ^I^I^I^Ilet full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
+line 69: 
+line 70: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 71: ^I^I^I^Iif len(base_parts) > 1
+line 72: ^I^I^I^I^Ilet namespace_part = join(base_parts[0:-2], '\')
+line 73: ^I^I^I^Ielse
+line 74: ^I^I^I^I^Ilet namespace_part = ''
+line 75: ^I^I^I^Iendif
+line 76: ^I^I^I^Ilet relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
+line 77: ^I^I^Iendif
+line 78: 
+line 79: ^I^I^Iif tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
+line 80: ^I^I^I^Ilet info = tag.name.' - '.tag.filename
+line 81: ^I^I^I^I" patched ctag provides absolute namespace names as tag name, namespace tags dont have namespace fields
+line 82: ^I^I^I^Ilet full_name = tag.name
+line 83: 
+line 84: ^I^I^I^Ilet base_parts = split(a:base, '\')
+line 85: ^I^I^I^Ilet full_name_parts = split(full_name, '\')
+line 86: ^I^I^I^Iif len(base_parts) > 1
+line 87: ^I^I^I^I^I" the first segment could be a renamed import, take the first segment from the user provided input
+line 88: ^I^I^I^I^I" so if it's a sub namespace of a renamed namespace, just use the typed in segments in place of the absolute path
+line 89: ^I^I^I^I^I" for example:
+line 90: ^I^I^I^I^I"     you have a namespace NS1\SUBNS as SUB
+line 91: ^I^I^I^I^I"     you have a sub-sub-namespace NS1\SUBNS\SUBSUB
+line 92: ^I^I^I^I^I"     typed in SUB\SU
+line 93: ^I^I^I^I^I"     the tags will return NS1\SUBNS\SUBSUB
+line 94: ^I^I^I^I^I"     the completion should be: SUB\SUBSUB by replacing the NS1\SUBSN to SUB as in the import
+line 95: ^I^I^I^I^Iif has_key(a:imports, base_parts[0]) && a:imports[base_parts[0]].kind == 'n'
+line 96: ^I^I^I^I^I^Ilet import = a:imports[base_parts[0]]
+line 97: ^I^I^I^I^I^Ilet relative_name = substitute(full_name, '^'.substitute(import.name, '\\', '\\\\', 'g'), base_parts[0], '')
+line 98: ^I^I^I^I^Ielse
+line 99: ^I^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 100: ^I^I^I^I^Iendif
+line 101: ^I^I^I^Ielse
+line 102: ^I^I^I^I^Ilet relative_name = strpart(full_name, stridx(full_name, a:base))
+line 103: ^I^I^I^Iendif
+line 104: 
+line 105: ^I^I^I^Iif leading_slash == ''
+line 106: ^I^I^I^I^Ilet ext_namespaces[relative_name.'\'] = info
+line 107: ^I^I^I^Ielse
+line 108: ^I^I^I^I^Ilet ext_namespaces['\'.full_name.'\'] = info
+line 109: ^I^I^I^Iendif
+line 110: ^I^I^Ielseif tag.kind ==? 'f' && !has_key(tag, 'class') " class related functions (methods) completed elsewhere, only works with patched ctags
+line 111: ^I^I^I^Iif has_key(tag, 'signature')
+line 112: ^I^I^I^I^Ilet prototype = tag.signature[1:-2] " drop the ()s around the string
+line 113: ^I^I^I^Ielse
+line 114: ^I^I^I^I^Ilet prototype = matchstr(tag.cmd, 'function\s\+&\?[^[:space:]]\+\s*(\s*\zs.\{-}\ze\s*)\s*{\?')
+line 116: ^I^I^I^Iendif
+line 117: ^I^I^I^Ilet info = prototype.') - '.tag.filename
+line 118: 
+line 119: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 120: ^I^I^I^I^Ilet ext_functions[tag.name.'('] = info
+line 121: ^I^I^I^Ielse
+line 122: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 123: ^I^I^I^I^I^Iif leading_slash == ''
+line 124: ^I^I^I^I^I^I^Ilet ext_functions[relative_name.'('] = info
+line 125: ^I^I^I^I^I^Ielse
+line 126: ^I^I^I^I^I^I^Ilet ext_functions['\'.full_name.'('] = info
+line 127: ^I^I^I^I^I^Iendif
+line 128: ^I^I^I^I^Iendif
+line 129: ^I^I^I^Iendif
+line 130: ^I^I^Ielseif tag.kind ==? 'd'
+line 131: ^I^I^I^Ilet info = ' - '.tag.filename
+line 132: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 133: ^I^I^I^I^Ilet ext_constants[tag.name] = info
+line 134: ^I^I^I^Ielse
+line 135: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 136: ^I^I^I^I^I^Iif leading_slash == ''
+line 137: ^I^I^I^I^I^I^Ilet ext_constants[relative_name] = info
+line 138: ^I^I^I^I^I^Ielse
+line 139: ^I^I^I^I^I^I^Ilet ext_constants['\'.full_name] = info
+line 140: ^I^I^I^I^I^Iendif
+line 141: ^I^I^I^I^Iendif
+line 142: ^I^I^I^Iendif
+line 143: ^I^I^Ielseif tag.kind ==? 'c'
+line 144: ^I^I^I^Ilet info = ' - '.tag.filename
+line 145: ^I^I^I^Iif !has_key(tag, 'namespace')
+line 146: ^I^I^I^I^Ilet ext_classes[tag.name] = info
+line 147: ^I^I^I^Ielse
+line 148: ^I^I^I^I^Iif tag.namespace ==? namespace_for_tag
+line 149: ^I^I^I^I^I^Iif leading_slash == ''
+line 150: ^I^I^I^I^I^I^Ilet ext_classes[relative_name] = info
+line 151: ^I^I^I^I^I^Ielse
+line 152: ^I^I^I^I^I^I^Ilet ext_classes['\'.full_name] = info
+line 153: ^I^I^I^I^I^Iendif
+line 154: ^I^I^I^I^Iendif
+line 155: ^I^I^I^Iendif
+line 156: ^I^I^Iendif
+line 157: ^I^Iendif
+line 158: ^Iendfor
+line 159: 
+line 160: ^Ilet builtin_constants  = {}
+line 161: ^Ilet builtin_classnames = {}
+line 162: ^Ilet builtin_functions  = {}
+line 163: ^Ilet builtin_keywords   = {}
+line 164: ^Iif a:current_namespace == '\' || (a:base =~ '^\\' && a:base =~ '^\\[^\\]*$')
+line 165: ^I^Ilet base = substitute(a:base, '^\', '', '')
+line 166: 
+line 167: ^I^I" Prepare list of constants from built-in constants
+line 168: ^I^Ifor [constant, info] in items(g:php_constants)
+line 169: ^I^I^Iif constant =~# '^'.base
+line 170: ^I^I^I^Ilet builtin_constants[leading_slash.constant] = info
+line 171: ^I^I^Iendif
+line 172: ^I^Iendfor
+line 173: 
+line 174: ^I^Iif leading_slash == '' " keywords should not be completed when base starts with '\'
+line 175: ^I^I^I" Treat keywords as constants
+line 176: ^I^I^Ifor [constant, info] in items(g:php_keywords)
+line 177: ^I^I^I^Iif constant =~? '^'.a:base
+line 178: ^I^I^I^I^Ilet builtin_keywords[constant] = info
+line 179: ^I^I^I^Iendif
+line 180: ^I^I^Iendfor
+line 181: ^I^Iendif
+line 182: 
+line 183: ^I^I" Add builtin class names
+line 184: ^I^Ifor [classname, info] in items(g:php_builtin_classnames)
+line 185: ^I^I^Iif classname =~? '^'.base
+line 186: ^I^I^I^Ilet builtin_classnames[leading_slash.classname] = info
+line 187: ^I^I^Iendif
+line 188: ^I^Iendfor
+line 189: 
+line 190: ^I^Ifor [function_name, info] in items(g:php_builtin_functions)
+line 191: ^I^I^Iif function_name =~? '^'.base
+line 192: ^I^I^I^Ilet builtin_functions[leading_slash.function_name] = info
+line 193: ^I^I^Iendif
+line 194: ^I^Iendfor
+line 195: ^Iendif
+line 196: 
+line 197: ^I" All constants
+line 198: ^Icall extend(int_constants, ext_constants)
+line 199: 
+line 200: ^I" All functions
+line 201: ^Icall extend(int_functions, ext_functions)
+line 202: ^Icall extend(int_functions, builtin_functions)
+line 203: 
+line 204: ^Ifor [imported_name, import] in items(a:imports)
+line 205: ^I^Iif imported_name =~? '^'.base
+line 206: ^I^I^Iif import.kind == 'c'
+line 207: ^I^I^I^Iif import.builtin
+line 208: ^I^I^I^I^Ilet builtin_classnames[imported_name] = ' '.import.name
+line 209: ^I^I^I^Ielse
+line 210: ^I^I^I^I^Ilet ext_classes[imported_name] = ' '.import.name' - '.import.filename
+line 211: ^I^I^I^Iendif
+line 212: ^I^I^Iendif
+line 213: ^I^I^Iif import.kind == 'n'
+line 214: ^I^I^I^Ilet ext_namespaces[imported_name.'\'] = ' '.import.name.' - '.import.filename
+line 215: ^I^I^Iendif
+line 216: ^I^Iend
+line 217: ^Iendfor
+line 218: 
+line 219: ^Ilet all_values = {}
+line 220: 
+line 221: ^I" Add functions found in this file
+line 222: ^Icall extend(all_values, int_functions)
+line 223: 
+line 224: ^I" Add namespaces from tags
+line 225: ^Icall extend(all_values, ext_namespaces)
+line 226: 
+line 227: ^I" Add constants from the current file
+line 228: ^Icall extend(all_values, int_constants)
+line 229: 
+line 230: ^I" Add built-in constants
+line 231: ^Icall extend(all_values, builtin_constants)
+line 232: 
+line 233: ^I" Add external classes
+line 234: ^Icall extend(all_values, ext_classes)
+line 235: 
+line 236: ^I" Add built-in classes
+line 237: ^Icall extend(all_values, builtin_classnames)
+line 238: 
+line 239: ^I" Add php keywords
+line 240: ^Icall extend(all_values, builtin_keywords)
+line 241: 
+line 242: ^Ilet final_list = []
+line 243: ^Ilet int_list = sort(keys(all_values))
+line 244: ^Ifor i in int_list
+line 245: ^I^Iif has_key(ext_namespaces, i)
+line 246: ^I^I^Ilet final_list += [{'word':i, 'kind':'n', 'menu': ext_namespaces[i], 'info': ext_namespaces[i]}]
+line 247: ^I^Ielseif has_key(int_functions, i)
+line 248: ^I^I^Ilet final_list += [{'word':i,^I'info':i.int_functions[i],^I'menu':int_functions[i],^I'kind':'f'}]
+line 253: ^I^Ielseif has_key(ext_classes, i) || has_key(builtin_classnames, i)
+line 254: ^I^I^Ilet info = has_key(ext_classes, i) ? ext_classes[i] : builtin_classnames[i].' - builtin'
+line 255: ^I^I^Ilet final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
+line 256: ^I^Ielseif has_key(int_constants, i) || has_key(builtin_constants, i)
+line 257: ^I^I^Ilet info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
+line 258: ^I^I^Ilet final_list += [{'word':i, 'kind': 'd', 'menu': info, 'info': i.info}]
+line 259: ^I^Ielse
+line 260: ^I^I^Ilet final_list += [{'word':i}]
+line 261: ^I^Iendif
+line 262: ^Iendfor
+line 244: ^Ifor i in int_list
+line 245: ^I^Iif has_key(ext_namespaces, i)
+line 246: ^I^I^Ilet final_list += [{'word':i, 'kind':'n', 'menu': ext_namespaces[i], 'info': ext_namespaces[i]}]
+line 247: ^I^Ielseif has_key(int_functions, i)
+line 248: ^I^I^Ilet final_list += [{'word':i,^I'info':i.int_functions[i],^I'menu':int_functions[i],^I'kind':'f'}]
+line 253: ^I^Ielseif has_key(ext_classes, i) || has_key(builtin_classnames, i)
+line 254: ^I^I^Ilet info = has_key(ext_classes, i) ? ext_classes[i] : builtin_classnames[i].' - builtin'
+line 255: ^I^I^Ilet final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
+line 256: ^I^Ielseif has_key(int_constants, i) || has_key(builtin_constants, i)
+line 257: ^I^I^Ilet info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
+line 258: ^I^I^Ilet final_list += [{'word':i, 'kind': 'd', 'menu': info, 'info': i.info}]
+line 259: ^I^Ielse
+line 260: ^I^I^Ilet final_list += [{'word':i}]
+line 261: ^I^Iendif
+line 262: ^Iendfor
+line 263: 
+line 264: ^Ireturn final_list
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..phpcomplete#CompleteGeneral returning [{'word': '\NS1\SUBNS\FooSub', 'menu'...ommon/namespaced_foo.php', 'kind': 'c'}]
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces
+
+line 16:     call VUAssertEquals([{'word': '\NS1\SUBNS\FooSub', 'kind': 'c', 'menu': ' - fixtures/CompleteGeneral/namespaced_foo.php', 'info': '\NS1\SUBNS\FooSub - fixtures/CompleteGeneral/namespaced_foo.php'}], res)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals([{'word': '\NS1\SUBNS\FooSub', 'menu'...neral/namespaced_foo.php', 'kind': 'c'}], [{'word': '\NS1\SUBNS\FooSub', 'menu'...ommon/namespaced_foo.php', 'kind': 'c'}])
+
+line 1: ^Ilet diffs = vimunit#util#diff(a:arg1,a:arg2)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff([{'word': '\NS1\SUBNS\FooSub', 'menu'...neral/namespaced_foo.php', 'kind': 'c'}], [{'word': '\NS1\SUBNS\FooSub', 'menu'...ommon/namespaced_foo.php', 'kind': 'c'}])
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff({'word': '\NS1\SUBNS\FooSub', 'menu':...eneral/namespaced_foo.php', 'kind': 'c'}, {'word': '\NS1\SUBNS\FooSub', 'menu':...common/namespaced_foo.php', 'kind': 'c'})
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('\NS1\SUBNS\FooSub', '\NS1\SUBNS\FooSub')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff(' - fixtures/CompleteGeneral/namespaced_foo.php', ' - fixtures/common/namespaced_foo.php')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff..<SNR>66_str(' - fixtures/CompleteGeneral/namespaced_foo.php')
+
+line 1:   if type(a:str) != 1
+line 2:     return string(a:str)
+line 3:   end
+line 4:   return a:str
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff..<SNR>66_str returning ' - fixtures/CompleteGeneral/namespaced_foo.php'
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff
+
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff..<SNR>66_str(' - fixtures/common/namespaced_foo.php')
+
+line 1:   if type(a:str) != 1
+line 2:     return string(a:str)
+line 3:   end
+line 4:   return a:str
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff..<SNR>66_str returning ' - fixtures/common/namespaced_foo.php'
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff
+
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning [' - fixtures/CompleteGeneral/namespa...  - fixtures/common/namespaced_foo.php']
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('\NS1\SUBNS\FooSub - fixtures/CompleteGeneral/namespaced_foo.php', '\NS1\SUBNS\FooSub - fixtures/common/namespaced_foo.php')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff..<SNR>66_str('\NS1\SUBNS\FooSub - fixtures/CompleteGeneral/namespaced_foo.php')
+
+line 1:   if type(a:str) != 1
+line 2:     return string(a:str)
+line 3:   end
+line 4:   return a:str
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff..<SNR>66_str returning '\NS1\SUBNS\FooSub - fixtures/CompleteGeneral/namespaced_foo.php'
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff
+
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff..<SNR>66_str('\NS1\SUBNS\FooSub - fixtures/common/namespaced_foo.php')
+
+line 1:   if type(a:str) != 1
+line 2:     return string(a:str)
+line 3:   end
+line 4:   return a:str
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff..<SNR>66_str returning '\NS1\SUBNS\FooSub - fixtures/common/namespaced_foo.php'
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff
+
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning ['\NS1\SUBNS\FooSub - fixtures/Comple...b - fixtures/common/namespaced_foo.php']
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff('c', 'c')
+
+line 1:   let maxstrlen = 10
+line 2:   let types = {0: "Number",1: "String",2: "Funcref",3: "List",4: "Dictionary",5: "Float"}
+line 10:   " easy: the types are different
+line 11:   if type(a:arg1) != type(a:arg2)
+line 12:     return [printf('%s(%s) != %s(%s)',types[type(a:arg1)], vimunit#util#substr(a:arg1,maxstrlen,'...'), types[type(a:arg2)], vimunit#util#substr(a:arg2,maxstrlen,'...'))]
+line 13:   endif
+line 14:   let results = []
+line 15:   " differences between two lists
+line 16:   if type(a:arg1) == type(a:arg2) && type(a:arg1) == 3
+line 17:     if len(a:arg1) != len(a:arg2)
+line 18:       call add(results,printf('len(%s)(%d) != len(%s)(%d)',vimunit#util#substr(a:arg1,maxstrlen,'...'),len(a:arg1),vimunit#util#substr(a:arg2,maxstrlen,'...'),len(a:arg2)))
+line 19:     else
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff..vimunit#util#diff returning []
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff
+
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff..vimunit#util#diff returning ['Different values for key "menu"', [... - fixtures/common/namespaced_foo.php']]
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff
+
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 20:       for idx in range(len(a:arg1))
+line 21:         let idxdiff = vimunit#util#diff(a:arg1[idx],a:arg2[idx])
+line 22:         if len(idxdiff) > 0
+line 23:           call add(results,'Different values for index '. idx)
+line 24:           call add(results,idxdiff)
+line 25:         endif
+line 26:       endfor
+line 27:     endif
+line 28:   elseif type(a:arg1) == type(a:arg2) && type(a:arg1) == 4
+line 29:     for key in keys(a:arg1)
+line 30:       if !has_key(a:arg2,key)
+line 31:         call add(results,'Only in first dictionary: {'. key .': '. s:str(a:arg1[key]) .'}')
+line 32:       else
+line 33:         let sub = vimunit#util#diff(a:arg1[key],a:arg2[key])
+line 34:         if len(sub) > 0
+line 35:           call add(results,'Different values for key "'. key .'"')
+line 36:           call add(results,sub)
+line 37:         endif
+line 38:       endif
+line 39:     endfor
+line 40:     for key in keys(a:arg2)
+line 41:       if !has_key(a:arg1,key)
+line 42:         call add(results,'Only in second dictionary: {'. key .': '. s:str(a:arg2[key]) .'}')
+line 43:       endif
+line 44:     endfor
+line 45:   else
+line 46:     if a:arg1 != a:arg2
+line 47:       call add(results,s:str(a:arg1) .' != '. s:str(a:arg2))
+line 48:     endif
+line 49:   endif
+line 50:   return results
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..vimunit#util#diff returning ['Different values for index 0', ['Di...- fixtures/common/namespaced_foo.php']]]
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+line 2: ^Ilet s:testRunCount = s:testRunCount + 1
+line 3: ^I" check the types..."
+line 4: ^Iif len(diffs) == 0
+line 5: ^I^Ilet s:testRunSuccessCount = s:testRunSuccessCount + 1
+line 6: ^I^Ilet bFoo = TRUE()
+line 7: ^Ielse
+line 8: ^I^Ilet s:testRunFailureCount = s:testRunFailureCount + 1
+line 9: ^I^Ilet bFoo = FALSE()
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..FALSE()
+
+line 1: ^I^Ilet sFoo = (1 != 1)
+line 2: ^I^Ireturn sFoo
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..FALSE returning #0
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+line 10: ^I^Ilet arg1text = s:str(a:arg1)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..<SNR>36_str([{'word': '\NS1\SUBNS\FooSub', 'menu'...neral/namespaced_foo.php', 'kind': 'c'}])
+
+line 1:   if type(a:str) != 1
+line 2:     return string(a:str)
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..<SNR>36_str returning '[{''word'': ''\NS1\SUBNS\FooSub'', '...namespaced_foo.php'', ''kind'': ''c''}]'
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+line 11: ^I^Ilet arg2text = s:str(a:arg2)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..<SNR>36_str([{'word': '\NS1\SUBNS\FooSub', 'menu'...ommon/namespaced_foo.php', 'kind': 'c'}])
+
+line 1:   if type(a:str) != 1
+line 2:     return string(a:str)
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..<SNR>36_str returning '[{''word'': ''\NS1\SUBNS\FooSub'', '...namespaced_foo.php'', ''kind'': ''c''}]'
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+line 12: ^I^Ilet msg = ''
+line 13: ^I^Iif (exists('a:1'))
+line 14: ^I^I^Ilet msg = " MSG: ". a:1
+line 15: ^I^Iendif
+line 16: ^I^I" TODO provide some 'verbose' option that prints out all the differences
+line 17: ^I^I" between the objects.
+line 18: ^I^Icall s:MsgSink('AssertEquals', arg1text .'!='. arg2text . msg)
+calling function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..<SNR>36_MsgSink('AssertEquals', '[{''word'': ''\NS1\SUBNS\FooSub'', '...namespaced_foo.php'', ''kind'': ''c''}]')
+
+line 1:     " recording of the last failure
+line 2: ^Ilet trace = split(expand("<sfile>"), '\.\.')
+line 3: ^Ilet msg = [[ a:caller,a:msg, (len(trace) >= 3 ? trace[-3] : '') ]]
+line 4: ^Iif g:vimUnitVerbosity > 0
+line 5: ^I^Ilet s:msgSink = s:msgSink + msg
+line 6: ^I^I"echo a:caller.': '.a:msg
+line 7: ^Iendif
+line 8: ^Iif g:vimUnitFailFast
+line 9: ^I^Ithrow string("VU " . msg[0][0] .": ". msg[0][1])
+Exception thrown: 'VU AssertEquals: [{''word'': ''\NS1\SUBNS\FooSub'', ''menu'': '' - fixtures/CompleteGeneral/namespaced_foo.php'', ''info'': ''\NS1\SUBNS\FooSub - fixtures/CompleteGeneral/namespaced_foo.php'', ''kind'': ''c''}]!=[{''word'': ''\NS1\SUBNS\FooSub'', ''menu'': '' - fixtures/common/namespaced_foo.php'', ''info'': ''\NS1\SUBNS\FooSub - fixtures/common/namespaced_foo.php'', ''kind'': ''c''}]'
+
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals..<SNR>36_MsgSink aborted
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals
+
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces..VUAssertEquals aborted
+
+continuing in function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces
+
+function VURunAllTests..TestCase_completes_class_names_from_tags_matching_namespaces aborted
+
+continuing in function VURunAllTests
+
+line 30: ^I^I^I^I^Ilet goodTests = goodTests + 1
+line 31: ^I^I^I^Icatch /.*/
+Exception caught: 'VU AssertEquals: [{''word'': ''\NS1\SUBNS\FooSub'', ''menu'': '' - fixtures/CompleteGeneral/namespaced_foo.php'', ''info'': ''\NS1\SUBNS\FooSub - fixtures/CompleteGeneral/namespaced_foo.php'', ''kind'': ''c''}]!=[{''word'': ''\NS1\SUBNS\FooSub'', ''menu'': '' - fixtures/common/namespaced_foo.php'', ''info'': ''\NS1\SUBNS\FooSub - fixtures/common/namespaced_foo.php'', ''kind'': ''c''}]'
+
+line 32: ^I^I^I^I^Ilet failtype = 'Failure'
+line 33: ^I^I^I^I^Iif v:exception =~ 'VU'
+line 34: ^I^I^I^I^I^Ilet failedTests = failedTests + 1
+line 35: ^I^I^I^I^Ielse
+line 36: ^I^I^I^I^I^Ilet exceptTests = exceptTests + 1
+line 37: ^I^I^I^I^I^Ilet failtype = 'Exception'
+line 38: ^I^I^I^I^Iendif
+line 39: 
+line 40: ^I^I^I^I^Iexec "set verbose=".oldverbose
+line 40: set verbose=0
