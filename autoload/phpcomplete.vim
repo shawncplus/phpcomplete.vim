@@ -1,4 +1,5 @@
-" Vim completion script " Language:	PHP
+" Vim completion script
+" Language:	PHP
 " Maintainer:	Mikolaj Machowski ( mikmach AT wp DOT pl )
 " Maintainer:	Shawn Biddle ( shawn AT shawnbiddle DOT com )
 "
@@ -52,6 +53,10 @@ if !exists('g:phpcomplete_parse_docblock_comments')
 	let g:phpcomplete_parse_docblock_comments = 0
 endif
 
+if !exists('g:phpcomplete_cache_taglists')
+	let g:phpcomplete_cache_taglists = 0
+endif
+
 if !exists('s:cache_classstructures')
 	let s:cache_classstructures = {}
 endif
@@ -60,8 +65,8 @@ if !exists('s:cache_tags')
 	let s:cache_tags = {}
 endif
 
-function! phpcomplete#GetCachedTaglist(pattern) " {{{
-	if has_key(s:cache_tags, a:pattern)
+function! phpcomplete#GetTaglist(pattern) " {{{
+	if g:phpcomplete_cache_taglists == 1 && has_key(s:cache_tags, a:pattern)
 		let tags = s:cache_tags[a:pattern]
 	else
 		let tags = taglist(a:pattern)
@@ -200,9 +205,9 @@ function! phpcomplete#CompleteUse(base) " {{{
 
 	if len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
 		if len(classname_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-			let tags = phpcomplete#GetCachedTaglist('^\('.namespace_match_pattern.'\|'.classname_match_pattern.'\)')
+			let tags = phpcomplete#GetTaglist('^\('.namespace_match_pattern.'\|'.classname_match_pattern.'\)')
 		else
-			let tags = phpcomplete#GetCachedTaglist('^'.namespace_match_pattern)
+			let tags = phpcomplete#GetTaglist('^'.namespace_match_pattern)
 		endif
 
 		for tag in tags
@@ -283,11 +288,11 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 
 	let tags = []
 	if len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && tag_match_pattern != namespace_match_pattern
-		let tags = phpcomplete#GetCachedTaglist('\c^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
+		let tags = phpcomplete#GetTaglist('\c^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
 	elseif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = phpcomplete#GetCachedTaglist('\c^'.namespace_match_pattern)
+		let tags = phpcomplete#GetTaglist('\c^'.namespace_match_pattern)
 	elseif len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = phpcomplete#GetCachedTaglist('\c^'.tag_match_pattern)
+		let tags = phpcomplete#GetTaglist('\c^'.tag_match_pattern)
 	endif
 
 	for tag in tags
@@ -544,7 +549,7 @@ function! phpcomplete#CompleteUnknownClass(base, scontext) " {{{
 
 	" collect external functions from tags
 	let ext_functions = {}
-	let tags = phpcomplete#GetCachedTaglist('^'.substitute(a:base, '^\$', '', ''))
+	let tags = phpcomplete#GetTaglist('^'.substitute(a:base, '^\$', '', ''))
 	for tag in tags
 		if tag.kind ==? 'f'
 			let item = tag.name
@@ -619,7 +624,7 @@ function! phpcomplete#CompleteVariable(base) " {{{
 
 	" ctags has support for PHP, use tags file for external variables
 	let ext_vars = {}
-	let tags = phpcomplete#GetCachedTaglist('\C^'.substitute(a:base, '^\$', '', ''))
+	let tags = phpcomplete#GetTaglist('\C^'.substitute(a:base, '^\$', '', ''))
 	for tag in tags
 		if tag.kind ==? 'v'
 			let item = tag.name
@@ -690,7 +695,7 @@ function! phpcomplete#CompleteClassName(base, current_namespace, imports) " {{{
 
 	let tags = []
 	if len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = phpcomplete#GetCachedTaglist('^'.tag_match_pattern)
+		let tags = phpcomplete#GetTaglist('^'.tag_match_pattern)
 	endif
 
 	if len(tags)
@@ -986,6 +991,9 @@ function! phpcomplete#GetSubContext(context) " {{{
 endfunction " }}}
 
 function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
+	" Tries to get the classname and namespace for a chained method call like: 
+	"	$this->foo()->bar()->baz()->
+	"
 	let classname_candidate = a:classname_candidate 
 	let class_candidate_namespace = a:class_candidate_namespace 
 	let methodstack = a:methodstack
@@ -1055,7 +1063,6 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
-
 			let methodstack = split(a:scontext, '->')
 
 			" Don't complete self:: or $this if outside of a class
@@ -1075,7 +1082,6 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 
 			if classname_candidate != ''
 				let [classname_candidate, class_candidate_namespace] = phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
-				"let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, class_candidate_imports)
 				" return absolute classname, without leading \
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
@@ -1211,7 +1217,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 		" OK, first way failed, now check tags file(s)
 		" This method is useless when local variables are not indexed by ctags and
 		" pretty inaccurate even if it is
-		let tags = phpcomplete#GetCachedTaglist('^'.substitute(object, '^\$', '', ''))
+		let tags = phpcomplete#GetTaglist('^'.substitute(object, '^\$', '', ''))
 		if len(tags) == 0
 			return
 		else
@@ -1246,7 +1252,7 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 
 	" Get class location from tags
 	let no_namespace_candidate = ''
-	let tags = phpcomplete#GetCachedTaglist('^'.a:classname.'$')
+	let tags = phpcomplete#GetTaglist('^'.a:classname.'$')
 	for tag in tags
 		if tag.kind == 'c' || tag.kind == 'i'
 			if !has_key(tag, 'namespace')
@@ -1266,6 +1272,26 @@ endfunction
 " }}}
 
 function! phpcomplete#GetClassContentsStructured(file, name, imports) " {{{
+	" works like 'GetClassContents' but returns a dictionary containing 
+	" content, namespace, and imports for the class and all parent classes.
+	"
+	" {
+	"   foo:
+	"		{
+	"			content: '... class foo extends bar ... ', 
+	"			namespace: 'NS\Foo',
+	"			imports : { ... }
+	"		}, 
+	"	bar: 
+	"		{
+	"			content: '... class bar extends baz ... ', 
+	"			namespace: 'NS\Bar',
+	"			imports : { ... }
+	"		}, 
+	"	...
+	" }
+	"
+
 	" try to read from the cache first
 	if has_key(s:cache_classstructures, a:name)
 		return s:cache_classstructures[a:name]
@@ -1569,6 +1595,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 				" leading slash is not required use imports are always absolute
 				let imports[name] = {'name': object, 'kind': ''}
 			endfor
+
 			" find kind flags from tags or built in methods for the objects we extracted
 			" they can be either classes, interfaces or namespaces, no other thing is importable in php
 			for [key, import] in items(imports)
@@ -1577,7 +1604,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 					let [classname, namespace_for_classes] = phpcomplete#ExpandClassName(import.name, '\', {})
 					let namespace_name_candidate = substitute(import.name, '\\', '\\\\', 'g')
 					" can be a namespace name as is, or can be a tagname at the end with a namespace
-					let tags = phpcomplete#GetCachedTaglist('^\('.namespace_name_candidate.'\|'.classname.'\)$')
+					let tags = phpcomplete#GetTaglist('^\('.namespace_name_candidate.'\|'.classname.'\)$')
 					if len(tags) > 0
 						for tag in tags
 							" if there's a namespace with the name of the import
@@ -1609,7 +1636,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 						let import['builtin'] = 1
 					else
 						" or can be a tag with exactly matchign name
-						let tags = phpcomplete#GetCachedTaglist('^'.import['name'].'$')
+						let tags = phpcomplete#GetTaglist('^'.import['name'].'$')
 						for tag in tags
 							" search for the first matchin namespace, class, interface with no namespace
 							if !has_key(tag, 'namespace') && (tag.kind == 'n' || tag.kind == 'c' || tag.kind == 'i')
