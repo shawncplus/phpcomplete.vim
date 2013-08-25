@@ -58,13 +58,13 @@ fun! TestCase_complete_classes_from_built_in_classes()
 
     let res = phpcomplete#CompleteClassName('', '\', {})
     call VUAssertEquals([
-                \ {'word': 'Datetime', 'menu': '', 'kind': 'c'}],
+                \ {'word': 'DateTime', 'menu': '', 'kind': 'c'}],
                 \ res)
 
     " user typed \ and hits <c-x><c-o> in a file starting with "namespace NS1;"
     let res = phpcomplete#CompleteClassName('\', 'NS1', {})
     call VUAssertEquals([
-                \ {'word': '\Datetime', 'menu': '', 'kind': 'c'}],
+                \ {'word': '\DateTime', 'menu': '', 'kind': 'c'}],
                 \ res)
     silent! bw! %
 endf
@@ -88,7 +88,7 @@ fun! TestCase_adds_arguments_of_constructors_for_built_in_classes()
 
     let res = phpcomplete#CompleteClassName('', '\', {})
     call VUAssertEquals([
-                \ {'word': 'Datetime', 'menu': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'kind': 'c'}],
+                \ {'word': 'DateTime', 'menu': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'kind': 'c'}],
                 \ res)
     silent! bw! %
 endf

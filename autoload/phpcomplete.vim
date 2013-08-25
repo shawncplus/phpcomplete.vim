@@ -53,6 +53,29 @@ if !exists('g:phpcomplete_parse_docblock_comments')
 	let g:phpcomplete_parse_docblock_comments = 0
 endif
 
+if !exists('g:phpcomplete_cache_taglists')
+	let g:phpcomplete_cache_taglists = 0
+endif
+
+if !exists('s:cache_classstructures')
+	let s:cache_classstructures = {}
+endif
+
+if !exists('s:cache_tags')
+	let s:cache_tags = {}
+endif
+
+function! phpcomplete#GetTaglist(pattern) " {{{
+	if g:phpcomplete_cache_taglists == 1 && has_key(s:cache_tags, a:pattern)
+		let tags = s:cache_tags[a:pattern]
+	else
+		let tags = taglist(a:pattern)
+		let s:cache_tags[a:pattern] = tags
+	endif
+	return tags
+endfunction
+" }}}
+
 function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if a:findstart
 		unlet! b:php_menu
@@ -182,9 +205,9 @@ function! phpcomplete#CompleteUse(base) " {{{
 
 	if len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
 		if len(classname_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-			let tags = taglist('^\('.namespace_match_pattern.'\|'.classname_match_pattern.'\)')
+			let tags = phpcomplete#GetTaglist('^\('.namespace_match_pattern.'\|'.classname_match_pattern.'\)')
 		else
-			let tags = taglist('^'.namespace_match_pattern)
+			let tags = phpcomplete#GetTaglist('^'.namespace_match_pattern)
 		endif
 
 		for tag in tags
@@ -248,8 +271,8 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 	let int_constants = {}
 	for i in int_values
 		let c_name = matchstr(i, '\(["'']\)\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze\1')
-		if c_name != '' && c_name =~ '^'.substitute(a:base, '\\', '\\\\', 'g')
-			let int_constants[leading_slash.c_name] = '' " c_value
+		if c_name != '' && c_name =~# '^'.substitute(a:base, '\\', '\\\\', 'g')
+			let int_constants[leading_slash.c_name] = ''
 		endif
 	endfor
 
@@ -265,11 +288,11 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 
 	let tags = []
 	if len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion && tag_match_pattern != namespace_match_pattern
-		let tags = taglist('^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
+		let tags = phpcomplete#GetTaglist('\c^\('.tag_match_pattern.'\|'.namespace_match_pattern.'\)')
 	elseif len(namespace_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = taglist('^'.namespace_match_pattern)
+		let tags = phpcomplete#GetTaglist('\c^'.namespace_match_pattern)
 	elseif len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = taglist('^'.tag_match_pattern)
+		let tags = phpcomplete#GetTaglist('\c^'.tag_match_pattern)
 	endif
 
 	for tag in tags
@@ -526,7 +549,7 @@ function! phpcomplete#CompleteUnknownClass(base, scontext) " {{{
 
 	" collect external functions from tags
 	let ext_functions = {}
-	let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
+	let tags = phpcomplete#GetTaglist('^'.substitute(a:base, '^\$', '', ''))
 	for tag in tags
 		if tag.kind ==? 'f'
 			let item = tag.name
@@ -585,7 +608,7 @@ function! phpcomplete#CompleteVariable(base) " {{{
 	let int_vals = split(jfile, '\ze\$')
 	let int_vars = {}
 	for i in int_vals
-		if i =~ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
+		if i =~? '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*=\s*new'
 			let val = matchstr(i,
 						\ '^\$[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
 		else
@@ -601,14 +624,14 @@ function! phpcomplete#CompleteVariable(base) " {{{
 
 	" ctags has support for PHP, use tags file for external variables
 	let ext_vars = {}
-	let tags = taglist('^'.substitute(a:base, '^\$', '', ''))
+	let tags = phpcomplete#GetTaglist('\C^'.substitute(a:base, '^\$', '', ''))
 	for tag in tags
 		if tag.kind ==? 'v'
 			let item = tag.name
 			let m_menu = ''
-			if tag.cmd =~ tag['name'].'\s*=\s*new\s\+'
+			if tag.cmd =~? tag['name'].'\s*=\s*new\s\+'
 				let m_menu = matchstr(tag.cmd,
-							\ '=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+							\ '\c=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
 			endif
 			let ext_vars['$'.item] = m_menu
 		endif
@@ -617,7 +640,7 @@ function! phpcomplete#CompleteVariable(base) " {{{
 	call extend(int_vars, ext_vars)
 
 	for m in sort(keys(int_vars))
-		if m =~ '^\'.a:base
+		if m =~# '^\'.a:base
 			call add(res, m)
 		endif
 	endfor
@@ -672,7 +695,7 @@ function! phpcomplete#CompleteClassName(base, current_namespace, imports) " {{{
 
 	let tags = []
 	if len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = taglist('^'.tag_match_pattern)
+		let tags = phpcomplete#GetTaglist('^'.tag_match_pattern)
 	endif
 
 	if len(tags)
@@ -732,29 +755,27 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, classAccess) 
 	let res  = []
 
 	" limit based on context to static or normal methods
+    let static_con = ''
 	if a:scontext =~ '::'
 		if g:phpcomplete_relax_static_constraint == 1
-			let functions = filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . a:classAccess . '\\)*\\|\\(' . a:classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
-			let functions += filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\s\\+\\)*function"')
-		else
-			let functions = filter(deepcopy(a:sccontent),
-						\ 'v:val =~ "^\\s*\\(static\\s\\+\\(' . a:classAccess . '\\)*\\|\\(' . a:classAccess . '\\s\\+\\)*static\\)\\s\\+function"')
+            let static_con = ''
+        else
+            let static_con = '\\(.*\\<static\\>\\)\\@='
 		endif
 	elseif a:scontext =~ '->'
-		let functions = filter(deepcopy(a:sccontent),
-					\ 'v:val =~ "^\\s*\\(' . a:classAccess . '\\s\\+\\)*function"')
+        let static_con = '\\(.*\\<static\\>\\)\\@!'
 	endif
 
-	let sfuncs = split(join(functions, ' '), 'function\s\+')
+    let functions = filter(deepcopy(a:sccontent),
+                \ 'v:val =~ "^\\s*\\(.*\\<' . a:classAccess . '\\>\\)\\@=' . static_con . '\\(public\\|protected\\|private\\|static\\|final\\|abstract\\|\\s\\)\\+function"')
+
 	let c_functions = {}
 	let c_doc = {}
-	for i in sfuncs
+	for i in functions
 		let f_name = matchstr(i,
-					\ '^&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
+					\ 'function\s*&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		let f_args = matchstr(i,
-					\ '^&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|$\)')
+					\ 'function\s*&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|\_$\)')
 		if f_name != ''
 			let c_functions[f_name.'('] = f_args
 			if g:phpcomplete_parse_docblock_comments
@@ -969,36 +990,54 @@ function! phpcomplete#GetSubContext(context) " {{{
 	return substitute(re, '^\s\+\|\s\+$', '', 'g')
 endfunction " }}}
 
-function! phpcomplete#ResolveNestedReturnValue(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
+function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
+	" Tries to get the classname and namespace for a chained method call like: 
+	"	$this->foo()->bar()->baz()->
+	"
 	let classname_candidate = a:classname_candidate 
 	let class_candidate_namespace = a:class_candidate_namespace 
-	if (len(a:methodstack) == 1) 
-		let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(a:classname_candidate, a:class_candidate_namespace, a:imports)
+	let methodstack = a:methodstack
+
+	if (len(methodstack) == 1) 
+		let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, a:imports)
 		return [classname_candidate, class_candidate_namespace]
 	else 
 		" Remove the first item from the stack
-		call remove(a:methodstack, 0)
-
-		let classlocation = phpcomplete#GetClassLocation(a:classname_candidate, a:class_candidate_namespace)
+		call remove(methodstack, 0)
+		let classlocation = phpcomplete#GetClassLocation(classname_candidate, class_candidate_namespace)
 		if filereadable(classlocation)
 			let classfile = readfile(classlocation)
-			let classcontent = "\n".phpcomplete#GetClassContents(classfile, a:classname_candidate)
 
 			" Read the next method from the stack and extract only the name
-			let method = matchstr(a:methodstack[0], '\zs\a\+\ze')
+			let method = matchstr(methodstack[0], '\zs\a\+\ze')
 
+			" Get structured information of all classes and subclasses including namespace and includes
+			let classcontents = phpcomplete#GetClassContentsStructured(classfile, classname_candidate, [])
 			" try to find the method's return type in docblock comment
-			let doc_str = phpcomplete#GetDocBlock(split(classcontent, "\n"), 'function\s*\<' . method . '\>')
-
+			for [key, classstructure] in items(classcontents)
+				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), 'function\s\+' . method)
+				if (doc_str!='')
+					break
+				endif
+			endfor
 			if doc_str != ''
 				let docblock = phpcomplete#ParseDocBlock(doc_str)
 				if has_key(docblock.return, 'type')
-					" Get the full namespace of the return type
-					let fullnamespace = matchstr(classcontent, 'use\s\+\zs[A-Za-z0-9\\]\+\ze\\' . docblock.return.type . ';')
-					let [classname_candiate, class_candidate_namespace] = phpcomplete#ExpandClassName(docblock.return.type, fullnamespace, a:imports)
+					let returnclass = matchstr(docblock.return.type, '\zs[A-Za-z0-9]\+\ze$')
+					if has_key(classstructure.imports, returnclass)
+						if has_key(classstructure.imports[returnclass], 'namespace')
+							let fullnamespace = classstructure.imports[returnclass].namespace
+						else 
+							let fullnamespace = class_candidate_namespace 
+						endif
+					else
+						let fullnamespace = class_candidate_namespace 
+					endif
+
+					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(returnclass, fullnamespace, a:imports)
 				endif
 			endif
-			return phpcomplete#ResolveNestedReturnValue(classname_candiate, class_candidate_namespace, a:imports, a:methodstack)					
+			return phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, a:imports, methodstack)					
 		endif
 	endif
 
@@ -1020,12 +1059,11 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	let class_candidate_namespace = a:current_namespace
 	let class_candidate_imports = a:imports
 
-	let methodstack = split(a:scontext, '->')
-
 	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
+			let methodstack = split(a:scontext, '->')
 
 			" Don't complete self:: or $this if outside of a class
 			" (assumes correct indenting)
@@ -1034,16 +1072,16 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 			endif
 
 			if line =~? '^\s*abstract\s*class'
-				let classname_candidate = matchstr(line, '^\s*abstract\s*class\s*\zs'.class_name_pattern.'\ze')
+				let classname_candidate = matchstr(line, '\c^\s*abstract\s*class\s*\zs'.class_name_pattern.'\ze')
 			elseif line =~? '^\s*class'
-				let classname_candidate = matchstr(line, '^\s*class\s*\zs'.class_name_pattern.'\ze')
+				let classname_candidate = matchstr(line, '\c^\s*class\s*\zs'.class_name_pattern.'\ze')
 			else
 				let i += 1
 				continue
 			endif
 
 			if classname_candidate != ''
-				let [classname_candidate, class_candidate_namespace] = phpcomplete#ResolveNestedReturnValue(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
+				let [classname_candidate, class_candidate_namespace] = phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
 				" return absolute classname, without leading \
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
@@ -1135,7 +1173,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 			"   - the function can have a name or be anonymous (e.g., function qux() { ... } vs. function () { ... })
 			"   - the type-hinted argument can be anywhere in the arguments list.
 			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+\$'.object
-				let f_args = matchstr(line, 'function\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
+				let f_args = matchstr(line, '\cfunction\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
 				let args = split(f_args, '\s*\zs,\ze\s*')
 				for arg in args
 					if arg =~# '\$'.object.'\(,\|$\)'
@@ -1179,7 +1217,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 		" OK, first way failed, now check tags file(s)
 		" This method is useless when local variables are not indexed by ctags and
 		" pretty inaccurate even if it is
-		let tags = taglist('^'.substitute(object, '^\$', '', ''))
+		let tags = phpcomplete#GetTaglist('^'.substitute(object, '^\$', '', ''))
 		if len(tags) == 0
 			return
 		else
@@ -1214,7 +1252,7 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 
 	" Get class location from tags
 	let no_namespace_candidate = ''
-	let tags = taglist('^'.a:classname.'$')
+	let tags = phpcomplete#GetTaglist('^'.a:classname.'$')
 	for tag in tags
 		if tag.kind == 'c' || tag.kind == 'i'
 			if !has_key(tag, 'namespace')
@@ -1232,6 +1270,83 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 
 endfunction
 " }}}
+
+function! phpcomplete#GetClassContentsStructured(file, name, imports) " {{{
+	" works like 'GetClassContents' but returns a dictionary containing 
+	" content, namespace, and imports for the class and all parent classes.
+	"
+	" {
+	"   foo:
+	"		{
+	"			content: '... class foo extends bar ... ', 
+	"			namespace: 'NS\Foo',
+	"			imports : { ... }
+	"		}, 
+	"	bar: 
+	"		{
+	"			content: '... class bar extends baz ... ', 
+	"			namespace: 'NS\Bar',
+	"			imports : { ... }
+	"		}, 
+	"	...
+	" }
+	"
+
+	" try to read from the cache first
+	if has_key(s:cache_classstructures, a:name)
+		return s:cache_classstructures[a:name]
+	endif
+
+	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
+	let cfile = join(a:file, "\n")
+	let result = {}
+	" We use new buffer and (later) normal! because
+	" this is the most efficient way. The other way
+	" is to go through the looong string looking for
+	" matching {}
+
+	" remember the window we started at
+	let phpcomplete_original_window = winnr()
+
+	silent! below 1new
+	silent! 0put =cfile
+	call search('\(class\|interface\)\s\+'.a:name.'\(\>\|$\)')
+	let cfline = line('.')
+	call search('{')
+	let endline = line('.')
+
+	let content = join(getline(cfline, endline),"\n")
+	" Catch extends
+	if content =~? 'extends'
+		let extends_class = matchstr(content, 'class\_s\+'.a:name.'\_s\+extends\_s\+\zs'.class_name_pattern.'\ze')
+	else
+		let extends_class = ''
+	endif
+	normal! %
+	let classcontent = join(getline(cfline, line('.')), "\n")
+	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
+	silent! bw! %
+	" go back to original window
+	exe phpcomplete_original_window.'wincmd w'
+	let result = {a:name : {'content' : classcontent, 'namespace' : current_namespace, 'imports' : imports}}
+
+	if extends_class != ''
+		let [extends_class, namespace] = phpcomplete#ExpandClassName(extends_class, current_namespace, imports)
+		let classlocation = phpcomplete#GetClassLocation(extends_class, namespace)
+		if filereadable(classlocation)
+			let classfile = readfile(classlocation)
+			let result = extend(result, phpcomplete#GetClassContentsStructured(classfile, extends_class, imports))
+		else
+			" try to find the declaration in the same file.
+			let result = extend(result, phpcomplete#GetClassContentsStructured(a:file, extends_class, imports))
+		endif
+	endif
+	let s:cache_classstructures[a:name] = result
+
+	return result
+endfunction
+" }}}
+
 
 function! phpcomplete#GetClassContents(file, name) " {{{
 	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
@@ -1260,8 +1375,7 @@ function! phpcomplete#GetClassContents(file, name) " {{{
 	endif
 	normal! %
 
-	" Getting classcontent from line 0, to also include the namspace and use statements
-	let classcontent = join(getline(0, line('.')), "\n")
+	let classcontent = join(getline(cfline, line('.')), "\n")
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
 	silent! bw! %
 
@@ -1490,21 +1604,31 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 					let [classname, namespace_for_classes] = phpcomplete#ExpandClassName(import.name, '\', {})
 					let namespace_name_candidate = substitute(import.name, '\\', '\\\\', 'g')
 					" can be a namespace name as is, or can be a tagname at the end with a namespace
-					let tags = taglist('^\('.namespace_name_candidate.'\|'.classname.'\)$')
-					for tag in tags
-						" if there's a namespace with the name of the import
-						if tag.kind == 'n' && tag.name == import.name
-							call extend(import, tag)
+					let tags = phpcomplete#GetTaglist('^\('.namespace_name_candidate.'\|'.classname.'\)$')
+					if len(tags) > 0
+						for tag in tags
+							" if there's a namespace with the name of the import
+							if tag.kind == 'n' && tag.name == import.name
+								call extend(import, tag)
+								let import['builtin'] = 0
+								break
+							endif
+							" if the name matches with the extracted classname and namespace
+							if (tag.kind == 'c' || tag.kind == 'i') && tag.name == classname && has_key(tag, 'namespace') && tag.namespace == namespace_for_classes
+								call extend(import, tag)
+								let import['builtin'] = 0
+								break
+							endif
+						endfor
+					else
+						" if no tags are found, extract the namespace from the name
+						let ns = matchstr(import.name, '\c\zs[a-zA-Z0-9\\]\+\ze\\' . name)
+						if len(ns) > 0 
+							let import['name'] = name
+							let import['namespace'] = ns
 							let import['builtin'] = 0
-							break
-						endif
-						" if the name matches with the extracted classname and namespace
-						if (tag.kind == 'c' || tag.kind == 'i') && tag.name == classname && has_key(tag, 'namespace') && tag.namespace == namespace_for_classes
-							call extend(import, tag)
-							let import['builtin'] = 0
-							break
-						endif
-					endfor
+						endif 
+					endif
 				else
 					" if no \ in the name, it can be a built in class
 					if has_key(g:php_builtin_classnames, import.name)
@@ -1512,7 +1636,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 						let import['builtin'] = 1
 					else
 						" or can be a tag with exactly matchign name
-						let tags = taglist('^'.import['name'].'$')
+						let tags = phpcomplete#GetTaglist('^'.import['name'].'$')
 						for tag in tags
 							" search for the first matchin namespace, class, interface with no namespace
 							if !has_key(tag, 'namespace') && (tag.kind == 'n' || tag.kind == 'c' || tag.kind == 'i')
