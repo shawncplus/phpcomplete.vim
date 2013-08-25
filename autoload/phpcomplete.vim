@@ -1014,7 +1014,7 @@ function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namesp
 			let classfile = readfile(classlocation)
 
 			" Read the next method from the stack and extract only the name
-			let method = matchstr(methodstack[0], '\zs\a\+\ze')
+			let method = matchstr(methodstack[0], '\zs\w\+\ze')
 
 			" Get structured information of all classes and subclasses including namespace and includes
 			let classcontents = phpcomplete#GetClassContentsStructured(classfile, classname_candidate, [])
