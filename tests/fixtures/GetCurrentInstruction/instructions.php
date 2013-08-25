@@ -35,3 +35,10 @@ $some->foo = $some_long_variable
 ->that()
 ->you()
 ->love // cursor just before comment
+
+class Foo {
+    public function bar()
+    {
+        $this->foo-> // cursor before the comment
+    }
+}

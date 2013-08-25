@@ -32,5 +32,11 @@ fun! TestCase_returns_instuction_string()
                 \ '$some->foo = $some_long_variable->love()->me()->love()->me()->say()->that()->you()->love',
                 \ res)
 
+    call cursor(42, 20)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '$this->foo->',
+                \ res)
+
     silent! bw! %
 endf

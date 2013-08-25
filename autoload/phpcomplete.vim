@@ -929,6 +929,10 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 		if [line_number, col_number] == phpbegin_end
 			break
 		endif
+		" stop collecting chars if we see a function start { (think of first line in a function)
+		if current_char == '{' && synIDName =~ 'phpBraceFunc\|phpParent'
+			break
+		endif
 
 		let instruction = current_char.instruction
 
@@ -940,6 +944,8 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 			let col_number = strlen(line)
 		endif
 	endwhile
+	" strip leading whitespace
+	let instruction = substitute(instruction, '^\s\+', '', '')
 	return instruction
 endfunction " }}}
 
