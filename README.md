@@ -65,3 +65,8 @@ have to scan every tag, and vim's taglist() function runs extremly slow with a
 When enabled the preview window's content will include information
 extracted from docblock comments of the completions.
 Enabling this option will add return types to the completion menu for functions too.
+
+**let g:phpcomplete\_cache\_taglists = 1/0 [default 0]**<br>
+When enabled the taglist() lookups will be cached and subsequent searches
+for the same pattern will not check the tagfiles any more, thus making the
+lookups faster (no cache expiration implemented as of now).

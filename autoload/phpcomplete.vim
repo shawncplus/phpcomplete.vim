@@ -28,6 +28,11 @@
 "			extracted from docblock comments of the completions.
 "			Enabling this option will add return types to the completion menu for functions too.
 "
+"		let g:phpcomplete_cache_taglists = 1/0 [default 0]
+"			When enabled the taglist() lookups will be cached and subsequent searches
+"			for the same pattern will not check the tagfiles any more, thus making the
+"			lookups faster (no cache expiration implemented as of now).
+"
 "	TODO:
 "	- Switching to HTML (XML?) completion (SQL) inside of phpStrings
 "	- allow also for XML completion <- better do html_flavor for HTML
@@ -991,17 +996,17 @@ function! phpcomplete#GetSubContext(context) " {{{
 endfunction " }}}
 
 function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
-	" Tries to get the classname and namespace for a chained method call like: 
+	" Tries to get the classname and namespace for a chained method call like:
 	"	$this->foo()->bar()->baz()->
 	"
-	let classname_candidate = a:classname_candidate 
-	let class_candidate_namespace = a:class_candidate_namespace 
+	let classname_candidate = a:classname_candidate
+	let class_candidate_namespace = a:class_candidate_namespace
 	let methodstack = a:methodstack
 
-	if (len(methodstack) == 1) 
+	if (len(methodstack) == 1)
 		let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, a:imports)
 		return [classname_candidate, class_candidate_namespace]
-	else 
+	else
 		" Remove the first item from the stack
 		call remove(methodstack, 0)
 		let classlocation = phpcomplete#GetClassLocation(classname_candidate, class_candidate_namespace)
@@ -1027,22 +1032,21 @@ function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namesp
 					if has_key(classstructure.imports, returnclass)
 						if has_key(classstructure.imports[returnclass], 'namespace')
 							let fullnamespace = classstructure.imports[returnclass].namespace
-						else 
-							let fullnamespace = class_candidate_namespace 
+						else
+							let fullnamespace = class_candidate_namespace
 						endif
 					else
-						let fullnamespace = class_candidate_namespace 
+						let fullnamespace = class_candidate_namespace
 					endif
 
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(returnclass, fullnamespace, a:imports)
 				endif
 			endif
-			return phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, a:imports, methodstack)					
+			return phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, a:imports, methodstack)
 		endif
 	endif
 
 endfunction " }}}
-
 
 function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	" Get class name
@@ -1272,22 +1276,22 @@ endfunction
 " }}}
 
 function! phpcomplete#GetClassContentsStructured(file, name, imports) " {{{
-	" works like 'GetClassContents' but returns a dictionary containing 
+	" works like 'GetClassContents' but returns a dictionary containing
 	" content, namespace, and imports for the class and all parent classes.
 	"
 	" {
 	"   foo:
 	"		{
-	"			content: '... class foo extends bar ... ', 
+	"			content: '... class foo extends bar ... ',
 	"			namespace: 'NS\Foo',
 	"			imports : { ... }
-	"		}, 
-	"	bar: 
+	"		},
+	"	bar:
 	"		{
-	"			content: '... class bar extends baz ... ', 
+	"			content: '... class bar extends baz ... ',
 	"			namespace: 'NS\Bar',
 	"			imports : { ... }
-	"		}, 
+	"		},
 	"	...
 	" }
 	"
@@ -1346,7 +1350,6 @@ function! phpcomplete#GetClassContentsStructured(file, name, imports) " {{{
 	return result
 endfunction
 " }}}
-
 
 function! phpcomplete#GetClassContents(file, name) " {{{
 	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
@@ -1623,11 +1626,11 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 					else
 						" if no tags are found, extract the namespace from the name
 						let ns = matchstr(import.name, '\c\zs[a-zA-Z0-9\\]\+\ze\\' . name)
-						if len(ns) > 0 
+						if len(ns) > 0
 							let import['name'] = name
 							let import['namespace'] = ns
 							let import['builtin'] = 0
-						endif 
+						endif
 					endif
 				else
 					" if no \ in the name, it can be a built in class
