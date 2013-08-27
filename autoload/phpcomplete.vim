@@ -1016,10 +1016,20 @@ function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namesp
 			" Read the next method from the stack and extract only the name
 			let method = matchstr(methodstack[0], '\zs\w\+\ze')
 
+			let full_file_path = fnamemodify(classlocation, ':p')
+			let cache_key = full_file_path.'#'.classname_candidate.'#'.getftime(full_file_path)
+			" try to read from the cache first
+			let s:cache_classstructures = {}
+			if has_key(s:cache_classstructures, cache_key)
+				let classcontent = s:cache_classstructures[cache_key]
+			else
+				let classcontents = phpcomplete#GetClassContentsStructured(classfile, classname_candidate, [])
+				let s:cache_classstructures[cache_key] = classcontents
+			endif
+
 			" Get structured information of all classes and subclasses including namespace and includes
-			let classcontents = phpcomplete#GetClassContentsStructured(classfile, classname_candidate, [])
 			" try to find the method's return type in docblock comment
-			for [key, classstructure] in items(classcontents)
+			for classstructure in classcontents
 				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), 'function\s\+' . method)
 				if (doc_str!='')
 					break
@@ -1275,35 +1285,30 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#GetClassContentsStructured(file, name, imports) " {{{
+function! phpcomplete#GetClassContentsStructured(file_lines, class_name, imports) " {{{
 	" works like 'GetClassContents' but returns a dictionary containing
 	" content, namespace, and imports for the class and all parent classes.
 	"
-	" {
-	"   foo:
-	"		{
-	"			content: '... class foo extends bar ... ',
-	"			namespace: 'NS\Foo',
-	"			imports : { ... }
-	"		},
-	"	bar:
-	"		{
-	"			content: '... class bar extends baz ... ',
-	"			namespace: 'NS\Bar',
-	"			imports : { ... }
-	"		},
+	" [
+	"	{
+	"		class: 'foo',
+	"		content: '... class foo extends bar ... ',
+	"		namespace: 'NS\Foo',
+	"		imports : { ... }
+	"	},
+	"	{
+	"		class: 'bar',
+	"		content: '... class bar extends baz ... ',
+	"		namespace: 'NS\Bar',
+	"		imports : { ... }
+	"	},
 	"	...
-	" }
+	" ]
 	"
 
-	" try to read from the cache first
-	if has_key(s:cache_classstructures, a:name)
-		return s:cache_classstructures[a:name]
-	endif
-
 	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
-	let cfile = join(a:file, "\n")
-	let result = {}
+	let cfile = join(a:file_lines, "\n")
+	let result = []
 	" We use new buffer and (later) normal! because
 	" this is the most efficient way. The other way
 	" is to go through the looong string looking for
@@ -1314,7 +1319,7 @@ function! phpcomplete#GetClassContentsStructured(file, name, imports) " {{{
 
 	silent! below 1new
 	silent! 0put =cfile
-	call search('\(class\|interface\)\s\+'.a:name.'\(\>\|$\)')
+	call search('\(class\|interface\)\s\+'.a:class_name.'\(\>\|$\)')
 	let cfline = line('.')
 	call search('{')
 	let endline = line('.')
@@ -1322,30 +1327,34 @@ function! phpcomplete#GetClassContentsStructured(file, name, imports) " {{{
 	let content = join(getline(cfline, endline),"\n")
 	" Catch extends
 	if content =~? 'extends'
-		let extends_class = matchstr(content, 'class\_s\+'.a:name.'\_s\+extends\_s\+\zs'.class_name_pattern.'\ze')
+		let extends_class = matchstr(content, 'class\_s\+'.a:class_name.'\_s\+extends\_s\+\zs'.class_name_pattern.'\ze')
 	else
 		let extends_class = ''
 	endif
 	normal! %
 	let classcontent = join(getline(cfline, line('.')), "\n")
-	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
+	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file_lines[0:cfline])
 	silent! bw! %
 	" go back to original window
 	exe phpcomplete_original_window.'wincmd w'
-	let result = {a:name : {'content' : classcontent, 'namespace' : current_namespace, 'imports' : imports}}
+	call add(result, {
+				\ 'class': a:class_name,
+				\ 'content': classcontent,
+				\ 'namespace': current_namespace,
+				\ 'imports': imports,
+				\ })
 
 	if extends_class != ''
 		let [extends_class, namespace] = phpcomplete#ExpandClassName(extends_class, current_namespace, imports)
 		let classlocation = phpcomplete#GetClassLocation(extends_class, namespace)
 		if filereadable(classlocation)
 			let classfile = readfile(classlocation)
-			let result = extend(result, phpcomplete#GetClassContentsStructured(classfile, extends_class, imports))
+			let result += phpcomplete#GetClassContentsStructured(classfile, extends_class, imports)
 		else
 			" try to find the declaration in the same file.
-			let result = extend(result, phpcomplete#GetClassContentsStructured(a:file, extends_class, imports))
+			let result += phpcomplete#GetClassContentsStructured(a:file_lines, extends_class, imports)
 		endif
 	endif
-	let s:cache_classstructures[a:name] = result
 
 	return result
 endfunction
