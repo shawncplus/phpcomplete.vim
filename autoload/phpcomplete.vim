@@ -1014,7 +1014,7 @@ function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namesp
 			" Read the next method from the stack and extract only the name
 			let method = matchstr(methodstack[0], '\zs\w\+\ze')
 
-			let classcontents = phpcomplete#GetCachedClassContents(classlocation, classname_candidate, [])
+			let classcontents = phpcomplete#GetCachedClassContents(classlocation, classname_candidate)
 
 			" Get structured information of all classes and subclasses including namespace and includes
 			" try to find the method's return type in docblock comment
@@ -1273,7 +1273,7 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#GetCachedClassContents(classlocation, class_name, imports) " {{{
+function! phpcomplete#GetCachedClassContents(classlocation, class_name) " {{{
 	let full_file_path = fnamemodify(a:classlocation, ':p')
 	let cache_key = full_file_path.'#'.a:class_name.'#'.getftime(full_file_path)
 
@@ -1309,7 +1309,7 @@ function! phpcomplete#GetCachedClassContents(classlocation, class_name, imports)
 
 	" cache miss, fetch the content from the files itself
 	let classfile = readfile(a:classlocation)
-	let classcontents = phpcomplete#GetClassContentsStructured(full_file_path, classfile, a:class_name, a:imports)
+	let classcontents = phpcomplete#GetClassContentsStructured(full_file_path, classfile, a:class_name)
 	let s:cache_classstructures[cache_key] = classcontents
 
 	return classcontents
@@ -1323,7 +1323,7 @@ function! phpcomplete#ClearCachedClassContents(full_file_path) " {{{
 	endfor
 endfunction " }}}
 
-function! phpcomplete#GetClassContentsStructured(file_path, file_lines, class_name, imports) " {{{
+function! phpcomplete#GetClassContentsStructured(file_path, file_lines, class_name) " {{{
 	" works like 'GetClassContents' but returns a dictionary containing
 	" content, namespace, and imports for the class and all parent classes.
 	"
@@ -1393,10 +1393,10 @@ function! phpcomplete#GetClassContentsStructured(file_path, file_lines, class_na
 		let classlocation = phpcomplete#GetClassLocation(extends_class, namespace)
 		if filereadable(classlocation)
 			let full_file_path = fnamemodify(classlocation, ':p')
-			let result += phpcomplete#GetClassContentsStructured(full_file_path, readfile(full_file_path), extends_class, imports)
+			let result += phpcomplete#GetClassContentsStructured(full_file_path, readfile(full_file_path), extends_class)
 		else
 			" try to find the declaration in the same file.
-			let result += phpcomplete#GetClassContentsStructured(full_file_path, a:file_lines, extends_class, imports)
+			let result += phpcomplete#GetClassContentsStructured(full_file_path, a:file_lines, extends_class)
 		endif
 	endif
 
@@ -1405,7 +1405,7 @@ endfunction
 " }}}
 
 function! phpcomplete#GetClassContents(classlocation, class_name) " {{{
-	let classcontents = phpcomplete#GetCachedClassContents(a:classlocation, a:class_name, [])
+	let classcontents = phpcomplete#GetCachedClassContents(a:classlocation, a:class_name)
 	let result = []
 	for classstructure in classcontents
 		call add(result, classstructure.content)
