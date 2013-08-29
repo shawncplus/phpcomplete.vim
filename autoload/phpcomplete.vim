@@ -165,7 +165,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 			if filereadable(classlocation)
 				let classfile = readfile(classlocation)
 				let classcontent = ''
-				let classcontent .= "\n".phpcomplete#GetClassContents(classfile, classname)
+				let classcontent .= "\n".phpcomplete#GetClassContents(classlocation, classname)
 				let sccontent = split(classcontent, "\n")
 				let classAccess = expand('%:p') == fnamemodify(classlocation, ':p') ? '\\(public\\|private\\|protected\\)' : 'public'
 
@@ -1315,13 +1315,13 @@ function! phpcomplete#GetCachedClassContents(classlocation, class_name, imports)
 	return classcontents
 endfunction " }}}
 
-function! phpcomplete#ClearCachedClassContents(full_file_path)
+function! phpcomplete#ClearCachedClassContents(full_file_path) " {{{
 	for [cache_key, cached_value] in items(s:cache_classstructures)
 		if stridx(cache_key, a:full_file_path.'#') == 0
 			call remove(s:cache_classstructures, cache_key)
 		endif
 	endfor
-endfunction!
+endfunction " }}}
 
 function! phpcomplete#GetClassContentsStructured(file_path, file_lines, class_name, imports) " {{{
 	" works like 'GetClassContents' but returns a dictionary containing
@@ -1404,50 +1404,13 @@ function! phpcomplete#GetClassContentsStructured(file_path, file_lines, class_na
 endfunction
 " }}}
 
-function! phpcomplete#GetClassContents(file, name) " {{{
-	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
-	let cfile = join(a:file, "\n")
-	" We use new buffer and (later) normal! because
-	" this is the most efficient way. The other way
-	" is to go through the looong string looking for
-	" matching {}
-
-	" remember the window we started at
-	let phpcomplete_original_window = winnr()
-
-	silent! below 1new
-	silent! 0put =cfile
-	call search('\(class\|interface\)\s\+'.a:name.'\(\>\|$\)')
-	let cfline = line('.')
-	call search('{')
-	let endline = line('.')
-
-	let content = join(getline(cfline, endline),"\n")
-	" Catch extends
-	if content =~? 'extends'
-		let extends_class = matchstr(content, 'class\_s\+'.a:name.'\_s\+extends\_s\+\zs'.class_name_pattern.'\ze')
-	else
-		let extends_class = ''
-	endif
-	normal! %
-
-	let classcontent = join(getline(cfline, line('.')), "\n")
-	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file[0:cfline])
-	silent! bw! %
-
-	" go back to original window
-	exe phpcomplete_original_window.'wincmd w'
-
-	if extends_class != ''
-		let [extends_class, namespace] = phpcomplete#ExpandClassName(extends_class, current_namespace, imports)
-		let classlocation = phpcomplete#GetClassLocation(extends_class, namespace)
-		if filereadable(classlocation)
-			let classfile = readfile(classlocation)
-			let classcontent .= "\n".phpcomplete#GetClassContents(classfile, extends_class)
-		endif
-	endif
-
-	return classcontent
+function! phpcomplete#GetClassContents(classlocation, class_name) " {{{
+	let classcontents = phpcomplete#GetCachedClassContents(a:classlocation, a:class_name, [])
+	let result = []
+	for classstructure in classcontents
+		call add(result, classstructure.content)
+	endfor
+	return join(result, "\n")
 endfunction
 " }}}
 
