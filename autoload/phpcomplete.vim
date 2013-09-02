@@ -175,7 +175,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 
 		return phpcomplete#CompleteUnknownClass(a:base, scontext)
 		" }}}
-	elseif scontext =~? '\(\s*new\|extends\)\s\+'
+	elseif scontext =~? '\(\s*new\|extends\)'
 		return phpcomplete#CompleteClassName(a:base, current_namespace, imports)
 	endif
 
