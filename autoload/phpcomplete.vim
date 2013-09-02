@@ -958,7 +958,7 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 			break
 		endif
 		" stop collecting chars if we see a function start { (think of first line in a function)
-		if current_char == '{' && synIDName =~ 'phpBraceFunc\|phpParent'
+		if (current_char == '{' || current_char == '}') && synIDName =~? 'phpBraceFunc\|phpParent\|Delimiter'
 			break
 		endif
 
