@@ -1001,7 +1001,7 @@ function! phpcomplete#GetSubContext(context) " {{{
 	return substitute(re, '^\s\+\|\s\+$', '', 'g')
 endfunction " }}}
 
-function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
+function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
 	" Tries to get the classname and namespace for a chained method call like:
 	"	$this->foo()->bar()->baz()->
 	"
@@ -1022,7 +1022,7 @@ function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namesp
 
 			let classcontents = phpcomplete#GetCachedClassContents(classlocation, classname_candidate)
 
-			" Get structured information of all classes and subclasses including namespace and includes
+			" Get Structured information of all classes and subclasses including namespace and includes
 			" try to find the method's return type in docblock comment
 			for classstructure in classcontents
 				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), 'function\s\+' . method)
@@ -1047,7 +1047,7 @@ function! phpcomplete#GetReturnValue(classname_candidate, class_candidate_namesp
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(returnclass, fullnamespace, a:imports)
 				endif
 			endif
-			return phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, a:imports, methodstack)
+			return phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, a:imports, methodstack)
 		endif
 	endif
 endfunction " }}}
@@ -1089,7 +1089,7 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 			endif
 
 			if classname_candidate != ''
-				let [classname_candidate, class_candidate_namespace] = phpcomplete#GetReturnValue(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
+				let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
 				" return absolute classname, without leading \
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
@@ -1315,7 +1315,7 @@ function! phpcomplete#GetCachedClassContents(classlocation, class_name) " {{{
 
 	" cache miss, fetch the content from the files itself
 	let classfile = readfile(a:classlocation)
-	let classcontents = phpcomplete#GetClassContentsStructured(full_file_path, classfile, a:class_name)
+	let classcontents = phpcomplete#GetClassContentsStructure(full_file_path, classfile, a:class_name)
 	let s:cache_classstructures[cache_key] = classcontents
 
 	return classcontents
@@ -1329,7 +1329,7 @@ function! phpcomplete#ClearCachedClassContents(full_file_path) " {{{
 	endfor
 endfunction " }}}
 
-function! phpcomplete#GetClassContentsStructured(file_path, file_lines, class_name) " {{{
+function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_name) " {{{
 	" works like 'GetClassContents' but returns a dictionary containing
 	" content, namespace, and imports for the class and all parent classes.
 	"
@@ -1399,10 +1399,10 @@ function! phpcomplete#GetClassContentsStructured(file_path, file_lines, class_na
 		let classlocation = phpcomplete#GetClassLocation(extends_class, namespace)
 		if filereadable(classlocation)
 			let full_file_path = fnamemodify(classlocation, ':p')
-			let result += phpcomplete#GetClassContentsStructured(full_file_path, readfile(full_file_path), extends_class)
+			let result += phpcomplete#GetClassContentsStructure(full_file_path, readfile(full_file_path), extends_class)
 		else
 			" try to find the declaration in the same file.
-			let result += phpcomplete#GetClassContentsStructured(full_file_path, a:file_lines, extends_class)
+			let result += phpcomplete#GetClassContentsStructure(full_file_path, a:file_lines, extends_class)
 		endif
 	endif
 
