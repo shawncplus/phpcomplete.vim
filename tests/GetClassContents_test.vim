@@ -7,17 +7,17 @@ fun! TestCase_reads_in_the_class_from_the_list_of_lines()
     call SetUp()
 
     let location =  expand('%:p:h')."/".'fixtures/GetClassContents/foo.class.php'
-    let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
+    let contents = phpcomplete#GetClassContents(location, 'FooClass')
     let expected = join(readfile(location)[1:], "\n")
     call VUAssertEquals(expected, contents)
 
     let location =  expand('%:p:h')."/".'fixtures/GetClassContents/foo_whitespace.class.php'
-    let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
+    let contents = phpcomplete#GetClassContents(location, 'FooClass')
     let expected = join(readfile(location)[4:9], "\n")
     call VUAssertEquals(expected, contents)
 
     let location =  expand('%:p:h')."/".'fixtures/GetClassContents/foo.interface.php'
-    let contents = phpcomplete#GetClassContents(readfile(location), 'FooInterface')
+    let contents = phpcomplete#GetClassContents(location, 'FooInterface')
     let expected = join(readfile(location)[1:], "\n")
     call VUAssertEquals(expected, contents)
 endf
@@ -26,7 +26,7 @@ fun! TestCase_only_reads_in_the_class_content()
     call SetUp()
 
     let location =  expand('%:p:h')."/".'fixtures/GetClassContents/foo_with_extra_content.class.php'
-    let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
+    let contents = phpcomplete#GetClassContents(location, 'FooClass')
     let expected = join(readfile(location)[5:8], "\n")
     call VUAssertEquals(expected, contents)
 endf
@@ -39,7 +39,7 @@ fun! TestCase_reads_in_the_extended_class_content()
     let location         =  expand('%:p:h')."/".'fixtures/GetClassContents/extends/foo_extends_bar.class.php'
     let extends_location =  expand('%:p:h')."/".'fixtures/GetClassContents/extends/bar.class.php'
 
-    let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass')
+    let contents = phpcomplete#GetClassContents(location, 'FooClass')
 
     let expected = readfile(location)[2]."\n".readfile(extends_location)[2]
     call VULog(expected)
@@ -61,7 +61,7 @@ fun! TestCase_reads_in_the_extended_classes_recursive()
     let expected .= readfile(extends_extends_location)[2]
     call VULog(expected)
 
-    let contents = phpcomplete#GetClassContents(readfile(location), 'FooClass2')
+    let contents = phpcomplete#GetClassContents(location, 'FooClass2')
     call VUAssertEquals(expected, contents)
 endf
 
@@ -77,7 +77,7 @@ fun! TestCase_reads_in_the_extended_classes_recursive_with_namespaces()
     let expected .= readfile(extends_location)[3]
     call VULog(expected)
 
-    let contents = phpcomplete#GetClassContents(readfile(location), 'NamespacedFoo2')
+    let contents = phpcomplete#GetClassContents(location, 'NamespacedFoo2')
     call VUAssertEquals(expected, contents)
 endf
 
@@ -94,6 +94,6 @@ fun! TestCase_reads_in_the_extended_classes_with_imports()
     let expected .= readfile(extends_location)[3]
     call VULog(expected)
 
-    let contents = phpcomplete#GetClassContents(readfile(location), 'NamespacedFoo2')
+    let contents = phpcomplete#GetClassContents(location, 'NamespacedFoo2')
     call VUAssertEquals(expected, contents)
 endf
