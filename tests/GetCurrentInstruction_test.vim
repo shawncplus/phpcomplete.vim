@@ -38,5 +38,11 @@ fun! TestCase_returns_instuction_string()
                 \ '$this->foo->',
                 \ res)
 
+    call cursor(48, 10)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '$a = "foo"',
+                \ res)
+
     silent! bw! %
 endf

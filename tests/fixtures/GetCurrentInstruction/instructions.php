@@ -42,3 +42,7 @@ class Foo {
         $this->foo-> // cursor before the comment
     }
 }
+
+if (true) {
+}
+$a = "foo" // cursor just before the comment
