@@ -1025,15 +1025,17 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 			" Get Structured information of all classes and subclasses including namespace and includes
 			" try to find the method's return type in docblock comment
 			for classstructure in classcontents
-				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), 'function\s\+' . method)
+				let doclock_target_pattern = 'function\s\+'.method.'\|\(public\|private\|protected\|var\).\+\$'.method
+				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), doclock_target_pattern)
 				if (doc_str!='')
 					break
 				endif
 			endfor
 			if doc_str != ''
 				let docblock = phpcomplete#ParseDocBlock(doc_str)
-				if has_key(docblock.return, 'type')
-					let returnclass = matchstr(docblock.return.type, '\zs[A-Za-z0-9]\+\ze$')
+				if has_key(docblock.return, 'type') || has_key(docblock, 'var')
+					let type = has_key(docblock.return, 'type') ? docblock.return.type : docblock.var.type
+					let returnclass = matchstr(type, '\zs[A-Za-z0-9]\+\ze$')
 					if has_key(classstructure.imports, returnclass)
 						if has_key(classstructure.imports[returnclass], 'namespace')
 							let fullnamespace = classstructure.imports[returnclass].namespace

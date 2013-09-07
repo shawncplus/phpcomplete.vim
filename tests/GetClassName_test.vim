@@ -419,17 +419,33 @@ fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detect
     below 1new
     exe ":silent! edit ".path
 
-    exe ':28'
+    exe ':68'
     let classname = phpcomplete#GetClassName('$foo->return_bar()->return_foo()->return_bar()->', '\', {})
     call VUAssertEquals('Bar', classname)
 
-    exe ':31'
+    exe ':71'
     let classname = phpcomplete#GetClassName('$foo->return_bar()->return_foo()->return_bar()->', '\', {})
     call VUAssertEquals('Bar', classname)
 
-    exe ':34'
+    exe ':74'
     let classname = phpcomplete#GetClassName('$foo->return_bar()->return_foo()->return_bar()->', '\', {})
     call VUAssertEquals('Bar', classname)
+
+    exe ':77'
+    let classname = phpcomplete#GetClassName('$foo->bar->', '\', {})
+    call VUAssertEquals('Bar', classname)
+
+    exe ':78'
+    let classname = phpcomplete#GetClassName('$foo->bar->', '\', {})
+    call VUAssertEquals('Bar', classname)
+
+    exe ':79'
+    let classname = phpcomplete#GetClassName('$foo->bar->', '\', {})
+    call VUAssertEquals('Bar', classname)
+
+    exe ':80'
+    let classname = phpcomplete#GetClassName('$foo->bar->foo->', '\', {})
+    call VUAssertEquals('Foo', classname)
 
     silent! bw! %
 endf

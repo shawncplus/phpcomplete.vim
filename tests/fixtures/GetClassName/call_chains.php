@@ -1,6 +1,15 @@
 <?php
 
 class Bar {
+
+    /**
+     * foo
+     *
+     * @var Foo
+     * @access public
+     */
+    var $foo;
+
     /**
      * return_foo
      *
@@ -12,6 +21,37 @@ class Bar {
 }
 
 class Foo {
+    /**
+     * bar
+     *
+     * @var Bar
+     */
+    public $bar;
+
+    /**
+     * bar
+     *
+     * @var Bar
+     */
+    private $bar2;
+
+    /**
+     * bar
+     *
+     * @var Bar
+     */
+    protected $bar3;
+
+    /**
+     * @var Bar
+     */
+    protected static $static_bar;
+
+    /**
+     * @var Bar
+     */
+    static public $static_bar2;
+
     /**
      * return_bar
      *
@@ -34,4 +74,7 @@ function fun(Foo $foo) {
     $foo->return_bar()->return_foo()->return_bar()->
 }
 
-
+$foo->bar->
+$foo->bar2->
+$foo->bar3->
+$foo->bar3->foo->
