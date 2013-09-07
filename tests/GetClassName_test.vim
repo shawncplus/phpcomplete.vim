@@ -347,8 +347,7 @@ fun! TestCase_returns_static_function_calls_retun_type_with_namespaces()
     silent! bw! %
 endf
 
-fun! TestCase_returns_nested_returntypes_from_this()
-
+fun! TestCase_resolves_call_chains_return_type_with_this()
 	let g:php_builtin_classes = {}
 	let g:php_builtin_classnames = {}
 
@@ -371,8 +370,7 @@ fun! TestCase_returns_nested_returntypes_from_this()
     silent! bw! %
 endf
 
-fun! TestCase_returns_nested_returntypes_from_this_with_tags()
-
+fun! TestCase_resolves_call_chains_return_type_with_tags()
 	let g:php_builtin_classes = {}
 	let g:php_builtin_classnames = {}
 
@@ -396,3 +394,42 @@ fun! TestCase_returns_nested_returntypes_from_this_with_tags()
     silent! bw! %
 endf
 
+fun! TestCase_resolves_call_chains_return_type_with_php5_4_new()
+	let g:php_builtin_classes = {}
+	let g:php_builtin_classnames = {}
+
+	let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_new_oneline_chain.php"
+
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':18'
+    let classname = phpcomplete#GetClassName('(new Foo)->return_bar()->', '\', {})
+    call VUAssertEquals('Bar', classname)
+
+    silent! bw! %
+endf
+
+fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detectable()
+	let g:php_builtin_classes = {}
+	let g:php_builtin_classnames = {}
+
+	let path = expand('%:p:h')."/"."fixtures/GetClassName/call_chains.php"
+
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':28'
+    let classname = phpcomplete#GetClassName('$foo->return_bar()->return_foo()->return_bar()->', '\', {})
+    call VUAssertEquals('Bar', classname)
+
+    exe ':31'
+    let classname = phpcomplete#GetClassName('$foo->return_bar()->return_foo()->return_bar()->', '\', {})
+    call VUAssertEquals('Bar', classname)
+
+    exe ':34'
+    let classname = phpcomplete#GetClassName('$foo->return_bar()->return_foo()->return_bar()->', '\', {})
+    call VUAssertEquals('Bar', classname)
+
+    silent! bw! %
+endf
