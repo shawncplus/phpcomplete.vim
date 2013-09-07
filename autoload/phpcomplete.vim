@@ -1033,7 +1033,7 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 			endfor
 			if doc_str != ''
 				let docblock = phpcomplete#ParseDocBlock(doc_str)
-				if has_key(docblock.return, 'type') || has_key(docblock, 'var')
+				if has_key(docblock.return, 'type') || has_key(docblock.var, 'type')
 					let type = has_key(docblock.return, 'type') ? docblock.return.type : docblock.var.type
 					let returnclass = matchstr(type, '\zs[A-Za-z0-9]\+\ze$')
 					if has_key(classstructure.imports, returnclass)
