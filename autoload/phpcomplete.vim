@@ -1383,8 +1383,8 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	endif
 	normal! %
 	let classcontent = join(getline(cfline, line('.')), "\n")
-	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file_lines[0:cfline])
 	silent! bw! %
+	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file_lines[0:cfline])
 	" go back to original window
 	exe phpcomplete_original_window.'wincmd w'
 	call add(result, {
