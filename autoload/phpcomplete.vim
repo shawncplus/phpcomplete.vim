@@ -992,7 +992,7 @@ function! phpcomplete#GetSubContext(context) " {{{
 			continue
 		endif
 		" chars that should stop the variable search
-		if char == '=' || char == ','
+		if char == '=' || char == ',' || char == '(' || char == ')'
 			break
 		endif
 
