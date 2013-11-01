@@ -140,7 +140,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if scontext =~ '\(->\|::\)$'
 		" {{{
 		" Get name of the class
-		let classname = phpcomplete#GetClassName(scontext, current_namespace, imports)
+		let classname = phpcomplete#GetClassName(context, current_namespace, imports)
 
 		" Get location of class definition, we have to iterate through all
 		if classname != ''
@@ -1008,17 +1008,36 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 	let classname_candidate = a:classname_candidate
 	let class_candidate_namespace = a:class_candidate_namespace
 	let methodstack = a:methodstack
+	let unknown_result = ['', '']
 
-	if (len(methodstack) == 1)
+	if (len(methodstack) == 2)
 		let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, a:imports)
 		return [classname_candidate, class_candidate_namespace]
 	else
 		" Remove the first item from the stack
 		call remove(methodstack, 0)
+		let method = matchstr(methodstack[0], '\zs\w\+\ze')
 		let classlocation = phpcomplete#GetClassLocation(classname_candidate, class_candidate_namespace)
-		if filereadable(classlocation)
+
+		if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, classname_candidate)
+			let class_info = g:php_builtin_classes[classname_candidate]
+			if has_key(class_info['methods'], method)
+				return phpcomplete#GetCallChainReturnType(class_info['methods'][method].return_type, '\', a:imports, methodstack)
+			endif
+			if has_key(class_info['properties'], method)
+				return phpcomplete#GetCallChainReturnType(class_info['properties'][method].type, '\', a:imports, methodstack)
+			endif
+			if has_key(class_info['static_methods'], method)
+				return phpcomplete#GetCallChainReturnType(class_info['static_methods'][method].return_type, '\', a:imports, methodstack)
+			endif
+			if has_key(class_info['static_properties'], method)
+				return phpcomplete#GetCallChainReturnType(class_info['static_properties'][method].type, '\', a:imports, methodstack)
+			endif
+
+			return unknown_result
+
+		elseif filereadable(classlocation)
 			" Read the next method from the stack and extract only the name
-			let method = matchstr(methodstack[0], '\zs\w\+\ze')
 
 			let classcontents = phpcomplete#GetCachedClassContents(classlocation, classname_candidate)
 
@@ -1047,14 +1066,18 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 					endif
 
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(returnclass, fullnamespace, a:imports)
+					return phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, a:imports, methodstack)
 				endif
 			endif
-			return phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, a:imports, methodstack)
+
+			return unknown_result
+		else
+			return unknown_result
 		endif
 	endif
 endfunction " }}}
 
-function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
+function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 	" Get class name
 	" Class name can be detected in few ways:
 	" @var $myVar class
@@ -1068,9 +1091,16 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 	let classname_candidate = ''
 	let class_candidate_namespace = a:current_namespace
 	let class_candidate_imports = a:imports
-	let methodstack = split(a:scontext, '\s*->\s*')
+	let methodstack = split(a:context, '\s*->\s*')
 
-	if a:scontext =~? '\$this->' || a:scontext =~? '\(self\|static\)::'
+	" add an empty string to the methodstack if the context ends with -> or ::
+	" representing the last segment the user typed so the methodstack has the same
+	" number of elements whenever the user typed some chars for the copletion or not
+	if a:context =~? '\(->\|::\)\s*$'
+		call add(methodstack, '')
+	endif
+
+	if a:context =~? '\$this->' || a:context =~? '\(self\|static\)::'
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
@@ -1096,20 +1126,20 @@ function! phpcomplete#GetClassName(scontext, current_namespace, imports) " {{{
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
 		endwhile
-	elseif a:scontext =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
-		let classname_candidate = matchstr(a:scontext, '\cnew\s\+\zs'.class_name_pattern.'\ze')
+	elseif a:context =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
+		let classname_candidate = matchstr(a:context, '\cnew\s\+\zs'.class_name_pattern.'\ze')
 		let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
 		" return absolute classname, without leading \
 		return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 	else
 		" check Constant lookup
-		let constant_object = matchstr(a:scontext, '\zs'.class_name_pattern.'\ze::')
+		let constant_object = matchstr(a:context, '\zs'.class_name_pattern.'\ze::')
 		if constant_object != ''
 			let classname_candidate = constant_object
 		endif
 
 		"extract the variable name from the context
-		let object = matchstr(a:scontext, '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
+		let object = matchstr(a:context, '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1

@@ -420,7 +420,7 @@ fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detect
     exe ":silent! edit ".path
 
     exe ':68'
-    let classname = phpcomplete#GetClassName('$foo->return_bar()->return_foo()->return_bar()->', '\', {})
+    let classname = phpcomplete#GetClassName('$foo->return_bar()->return_foo()->return_bar()->f', '\', {})
     call VUAssertEquals('Bar', classname)
 
     exe ':71'
@@ -446,6 +446,24 @@ fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detect
     exe ':80'
     let classname = phpcomplete#GetClassName('$foo->bar->foo->', '\', {})
     call VUAssertEquals('Foo', classname)
+
+    silent! bw! %
+endf
+
+fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detectable_with_builtin_types()
+    call phpcomplete#LoadData()
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/call_chains.php"
+
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':87'
+    let classname = phpcomplete#GetClassName('$doc->createAttribute()->ownerElement->', '\', {})
+    call VUAssertEquals('DOMElement', classname)
+
+    exe ':90'
+    let classname = phpcomplete#GetClassName('$d->add()->getTimezone()->', '\', {})
+    call VUAssertEquals('DateTimeZone', classname)
 
     silent! bw! %
 endf

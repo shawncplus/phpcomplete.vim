@@ -65,7 +65,7 @@ class Foo {
 // just some example of that path
 
 $foo = new Foo;
-$foo->return_bar()->return_foo()->return_bar()->
+$foo->return_bar()->return_foo()->return_bar()->f
 
 // @var $foo Foo
 $foo->return_bar()->return_foo()->return_bar()->
@@ -78,3 +78,13 @@ $foo->bar->
 $foo->bar2->
 $foo->bar3->
 $foo->bar3->foo->
+
+
+
+// ----
+
+$doc = new DOMDocument;
+$doc->createAttribute()->ownerElement->
+
+$d = new DateTime;
+$d->add()->getTimezone()->
