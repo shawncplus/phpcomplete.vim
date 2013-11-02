@@ -44,5 +44,21 @@ fun! TestCase_returns_instuction_string()
                 \ '$a = "foo"',
                 \ res)
 
+    call cursor(53, 36)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '$date->',
+                \ res)
+    call cursor(55, 38)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '$date->',
+                \ res)
+    call cursor(57, 40)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '$date->',
+                \ res)
+
     silent! bw! %
 endf

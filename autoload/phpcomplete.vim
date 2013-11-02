@@ -974,6 +974,32 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 	endwhile
 	" strip leading whitespace
 	let instruction = substitute(instruction, '^\s\+', '', '')
+
+	" TODO make one liners like: "for ($i=0; $i<42; ++i) $some->" work. Now results in "++$i) $some->"
+
+	" HACK to remove one line conditionals from code like "if ($foo) echo 'bar'"
+	" what the plugin really need is a proper php tokenizer
+	if instruction =~? '^\(if\|while\|foreach\)\s*('
+		" clear everything up until the first (
+		let instruction = substitute(instruction, '^\(if\|while\|foreach\)\s*(\s*', '', '')
+
+		let i = 0
+		let depth = 1
+		while i < len(instruction)
+			if instruction[i] == '('
+				let depth += 1
+			endif
+			if instruction[i] == ')'
+				let depth -= 1
+			endif
+			if depth == 0
+				break
+			end
+			let i += 1
+		endwhile
+		let instruction = instruction[i + 1 : len(instruction)]
+		let instruction = substitute(instruction, '^\s\+', '', '')
+	endif
 	return instruction
 endfunction " }}}
 
@@ -992,7 +1018,7 @@ function! phpcomplete#GetSubContext(context) " {{{
 			continue
 		endif
 		" chars that should stop the variable search
-		if char == '=' || char == ',' || char == '(' || char == ')'
+		if char == '=' || char == ','
 			break
 		endif
 
@@ -1139,7 +1165,7 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 		endif
 
 		"extract the variable name from the context
-		let object = matchstr(a:context, '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
+		let object = matchstr(phpcomplete#GetSubContext(a:context), '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1

@@ -46,3 +46,13 @@ class Foo {
 if (true) {
 }
 $a = "foo" // cursor just before the comment
+;
+
+
+
+if( $date->format('N') > 5 ) $date-> // cursor before the comment
+;
+while ($date->format('N') > 5) $date-> // cursor before the comment
+;
+foreach ($date->format('N') > 5) $date-> // cursor before the comment
+;

@@ -10,7 +10,4 @@ fun! TestCase_returns_last_variable_related_part_of_the_context()
 
     let res = phpcomplete#GetSubContext('$foo, $bar, $baz, $bar->')
     call VUAssertEquals('$bar->', res, "should stop at ',' -s")
-
-    let res = phpcomplete#GetSubContext("if ($date->format('N') > 5) $date->")
-    call VUAssertEquals('$date->', res, "should stop at parents")
 endf
