@@ -937,6 +937,7 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 	let col_number = col('.') - 1
 	let line_number = line('.')
 	let instruction = ''
+	let parent_depth = 0
 
 	let phpbegin_length = len(matchstr(getline(a:phpbegin[0]), '\zs<?\(php\)\?\ze'))
 	let phpbegin_end = [a:phpbegin[0], a:phpbegin[1] - 1 + phpbegin_length]
@@ -949,14 +950,23 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 		if synIDName =~? 'comment'
 			let current_char = ''
 		endif
-		" break if we are reached the previous statemenet
-		if current_char == ';' && synIDName !~? 'comment\|string'
+		" break if we are reached the previous statemenet,
+		if current_char == ';' && synIDName !~? 'comment\|string' && parent_depth >= 0
 			break
 		endif
 		" break if we are reached the php block start (<?php or <?)
 		if [line_number, col_number] == phpbegin_end
 			break
 		endif
+		" count nested darenthesis so we can tell if we need to break on a ';' or not (think of for (;;) loops)
+		if (current_char == '(' || current_char == ')') && synIDName =~? 'phpBraceFunc\|phpParent\|Delimiter'
+			if current_char == '('
+				let parent_depth += 1
+			elseif current_char == ')'
+				let parent_depth -= 1
+			endif
+		endif
+
 		" stop collecting chars if we see a function start { (think of first line in a function)
 		if (current_char == '{' || current_char == '}') && synIDName =~? 'phpBraceFunc\|phpParent\|Delimiter'
 			break
@@ -975,14 +985,13 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 	" strip leading whitespace
 	let instruction = substitute(instruction, '^\s\+', '', '')
 
-	" TODO make one liners like: "for ($i=0; $i<42; ++i) $some->" work. Now results in "++$i) $some->"
-
 	" HACK to remove one line conditionals from code like "if ($foo) echo 'bar'"
 	" what the plugin really need is a proper php tokenizer
-	if instruction =~? '^\(if\|while\|foreach\)\s*('
+	if instruction =~? '^\(if\|while\|foreach\|for\)\s*('
 		" clear everything up until the first (
-		let instruction = substitute(instruction, '^\(if\|while\|foreach\)\s*(\s*', '', '')
+		let instruction = substitute(instruction, '^\(if\|while\|foreach\|for\)\s*(\s*', '', '')
 
+		" lets iterate trough the instruction until we can find the pair for the opening (
 		let i = 0
 		let depth = 1
 		while i < len(instruction)

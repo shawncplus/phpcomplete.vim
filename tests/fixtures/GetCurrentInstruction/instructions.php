@@ -56,3 +56,5 @@ while ($date->format('N') > 5) $date-> // cursor before the comment
 ;
 foreach ($date->format('N') > 5) $date-> // cursor before the comment
 ;
+for ($i = 0; $i < 10; ++$i) $date-> // cursor before the comment
+;

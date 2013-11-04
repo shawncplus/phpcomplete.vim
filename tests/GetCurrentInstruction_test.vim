@@ -59,6 +59,11 @@ fun! TestCase_returns_instuction_string()
     call VUAssertEquals(
                 \ '$date->',
                 \ res)
+    call cursor(59, 35)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '$date->',
+                \ res)
 
     silent! bw! %
 endf
