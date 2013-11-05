@@ -1173,15 +1173,16 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 	let class_candidate_namespace = a:current_namespace
 	let class_candidate_imports = a:imports
 	let methodstack = split(a:context, '\s*->\s*')
+	let scontext = phpcomplete#GetSubContext(a:context)
 
 	" add an empty string to the methodstack if the context ends with -> or ::
 	" representing the last segment the user typed so the methodstack has the same
 	" number of elements whenever the user typed some chars for the copletion or not
-	if a:context =~? '\(->\|::\)\s*$'
+	if scontext =~? '\(->\|::\)\s*$'
 		call add(methodstack, '')
 	endif
 
-	if a:context =~? '\$this->' || a:context =~? '\(self\|static\)::'
+	if scontext =~? '\$this->' || scontext =~? '\(self\|static\)::'
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
@@ -1207,20 +1208,20 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
 		endwhile
-	elseif a:context =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
-		let classname_candidate = matchstr(a:context, '\cnew\s\+\zs'.class_name_pattern.'\ze')
+	elseif scontext =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
+		let classname_candidate = matchstr(scontext, '\cnew\s\+\zs'.class_name_pattern.'\ze')
 		let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
 		" return absolute classname, without leading \
 		return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 	else
 		" check Constant lookup
-		let constant_object = matchstr(a:context, '\zs'.class_name_pattern.'\ze::')
+		let constant_object = matchstr(scontext, '\zs'.class_name_pattern.'\ze::')
 		if constant_object != ''
 			let classname_candidate = constant_object
 		endif
 
 		"extract the variable name from the context
-		let object = matchstr(phpcomplete#GetSubContext(a:context), '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
+		let object = matchstr(scontext, '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1
