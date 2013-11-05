@@ -8,11 +8,12 @@ endf
 fun! TestCase_returns_everyting_instance_related_when_scope_is_in_class()
     call SetUp()
 
-    let ret = phpcomplete#CompleteUserClass('$u->', '', g:fixture_class_content, '\\(public\\|private\\|protected\\)')
+    let ret = phpcomplete#CompleteUserClass('$u->', '', g:fixture_class_content, 'private')
     call VUAssertEquals([
                 \{'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
                 \{'word': '__construct(', 'info': '__construct()', 'menu': ')', 'kind': 'f'},
                 \{'word': 'final_private_method(', 'info': 'final_private_method($foo = null)', 'menu': '$foo = null)', 'kind': 'f'},
+                \{'word': 'naked_public_method(', 'info': 'naked_public_method()', 'menu': ')', 'kind': 'f'},
                 \{'word': 'private_method(', 'info': 'private_method($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \{'word': 'private_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \{'word': 'protected_method(', 'info': 'protected_method($foo)', 'menu': '$foo)', 'kind': 'f'},
@@ -32,6 +33,7 @@ fun! TestCase_returns_everyting_instance_related_when_scope_is_out_of_class()
     call VUAssertEquals([
                 \{'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
                 \{'word': '__construct(', 'info': '__construct()', 'menu': ')', 'kind': 'f'},
+                \{'word': 'naked_public_method(', 'info': 'naked_public_method()', 'menu': ')', 'kind': 'f'},
                 \{'word': 'public_final_method(', 'info': 'public_final_method($foo, $anotherfoo = '''')', 'menu': '$foo, $anotherfoo = '''')', 'kind': 'f'},
                 \{'word': 'public_method(', 'info': 'public_method($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \{'word': 'public_method_with_amp(', 'info': 'public_method_with_amp($foo)', 'menu': '$foo)', 'kind': 'f'},
@@ -43,7 +45,7 @@ endfun
 fun! TestCase_returns_everyting_static_when_scope_is_in_class()
     call SetUp()
 
-    let ret = phpcomplete#CompleteUserClass('UserClass::', '', g:fixture_class_content, '\\(public\\|private\\|protected\\)')
+    let ret = phpcomplete#CompleteUserClass('UserClass::', '', g:fixture_class_content, 'private')
     call VUAssertEquals([
                 \ {'word': '$private_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$protected_static_property', 'info': '', 'menu': '', 'kind': 'v'},
@@ -62,7 +64,7 @@ endfun
 fun! TestCase_filters_for_instane_level_prefix()
     call SetUp()
 
-    let ret = phpcomplete#CompleteUserClass('$u->', 'public_', g:fixture_class_content, '\\(public\\|private\\|protected\\)')
+    let ret = phpcomplete#CompleteUserClass('$u->', 'public_', g:fixture_class_content, 'private')
     call VUAssertEquals([
                 \ {'word': 'public_final_method(', 'info': 'public_final_method($foo, $anotherfoo = '''')', 'menu': '$foo, $anotherfoo = '''')', 'kind': 'f'},
                 \ {'word': 'public_method(', 'info': 'public_method($foo)', 'menu': '$foo)', 'kind': 'f'},
@@ -75,7 +77,7 @@ endfun
 fun! TestCase_filters_for_static_property_names()
     call SetUp()
 
-    let ret = phpcomplete#CompleteUserClass('UserClass::', '$private_', g:fixture_class_content, '\\(public\\|private\\|protected\\)')
+    let ret = phpcomplete#CompleteUserClass('UserClass::', '$private_', g:fixture_class_content, 'private')
     call VUAssertEquals([
                 \ {'word': '$private_static_property', 'info': '', 'menu': '', 'kind': 'v'}],
                 \ ret)
@@ -104,6 +106,7 @@ fun! TestCase_returns_non_explicit_static_methods_when_phpcomplete_relax_static_
                 \ {'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
                 \ {'word': '__construct(', 'info': '__construct()', 'menu': ')', 'kind': 'f'},
                 \ {'word': 'final_static_public_method(', 'info': 'final_static_public_method()', 'menu': ')', 'kind': 'f'},
+                \ {'word': 'naked_public_method(', 'info': 'naked_public_method()', 'menu': ')', 'kind': 'f'},
                 \ {'word': 'public_final_method(', 'info': 'public_final_method($foo, $anotherfoo = '''')', 'menu': '$foo, $anotherfoo = '''')', 'kind': 'f'},
                 \ {'word': 'public_final_static_method(', 'info': 'public_final_static_method( $foo, $anotherfoo = array() )', 'menu': ' $foo, $anotherfoo = array() )', 'kind': 'f'},
                 \ {'word': 'public_method(', 'info': 'public_method($foo)', 'menu': '$foo)', 'kind': 'f'},
@@ -122,4 +125,5 @@ fun! TestCase_returns_types_for_properties_and_return_types_from_docblock_commen
                 \ {'word': 'commented_method(', 'info': "commented_method($foo, $bar, $baz = '')\n\nReturn:\n\tstring: description of return\n", 'menu': "$foo, $bar, $baz = '') | string", 'kind': 'f'},
                 \ {'word': 'commented_property', 'info': "Type:\n\tFoo\n", 'menu': 'Foo', 'kind': 'v'}],
                 \ ret)
+
 endfun

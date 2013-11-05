@@ -66,5 +66,8 @@ class UserClass {
     {
 
     }
+
+    function naked_public_method(){
+    }
 }
 
