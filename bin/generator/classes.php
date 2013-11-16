@@ -1,13 +1,15 @@
 <?php
 
 function extract_class_signatures($files) {
-    $signatures = array();
+    $class_signatures = array();
+    $interface_signatures = array();
+
     foreach ($files as $file) {
         $doc = new DOMDocument;
         $doc->loadHTMLFile($file);
         $xpath = new DOMXpath($doc);
 
-        $classname = extract_class_name($xpath, $file);
+        list($classname, $is_interface) = extract_class_name($xpath, $file);
         if (empty($classname)) {
             // no usual class synopsis found inside the file, just skip this class
             continue;
@@ -15,21 +17,31 @@ function extract_class_signatures($files) {
         $fields    = extract_class_fields($xpath, $classname, $file);
         $methods   = extract_class_methods($xpath, $classname, $file);
 
-        if (!isset($signatures[$classname])) {
-            $signatures[$classname] = array(
-                'constants'         => $fields['constants'],
-                'properties'        => $fields['properties'],
-                'static_properties' => $fields['static_properties'],
-                'methods'           => $methods['methods'],
-                'static_methods'    => $methods['static_methods'],
-            );
+        if (!isset($class_signatures[$classname])) {
+            if ($is_interface) {
+                $interface_signatures[$classname] = array(
+                    'constants'         => $fields['constants'],
+                    'properties'        => $fields['properties'],
+                    'static_properties' => $fields['static_properties'],
+                    'methods'           => $methods['methods'],
+                    'static_methods'    => $methods['static_methods'],
+                );
+            } else {
+                $class_signatures[$classname] = array(
+                    'constants'         => $fields['constants'],
+                    'properties'        => $fields['properties'],
+                    'static_properties' => $fields['static_properties'],
+                    'methods'           => $methods['methods'],
+                    'static_methods'    => $methods['static_methods'],
+                );
+            }
         } else {
             // there are some duplicate class names in extensions, use only the first one
         }
-
     }
-    ksort($signatures);
-    return $signatures;
+    ksort($class_signatures);
+    ksort($interface_signatures);
+    return array($class_signatures, $interface_signatures);
 }
 
 function extract_class_fields($xpath, $classname, $file) {
@@ -95,16 +107,23 @@ function handle_method_def($xpath, $classname, $node, $file) {
     $name = $xpath->query('*[@class="methodname"]/*[@class="methodname"]', $node);
 
     if ($name->length === 0) {
-        var_dump($node->textContent);
-        fwrite(STDERR, "\nextraction error, cant find method name in $file\n");
-        exit;
+        // methods that don't have manual pages will look like <span class="methodname"><strong> ... </strong></span>
+        $name = $xpath->query('*[@class="methodname"]/strong', $node);
+
+        // if even that failed, just give up
+        if ($name->length === 0) {
+            var_dump($node->textContent);
+            fwrite(STDERR, "\nextraction error, cant find method name in $file\n");
+            exit;
+        }
     }
     // chop of class name from the inherited method names
-    $name = preg_replace('/^\w+::/', '', trim($name->item(0)->textContent));
+    $name = preg_replace('/^[\w\\\\]+::/', '', trim($name->item(0)->textContent));
     $re['name'] = $name;
 
     // constructors and destructors dont have return types
-    if ($type->length === 0 && !($name == '__construct' || $name == '__destruct' || $name == $classname)) {
+    if ($type->length === 0 && !($name == '__construct' || $name == '__destruct' || $name == '__wakeup' || $name == $classname)) {
+        var_dump($name);
         var_dump($xpath->document->saveHTML($node));
         fwrite(STDERR, "\nextraction error, cant find return type in $file\n");
         exit;
@@ -148,12 +167,18 @@ function handle_method_def($xpath, $classname, $node, $file) {
 }
 
 function extract_class_name($xpath) {
+    $is_interface = false;
     $class = $xpath->query('//div[@class="classsynopsis"]/div[@class="classsynopsisinfo"]/*[@class="ooclass"]/*[@class="classname"]')->item(0);
     if (!$class) {
-        return false;
+        return array(false, $is_interface);
     }
     $classname = trim($class->textContent);
-    return $classname;
+
+    $title = $xpath->query('//div[@class="classsynopsis"]/preceding-sibling::h2[@class="title"]')->item(0);
+    if (stripos(trim($title->textContent), 'interface') === 0) {
+        $is_interface = true;
+    }
+    return array($classname, $is_interface);
 }
 
 function handle_class_property($xpath, $node, $file) {
@@ -215,10 +240,10 @@ function handle_class_const($xpath, $node, $file) {
     return $re;
 }
 
-function write_class_signatures_to_vim_hash($signatures, $outpath) {
+function write_class_signatures_to_vim_hash($signatures, $outpath, $vim_varname) {
     $fd = fopen($outpath, 'w');
 
-    fwrite($fd, "let g:php_builtin_classes = {\n");
+    fwrite($fd, "let $vim_varname = {\n");
     foreach ($signatures as $classname => $class_info) {
         fwrite($fd, "\\'{$classname}': {\n");
 

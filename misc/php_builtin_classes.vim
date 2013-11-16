@@ -120,7 +120,7 @@ let g:php_builtin_classes = {
 \     'consume': { 'signature': 'callable $callback [, int $flags = AMQP_NOPARAM] | void', 'return_type': 'void'},
 \     'declare': { 'signature': 'void | int', 'return_type': 'int'},
 \     'delete': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'get': { 'signature': '[ int $flags] | mixed', 'return_type': 'mixed'},
+\     'get': { 'signature': '[ int $flags = ini_get("amqp.auto_ack")] | mixed', 'return_type': 'mixed'},
 \     'getArgument': { 'signature': 'string $key | mixed', 'return_type': 'mixed'},
 \     'getArguments': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getFlags': { 'signature': 'void | int', 'return_type': 'int'},
@@ -144,7 +144,7 @@ let g:php_builtin_classes = {
 \   'static_properties': {
 \   },
 \   'methods': {
-\     '__construct': { 'signature': 'string $cache [, mixed $search = null [, int $format [, int $chunk_size = 100 [, int $list]]]]', 'return_type': ''},
+\     '__construct': { 'signature': 'string $cache [, mixed $search = null [, int $format = APC_ITER_ALL [, int $chunk_size = 100 [, int $list = APC_LIST_ACTIVE]]]]', 'return_type': ''},
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'getTotalCount': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getTotalHits': { 'signature': 'void | int', 'return_type': 'int'},
@@ -175,22 +175,6 @@ let g:php_builtin_classes = {
 \     'next': { 'signature': 'void | void', 'return_type': 'void'},
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
-\   },
-\},
-\'ArrayAccess': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'offsetExists': { 'signature': 'mixed $offset | boolean', 'return_type': 'boolean'},
-\     'offsetGet': { 'signature': 'mixed $offset | mixed', 'return_type': 'mixed'},
-\     'offsetSet': { 'signature': 'mixed $offset, mixed $value | void', 'return_type': 'void'},
-\     'offsetUnset': { 'signature': 'mixed $offset | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -241,7 +225,7 @@ let g:php_builtin_classes = {
 \   'static_properties': {
 \   },
 \   'methods': {
-\     '__construct': { 'signature': '[ mixed $input [, int $flags = 0 [, string $iterator_class = "ArrayIterator"]]]', 'return_type': ''},
+\     '__construct': { 'signature': '[ mixed $input = [] [, int $flags = 0 [, string $iterator_class = "ArrayIterator"]]]', 'return_type': ''},
 \     'append': { 'signature': 'mixed $value | void', 'return_type': 'void'},
 \     'asort': { 'signature': 'void | void', 'return_type': 'void'},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
@@ -271,6 +255,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -292,6 +280,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -305,6 +297,28 @@ let g:php_builtin_classes = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'CURLFile': {
+\   'constants': {
+\   },
+\   'properties': {
+\     'name': { 'initializer': '', 'type': ''},
+\     'mime': { 'initializer': '', 'type': ''},
+\     'postname': { 'initializer': '', 'type': ''},
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': 'string $filename [, string $mimetype [, string $postname]]', 'return_type': ''},
+\     'getFilename': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getMimeType': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPostFilename': { 'signature': 'void | string', 'return_type': 'string'},
+\     'setMimeType': { 'signature': 'string $mime | void', 'return_type': 'void'},
+\     'setPostFilename': { 'signature': 'string $postname | void', 'return_type': 'void'},
+\     '__wakeup': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -505,10 +519,23 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
 \   'methods': {
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -1275,7 +1302,7 @@ let g:php_builtin_classes = {
 \     'getAttribute': { 'signature': 'int $attr | int', 'return_type': 'int'},
 \     'getErrorCode': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getErrorMessage': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getLocale': { 'signature': '[ int $type] | string', 'return_type': 'string'},
+\     'getLocale': { 'signature': 'int $type | string', 'return_type': 'string'},
 \     'getSortKey': { 'signature': 'string $str | string', 'return_type': 'string'},
 \     'getStrength': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setAttribute': { 'signature': 'int $attr, int $val | bool', 'return_type': 'bool'},
@@ -1302,19 +1329,6 @@ let g:php_builtin_classes = {
 \     'destroy': { 'signature': 'long $condition | boolean', 'return_type': 'boolean'},
 \     'signal': { 'signature': 'long $condition | boolean', 'return_type': 'boolean'},
 \     'wait': { 'signature': 'long $condition, long $mutex [, long $timeout] | boolean', 'return_type': 'boolean'},
-\   },
-\},
-\'Countable': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'count': { 'signature': 'void | int', 'return_type': 'int'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'DOMAttr': {
@@ -1482,8 +1496,8 @@ let g:php_builtin_classes = {
 \     'getElementsByTagNameNS': { 'signature': 'string $namespaceURI, string $localName | DOMNodeList', 'return_type': 'DOMNodeList'},
 \     'importNode': { 'signature': 'DOMNode $importedNode [, bool $deep] | DOMNode', 'return_type': 'DOMNode'},
 \     'load': { 'signature': 'string $filename [, int $options = 0] | mixed', 'return_type': 'mixed'},
-\     'loadHTML': { 'signature': 'string $source | bool', 'return_type': 'bool'},
-\     'loadHTMLFile': { 'signature': 'string $filename | bool', 'return_type': 'bool'},
+\     'loadHTML': { 'signature': 'string $source [, int $options = 0] | bool', 'return_type': 'bool'},
+\     'loadHTMLFile': { 'signature': 'string $filename [, int $options = 0] | bool', 'return_type': 'bool'},
 \     'loadXML': { 'signature': 'string $source [, int $options = 0] | mixed', 'return_type': 'mixed'},
 \     'normalizeDocument': { 'signature': 'void | void', 'return_type': 'void'},
 \     'registerNodeClass': { 'signature': 'string $baseclass, string $extendedclass | bool', 'return_type': 'bool'},
@@ -1493,8 +1507,8 @@ let g:php_builtin_classes = {
 \     'saveHTML': { 'signature': '[ DOMNode $node = NULL] | string', 'return_type': 'string'},
 \     'saveHTMLFile': { 'signature': 'string $filename | int', 'return_type': 'int'},
 \     'saveXML': { 'signature': '[ DOMNode $node [, int $options]] | string', 'return_type': 'string'},
-\     'schemaValidate': { 'signature': 'string $filename | bool', 'return_type': 'bool'},
-\     'schemaValidateSource': { 'signature': 'string $source | bool', 'return_type': 'bool'},
+\     'schemaValidate': { 'signature': 'string $filename [, int $flags] | bool', 'return_type': 'bool'},
+\     'schemaValidateSource': { 'signature': 'string $source [, int $flags] | bool', 'return_type': 'bool'},
 \     'validate': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'xinclude': { 'signature': '[ int $options] | int', 'return_type': 'int'},
 \     'appendChild': { 'signature': 'DOMNode $newnode | DOMNode', 'return_type': 'DOMNode'},
@@ -1983,11 +1997,6 @@ let g:php_builtin_classes = {
 \   'methods': {
 \     '__construct': { 'signature': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'return_type': ''},
 \     'add': { 'signature': 'DateInterval $interval | DateTime', 'return_type': 'DateTime'},
-\     'diff': { 'signature': 'DateTime $datetime2 [, bool $absolute = false] | DateInterval', 'return_type': 'DateInterval'},
-\     'format': { 'signature': 'string $format | string', 'return_type': 'string'},
-\     'getOffset': { 'signature': 'void | int', 'return_type': 'int'},
-\     'getTimestamp': { 'signature': 'void | int', 'return_type': 'int'},
-\     'getTimezone': { 'signature': 'void | DateTimeZone', 'return_type': 'DateTimeZone'},
 \     'modify': { 'signature': 'string $modify | DateTime', 'return_type': 'DateTime'},
 \     'setDate': { 'signature': 'int $year, int $month, int $day | DateTime', 'return_type': 'DateTime'},
 \     'setISODate': { 'signature': 'int $year, int $week [, int $day = 1] | DateTime', 'return_type': 'DateTime'},
@@ -1995,12 +2004,65 @@ let g:php_builtin_classes = {
 \     'setTimestamp': { 'signature': 'int $unixtimestamp | DateTime', 'return_type': 'DateTime'},
 \     'setTimezone': { 'signature': 'DateTimeZone $timezone | DateTime', 'return_type': 'DateTime'},
 \     'sub': { 'signature': 'DateInterval $interval | DateTime', 'return_type': 'DateTime'},
-\     '__wakeup': { 'signature': 'void | DateTime', 'return_type': 'DateTime'},
+\     'diff': { 'signature': 'DateTimeInterface $datetime2 [, bool $absolute = false] | DateInterval', 'return_type': 'DateInterval'},
+\     'format': { 'signature': 'string $format | string', 'return_type': 'string'},
+\     'getOffset': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTimestamp': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTimezone': { 'signature': 'void | DateTimeZone', 'return_type': 'DateTimeZone'},
+\     '__wakeup': { 'signature': 'void', 'return_type': ''},
 \   },
 \   'static_methods': {
 \     'createFromFormat': { 'signature': 'string $format, string $time [, DateTimeZone $timezone] | DateTime', 'return_type': 'DateTime'},
 \     'getLastErrors': { 'signature': 'void | array', 'return_type': 'array'},
 \     '__set_state': { 'signature': 'array $array | DateTime', 'return_type': 'DateTime'},
+\   },
+\},
+\'DateTimeImmutable': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'return_type': ''},
+\     'add': { 'signature': 'DateInterval $interval | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'modify': { 'signature': 'string $modify | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'setDate': { 'signature': 'int $year, int $month, int $day | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'setISODate': { 'signature': 'int $year, int $week [, int $day = 1] | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'setTime': { 'signature': 'int $hour, int $minute [, int $second = 0] | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'setTimestamp': { 'signature': 'int $unixtimestamp | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'setTimezone': { 'signature': 'DateTimeZone $timezone | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'sub': { 'signature': 'DateInterval $interval | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'diff': { 'signature': 'DateTimeInterface $datetime2 [, bool $absolute = false] | DateInterval', 'return_type': 'DateInterval'},
+\     'format': { 'signature': 'string $format | string', 'return_type': 'string'},
+\     'getOffset': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTimestamp': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTimezone': { 'signature': 'void | DateTimeZone', 'return_type': 'DateTimeZone'},
+\     '__wakeup': { 'signature': 'void', 'return_type': ''},
+\   },
+\   'static_methods': {
+\     'createFromFormat': { 'signature': 'string $format, string $time [, DateTimeZone $timezone] | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\     'getLastErrors': { 'signature': 'void | array', 'return_type': 'array'},
+\     '__set_state': { 'signature': 'array $array | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
+\   },
+\},
+\'DateTimeInterface': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'diff': { 'signature': 'DateTimeInterface $datetime2 [, bool $absolute = false] | DateInterval', 'return_type': 'DateInterval'},
+\     'format': { 'signature': 'string $format | string', 'return_type': 'string'},
+\     'getOffset': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTimestamp': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTimezone': { 'signature': 'void | DateTimeZone', 'return_type': 'DateTimeZone'},
+\     '__wakeup': { 'signature': 'void', 'return_type': ''},
+\   },
+\   'static_methods': {
 \   },
 \},
 \'DateTimeZone': {
@@ -2098,6 +2160,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -2137,6 +2203,10 @@ let g:php_builtin_classes = {
 \   },
 \   'properties': {
 \     'severity': { 'initializer': '', 'type': 'int'},
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -2689,7 +2759,7 @@ let g:php_builtin_classes = {
 \     'prepend': { 'signature': 'string $data | bool', 'return_type': 'bool'},
 \     'prependBuffer': { 'signature': 'EventBuffer $buf | bool', 'return_type': 'bool'},
 \     'pullup': { 'signature': 'string $size | void', 'return_type': 'void'},
-\     'read': { 'signature': 'int $max_bytes | string', 'return_type': 'string'},
+\     'read': { 'signature': 'mixed $fd, int $howmuch | string', 'return_type': 'string'},
 \     'readLine': { 'signature': 'string $eol_style | void', 'return_type': 'void'},
 \     'search': { 'signature': 'string $what [, int $start = -1 [, int $end = -1]] | mixed', 'return_type': 'mixed'},
 \     'searchEol': { 'signature': '[ int $start = -1 [, int $eol_style = EventBuffer::EOL_ANY]] | mixed', 'return_type': 'mixed'},
@@ -2833,6 +2903,7 @@ let g:php_builtin_classes = {
 \     'getBase': { 'signature': 'void | EventBase', 'return_type': 'EventBase'},
 \     'getPeer': { 'signature': 'string &$address, int &$port | void', 'return_type': 'void'},
 \     'makeRequest': { 'signature': 'EventHttpRequest $req, int $type, string $uri | bool', 'return_type': 'bool'},
+\     'setCloseCallback': { 'signature': 'callable $callback [, mixed $data] | void', 'return_type': 'void'},
 \     'setLocalAddress': { 'signature': 'string $address | void', 'return_type': 'void'},
 \     'setLocalPort': { 'signature': 'int $port | void', 'return_type': 'void'},
 \     'setMaxBodySize': { 'signature': 'string $max_size | void', 'return_type': 'void'},
@@ -2865,6 +2936,7 @@ let g:php_builtin_classes = {
 \     'addHeader': { 'signature': 'string $key, string $value, int $type | bool', 'return_type': 'bool'},
 \     'cancel': { 'signature': 'void | void', 'return_type': 'void'},
 \     'clearHeaders': { 'signature': 'void | void', 'return_type': 'void'},
+\     'closeConnection': { 'signature': 'void | EventHttpConnection', 'return_type': 'EventHttpConnection'},
 \     '__construct': { 'signature': 'callable $callback [, mixed $data = NULL]', 'return_type': ''},
 \     'findHeader': { 'signature': 'string $key, string $type | void', 'return_type': 'void'},
 \     'free': { 'signature': 'void | void', 'return_type': 'void'},
@@ -2980,6 +3052,7 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \     'getLastSocketErrno': { 'signature': '[ mixed $socket = NULL] | int', 'return_type': 'int'},
 \     'getLastSocketError': { 'signature': '[ mixed $socket] | string', 'return_type': 'string'},
+\     'getSocketFd': { 'signature': 'mixed $socket | int', 'return_type': 'int'},
 \     'getSocketName': { 'signature': 'mixed $socket, string &$address [, mixed &$port] | bool', 'return_type': 'bool'},
 \     'setSocketOption': { 'signature': 'mixed $socket, int $level, int $optname, mixed $optval | bool', 'return_type': 'bool'},
 \     'sslRandPoll': { 'signature': 'void | void', 'return_type': 'void'},
@@ -3007,6 +3080,26 @@ let g:php_builtin_classes = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'FANNConnection': {
+\   'constants': {
+\   },
+\   'properties': {
+\     'from_neuron': { 'initializer': '', 'type': ''},
+\     'to_neuron': { 'initializer': '', 'type': ''},
+\     'weight': { 'initializer': '', 'type': ''},
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': 'int $from_neuron, int $to_neuron, float $weight', 'return_type': ''},
+\     'getFromNeuron': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getToNeuron': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getWeight': { 'signature': 'void | void', 'return_type': 'void'},
+\     'setWeight': { 'signature': 'float $weight | bool', 'return_type': 'bool'},
 \   },
 \   'static_methods': {
 \   },
@@ -3147,6 +3240,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -3334,6 +3431,26 @@ let g:php_builtin_classes = {
 \     'get': { 'signature': 'string $name [, integer $country] | integer', 'return_type': 'integer'},
 \     'isNick': { 'signature': 'string $name0, string $name1 [, integer $country] | array', 'return_type': 'array'},
 \     'similarNames': { 'signature': 'string $name [, integer $country] | array', 'return_type': 'array'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'Generator': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'key': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'next': { 'signature': 'void | void', 'return_type': 'void'},
+\     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
+\     'send': { 'signature': 'mixed $value | mixed', 'return_type': 'mixed'},
+\     'throw': { 'signature': 'Exception $exception | void', 'return_type': 'void'},
+\     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     '__wakeup': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -4363,7 +4480,7 @@ let g:php_builtin_classes = {
 \     'setImageRenderingIntent': { 'signature': 'int $rendering_intent | bool', 'return_type': 'bool'},
 \     'setImageResolution': { 'signature': 'float $x_resolution, float $y_resolution | bool', 'return_type': 'bool'},
 \     'setImageScene': { 'signature': 'int $scene | bool', 'return_type': 'bool'},
-\     'setImageTicksPerSecond': { 'signature': 'int $ticks_per-second | bool', 'return_type': 'bool'},
+\     'setImageTicksPerSecond': { 'signature': 'int $ticks_per_second | bool', 'return_type': 'bool'},
 \     'setImageType': { 'signature': 'int $image_type | bool', 'return_type': 'bool'},
 \     'setImageUnits': { 'signature': 'int $units | bool', 'return_type': 'bool'},
 \     'setImageVirtualPixelMethod': { 'signature': 'int $method | bool', 'return_type': 'bool'},
@@ -4410,7 +4527,7 @@ let g:php_builtin_classes = {
 \     'vignetteImage': { 'signature': 'float $blackPoint, float $whitePoint, int $x, int $y | bool', 'return_type': 'bool'},
 \     'waveImage': { 'signature': 'float $amplitude, float $length | bool', 'return_type': 'bool'},
 \     'whiteThresholdImage': { 'signature': 'mixed $threshold | bool', 'return_type': 'bool'},
-\     'writeImage': { 'signature': '[ string $filename] | bool', 'return_type': 'bool'},
+\     'writeImage': { 'signature': '[ string $filename = NULL] | bool', 'return_type': 'bool'},
 \     'writeImageFile': { 'signature': 'resource $filehandle | bool', 'return_type': 'bool'},
 \     'writeImages': { 'signature': 'string $filename, bool $adjoin | bool', 'return_type': 'bool'},
 \     'writeImagesFile': { 'signature': 'resource $filehandle | bool', 'return_type': 'bool'},
@@ -4561,6 +4678,7 @@ let g:php_builtin_classes = {
 \     'getColorCount': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getColorValue': { 'signature': 'int $color | float', 'return_type': 'float'},
 \     'getHSL': { 'signature': 'void | array', 'return_type': 'array'},
+\     'isPixelSimilar': { 'signature': 'ImagickPixel $color, float $fuzz | bool', 'return_type': 'bool'},
 \     'isSimilar': { 'signature': 'ImagickPixel $color, float $fuzz | bool', 'return_type': 'bool'},
 \     'setColor': { 'signature': 'string $color | bool', 'return_type': 'bool'},
 \     'setColorValue': { 'signature': 'int $color, float $value | bool', 'return_type': 'bool'},
@@ -4614,6 +4732,211 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
+\'IntlBreakIterator': {
+\   'constants': {
+\     'DONE': '-1',
+\     'WORD_NONE': '0',
+\     'WORD_NONE_LIMIT': '100',
+\     'WORD_NUMBER': '100',
+\     'WORD_NUMBER_LIMIT': '200',
+\     'WORD_LETTER': '200',
+\     'WORD_LETTER_LIMIT': '300',
+\     'WORD_KANA': '300',
+\     'WORD_KANA_LIMIT': '400',
+\     'WORD_IDEO': '400',
+\     'WORD_IDEO_LIMIT': '500',
+\     'LINE_SOFT': '0',
+\     'LINE_SOFT_LIMIT': '100',
+\     'LINE_HARD': '100',
+\     'LINE_HARD_LIMIT': '200',
+\     'SENTENCE_TERM': '0',
+\     'SENTENCE_TERM_LIMIT': '100',
+\     'SENTENCE_SEP': '100',
+\     'SENTENCE_SEP_LIMIT': '200',
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': 'void', 'return_type': ''},
+\     'current': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'first': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'following': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'getErrorCode': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'intl_get_error_code': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getErrorMessage': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'intl_get_error_message': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getLocale': { 'signature': 'string $"locale_type" | ReturnType', 'return_type': 'ReturnType'},
+\     'getPartsIterator': { 'signature': '[ string $"key_type"] | ReturnType', 'return_type': 'ReturnType'},
+\     'getText': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'isBoundary': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'last': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'next': { 'signature': '[ string $"offset"] | ReturnType', 'return_type': 'ReturnType'},
+\     'preceding': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'previous': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'setText': { 'signature': 'string $"text" | ReturnType', 'return_type': 'ReturnType'},
+\   },
+\   'static_methods': {
+\     'createCharacterInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createCodePointInstance': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'createLineInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createSentenceInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createTitleInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createWordInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\   },
+\},
+\'IntlCalendar': {
+\   'constants': {
+\     'FIELD_ERA': '0',
+\     'FIELD_YEAR': '1',
+\     'FIELD_MONTH': '2',
+\     'FIELD_WEEK_OF_YEAR': '3',
+\     'FIELD_WEEK_OF_MONTH': '4',
+\     'FIELD_DATE': '5',
+\     'FIELD_DAY_OF_YEAR': '6',
+\     'FIELD_DAY_OF_WEEK': '7',
+\     'FIELD_DAY_OF_WEEK_IN_MONTH': '8',
+\     'FIELD_AM_PM': '9',
+\     'FIELD_HOUR': '10',
+\     'FIELD_HOUR_OF_DAY': '11',
+\     'FIELD_MINUTE': '12',
+\     'FIELD_SECOND': '13',
+\     'FIELD_MILLISECOND': '14',
+\     'FIELD_ZONE_OFFSET': '15',
+\     'FIELD_DST_OFFSET': '16',
+\     'FIELD_YEAR_WOY': '17',
+\     'FIELD_DOW_LOCAL': '18',
+\     'FIELD_EXTENDED_YEAR': '19',
+\     'FIELD_JULIAN_DAY': '20',
+\     'FIELD_MILLISECONDS_IN_DAY': '21',
+\     'FIELD_IS_LEAP_MONTH': '22',
+\     'FIELD_FIELD_COUNT': '23',
+\     'FIELD_DAY_OF_MONTH': '5',
+\     'DOW_SUNDAY': '1',
+\     'DOW_MONDAY': '2',
+\     'DOW_TUESDAY': '3',
+\     'DOW_WEDNESDAY': '4',
+\     'DOW_THURSDAY': '5',
+\     'DOW_FRIDAY': '6',
+\     'DOW_SATURDAY': '7',
+\     'DOW_TYPE_WEEKDAY': '0',
+\     'DOW_TYPE_WEEKEND': '1',
+\     'DOW_TYPE_WEEKEND_OFFSET': '2',
+\     'DOW_TYPE_WEEKEND_CEASE': '3',
+\     'WALLTIME_FIRST': '1',
+\     'WALLTIME_LAST': '0',
+\     'WALLTIME_NEXT_VALID': '2',
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'add': { 'signature': 'int $field, int $amount | bool', 'return_type': 'bool'},
+\     'after': { 'signature': 'IntlCalendar $calendar | bool', 'return_type': 'bool'},
+\     'before': { 'signature': 'IntlCalendar $calendar | bool', 'return_type': 'bool'},
+\     'clear': { 'signature': '[ int $field = NULL] | bool', 'return_type': 'bool'},
+\     '__construct': { 'signature': 'void', 'return_type': ''},
+\     'equals': { 'signature': 'IntlCalendar $calendar | bool', 'return_type': 'bool'},
+\     'fieldDifference': { 'signature': 'float $when, int $field | int', 'return_type': 'int'},
+\     'get': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'getActualMaximum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'getActualMinimum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'getDayOfWeekType': { 'signature': 'int $dayOfWeek | int', 'return_type': 'int'},
+\     'getErrorCode': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getErrorMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getFirstDayOfWeek': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getGreatestMinimum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'getLeastMaximum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'getLocale': { 'signature': 'int $localeType | string', 'return_type': 'string'},
+\     'getMaximum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'getMinimalDaysInFirstWeek': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getMinimum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'getRepeatedWallTimeOption': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getSkippedWallTimeOption': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTime': { 'signature': 'void | float', 'return_type': 'float'},
+\     'getTimeZone': { 'signature': 'void | IntlTimeZone', 'return_type': 'IntlTimeZone'},
+\     'getType': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getWeekendTransition': { 'signature': 'string $dayOfWeek | int', 'return_type': 'int'},
+\     'inDaylightTime': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'isEquivalentTo': { 'signature': 'IntlCalendar $calendar | bool', 'return_type': 'bool'},
+\     'isLenient': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'isSet': { 'signature': 'int $field | bool', 'return_type': 'bool'},
+\     'isWeekend': { 'signature': '[ float $date = NULL] | bool', 'return_type': 'bool'},
+\     'roll': { 'signature': 'int $field, mixed $amountOrUpOrDown | bool', 'return_type': 'bool'},
+\     'set': { 'signature': 'int $year, int $month [, int $dayOfMonth = NULL [, int $hour = NULL [, int $minute = NULL [, int $second = NULL]]]] | bool', 'return_type': 'bool'},
+\     'setFirstDayOfWeek': { 'signature': 'int $dayOfWeek | bool', 'return_type': 'bool'},
+\     'setLenient': { 'signature': 'string $isLenient | ReturnType', 'return_type': 'ReturnType'},
+\     'setRepeatedWallTimeOption': { 'signature': 'int $wallTimeOption | bool', 'return_type': 'bool'},
+\     'setSkippedWallTimeOption': { 'signature': 'int $wallTimeOption | bool', 'return_type': 'bool'},
+\     'setTime': { 'signature': 'float $date | bool', 'return_type': 'bool'},
+\     'setTimeZone': { 'signature': 'mixed $timeZone | bool', 'return_type': 'bool'},
+\     'toDateTime': { 'signature': 'void | DateTime', 'return_type': 'DateTime'},
+\   },
+\   'static_methods': {
+\     'createInstance': { 'signature': '[ mixed $timeZone = NULL [, string $locale = NULL]] | IntlCalendar', 'return_type': 'IntlCalendar'},
+\     'fromDateTime': { 'signature': 'mixed $dateTime | IntlCalendar', 'return_type': 'IntlCalendar'},
+\     'getAvailableLocales': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getKeywordValuesForLocale': { 'signature': 'string $key, string $locale, boolean $commonlyUsed | Iterator', 'return_type': 'Iterator'},
+\     'getNow': { 'signature': 'void | float', 'return_type': 'float'},
+\   },
+\},
+\'IntlCodePointBreakIterator': {
+\   'constants': {
+\     'DONE': '-1',
+\     'WORD_NONE': '0',
+\     'WORD_NONE_LIMIT': '100',
+\     'WORD_NUMBER': '100',
+\     'WORD_NUMBER_LIMIT': '200',
+\     'WORD_LETTER': '200',
+\     'WORD_LETTER_LIMIT': '300',
+\     'WORD_KANA': '300',
+\     'WORD_KANA_LIMIT': '400',
+\     'WORD_IDEO': '400',
+\     'WORD_IDEO_LIMIT': '500',
+\     'LINE_SOFT': '0',
+\     'LINE_SOFT_LIMIT': '100',
+\     'LINE_HARD': '100',
+\     'LINE_HARD_LIMIT': '200',
+\     'SENTENCE_TERM': '0',
+\     'SENTENCE_TERM_LIMIT': '100',
+\     'SENTENCE_SEP': '100',
+\     'SENTENCE_SEP_LIMIT': '200',
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'getLastCodePoint': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     '__construct': { 'signature': 'void', 'return_type': ''},
+\     'current': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'first': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'following': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'getErrorCode': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'intl_get_error_code': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getErrorMessage': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'intl_get_error_message': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getLocale': { 'signature': 'string $"locale_type" | ReturnType', 'return_type': 'ReturnType'},
+\     'getPartsIterator': { 'signature': '[ string $"key_type"] | ReturnType', 'return_type': 'ReturnType'},
+\     'getText': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'isBoundary': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'last': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'next': { 'signature': '[ string $"offset"] | ReturnType', 'return_type': 'ReturnType'},
+\     'preceding': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'previous': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'setText': { 'signature': 'string $"text" | ReturnType', 'return_type': 'ReturnType'},
+\   },
+\   'static_methods': {
+\     'createCharacterInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createCodePointInstance': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'createLineInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createSentenceInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createTitleInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createWordInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\   },
+\},
 \'IntlDateFormatter': {
 \   'constants': {
 \   },
@@ -4622,7 +4945,7 @@ let g:php_builtin_classes = {
 \   'static_properties': {
 \   },
 \   'methods': {
-\     '__construct': { 'signature': 'string $locale, int $datetype, int $timetype [, string $timezone [, int $calendar [, string $pattern]]]', 'return_type': ''},
+\     '__construct': { 'signature': 'string $locale, int $datetype, int $timetype [, mixed $timezone = NULL [, mixed $calendar = NULL [, string $pattern = '''']]]', 'return_type': ''},
 \     'format': { 'signature': 'mixed $value | string', 'return_type': 'string'},
 \     'getCalendar': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getDateType': { 'signature': 'void | int', 'return_type': 'int'},
@@ -4637,21 +4960,25 @@ let g:php_builtin_classes = {
 \     'isLenient': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'localtime': { 'signature': 'string $value [, int &$position] | array', 'return_type': 'array'},
 \     'parse': { 'signature': 'string $value [, int &$position] | int', 'return_type': 'int'},
-\     'setCalendar': { 'signature': 'int $which | bool', 'return_type': 'bool'},
+\     'setCalendar': { 'signature': 'mixed $which | bool', 'return_type': 'bool'},
 \     'setLenient': { 'signature': 'bool $lenient | bool', 'return_type': 'bool'},
 \     'setPattern': { 'signature': 'string $pattern | bool', 'return_type': 'bool'},
 \     'setTimeZoneId': { 'signature': 'string $zone | bool', 'return_type': 'bool'},
 \     'setTimeZone': { 'signature': 'mixed $zone | boolean', 'return_type': 'boolean'},
 \   },
 \   'static_methods': {
-\     'create': { 'signature': 'string $locale, int $datetype, int $timetype [, string $timezone [, int $calendar [, string $pattern]]] | IntlDateFormatter', 'return_type': 'IntlDateFormatter'},
-\     'formatObject': { 'signature': 'object $object [, mixed $format [, string $locale]] | string', 'return_type': 'string'},
+\     'create': { 'signature': 'string $locale, int $datetype, int $timetype [, mixed $timezone = NULL [, mixed $calendar = NULL [, string $pattern = '''']]] | IntlDateFormatter', 'return_type': 'IntlDateFormatter'},
+\     'formatObject': { 'signature': 'object $object [, mixed $format = NULL [, string $locale = NULL]] | string', 'return_type': 'string'},
 \   },
 \},
-\'InvalidArgumentException': {
+\'IntlException': {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -4669,7 +4996,7 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
-\'Iterator': {
+\'IntlIterator': {
 \   'constants': {
 \   },
 \   'properties': {
@@ -4677,24 +5004,148 @@ let g:php_builtin_classes = {
 \   'static_properties': {
 \   },
 \   'methods': {
-\     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\     'key': { 'signature': 'void | scalar', 'return_type': 'scalar'},
-\     'next': { 'signature': 'void | void', 'return_type': 'void'},
-\     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
-\     'valid': { 'signature': 'void | boolean', 'return_type': 'boolean'},
+\     'current': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'key': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'next': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'rewind': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'valid': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
 \   },
 \   'static_methods': {
 \   },
 \},
-\'IteratorAggregate': {
+\'IntlPartsIterator': {
 \   'constants': {
+\     'KEY_SEQUENTIAL': '0',
+\     'KEY_LEFT': '1',
+\     'KEY_RIGHT': '2',
 \   },
 \   'properties': {
 \   },
 \   'static_properties': {
 \   },
 \   'methods': {
-\     'getIterator': { 'signature': 'void | Traversable', 'return_type': 'Traversable'},
+\     'getBreakIterator': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'current': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'key': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'next': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'rewind': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'valid': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'IntlRuleBasedBreakIterator': {
+\   'constants': {
+\     'DONE': '-1',
+\     'WORD_NONE': '0',
+\     'WORD_NONE_LIMIT': '100',
+\     'WORD_NUMBER': '100',
+\     'WORD_NUMBER_LIMIT': '200',
+\     'WORD_LETTER': '200',
+\     'WORD_LETTER_LIMIT': '300',
+\     'WORD_KANA': '300',
+\     'WORD_KANA_LIMIT': '400',
+\     'WORD_IDEO': '400',
+\     'WORD_IDEO_LIMIT': '500',
+\     'LINE_SOFT': '0',
+\     'LINE_SOFT_LIMIT': '100',
+\     'LINE_HARD': '100',
+\     'LINE_HARD_LIMIT': '200',
+\     'SENTENCE_TERM': '0',
+\     'SENTENCE_TERM_LIMIT': '100',
+\     'SENTENCE_SEP': '100',
+\     'SENTENCE_SEP_LIMIT': '200',
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': 'void', 'return_type': ''},
+\     'getBinaryRules': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getRules': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getRuleStatus': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getRuleStatusVec': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'current': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'first': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'following': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'getErrorCode': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'intl_get_error_code': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getErrorMessage': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'intl_get_error_message': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'getLocale': { 'signature': 'string $"locale_type" | ReturnType', 'return_type': 'ReturnType'},
+\     'getPartsIterator': { 'signature': '[ string $"key_type"] | ReturnType', 'return_type': 'ReturnType'},
+\     'getText': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'isBoundary': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'last': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'next': { 'signature': '[ string $"offset"] | ReturnType', 'return_type': 'ReturnType'},
+\     'preceding': { 'signature': 'string $"offset" | ReturnType', 'return_type': 'ReturnType'},
+\     'previous': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'setText': { 'signature': 'string $"text" | ReturnType', 'return_type': 'ReturnType'},
+\   },
+\   'static_methods': {
+\     'createCharacterInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createCodePointInstance': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
+\     'createLineInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createSentenceInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createTitleInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\     'createWordInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
+\   },
+\},
+\'IntlTimeZone': {
+\   'constants': {
+\     'DISPLAY_SHORT': '1',
+\     'DISPLAY_LONG': '2',
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'getDisplayName': { 'signature': '[ bool $isDaylight [, integer $style [, string $locale]]] | string', 'return_type': 'string'},
+\     'getDSTSavings': { 'signature': 'void | integer', 'return_type': 'integer'},
+\     'getErrorCode': { 'signature': 'void | integer', 'return_type': 'integer'},
+\     'getErrorMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getID': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getOffset': { 'signature': 'float $date, bool $local, integer &$rawOffset, integer &$dstOffset | integer', 'return_type': 'integer'},
+\     'getRawOffset': { 'signature': 'void | integer', 'return_type': 'integer'},
+\     'hasSameRules': { 'signature': 'IntlTimeZone $otherTimeZone | bool', 'return_type': 'bool'},
+\     'toDateTimeZone': { 'signature': 'void | DateTimeZone', 'return_type': 'DateTimeZone'},
+\     'useDaylightTime': { 'signature': 'void | bool', 'return_type': 'bool'},
+\   },
+\   'static_methods': {
+\     'countEquivalentIDs': { 'signature': 'string $zoneId | integer', 'return_type': 'integer'},
+\     'createDefault': { 'signature': 'void | IntlTimeZone', 'return_type': 'IntlTimeZone'},
+\     'createEnumeration': { 'signature': '[ mixed $countryOrRawOffset] | IntlIterator', 'return_type': 'IntlIterator'},
+\     'createTimeZone': { 'signature': 'string $zoneId | IntlTimeZone', 'return_type': 'IntlTimeZone'},
+\     'fromDateTimeZone': { 'signature': 'DateTimeZone $zoneId | IntlTimeZone', 'return_type': 'IntlTimeZone'},
+\     'getCanonicalID': { 'signature': 'string $zoneId [, bool &$isSystemID] | string', 'return_type': 'string'},
+\     'getEquivalentID': { 'signature': 'string $zoneId, integer $index | string', 'return_type': 'string'},
+\     'getGMT': { 'signature': 'void | IntlTimeZone', 'return_type': 'IntlTimeZone'},
+\     'getTZDataVersion': { 'signature': 'void | string', 'return_type': 'string'},
+\   },
+\},
+\'InvalidArgumentException': {
+\   'constants': {
+\   },
+\   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -4714,19 +5165,6 @@ let g:php_builtin_classes = {
 \     'next': { 'signature': 'void | void', 'return_type': 'void'},
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
-\   },
-\},
-\'JsonSerializable': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'jsonSerialize': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \   },
 \   'static_methods': {
 \   },
@@ -4877,6 +5315,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -4926,6 +5368,7 @@ let g:php_builtin_classes = {
 \   },
 \   'static_methods': {
 \     'acceptFromHttp': { 'signature': 'string $header | string', 'return_type': 'string'},
+\     'canonicalize': { 'signature': 'string $locale | string', 'return_type': 'string'},
 \     'composeLocale': { 'signature': 'array $subtags | string', 'return_type': 'string'},
 \     'filterMatches': { 'signature': 'string $langtag, string $locale [, bool $canonicalize = false] | bool', 'return_type': 'bool'},
 \     'getAllVariants': { 'signature': 'string $locale | array', 'return_type': 'array'},
@@ -4948,6 +5391,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -5092,6 +5539,31 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
+\'MemcachedException': {
+\   'constants': {
+\   },
+\   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
+\   },
+\   'static_methods': {
+\   },
+\},
 \'MessageFormatter': {
 \   'constants': {
 \   },
@@ -5101,7 +5573,6 @@ let g:php_builtin_classes = {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $locale, string $pattern', 'return_type': ''},
-\     'create': { 'signature': 'string $locale, string $pattern | MessageFormatter', 'return_type': 'MessageFormatter'},
 \     'format': { 'signature': 'array $args | string', 'return_type': 'string'},
 \     'getErrorCode': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getErrorMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5111,6 +5582,7 @@ let g:php_builtin_classes = {
 \     'setPattern': { 'signature': 'string $pattern | bool', 'return_type': 'bool'},
 \   },
 \   'static_methods': {
+\     'create': { 'signature': 'string $locale, string $pattern | MessageFormatter', 'return_type': 'MessageFormatter'},
 \     'formatMessage': { 'signature': 'string $locale, string $pattern, array $args | string', 'return_type': 'string'},
 \     'parseMessage': { 'signature': 'string $locale, string $pattern, string $source | array', 'return_type': 'array'},
 \   },
@@ -5135,6 +5607,7 @@ let g:php_builtin_classes = {
 \     '__get': { 'signature': 'string $dbname | MongoDB', 'return_type': 'MongoDB'},
 \     'getHosts': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getReadPreference': { 'signature': 'void | array', 'return_type': 'array'},
+\     'killCursor': { 'signature': 'string $server_hash, int|MongoInt64 $id | bool', 'return_type': 'bool'},
 \     'listDBs': { 'signature': 'void | array', 'return_type': 'array'},
 \     'selectCollection': { 'signature': 'string $db, string $collection | MongoCollection', 'return_type': 'MongoCollection'},
 \     'selectDB': { 'signature': 'string $name | MongoDB', 'return_type': 'MongoDB'},
@@ -5144,7 +5617,7 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \     'getPoolSize': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setPoolSize': { 'signature': 'int $size | bool', 'return_type': 'bool'},
-\     'getConnections': { 'signature': 'void | void', 'return_type': 'void'},
+\     'getConnections': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
 \'MongoBinData': {
@@ -5195,6 +5668,7 @@ let g:php_builtin_classes = {
 \     '__get': { 'signature': 'string $dbname | MongoDB', 'return_type': 'MongoDB'},
 \     'getHosts': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getReadPreference': { 'signature': 'void | array', 'return_type': 'array'},
+\     'killCursor': { 'signature': 'string $server_hash, int|MongoInt64 $id | bool', 'return_type': 'bool'},
 \     'listDBs': { 'signature': 'void | array', 'return_type': 'array'},
 \     'selectCollection': { 'signature': 'string $db, string $collection | MongoCollection', 'return_type': 'MongoCollection'},
 \     'selectDB': { 'signature': 'string $name | MongoDB', 'return_type': 'MongoDB'},
@@ -5202,7 +5676,7 @@ let g:php_builtin_classes = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
 \   'static_methods': {
-\     'getConnections': { 'signature': 'void | void', 'return_type': 'void'},
+\     'getConnections': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
 \'MongoCode': {
@@ -5236,14 +5710,14 @@ let g:php_builtin_classes = {
 \     'batchInsert': { 'signature': 'array $a [, array $options = array()] | mixed', 'return_type': 'mixed'},
 \     '__construct': { 'signature': 'MongoDB $db, string $name', 'return_type': ''},
 \     'count': { 'signature': '[ array $query = array() [, int $limit = 0 [, int $skip = 0]]] | int', 'return_type': 'int'},
-\     'createDBRef': { 'signature': 'array $a | array', 'return_type': 'array'},
+\     'createDBRef': { 'signature': 'mixed $document_or_id | array', 'return_type': 'array'},
 \     'deleteIndex': { 'signature': 'string|array $keys | array', 'return_type': 'array'},
 \     'deleteIndexes': { 'signature': 'void | array', 'return_type': 'array'},
 \     'distinct': { 'signature': 'string $key [, array $query] | array', 'return_type': 'array'},
 \     'drop': { 'signature': 'void | array', 'return_type': 'array'},
 \     'ensureIndex': { 'signature': 'string|array $key|keys [, array $options = array()] | bool', 'return_type': 'bool'},
 \     'find': { 'signature': '[ array $query = array() [, array $fields = array()]] | MongoCursor', 'return_type': 'MongoCursor'},
-\     'findAndModify': { 'signature': 'array $query [, array $update [, array $fields [, array $options]]] | void', 'return_type': 'void'},
+\     'findAndModify': { 'signature': 'array $query [, array $update [, array $fields [, array $options]]] | array', 'return_type': 'array'},
 \     'findOne': { 'signature': '[ array $query = array() [, array $fields = array()]] | array', 'return_type': 'array'},
 \     '__get': { 'signature': 'string $name | MongoCollection', 'return_type': 'MongoCollection'},
 \     'getDBRef': { 'signature': 'array $ref | array', 'return_type': 'array'},
@@ -5284,7 +5758,7 @@ let g:php_builtin_classes = {
 \   },
 \   'static_properties': {
 \     '$slaveOkay': { 'initializer': 'FALSE', 'type': 'boolean'},
-\     '$timeout': { 'initializer': '20000', 'type': 'integer'},
+\     '$timeout': { 'initializer': '30000', 'type': 'integer'},
 \   },
 \   'methods': {
 \     'addOption': { 'signature': 'string $key, mixed $value | MongoCursor', 'return_type': 'MongoCursor'},
@@ -5300,7 +5774,7 @@ let g:php_builtin_classes = {
 \     'getNext': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getReadPreference': { 'signature': 'void | array', 'return_type': 'array'},
 \     'hasNext': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'hint': { 'signature': 'array $key_pattern | MongoCursor', 'return_type': 'MongoCursor'},
+\     'hint': { 'signature': 'mixed $index | MongoCursor', 'return_type': 'MongoCursor'},
 \     'immortal': { 'signature': '[ bool $liveForever = true] | MongoCursor', 'return_type': 'MongoCursor'},
 \     'info': { 'signature': 'void | array', 'return_type': 'array'},
 \     'key': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5309,8 +5783,8 @@ let g:php_builtin_classes = {
 \     'partial': { 'signature': '[ bool $okay = true] | MongoCursor', 'return_type': 'MongoCursor'},
 \     'reset': { 'signature': 'void | void', 'return_type': 'void'},
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
-\     'setFlag': { 'signature': 'bool $flag [, bool $set = true] | MongoCursor', 'return_type': 'MongoCursor'},
-\     'setReadPreference': { 'signature': 'string $read_preference [, array $tags] | bool', 'return_type': 'bool'},
+\     'setFlag': { 'signature': 'int $flag [, bool $set = true] | MongoCursor', 'return_type': 'MongoCursor'},
+\     'setReadPreference': { 'signature': 'string $read_preference [, array $tags] | MongoCursor', 'return_type': 'MongoCursor'},
 \     'skip': { 'signature': 'int $num | MongoCursor', 'return_type': 'MongoCursor'},
 \     'slaveOkay': { 'signature': '[ bool $okay = true] | MongoCursor', 'return_type': 'MongoCursor'},
 \     'snapshot': { 'signature': 'void | MongoCursor', 'return_type': 'MongoCursor'},
@@ -5362,8 +5836,8 @@ let g:php_builtin_classes = {
 \     'authenticate': { 'signature': 'string $username, string $password | array', 'return_type': 'array'},
 \     'command': { 'signature': 'array $command [, array $options = array()] | array', 'return_type': 'array'},
 \     '__construct': { 'signature': 'MongoClient $conn, string $name', 'return_type': ''},
-\     'createCollection': { 'signature': 'string $name [, bool $capped = FALSE [, int $size = 0 [, int $max = 0]]] | MongoCollection', 'return_type': 'MongoCollection'},
-\     'createDBRef': { 'signature': 'string $collection, mixed $a | array', 'return_type': 'array'},
+\     'createCollection': { 'signature': 'string $name [, array $options] | MongoCollection', 'return_type': 'MongoCollection'},
+\     'createDBRef': { 'signature': 'string $collection, mixed $document_or_id | array', 'return_type': 'array'},
 \     'drop': { 'signature': 'void | array', 'return_type': 'array'},
 \     'dropCollection': { 'signature': 'mixed $coll | array', 'return_type': 'array'},
 \     'execute': { 'signature': 'mixed $code [, array $args = array()] | array', 'return_type': 'array'},
@@ -5604,6 +6078,10 @@ let g:php_builtin_classes = {
 \   },
 \   'properties': {
 \     'document': { 'initializer': '', 'type': ''},
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -5861,6 +6339,10 @@ let g:php_builtin_classes = {
 \   'properties': {
 \     'lastResponse': { 'initializer': '', 'type': ''},
 \     'debugInfo': { 'initializer': '', 'type': ''},
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -5906,10 +6388,66 @@ let g:php_builtin_classes = {
 \     'reportProblem': { 'signature': 'string $oauthexception [, bool $send_headers = true] | string', 'return_type': 'string'},
 \   },
 \},
+\'OCI-Collection': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'append': { 'signature': 'mixed $value | bool', 'return_type': 'bool'},
+\     'assign': { 'signature': 'OCI-Collection $from | bool', 'return_type': 'bool'},
+\     'assignElem': { 'signature': 'int $index, mixed $value | bool', 'return_type': 'bool'},
+\     'free': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'getElem': { 'signature': 'int $index | mixed', 'return_type': 'mixed'},
+\     'max': { 'signature': 'void | int', 'return_type': 'int'},
+\     'size': { 'signature': 'void | int', 'return_type': 'int'},
+\     'trim': { 'signature': 'int $num | bool', 'return_type': 'bool'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'OCI-Lob': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'append': { 'signature': 'OCI-Lob $lob_from | bool', 'return_type': 'bool'},
+\     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'eof': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'erase': { 'signature': '[ int $offset [, int $length]] | int', 'return_type': 'int'},
+\     'export': { 'signature': 'string $filename [, int $start [, int $length]] | bool', 'return_type': 'bool'},
+\     'flush': { 'signature': '[ int $flag] | bool', 'return_type': 'bool'},
+\     'free': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'getBuffering': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'import': { 'signature': 'string $filename | bool', 'return_type': 'bool'},
+\     'load': { 'signature': 'void | string', 'return_type': 'string'},
+\     'read': { 'signature': 'int $length | string', 'return_type': 'string'},
+\     'rewind': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'save': { 'signature': 'string $data [, int $offset] | bool', 'return_type': 'bool'},
+\     'seek': { 'signature': 'int $offset [, int $whence = OCI_SEEK_SET] | bool', 'return_type': 'bool'},
+\     'setBuffering': { 'signature': 'bool $on_off | bool', 'return_type': 'bool'},
+\     'size': { 'signature': 'void | int', 'return_type': 'int'},
+\     'tell': { 'signature': 'void | int', 'return_type': 'int'},
+\     'truncate': { 'signature': '[ int $length = 0] | bool', 'return_type': 'bool'},
+\     'write': { 'signature': 'string $data [, int $length] | int', 'return_type': 'int'},
+\     'writeTemporary': { 'signature': 'string $data [, int $lob_type = OCI_TEMP_CLOB] | bool', 'return_type': 'bool'},
+\   },
+\   'static_methods': {
+\   },
+\},
 \'OutOfBoundsException': {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -5931,6 +6469,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -5948,28 +6490,14 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
-\'OuterIterator': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'getInnerIterator': { 'signature': 'void | Iterator', 'return_type': 'Iterator'},
-\     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\     'key': { 'signature': 'void | scalar', 'return_type': 'scalar'},
-\     'next': { 'signature': 'void | void', 'return_type': 'void'},
-\     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
-\     'valid': { 'signature': 'void | boolean', 'return_type': 'boolean'},
-\   },
-\   'static_methods': {
-\   },
-\},
 \'OverflowException': {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -6121,8 +6649,10 @@ let g:php_builtin_classes = {
 \   },
 \   'properties': {
 \     'errorInfo': { 'initializer': '', 'type': 'array'},
+\     'code': { 'initializer': '', 'type': 'int'},
 \     'message': { 'initializer': '', 'type': 'string'},
-\     'code': { 'initializer': '', 'type': 'string'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -6154,7 +6684,7 @@ let g:php_builtin_classes = {
 \     'bindValue': { 'signature': 'mixed $parameter, mixed $value [, int $data_type = PDO::PARAM_STR] | bool', 'return_type': 'bool'},
 \     'closeCursor': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'columnCount': { 'signature': 'void | int', 'return_type': 'int'},
-\     'debugDumpParams': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'debugDumpParams': { 'signature': 'void | void', 'return_type': 'void'},
 \     'errorCode': { 'signature': 'void | string', 'return_type': 'string'},
 \     'errorInfo': { 'signature': 'void | array', 'return_type': 'array'},
 \     'execute': { 'signature': '[ array $input_parameters] | bool', 'return_type': 'bool'},
@@ -6201,11 +6731,8 @@ let g:php_builtin_classes = {
 \     'addEmptyDir': { 'signature': 'string $dirname | void', 'return_type': 'void'},
 \     'addFile': { 'signature': 'string $file [, string $localname] | void', 'return_type': 'void'},
 \     'addFromString': { 'signature': 'string $localname, string $contents | void', 'return_type': 'void'},
-\     'apiVersion': { 'signature': 'void | string', 'return_type': 'string'},
 \     'buildFromDirectory': { 'signature': 'string $base_dir [, string $regex] | array', 'return_type': 'array'},
 \     'buildFromIterator': { 'signature': 'Iterator $iter [, string $base_directory] | array', 'return_type': 'array'},
-\     'canCompress': { 'signature': '[ int $type = 0] | bool', 'return_type': 'bool'},
-\     'canWrite': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'compress': { 'signature': 'int $compression [, string $extension] | object', 'return_type': 'object'},
 \     'compressAllFilesBZIP2': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'compressAllFilesGZ': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -6215,7 +6742,6 @@ let g:php_builtin_classes = {
 \     'convertToExecutable': { 'signature': '[ int $format = 9021976 [, int $compression = 9021976 [, string $extension]]] | Phar', 'return_type': 'Phar'},
 \     'copy': { 'signature': 'string $oldfile, string $newfile | bool', 'return_type': 'bool'},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
-\     'createDefaultStub': { 'signature': '[ string $indexfile [, string $webindexfile]] | string', 'return_type': 'string'},
 \     'decompress': { 'signature': '[ string $extension] | object', 'return_type': 'object'},
 \     'decompressFiles': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'delMetadata': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -6225,37 +6751,41 @@ let g:php_builtin_classes = {
 \     'getModified': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'getSignature': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getStub': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getSupportedCompression': { 'signature': 'void | array', 'return_type': 'array'},
-\     'getSupportedSignatures': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getVersion': { 'signature': 'void | string', 'return_type': 'string'},
 \     'hasMetadata': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'interceptFileFuncs': { 'signature': 'void | void', 'return_type': 'void'},
 \     'isBuffering': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isCompressed': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'isFileFormat': { 'signature': 'int $format | bool', 'return_type': 'bool'},
-\     'isValidPharFilename': { 'signature': 'string $filename [, bool $executable = true] | bool', 'return_type': 'bool'},
 \     'isWritable': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'loadPhar': { 'signature': 'string $filename [, string $alias] | bool', 'return_type': 'bool'},
-\     'mapPhar': { 'signature': '[ string $alias [, int $dataoffset = 0]] | bool', 'return_type': 'bool'},
-\     'mount': { 'signature': 'string $pharpath, string $externalpath | void', 'return_type': 'void'},
-\     'mungServer': { 'signature': 'array $munglist | void', 'return_type': 'void'},
 \     'offsetExists': { 'signature': 'string $offset | bool', 'return_type': 'bool'},
 \     'offsetGet': { 'signature': 'string $offset | int', 'return_type': 'int'},
 \     'offsetSet': { 'signature': 'string $offset, string $value | void', 'return_type': 'void'},
 \     'offsetUnset': { 'signature': 'string $offset | bool', 'return_type': 'bool'},
-\     'running': { 'signature': '[ bool $retphar = true] | string', 'return_type': 'string'},
 \     'setAlias': { 'signature': 'string $alias | bool', 'return_type': 'bool'},
 \     'setDefaultStub': { 'signature': '[ string $index [, string $webindex]] | bool', 'return_type': 'bool'},
 \     'setMetadata': { 'signature': 'mixed $metadata | void', 'return_type': 'void'},
 \     'setSignatureAlgorithm': { 'signature': 'int $sigtype [, string $privatekey] | void', 'return_type': 'void'},
-\     'setStub': { 'signature': 'string $stub | bool', 'return_type': 'bool'},
+\     'setStub': { 'signature': 'string $stub [, int $len = -1] | bool', 'return_type': 'bool'},
 \     'startBuffering': { 'signature': 'void | void', 'return_type': 'void'},
 \     'stopBuffering': { 'signature': 'void | void', 'return_type': 'void'},
 \     'uncompressAllFiles': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'unlinkArchive': { 'signature': 'string $archive | bool', 'return_type': 'bool'},
-\     'webPhar': { 'signature': '[ string $alias [, string $index = "index.php" [, string $f404 [, array $mimetypes [, callable $rewrites]]]]] | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
+\     'apiVersion': { 'signature': 'void | string', 'return_type': 'string'},
+\     'canCompress': { 'signature': '[ int $type = 0] | bool', 'return_type': 'bool'},
+\     'canWrite': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'createDefaultStub': { 'signature': '[ string $indexfile [, string $webindexfile]] | string', 'return_type': 'string'},
+\     'getSupportedCompression': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getSupportedSignatures': { 'signature': 'void | array', 'return_type': 'array'},
+\     'interceptFileFuncs': { 'signature': 'void | void', 'return_type': 'void'},
+\     'isValidPharFilename': { 'signature': 'string $filename [, bool $executable = true] | bool', 'return_type': 'bool'},
+\     'loadPhar': { 'signature': 'string $filename [, string $alias] | bool', 'return_type': 'bool'},
+\     'mapPhar': { 'signature': '[ string $alias [, int $dataoffset = 0]] | bool', 'return_type': 'bool'},
+\     'mount': { 'signature': 'string $pharpath, string $externalpath | void', 'return_type': 'void'},
+\     'mungServer': { 'signature': 'array $munglist | void', 'return_type': 'void'},
+\     'running': { 'signature': '[ bool $retphar = true] | string', 'return_type': 'string'},
+\     'unlinkArchive': { 'signature': 'string $archive | bool', 'return_type': 'bool'},
+\     'webPhar': { 'signature': '[ string $alias [, string $index = "index.php" [, string $f404 [, array $mimetypes [, callable $rewrites]]]]] | void', 'return_type': 'void'},
 \   },
 \},
 \'PharData': {
@@ -6289,51 +6819,64 @@ let g:php_builtin_classes = {
 \     'setDefaultStub': { 'signature': '[ string $index [, string $webindex]] | bool', 'return_type': 'bool'},
 \     'setMetadata': { 'signature': 'mixed $metadata | void', 'return_type': 'void'},
 \     'setSignatureAlgorithm': { 'signature': 'int $sigtype [, string $privatekey] | void', 'return_type': 'void'},
-\     'setStub': { 'signature': 'string $stub | bool', 'return_type': 'bool'},
-\     'apiVersion': { 'signature': 'void | string', 'return_type': 'string'},
-\     'canCompress': { 'signature': '[ int $type = 0] | bool', 'return_type': 'bool'},
-\     'canWrite': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'setStub': { 'signature': 'string $stub [, int $len = -1] | bool', 'return_type': 'bool'},
 \     'compressAllFilesBZIP2': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'compressAllFilesGZ': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
-\     'createDefaultStub': { 'signature': '[ string $indexfile [, string $webindexfile]] | string', 'return_type': 'string'},
 \     'getMetadata': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'getModified': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'getSignature': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getStub': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getSupportedCompression': { 'signature': 'void | array', 'return_type': 'array'},
-\     'getSupportedSignatures': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getVersion': { 'signature': 'void | string', 'return_type': 'string'},
 \     'hasMetadata': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'interceptFileFuncs': { 'signature': 'void | void', 'return_type': 'void'},
 \     'isBuffering': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isCompressed': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'isFileFormat': { 'signature': 'int $format | bool', 'return_type': 'bool'},
+\     'offsetExists': { 'signature': 'string $offset | bool', 'return_type': 'bool'},
+\     'offsetGet': { 'signature': 'string $offset | int', 'return_type': 'int'},
+\     'startBuffering': { 'signature': 'void | void', 'return_type': 'void'},
+\     'stopBuffering': { 'signature': 'void | void', 'return_type': 'void'},
+\     'uncompressAllFiles': { 'signature': 'void | bool', 'return_type': 'bool'},
+\   },
+\   'static_methods': {
+\     'apiVersion': { 'signature': 'void | string', 'return_type': 'string'},
+\     'canCompress': { 'signature': '[ int $type = 0] | bool', 'return_type': 'bool'},
+\     'canWrite': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'createDefaultStub': { 'signature': '[ string $indexfile [, string $webindexfile]] | string', 'return_type': 'string'},
+\     'getSupportedCompression': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getSupportedSignatures': { 'signature': 'void | array', 'return_type': 'array'},
+\     'interceptFileFuncs': { 'signature': 'void | void', 'return_type': 'void'},
 \     'isValidPharFilename': { 'signature': 'string $filename [, bool $executable = true] | bool', 'return_type': 'bool'},
 \     'loadPhar': { 'signature': 'string $filename [, string $alias] | bool', 'return_type': 'bool'},
 \     'mapPhar': { 'signature': '[ string $alias [, int $dataoffset = 0]] | bool', 'return_type': 'bool'},
 \     'mount': { 'signature': 'string $pharpath, string $externalpath | void', 'return_type': 'void'},
 \     'mungServer': { 'signature': 'array $munglist | void', 'return_type': 'void'},
-\     'offsetExists': { 'signature': 'string $offset | bool', 'return_type': 'bool'},
-\     'offsetGet': { 'signature': 'string $offset | int', 'return_type': 'int'},
 \     'running': { 'signature': '[ bool $retphar = true] | string', 'return_type': 'string'},
-\     'startBuffering': { 'signature': 'void | void', 'return_type': 'void'},
-\     'stopBuffering': { 'signature': 'void | void', 'return_type': 'void'},
-\     'uncompressAllFiles': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'unlinkArchive': { 'signature': 'string $archive | bool', 'return_type': 'bool'},
 \     'webPhar': { 'signature': '[ string $alias [, string $index = "index.php" [, string $f404 [, array $mimetypes [, callable $rewrites]]]]] | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'PharException': {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
 \   'methods': {
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -6528,6 +7071,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -6786,25 +7333,6 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveIterator': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'getChildren': { 'signature': 'void | RecursiveIterator', 'return_type': 'RecursiveIterator'},
-\     'hasChildren': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\     'key': { 'signature': 'void | scalar', 'return_type': 'scalar'},
-\     'next': { 'signature': 'void | void', 'return_type': 'void'},
-\     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
-\     'valid': { 'signature': 'void | boolean', 'return_type': 'boolean'},
-\   },
-\   'static_methods': {
-\   },
-\},
 \'RecursiveIteratorIterator': {
 \   'constants': {
 \     'LEAVES_ONLY': '0',
@@ -6828,7 +7356,7 @@ let g:php_builtin_classes = {
 \     'getDepth': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getInnerIterator': { 'signature': 'void | Iterator', 'return_type': 'Iterator'},
 \     'getMaxDepth': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\     'getSubIterator': { 'signature': 'void | RecursiveIterator', 'return_type': 'RecursiveIterator'},
+\     'getSubIterator': { 'signature': '[ int $level] | RecursiveIterator', 'return_type': 'RecursiveIterator'},
 \     'key': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'next': { 'signature': 'void | void', 'return_type': 'void'},
 \     'nextElement': { 'signature': 'void | void', 'return_type': 'void'},
@@ -6898,7 +7426,7 @@ let g:php_builtin_classes = {
 \     'getDepth': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getInnerIterator': { 'signature': 'void | iterator', 'return_type': 'iterator'},
 \     'getMaxDepth': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\     'getSubIterator': { 'signature': 'void | RecursiveIterator', 'return_type': 'RecursiveIterator'},
+\     'getSubIterator': { 'signature': '[ int $level] | RecursiveIterator', 'return_type': 'RecursiveIterator'},
 \     'setMaxDepth': { 'signature': '[ string $max_depth = -1] | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
@@ -6943,7 +7471,7 @@ let g:php_builtin_classes = {
 \     'getInterfaceNames': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getInterfaces': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getMethod': { 'signature': 'string $name | ReflectionMethod', 'return_type': 'ReflectionMethod'},
-\     'getMethods': { 'signature': '[ string $filter] | array', 'return_type': 'array'},
+\     'getMethods': { 'signature': '[ int $filter] | array', 'return_type': 'array'},
 \     'getModifiers': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getNamespaceName': { 'signature': 'void | string', 'return_type': 'string'},
@@ -6953,7 +7481,7 @@ let g:php_builtin_classes = {
 \     'getShortName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getStartLine': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getStaticProperties': { 'signature': 'void | array', 'return_type': 'array'},
-\     'getStaticPropertyValue': { 'signature': 'string $name | mixed', 'return_type': 'mixed'},
+\     'getStaticPropertyValue': { 'signature': 'string $name [, mixed &$def_value] | mixed', 'return_type': 'mixed'},
 \     'getTraitAliases': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getTraitNames': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getTraits': { 'signature': 'void | array', 'return_type': 'array'},
@@ -7053,6 +7581,7 @@ let g:php_builtin_classes = {
 \     'isDisabled': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__toString': { 'signature': 'void | void', 'return_type': 'void'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
+\     'getClosureScopeClass': { 'signature': 'void | ReflectionClass', 'return_type': 'ReflectionClass'},
 \     'getClosureThis': { 'signature': 'void | object', 'return_type': 'object'},
 \     'getDocComment': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getEndLine': { 'signature': 'void | int', 'return_type': 'int'},
@@ -7070,6 +7599,7 @@ let g:php_builtin_classes = {
 \     'inNamespace': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isClosure': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isDeprecated': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'isGenerator': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isInternal': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isUserDefined': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'returnsReference': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -7088,6 +7618,7 @@ let g:php_builtin_classes = {
 \   },
 \   'methods': {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
+\     'getClosureScopeClass': { 'signature': 'void | ReflectionClass', 'return_type': 'ReflectionClass'},
 \     'getClosureThis': { 'signature': 'void | object', 'return_type': 'object'},
 \     'getDocComment': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getEndLine': { 'signature': 'void | int', 'return_type': 'int'},
@@ -7105,6 +7636,7 @@ let g:php_builtin_classes = {
 \     'inNamespace': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isClosure': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isDeprecated': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'isGenerator': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isInternal': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isUserDefined': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'returnsReference': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -7130,7 +7662,7 @@ let g:php_builtin_classes = {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'mixed $class, string $name', 'return_type': ''},
-\     'getClosure': { 'signature': 'string $object | Closure', 'return_type': 'Closure'},
+\     'getClosure': { 'signature': 'object $object | Closure', 'return_type': 'Closure'},
 \     'getDeclaringClass': { 'signature': 'void | ReflectionClass', 'return_type': 'ReflectionClass'},
 \     'getModifiers': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getPrototype': { 'signature': 'void | ReflectionMethod', 'return_type': 'ReflectionMethod'},
@@ -7147,6 +7679,7 @@ let g:php_builtin_classes = {
 \     'setAccessible': { 'signature': 'bool $accessible | void', 'return_type': 'void'},
 \     '__toString': { 'signature': 'void | void', 'return_type': 'void'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
+\     'getClosureScopeClass': { 'signature': 'void | ReflectionClass', 'return_type': 'ReflectionClass'},
 \     'getClosureThis': { 'signature': 'void | object', 'return_type': 'object'},
 \     'getDocComment': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getEndLine': { 'signature': 'void | int', 'return_type': 'int'},
@@ -7164,6 +7697,7 @@ let g:php_builtin_classes = {
 \     'inNamespace': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isClosure': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isDeprecated': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'isGenerator': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isInternal': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isUserDefined': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'returnsReference': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -7179,6 +7713,7 @@ let g:php_builtin_classes = {
 \     'IS_FINAL': '64',
 \   },
 \   'properties': {
+\     'name': { 'initializer': '', 'type': ''},
 \   },
 \   'static_properties': {
 \   },
@@ -7196,7 +7731,7 @@ let g:php_builtin_classes = {
 \     'getInterfaceNames': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getInterfaces': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getMethod': { 'signature': 'string $name | ReflectionMethod', 'return_type': 'ReflectionMethod'},
-\     'getMethods': { 'signature': '[ string $filter] | array', 'return_type': 'array'},
+\     'getMethods': { 'signature': '[ int $filter] | array', 'return_type': 'array'},
 \     'getModifiers': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getNamespaceName': { 'signature': 'void | string', 'return_type': 'string'},
@@ -7206,7 +7741,7 @@ let g:php_builtin_classes = {
 \     'getShortName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getStartLine': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getStaticProperties': { 'signature': 'void | array', 'return_type': 'array'},
-\     'getStaticPropertyValue': { 'signature': 'string $name | mixed', 'return_type': 'mixed'},
+\     'getStaticPropertyValue': { 'signature': 'string $name [, mixed &$def_value] | mixed', 'return_type': 'mixed'},
 \     'getTraitAliases': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getTraitNames': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getTraits': { 'signature': 'void | array', 'return_type': 'array'},
@@ -7251,12 +7786,15 @@ let g:php_builtin_classes = {
 \     '__construct': { 'signature': 'string $function, string $parameter', 'return_type': ''},
 \     'getClass': { 'signature': 'void | ReflectionClass', 'return_type': 'ReflectionClass'},
 \     'getDeclaringClass': { 'signature': 'void | ReflectionClass', 'return_type': 'ReflectionClass'},
-\     'getDeclaringFunction': { 'signature': 'void | ReflectionFunction', 'return_type': 'ReflectionFunction'},
+\     'getDeclaringFunction': { 'signature': 'void | ReflectionFunctionAbstract', 'return_type': 'ReflectionFunctionAbstract'},
 \     'getDefaultValue': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getDefaultValueConstantName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getPosition': { 'signature': 'void | int', 'return_type': 'int'},
 \     'isArray': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'isCallable': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isDefaultValueAvailable': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'isDefaultValueConstant': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isOptional': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isPassedByReference': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
@@ -7285,7 +7823,7 @@ let g:php_builtin_classes = {
 \     'getDocComment': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getModifiers': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getName': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getValue': { 'signature': 'object $object | mixed', 'return_type': 'mixed'},
+\     'getValue': { 'signature': '[ object $object] | mixed', 'return_type': 'mixed'},
 \     'isDefault': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isPrivate': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isProtected': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -7391,6 +7929,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -7453,8 +7995,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'code': { 'initializer': '', 'type': 'int'},
 \     'message': { 'initializer': '', 'type': 'string'},
-\     'code': { 'initializer': '', 'type': 'string'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -7485,8 +8029,8 @@ let g:php_builtin_classes = {
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'string $filename [, int $flags [, string $encryption_key]]', 'return_type': ''},
 \     'createAggregate': { 'signature': 'string $name, mixed $step_callback, mixed $final_callback [, int $argument_count = -1] | bool', 'return_type': 'bool'},
+\     'createCollation': { 'signature': 'string $name, callable $callback | bool', 'return_type': 'bool'},
 \     'createFunction': { 'signature': 'string $name, mixed $callback [, int $argument_count = -1] | bool', 'return_type': 'bool'},
-\     'escapeString': { 'signature': 'string $value | string', 'return_type': 'string'},
 \     'exec': { 'signature': 'string $query | bool', 'return_type': 'bool'},
 \     'lastErrorCode': { 'signature': 'void | int', 'return_type': 'int'},
 \     'lastErrorMsg': { 'signature': 'void | string', 'return_type': 'string'},
@@ -7496,9 +8040,10 @@ let g:php_builtin_classes = {
 \     'prepare': { 'signature': 'string $query | SQLite3Stmt', 'return_type': 'SQLite3Stmt'},
 \     'query': { 'signature': 'string $query | SQLite3Result', 'return_type': 'SQLite3Result'},
 \     'querySingle': { 'signature': 'string $query [, bool $entire_row = false] | mixed', 'return_type': 'mixed'},
-\     'version': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \   'static_methods': {
+\     'escapeString': { 'signature': 'string $value | string', 'return_type': 'string'},
+\     'version': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
 \'SQLite3Result': {
@@ -7957,38 +8502,6 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
-\'SeekableIterator': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'seek': { 'signature': 'int $position | void', 'return_type': 'void'},
-\     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\     'key': { 'signature': 'void | scalar', 'return_type': 'scalar'},
-\     'next': { 'signature': 'void | void', 'return_type': 'void'},
-\     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
-\     'valid': { 'signature': 'void | boolean', 'return_type': 'boolean'},
-\   },
-\   'static_methods': {
-\   },
-\},
-\'Serializable': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'serialize': { 'signature': 'void | string', 'return_type': 'string'},
-\     'unserialize': { 'signature': 'string $serialized | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
-\   },
-\},
 \'SessionHandler': {
 \   'constants': {
 \   },
@@ -8040,7 +8553,7 @@ let g:php_builtin_classes = {
 \     'attributes': { 'signature': '[ string $ns = NULL [, bool $is_prefix = false]] | SimpleXMLElement', 'return_type': 'SimpleXMLElement'},
 \     'children': { 'signature': '[ string $ns [, bool $is_prefix = false]] | SimpleXMLElement', 'return_type': 'SimpleXMLElement'},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
-\     'getDocNamespaces': { 'signature': '[ bool $recursive = false] | array', 'return_type': 'array'},
+\     'getDocNamespaces': { 'signature': '[ bool $recursive = false [, bool $from_root = true]] | array', 'return_type': 'array'},
 \     'getName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getNamespaces': { 'signature': '[ bool $recursive = false] | array', 'return_type': 'array'},
 \     'registerXPathNamespace': { 'signature': 'string $prefix, string $ns | bool', 'return_type': 'bool'},
@@ -8071,7 +8584,7 @@ let g:php_builtin_classes = {
 \     'attributes': { 'signature': '[ string $ns = NULL [, bool $is_prefix = false]] | SimpleXMLElement', 'return_type': 'SimpleXMLElement'},
 \     'children': { 'signature': '[ string $ns [, bool $is_prefix = false]] | SimpleXMLElement', 'return_type': 'SimpleXMLElement'},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
-\     'getDocNamespaces': { 'signature': '[ bool $recursive = false] | array', 'return_type': 'array'},
+\     'getDocNamespaces': { 'signature': '[ bool $recursive = false [, bool $from_root = true]] | array', 'return_type': 'array'},
 \     'getName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getNamespaces': { 'signature': '[ bool $recursive = false] | array', 'return_type': 'array'},
 \     'registerXPathNamespace': { 'signature': 'string $prefix, string $ns | bool', 'return_type': 'bool'},
@@ -8109,6 +8622,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -8237,11 +8754,27 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
+\     'sourceline': { 'initializer': '', 'type': 'integer'},
+\     'sourcefile': { 'initializer': '', 'type': 'string'},
+\     'zif_name': { 'initializer': '', 'type': 'string'},
 \   },
 \   'static_properties': {
 \   },
 \   'methods': {
 \     'getInternalInfo': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -8318,6 +8851,10 @@ let g:php_builtin_classes = {
 \     'sourceline': { 'initializer': '', 'type': 'integer'},
 \     'sourcefile': { 'initializer': '', 'type': 'string'},
 \     'zif_name': { 'initializer': '', 'type': 'string'},
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -8340,8 +8877,20 @@ let g:php_builtin_classes = {
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
+\     'SolrResponse::PARSE_SOLR_OBJ': '0',
+\     'SolrResponse::PARSE_SOLR_DOC': '1',
 \   },
 \   'properties': {
+\     'http_status': { 'initializer': '', 'type': 'integer'},
+\     'parser_mode': { 'initializer': '', 'type': 'integer'},
+\     'success': { 'initializer': '', 'type': 'bool'},
+\     'http_status_message': { 'initializer': '', 'type': 'string'},
+\     'http_request_url': { 'initializer': '', 'type': 'string'},
+\     'http_raw_request_headers': { 'initializer': '', 'type': 'string'},
+\     'http_raw_request': { 'initializer': '', 'type': 'string'},
+\     'http_raw_response_headers': { 'initializer': '', 'type': 'string'},
+\     'http_raw_response': { 'initializer': '', 'type': 'string'},
+\     'http_digested_response': { 'initializer': '', 'type': 'string'},
 \   },
 \   'static_properties': {
 \   },
@@ -8367,11 +8916,27 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
+\     'sourceline': { 'initializer': '', 'type': 'integer'},
+\     'sourcefile': { 'initializer': '', 'type': 'string'},
+\     'zif_name': { 'initializer': '', 'type': 'string'},
 \   },
 \   'static_properties': {
 \   },
 \   'methods': {
 \     'getInternalInfo': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -8380,11 +8945,27 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
+\     'sourceline': { 'initializer': '', 'type': 'integer'},
+\     'sourcefile': { 'initializer': '', 'type': 'string'},
+\     'zif_name': { 'initializer': '', 'type': 'string'},
 \   },
 \   'static_properties': {
 \   },
 \   'methods': {
 \     'getInternalInfo': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \   'static_methods': {
 \   },
@@ -8695,8 +9276,20 @@ let g:php_builtin_classes = {
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
+\     'SolrResponse::PARSE_SOLR_OBJ': '0',
+\     'SolrResponse::PARSE_SOLR_DOC': '1',
 \   },
 \   'properties': {
+\     'http_status': { 'initializer': '', 'type': 'integer'},
+\     'parser_mode': { 'initializer': '', 'type': 'integer'},
+\     'success': { 'initializer': '', 'type': 'bool'},
+\     'http_status_message': { 'initializer': '', 'type': 'string'},
+\     'http_request_url': { 'initializer': '', 'type': 'string'},
+\     'http_raw_request_headers': { 'initializer': '', 'type': 'string'},
+\     'http_raw_request': { 'initializer': '', 'type': 'string'},
+\     'http_raw_response_headers': { 'initializer': '', 'type': 'string'},
+\     'http_raw_response': { 'initializer': '', 'type': 'string'},
+\     'http_digested_response': { 'initializer': '', 'type': 'string'},
 \   },
 \   'static_properties': {
 \   },
@@ -8757,8 +9350,20 @@ let g:php_builtin_classes = {
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
+\     'SolrResponse::PARSE_SOLR_OBJ': '0',
+\     'SolrResponse::PARSE_SOLR_DOC': '1',
 \   },
 \   'properties': {
+\     'http_status': { 'initializer': '', 'type': 'integer'},
+\     'parser_mode': { 'initializer': '', 'type': 'integer'},
+\     'success': { 'initializer': '', 'type': 'bool'},
+\     'http_status_message': { 'initializer': '', 'type': 'string'},
+\     'http_request_url': { 'initializer': '', 'type': 'string'},
+\     'http_raw_request_headers': { 'initializer': '', 'type': 'string'},
+\     'http_raw_request': { 'initializer': '', 'type': 'string'},
+\     'http_raw_response_headers': { 'initializer': '', 'type': 'string'},
+\     'http_raw_response': { 'initializer': '', 'type': 'string'},
+\     'http_digested_response': { 'initializer': '', 'type': 'string'},
 \   },
 \   'static_properties': {
 \   },
@@ -9186,19 +9791,6 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
-\'SplObserver': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'update': { 'signature': 'SplSubject $subject | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
-\   },
-\},
 \'SplPriorityQueue': {
 \   'constants': {
 \   },
@@ -9311,21 +9903,6 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
-\'SplSubject': {
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'attach': { 'signature': 'SplObserver $observer | void', 'return_type': 'void'},
-\     'detach': { 'signature': 'SplObserver $observer | void', 'return_type': 'void'},
-\     'notify': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
-\   },
-\},
 \'SplTempFileObject': {
 \   'constants': {
 \   },
@@ -9415,12 +9992,16 @@ let g:php_builtin_classes = {
 \   'static_properties': {
 \   },
 \   'methods': {
+\     'chunk': { 'signature': 'long $size, boolean $preserve | boolean', 'return_type': 'boolean'},
 \     'isRunning': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'isTerminated': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'isWaiting': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'lock': { 'signature': 'void | boolean', 'return_type': 'boolean'},
+\     'merge': { 'signature': 'mixed $from [, mixed $overwrite] | boolean', 'return_type': 'boolean'},
 \     'notify': { 'signature': 'void | boolean', 'return_type': 'boolean'},
+\     'pop': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'run': { 'signature': 'void | void', 'return_type': 'void'},
+\     'shift': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'synchronized': { 'signature': 'Closure $block [, mixed $...] | mixed', 'return_type': 'mixed'},
 \     'unlock': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'wait': { 'signature': '[ string $timeout] | boolean', 'return_type': 'boolean'},
@@ -9501,6 +10082,7 @@ let g:php_builtin_classes = {
 \   'static_properties': {
 \   },
 \   'methods': {
+\     'chunk': { 'signature': 'long $size, boolean $preserve | boolean', 'return_type': 'boolean'},
 \     'getCreatorId': { 'signature': 'void | long', 'return_type': 'long'},
 \     'getThreadId': { 'signature': 'void | long', 'return_type': 'long'},
 \     'isJoined': { 'signature': 'void | boolean', 'return_type': 'boolean'},
@@ -9510,8 +10092,11 @@ let g:php_builtin_classes = {
 \     'isWaiting': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'join': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'lock': { 'signature': 'void | boolean', 'return_type': 'boolean'},
+\     'merge': { 'signature': 'mixed $from [, mixed $overwrite] | boolean', 'return_type': 'boolean'},
 \     'notify': { 'signature': 'void | boolean', 'return_type': 'boolean'},
+\     'pop': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'run': { 'signature': 'void | void', 'return_type': 'void'},
+\     'shift': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'start': { 'signature': '[ long $options] | boolean', 'return_type': 'boolean'},
 \     'synchronized': { 'signature': 'Closure $block [, mixed $...] | mixed', 'return_type': 'mixed'},
 \     'unlock': { 'signature': 'void | boolean', 'return_type': 'boolean'},
@@ -9723,22 +10308,86 @@ let g:php_builtin_classes = {
 \     'listIDs': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
-\'Traversable': {
+\'UConverter': {
 \   'constants': {
+\     'REASON_UNASSIGNED': '0',
+\     'REASON_ILLEGAL': '1',
+\     'REASON_IRREGULAR': '2',
+\     'REASON_RESET': '3',
+\     'REASON_CLOSE': '4',
+\     'REASON_CLONE': '5',
+\     'UNSUPPORTED_CONVERTER': '-1',
+\     'SBCS': '0',
+\     'DBCS': '1',
+\     'MBCS': '2',
+\     'LATIN_1': '3',
+\     'UTF8': '4',
+\     'UTF16_BigEndian': '5',
+\     'UTF16_LittleEndian': '6',
+\     'UTF32_BigEndian': '7',
+\     'UTF32_LittleEndian': '8',
+\     'EBCDIC_STATEFUL': '9',
+\     'ISO_2022': '10',
+\     'LMBCS_1': '11',
+\     'LMBCS_2': '12',
+\     'LMBCS_3': '13',
+\     'LMBCS_4': '14',
+\     'LMBCS_5': '15',
+\     'LMBCS_6': '16',
+\     'LMBCS_8': '17',
+\     'LMBCS_11': '18',
+\     'LMBCS_16': '19',
+\     'LMBCS_17': '20',
+\     'LMBCS_18': '21',
+\     'LMBCS_19': '22',
+\     'LMBCS_LAST': '22',
+\     'HZ': '23',
+\     'SCSU': '24',
+\     'ISCII': '25',
+\     'US_ASCII': '26',
+\     'UTF7': '27',
+\     'BOCU1': '28',
+\     'UTF16': '29',
+\     'UTF32': '30',
+\     'CESU8': '31',
+\     'IMAP_MAILBOX': '32',
 \   },
 \   'properties': {
 \   },
 \   'static_properties': {
 \   },
 \   'methods': {
+\     '__construct': { 'signature': '[ string $destination_encoding [, string $source_encoding]]', 'return_type': ''},
+\     'convert': { 'signature': 'string $str [, bool $reverse] | string', 'return_type': 'string'},
+\     'fromUCallback': { 'signature': 'integer $reason, string $source, string $codePoint, integer &$error | mixed', 'return_type': 'mixed'},
+\     'getDestinationEncoding': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getDestinationType': { 'signature': 'void | integer', 'return_type': 'integer'},
+\     'getErrorCode': { 'signature': 'void | integer', 'return_type': 'integer'},
+\     'getErrorMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getSourceEncoding': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getSourceType': { 'signature': 'void | integer', 'return_type': 'integer'},
+\     'getSubstChars': { 'signature': 'void | string', 'return_type': 'string'},
+\     'setDestinationEncoding': { 'signature': 'string $encoding | void', 'return_type': 'void'},
+\     'setSourceEncoding': { 'signature': 'string $encoding | void', 'return_type': 'void'},
+\     'setSubstChars': { 'signature': 'string $chars | void', 'return_type': 'void'},
+\     'toUCallback': { 'signature': 'integer $reason, string $source, string $codeUnits, integer &$error | mixed', 'return_type': 'mixed'},
 \   },
 \   'static_methods': {
+\     'getAliases': { 'signature': '[ string $name] | array', 'return_type': 'array'},
+\     'getAvailable': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getStandards': { 'signature': 'void | array', 'return_type': 'array'},
+\     'reasonText': { 'signature': '[ integer $reason] | string', 'return_type': 'string'},
+\     'transcode': { 'signature': 'string $str, string $toEncoding, string $fromEncoding [, array $options] | string', 'return_type': 'string'},
 \   },
 \},
 \'UnderflowException': {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -9760,6 +10409,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -9805,6 +10458,10 @@ let g:php_builtin_classes = {
 \     'JsLineNumber': { 'initializer': '', 'type': ''},
 \     'JsSourceLine': { 'initializer': '', 'type': ''},
 \     'JsTrace': { 'initializer': '', 'type': ''},
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -9986,16 +10643,80 @@ let g:php_builtin_classes = {
 \   'static_properties': {
 \   },
 \   'methods': {
+\     'chunk': { 'signature': 'long $size, boolean $preserve | boolean', 'return_type': 'boolean'},
 \     'getCreatorId': { 'signature': 'void | long', 'return_type': 'long'},
 \     'getStacked': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getThreadId': { 'signature': 'void | long', 'return_type': 'long'},
 \     'isShutdown': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'isWorking': { 'signature': 'void | boolean', 'return_type': 'boolean'},
+\     'merge': { 'signature': 'mixed $from [, mixed $overwrite] | boolean', 'return_type': 'boolean'},
+\     'pop': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'run': { 'signature': 'void | void', 'return_type': 'void'},
+\     'shift': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'shutdown': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'stack': { 'signature': 'Stackable $work | int', 'return_type': 'int'},
 \     'start': { 'signature': '[ long $options] | boolean', 'return_type': 'boolean'},
 \     'unstack': { 'signature': '[ Stackable $work] | int', 'return_type': 'int'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'XMLDiff\Base': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': 'string $nsname', 'return_type': ''},
+\     'diff': { 'signature': 'mixed $from, mixed $to | mixed', 'return_type': 'mixed'},
+\     'merge': { 'signature': 'mixed $src, mixed $diff | mixed', 'return_type': 'mixed'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'XMLDiff\DOM': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'diff': { 'signature': 'mixed $from, mixed $to | mixed', 'return_type': 'mixed'},
+\     'merge': { 'signature': 'mixed $src, mixed $diff | mixed', 'return_type': 'mixed'},
+\     '__construct': { 'signature': 'string $nsname', 'return_type': ''},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'XMLDiff\File': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'diff': { 'signature': 'mixed $from, mixed $to | mixed', 'return_type': 'mixed'},
+\     'merge': { 'signature': 'mixed $src, mixed $diff | mixed', 'return_type': 'mixed'},
+\     '__construct': { 'signature': 'string $nsname', 'return_type': ''},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'XMLDiff\Memory': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'diff': { 'signature': 'mixed $from, mixed $to | mixed', 'return_type': 'mixed'},
+\     'merge': { 'signature': 'mixed $src, mixed $diff | mixed', 'return_type': 'mixed'},
+\     '__construct': { 'signature': 'string $nsname', 'return_type': ''},
 \   },
 \   'static_methods': {
 \   },
@@ -10341,9 +11062,10 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
-\     'message': { 'initializer': '', 'type': ''},
-\     'code': { 'initializer': '', 'type': ''},
-\     'previous': { 'initializer': '', 'type': ''},
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -10952,54 +11674,167 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
-\'ZipArchive': {
+\'ZMQ': {
 \   'constants': {
-\     'CHECKCONS': '',
-\     'CM_BZIP2': '',
-\     'CM_DEFAULT': '',
-\     'CM_DEFLATE': '',
-\     'CM_DEFLATE64': '',
-\     'CM_IMPLODE': '',
-\     'CM_PKWARE_IMPLODE': '',
-\     'CM_REDUCE_1': '',
-\     'CM_REDUCE_2': '',
-\     'CM_REDUCE_3': '',
-\     'CM_REDUCE_4': '',
-\     'CM_SHRINK': '',
-\     'CM_STORE': '',
-\     'CREATE': '',
-\     'ER_CHANGED': '',
-\     'ER_CLOSE': '',
-\     'ER_COMPNOTSUPP': '',
-\     'ER_CRC': '',
-\     'ER_DELETED': '',
-\     'ER_EOF': '',
-\     'ER_EXISTS': '',
-\     'ER_INCONS': '',
-\     'ER_INTERNAL': '',
-\     'ER_INVAL': '',
-\     'ER_MEMORY': '',
-\     'ER_MULTIDISK': '',
-\     'ER_NOENT': '',
-\     'ER_NOZIP': '',
-\     'ER_OK': '',
-\     'ER_OPEN': '',
-\     'ER_READ': '',
-\     'ER_REMOVE': '',
-\     'ER_RENAME': '',
-\     'ER_SEEK': '',
-\     'ER_TMPOPEN': '',
-\     'ER_WRITE': '',
-\     'ER_ZIPCLOSED': '',
-\     'ER_ZLIB': '',
-\     'EXCL': '',
-\     'FL_COMPRESSED': '',
-\     'FL_NOCASE': '',
-\     'FL_NODIR': '',
-\     'FL_UNCHANGED': '',
-\     'OVERWRITE': '',
+\     'SOCKET_PAIR': '',
+\     'SOCKET_PUB': '',
+\     'SOCKET_SUB': '',
+\     'SOCKET_REQ': '',
+\     'SOCKET_REP': '',
+\     'SOCKET_XREQ': '',
+\     'SOCKET_XREP': '',
+\     'SOCKET_PUSH': '',
+\     'SOCKET_PULL': '',
+\     'SOCKET_ROUTER': '',
+\     'SOCKET_DEALER': '',
+\     'SOCKET_XPUB': '',
+\     'SOCKET_XSUB': '',
+\     'SOCKET_STREAM': '',
+\     'SOCKOPT_HWM': '',
+\     'SOCKOPT_SNDHWM': '',
+\     'SOCKOPT_RCVHWM': '',
+\     'SOCKOPT_AFFINITY': '',
+\     'SOCKOPT_IDENTITY': '',
+\     'SOCKOPT_SUBSCRIBE': '',
+\     'SOCKOPT_UNSUBSCRIBE': '',
+\     'SOCKOPT_RATE': '',
+\     'SOCKOPT_RECOVERY_IVL': '',
+\     'SOCKOPT_RECONNECT_IVL': '',
+\     'SOCKOPT_RECONNECT_IVL_MAX': '',
+\     'SOCKOPT_MCAST_LOOP': '',
+\     'SOCKOPT_SNDBUF': '',
+\     'SOCKOPT_RCVBUF': '',
+\     'SOCKOPT_RCVMORE': '',
+\     'SOCKOPT_TYPE': '',
+\     'SOCKOPT_LINGER': '',
+\     'SOCKOPT_BACKLOG': '',
+\     'SOCKOPT_MAXMSGSIZE': '',
+\     'SOCKOPT_SNDTIMEO': '',
+\     'SOCKOPT_RCVTIMEO': '',
+\     'SOCKOPT_IPV4ONLY': '',
+\     'SOCKOPT_LAST_ENDPOINT': '',
+\     'SOCKOPT_TCP_KEEPALIVE_IDLE': '',
+\     'SOCKOPT_TCP_KEEPALIVE_CNT': '',
+\     'SOCKOPT_TCP_KEEPALIVE_INTVL': '',
+\     'SOCKOPT_TCP_ACCEPT_FILTER': '',
+\     'SOCKOPT_DELAY_ATTACH_ON_CONNECT': '',
+\     'SOCKOPT_XPUB_VERBOSE': '',
+\     'SOCKOPT_ROUTER_RAW': '',
+\     'SOCKOPT_IPV6': '',
+\     'CTXOPT_MAX_SOCKETS': '',
+\     'POLL_IN': '',
+\     'POLL_OUT': '',
+\     'MODE_NOBLOCK': '',
+\     'MODE_DONTWAIT': '',
+\     'MODE_SNDMORE': '',
+\     'ERR_INTERNAL': '',
+\     'ERR_EAGAIN': '',
+\     'ERR_ENOTSUP': '',
+\     'ERR_EFSM': '',
+\     'ERR_ETERM': '',
+\     'DEVICE_FORWARDER': '',
+\     'DEVICE_QUEUE': '',
+\     'DEVICE_STREAMER': '',
 \   },
 \   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': 'void', 'return_type': ''},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'ZMQContext': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': '[ integer $io_threads = 1 [, boolean $is_persistent = true]]', 'return_type': ''},
+\     'getOpt': { 'signature': 'string $key | mixed', 'return_type': 'mixed'},
+\     'getSocket': { 'signature': 'integer $type [, string $persistent_id = null [, callback $on_new_socket = null]] | ZMQSocket', 'return_type': 'ZMQSocket'},
+\     'isPersistent': { 'signature': 'void | boolean', 'return_type': 'boolean'},
+\     'setOpt': { 'signature': 'integer $key, mixed $value | ZMQContext', 'return_type': 'ZMQContext'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'ZMQDevice': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     '__construct': { 'signature': 'ZMQSocket $frontend, ZMQSocket $backend [, ZMQSocket $listener]', 'return_type': ''},
+\     'getIdleTimeout': { 'signature': 'void | ZMQDevice', 'return_type': 'ZMQDevice'},
+\     'getTimerTimeout': { 'signature': 'void | ZMQDevice', 'return_type': 'ZMQDevice'},
+\     'run': { 'signature': 'void | void', 'return_type': 'void'},
+\     'setIdleCallback': { 'signature': 'callable $cb_func, integer $timeout [, mixed $user_data] | ZMQDevice', 'return_type': 'ZMQDevice'},
+\     'setIdleTimeout': { 'signature': 'integer $timeout | ZMQDevice', 'return_type': 'ZMQDevice'},
+\     'setTimerCallback': { 'signature': 'callable $cb_func, integer $timeout [, mixed $user_data] | ZMQDevice', 'return_type': 'ZMQDevice'},
+\     'setTimerTimeout': { 'signature': 'integer $timeout | ZMQDevice', 'return_type': 'ZMQDevice'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'ZMQPoll': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'add': { 'signature': 'mixed $entry, integer $type | string', 'return_type': 'string'},
+\     'clear': { 'signature': 'void | ZMQPoll', 'return_type': 'ZMQPoll'},
+\     'count': { 'signature': 'void | integer', 'return_type': 'integer'},
+\     'getLastErrors': { 'signature': 'void | array', 'return_type': 'array'},
+\     'poll': { 'signature': 'array &$readable, array &$writable [, integer $timeout = -1] | integer', 'return_type': 'integer'},
+\     'remove': { 'signature': 'mixed $item | boolean', 'return_type': 'boolean'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'ZMQSocket': {
+\   'constants': {
+\   },
+\   'properties': {
+\   },
+\   'static_properties': {
+\   },
+\   'methods': {
+\     'bind': { 'signature': 'string $dsn [, boolean $force = false] | ZMQSocket', 'return_type': 'ZMQSocket'},
+\     'connect': { 'signature': 'string $dsn | ZMQSocket', 'return_type': 'ZMQSocket'},
+\     '__construct': { 'signature': 'ZMQContext $context, int $type [, string $persistent_id = null [, callback $on_new_socket = null]]', 'return_type': ''},
+\     'getEndpoints': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getPersistentId': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getSocketType': { 'signature': 'void | integer', 'return_type': 'integer'},
+\     'getSockOpt': { 'signature': 'string $key | mixed', 'return_type': 'mixed'},
+\     'isPersistent': { 'signature': 'void | boolean', 'return_type': 'boolean'},
+\     'recv': { 'signature': '[ integer $mode = 0] | string', 'return_type': 'string'},
+\     'recvMulti': { 'signature': '[ integer $mode = 0] | string', 'return_type': 'string'},
+\     'send': { 'signature': 'array $message [, integer $mode = 0] | ZMQSocket', 'return_type': 'ZMQSocket'},
+\     'setSockOpt': { 'signature': 'integer $key, mixed $value | ZMQSocket', 'return_type': 'ZMQSocket'},
+\     'unbind': { 'signature': 'string $dsn | ZMQSocket', 'return_type': 'ZMQSocket'},
+\   },
+\   'static_methods': {
+\   },
+\},
+\'ZipArchive': {
+\   'constants': {
+\   },
+\   'properties': {
+\     'status': { 'initializer': '', 'type': 'int'},
+\     'statusSys': { 'initializer': '', 'type': 'int'},
+\     'numFiles': { 'initializer': '', 'type': 'int'},
+\     'filename': { 'initializer': '', 'type': 'string'},
+\     'comment': { 'initializer': '', 'type': 'string'},
 \   },
 \   'static_properties': {
 \   },
@@ -11007,6 +11842,8 @@ let g:php_builtin_classes = {
 \     'addEmptyDir': { 'signature': 'string $dirname | bool', 'return_type': 'bool'},
 \     'addFile': { 'signature': 'string $filename [, string $localname = NULL [, int $start = 0 [, int $length = 0]]] | bool', 'return_type': 'bool'},
 \     'addFromString': { 'signature': 'string $localname, string $contents | bool', 'return_type': 'bool'},
+\     'addGlob': { 'signature': 'string $pattern [, int $flags = 0 [, array $options = array()]] | bool', 'return_type': 'bool'},
+\     'addPattern': { 'signature': 'string $pattern [, string $path = ''.'' [, array $options = array()]] | bool', 'return_type': 'bool'},
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'deleteIndex': { 'signature': 'int $index | bool', 'return_type': 'bool'},
 \     'deleteName': { 'signature': 'string $name | bool', 'return_type': 'bool'},
@@ -11014,24 +11851,24 @@ let g:php_builtin_classes = {
 \     'getArchiveComment': { 'signature': '[ int $flags] | string', 'return_type': 'string'},
 \     'getCommentIndex': { 'signature': 'int $index [, int $flags] | string', 'return_type': 'string'},
 \     'getCommentName': { 'signature': 'string $name [, int $flags] | string', 'return_type': 'string'},
-\     'getFromIndex': { 'signature': 'int $index [, int $length = 0 [, int $flags]] | mixed', 'return_type': 'mixed'},
-\     'getFromName': { 'signature': 'string $name [, int $length = 0 [, int $flags]] | mixed', 'return_type': 'mixed'},
+\     'getFromIndex': { 'signature': 'int $index [, int $length = 0 [, int $flags]] | string', 'return_type': 'string'},
+\     'getFromName': { 'signature': 'string $name [, int $length = 0 [, int $flags]] | string', 'return_type': 'string'},
 \     'getNameIndex': { 'signature': 'int $index [, int $flags] | string', 'return_type': 'string'},
 \     'getStatusString': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getStream': { 'signature': 'string $name | resource', 'return_type': 'resource'},
-\     'locateName': { 'signature': 'string $name [, int $flags] | mixed', 'return_type': 'mixed'},
+\     'locateName': { 'signature': 'string $name [, int $flags] | int', 'return_type': 'int'},
 \     'open': { 'signature': 'string $filename [, int $flags] | mixed', 'return_type': 'mixed'},
 \     'renameIndex': { 'signature': 'int $index, string $newname | bool', 'return_type': 'bool'},
 \     'renameName': { 'signature': 'string $name, string $newname | bool', 'return_type': 'bool'},
-\     'setArchiveComment': { 'signature': 'string $comment | mixed', 'return_type': 'mixed'},
-\     'setCommentIndex': { 'signature': 'int $index, string $comment | mixed', 'return_type': 'mixed'},
-\     'setCommentName': { 'signature': 'string $name, string $comment | mixed', 'return_type': 'mixed'},
-\     'statIndex': { 'signature': 'int $index [, int $flags] | mixed', 'return_type': 'mixed'},
-\     'statName': { 'signature': 'string $name [, int $flags] | mixed', 'return_type': 'mixed'},
-\     'unchangeAll': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\     'unchangeArchive': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\     'unchangeIndex': { 'signature': 'int $index | mixed', 'return_type': 'mixed'},
-\     'unchangeName': { 'signature': 'string $name | mixed', 'return_type': 'mixed'},
+\     'setArchiveComment': { 'signature': 'string $comment | bool', 'return_type': 'bool'},
+\     'setCommentIndex': { 'signature': 'int $index, string $comment | bool', 'return_type': 'bool'},
+\     'setCommentName': { 'signature': 'string $name, string $comment | bool', 'return_type': 'bool'},
+\     'statIndex': { 'signature': 'int $index [, int $flags] | array', 'return_type': 'array'},
+\     'statName': { 'signature': 'string $name [, int $flags] | array', 'return_type': 'array'},
+\     'unchangeAll': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'unchangeArchive': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'unchangeIndex': { 'signature': 'int $index | bool', 'return_type': 'bool'},
+\     'unchangeName': { 'signature': 'string $name | bool', 'return_type': 'bool'},
 \   },
 \   'static_methods': {
 \   },
@@ -11124,7 +11961,7 @@ let g:php_builtin_classes = {
 \     'change_user': { 'signature': 'string $user, string $password, string $database | bool', 'return_type': 'bool'},
 \     'character_set_name': { 'signature': 'void | string', 'return_type': 'string'},
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'commit': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'commit': { 'signature': '[ int $flags [, string $name]] | bool', 'return_type': 'bool'},
 \     'debug': { 'signature': 'string $message | bool', 'return_type': 'bool'},
 \     'dump_debug_info': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'get_charset': { 'signature': 'void | object', 'return_type': 'object'},
@@ -11138,7 +11975,6 @@ let g:php_builtin_classes = {
 \     'next_result': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'options': { 'signature': 'int $option, mixed $value | bool', 'return_type': 'bool'},
 \     'ping': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'poll': { 'signature': 'array &$read, array &$error, array &$reject, int $sec [, int $usec] | int', 'return_type': 'int'},
 \     'prepare': { 'signature': 'string $query | mysqli_stmt', 'return_type': 'mysqli_stmt'},
 \     'query': { 'signature': 'string $query [, int $resultmode = MYSQLI_STORE_RESULT] | mixed', 'return_type': 'mixed'},
 \     'real_connect': { 'signature': '[ string $host [, string $username [, string $passwd [, string $dbname [, int $port [, string $socket [, int $flags]]]]]]] | bool', 'return_type': 'bool'},
@@ -11146,7 +11982,7 @@ let g:php_builtin_classes = {
 \     'real_query': { 'signature': 'string $query | bool', 'return_type': 'bool'},
 \     'reap_async_query': { 'signature': 'void | mysqli_result', 'return_type': 'mysqli_result'},
 \     'refresh': { 'signature': 'int $options | bool', 'return_type': 'bool'},
-\     'rollback': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'rollback': { 'signature': '[ int $flags [, string $name]] | bool', 'return_type': 'bool'},
 \     'rpl_query_type': { 'signature': 'string $query | int', 'return_type': 'int'},
 \     'select_db': { 'signature': 'string $dbname | bool', 'return_type': 'bool'},
 \     'send_query': { 'signature': 'string $query | bool', 'return_type': 'bool'},
@@ -11159,6 +11995,7 @@ let g:php_builtin_classes = {
 \     'use_result': { 'signature': 'void | mysqli_result', 'return_type': 'mysqli_result'},
 \   },
 \   'static_methods': {
+\     'poll': { 'signature': 'array &$read, array &$error, array &$reject, int $sec [, int $usec] | int', 'return_type': 'int'},
 \   },
 \},
 \'mysqli_driver': {
@@ -11212,8 +12049,11 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
-\     'code': { 'initializer': '', 'type': ''},
-\     'sqlstate': { 'initializer': '', 'type': ''},
+\     'sqlstate': { 'initializer': '', 'type': 'string'},
+\     'message': { 'initializer': '', 'type': 'string'},
+\     'code': { 'initializer': '', 'type': 'int'},
+\     'file': { 'initializer': '', 'type': 'string'},
+\     'line': { 'initializer': '', 'type': 'int'},
 \   },
 \   'static_properties': {
 \   },
@@ -11293,44 +12133,6 @@ let g:php_builtin_classes = {
 \   'static_methods': {
 \   },
 \},
-\'streamWrapper': {
-\   'constants': {
-\   },
-\   'properties': {
-\     'context': { 'initializer': '', 'type': 'resource'},
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     '__construct': { 'signature': 'void', 'return_type': ''},
-\     '__destruct': { 'signature': 'void', 'return_type': ''},
-\     'dir_closedir': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'dir_opendir': { 'signature': 'string $path, int $options | bool', 'return_type': 'bool'},
-\     'dir_readdir': { 'signature': 'void | string', 'return_type': 'string'},
-\     'dir_rewinddir': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'mkdir': { 'signature': 'string $path, int $mode, int $options | bool', 'return_type': 'bool'},
-\     'rename': { 'signature': 'string $path_from, string $path_to | bool', 'return_type': 'bool'},
-\     'rmdir': { 'signature': 'string $path, int $options | bool', 'return_type': 'bool'},
-\     'stream_cast': { 'signature': 'int $cast_as | resource', 'return_type': 'resource'},
-\     'stream_close': { 'signature': 'void | void', 'return_type': 'void'},
-\     'stream_eof': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'stream_flush': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'stream_lock': { 'signature': 'int $operation | bool', 'return_type': 'bool'},
-\     'stream_metadata': { 'signature': 'string $path, int $option, mixed $value | bool', 'return_type': 'bool'},
-\     'stream_open': { 'signature': 'string $path, string $mode, int $options, string &$opened_path | bool', 'return_type': 'bool'},
-\     'stream_read': { 'signature': 'int $count | string', 'return_type': 'string'},
-\     'stream_seek': { 'signature': 'int $offset [, int $whence = SEEK_SET] | bool', 'return_type': 'bool'},
-\     'stream_set_option': { 'signature': 'int $option, int $arg1, int $arg2 | bool', 'return_type': 'bool'},
-\     'stream_stat': { 'signature': 'void | array', 'return_type': 'array'},
-\     'stream_tell': { 'signature': 'void | int', 'return_type': 'int'},
-\     'stream_truncate': { 'signature': 'int $new_size | bool', 'return_type': 'bool'},
-\     'stream_write': { 'signature': 'string $data | int', 'return_type': 'int'},
-\     'unlink': { 'signature': 'string $path | bool', 'return_type': 'bool'},
-\     'url_stat': { 'signature': 'string $path, int $flags | array', 'return_type': 'array'},
-\   },
-\   'static_methods': {
-\   },
-\},
 \'tidy': {
 \   'constants': {
 \   },
@@ -11367,15 +12169,15 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
-\     'value': { 'initializer': '', 'type': ''},
-\     'name': { 'initializer': '', 'type': ''},
-\     'type': { 'initializer': '', 'type': ''},
-\     'line': { 'initializer': '', 'type': ''},
-\     'column': { 'initializer': '', 'type': ''},
-\     'proprietary': { 'initializer': '', 'type': ''},
-\     'id': { 'initializer': '', 'type': ''},
-\     'attribute': { 'initializer': '', 'type': ''},
-\     'child': { 'initializer': '', 'type': ''},
+\     'value': { 'initializer': '', 'type': 'string'},
+\     'name': { 'initializer': '', 'type': 'string'},
+\     'type': { 'initializer': '', 'type': 'int'},
+\     'line': { 'initializer': '', 'type': 'int'},
+\     'column': { 'initializer': '', 'type': 'int'},
+\     'proprietary': { 'initializer': '', 'type': 'bool'},
+\     'id': { 'initializer': '', 'type': 'int'},
+\     'attribute': { 'initializer': '', 'type': 'array'},
+\     'child': { 'initializer': '', 'type': 'array'},
 \   },
 \   'static_properties': {
 \   },
@@ -11397,8 +12199,8 @@ let g:php_builtin_classes = {
 \   'constants': {
 \   },
 \   'properties': {
-\     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
+\     'message': { 'initializer': '', 'type': 'string'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
 \   },

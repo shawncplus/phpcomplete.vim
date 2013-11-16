@@ -14,7 +14,7 @@ require_once __DIR__.'/'.'generator/constants.php';
 require_once __DIR__.'/'.'generator/functions.php';
 require_once __DIR__.'/'.'generator/classes.php';
 
-main($argv);
+return main($argv);
 
 function main($argv){
 
@@ -50,7 +50,7 @@ function main($argv){
     $functions = extract_function_signatures($function_files);
 
     $class_files = glob("{$argv[1]}/class.*.html", GLOB_BRACE);
-    $classes = extract_class_signatures($class_files);
+    list($classes, $interfaces) = extract_class_signatures($class_files);
 
     // unfortunately constants are really everywhere, the *constants.html almost there ok but leaves out
     // pages like filter.filters.sanitize.html
@@ -59,12 +59,16 @@ function main($argv){
     // some class constants like PDO::* are not defined in the class synopsis
     // but they show up with the other constatns so we add them to the extracted classes
     inject_class_constants($classes, $class_constants);
+    inject_class_constants($interfaces, $class_constants, false);
 
     write_function_signatures_to_vim_hash($functions, $argv[2].'/misc/php_builtin_functions.vim');
     print "extracted ".count($functions)." built-in function\n";
 
-    write_class_signatures_to_vim_hash($classes, $argv[2].'/misc/php_builtin_classes.vim');
+    write_class_signatures_to_vim_hash($classes, $argv[2].'/misc/php_builtin_classes.vim', 'g:php_builtin_classes');
     print "extracted ".count($classes)." built-in class\n";
+
+    write_class_signatures_to_vim_hash($interfaces, $argv[2].'/misc/php_builtin_interfaces.vim', 'g:php_builtin_interfaces');
+    print "extracted ".count($interfaces)." built-in interface\n";
 
     write_constant_names_to_vim_hash($constants, $argv[2].'/misc/php_constants.vim');
     print "extracted ".count($constants)." built-in constants\n";

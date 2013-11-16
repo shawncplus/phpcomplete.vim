@@ -31,18 +31,28 @@ function extract_constant_names($files) {
     return array(array_keys($constants), array_keys($class_constants));
 }
 
-function inject_class_constants(&$classes, $class_constants) {
+function inject_class_constants(&$classes, $class_constants, $generate_warnings = true) {
     // a lowercaseclassname => LowerCaseClassName map
     $classnames = array_combine(array_map('strtolower', array_keys($classes)), array_keys($classes));
 
     foreach ($class_constants as $constant) {
         list($classname, $constantname) = explode('::', $constant);
+        if (!isset($classnames[strtolower($classname)])) {
+           if ($generate_warnings) {
+               fwrite(STDERR, "\ncan't place class constant: '{$constant}', no such class found: '{$classname}'\n");
+           }
+           continue;
+        }
+
         $classname = $classnames[strtolower($classname)];
         if (!isset($classes[$classname])) {
-            fwrite(STDERR, "\ncan't place class constant: '{$constant}', no such class found: '{$classname}'\n");
-        } else {
-            $classes[$classname]['constants'][$constantname] = array('initializer' => '');
+           if ($generate_warnings) {
+               fwrite(STDERR, "\ncan't place class constant: '{$constant}', no such class found: '{$classname}'\n");
+           }
+           continue;
         }
+
+        $classes[$classname]['constants'][$constantname] = array('initializer' => '');
     }
 }
 

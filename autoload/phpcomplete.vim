@@ -1859,20 +1859,25 @@ runtime! misc/php_keywords.vim
 " You can regenerate this list with the bin/extract_functions.php
 runtime! misc/php_builtin_functions.vim
 
-" Built in class methods
+" Built in classs
 " You can regenerate this list with the bin/extract_functions.php
 runtime! misc/php_builtin_classes.vim
+
+" Built in interfaces
+" You can regenerate this list with the bin/extract_functions.php
+runtime! misc/php_builtin_interfaces.vim
 
 " When the classname not found or found but the tags dosen't contain that
 " class we will try to complate any method of any builtin class. To speed up
 " that lookup we compile a 'ClassName::MethodName':'info' dictionary from the
 " builtin class informations
 let g:php_builtin_object_functions = {}
+
 " When completing for 'everyting imaginable' (no class context, not a
 " variable) we need a list of built-in classes in a format of {'classname':''}
 " for performance reasons we precompile this too
 let g:php_builtin_classnames = {}
-for [classname, class_info] in items(g:php_builtin_classes)
+for [classname, class_info] in extend(items(g:php_builtin_classes), items(g:php_builtin_interfaces))
 	let g:php_builtin_classnames[classname] = ''
 	for [method_name, method_info] in items(class_info.methods)
 		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
