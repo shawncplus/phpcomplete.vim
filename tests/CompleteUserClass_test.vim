@@ -125,5 +125,15 @@ fun! TestCase_returns_types_for_properties_and_return_types_from_docblock_commen
                 \ {'word': 'commented_method(', 'info': "commented_method($foo, $bar, $baz = '')\n\nReturn:\n\tstring: description of return\n", 'menu': "$foo, $bar, $baz = '') | string", 'kind': 'f'},
                 \ {'word': 'commented_property', 'info': "Type:\n\tFoo\n", 'menu': 'Foo', 'kind': 'v'}],
                 \ ret)
+endfun
 
+fun! TestCase_returns_static_properties_with_only_a_dollarsign_base()
+    call SetUp()
+
+    let ret = phpcomplete#CompleteUserClass('self::', '$', g:fixture_class_content, 'private')
+    call VUAssertEquals([
+                \ {'word': '$private_static_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \ {'word': '$protected_static_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \ {'word': '$public_static_property', 'info': '', 'menu': '', 'kind': 'v'}],
+                \ ret)
 endfun

@@ -877,7 +877,7 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 	call extend(all_values, c_constants)
 
 	for m in sort(keys(all_values))
-		if m =~ '^'.a:base
+		if stridx(m, a:base) == 0
 			call add(res, m)
 		endif
 	endfor
@@ -1091,7 +1091,7 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 	let instruction = substitute(instruction, '\v^(^\s+)|(\s+)$', '', 'g')
 
 	" chop of the completion "base" from the end
-	let instruction = substitute(instruction, '\s*\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
+	let instruction = substitute(instruction, '\s*\$\?\([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\)*$', '', '')
 
 	return instruction
 endfunction " }}}
