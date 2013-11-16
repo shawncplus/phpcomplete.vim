@@ -4,7 +4,7 @@ use Foo1 // cursor just before the comment
 ;
 
 use Foo2,
-    Bar // cursor jsut before the comment
+    Bar // cursor just before the comment
 ;
 
 use Foo3,
@@ -17,13 +17,13 @@ $a = new
     Foo // cursor just before the comment
 ;
 
-array_merge(
+$foo()->bar(
     /* ; */
-    array(';'),
-    $some_variable,
-    $object->call // cursor just before the comment
-);
+    array(';')
+)-> // cursor just before the comment
 
+
+;
 
 
 $some->foo = $some_long_variable
@@ -45,7 +45,7 @@ class Foo {
 
 if (true) {
 }
-$a = "foo" // cursor just before the comment
+$foo-> // cursor just before the comment
 ;
 
 
@@ -58,3 +58,8 @@ foreach ($date->format('N') > 5) $date-> // cursor before the comment
 ;
 for ($i = 0; $i < 10; ++$i) $date-> // cursor before the comment
 ;
+
+
+
+$foo = $bar->baz($f, $bar2-> // cursor before the comment
+$foo = $bar->baz($foo = call(), (new foo)->  // cursor before the comment

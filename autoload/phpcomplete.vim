@@ -70,17 +70,6 @@ if !exists('s:cache_tags')
 	let s:cache_tags = {}
 endif
 
-function! phpcomplete#GetTaglist(pattern) " {{{
-	if g:phpcomplete_cache_taglists == 1 && has_key(s:cache_tags, a:pattern)
-		let tags = s:cache_tags[a:pattern]
-	else
-		let tags = taglist(a:pattern)
-		let s:cache_tags[a:pattern] = tags
-	endif
-	return tags
-endfunction
-" }}}
-
 function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if a:findstart
 		unlet! b:php_menu
@@ -130,14 +119,13 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		unlet! b:compl_context
 	endif
 
-	let scontext = phpcomplete#GetSubContext(context)
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
 
-	if context =~? '^\s*use\s\+'
+	if context =~? '^use'
 		return phpcomplete#CompleteUse(a:base)
 	endif
 
-	if scontext =~ '\(->\|::\)$'
+	if context =~ '\(->\|::\)$'
 		" {{{
 		" Get name of the class
 		let classname = phpcomplete#GetClassName(context, current_namespace, imports)
@@ -159,7 +147,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 
 		if classlocation != ''
 			if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, classname)
-				return phpcomplete#CompleteBuiltInClass(scontext, classname, a:base)
+				return phpcomplete#CompleteBuiltInClass(context, classname, a:base)
 			endif
 
 			if filereadable(classlocation)
@@ -169,13 +157,13 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 				let sccontent = split(classcontent, "\n")
 				let visibility = expand('%:p') == fnamemodify(classlocation, ':p') ? 'private' : 'public'
 
-				return phpcomplete#CompleteUserClass(scontext, a:base, sccontent, visibility)
+				return phpcomplete#CompleteUserClass(context, a:base, sccontent, visibility)
 			endif
 		endif
 
-		return phpcomplete#CompleteUnknownClass(a:base, scontext)
+		return phpcomplete#CompleteUnknownClass(a:base, context)
 		" }}}
-	elseif scontext =~? '\(\s*new\|extends\)'
+	elseif context =~? '\(\s*new\|extends\)'
 		return phpcomplete#CompleteClassName(a:base, current_namespace, imports)
 	endif
 
@@ -503,7 +491,7 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#CompleteUnknownClass(base, scontext) " {{{
+function! phpcomplete#CompleteUnknownClass(base, context) " {{{
 	let res = []
 
 	if g:phpcomplete_complete_for_unknown_classes != 1
@@ -519,10 +507,10 @@ function! phpcomplete#CompleteUnknownClass(base, scontext) " {{{
 	let file = getline(1, '$')
 
 	" Internal solution for finding object properties in current file.
-	if a:scontext =~ '::'
+	if a:context =~ '::'
 		let variables = filter(deepcopy(file),
 					\ 'v:val =~ "^\\s*\\(static\\|static\\s\\+\\(public\\|var\\)\\|\\(public\\|var\\)\\s\\+static\\)\\s\\+\\$"')
-	elseif a:scontext =~ '->'
+	elseif a:context =~ '->'
 		let variables = filter(deepcopy(file),
 					\ 'v:val =~ "^\\s*\\(public\\|var\\)\\s\\+\\$"')
 	endif
@@ -780,7 +768,7 @@ function! phpcomplete#EvaluateModifiers(modifiers, required_modifiers, prohibite
 endfunction
 " }}}
 
-function! phpcomplete#CompleteUserClass(scontext, base, sccontent, visibility) " {{{
+function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " {{{
 	let final_list = []
 	let res  = []
 
@@ -793,11 +781,11 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, visibility) "
 
 	" limit based on context to static or normal methods
     let static_con = ''
-	if a:scontext =~ '::'
+	if a:context =~ '::$'
 		if g:phpcomplete_relax_static_constraint != 1
             let required_modifiers += ['static']
 		endif
-	elseif a:scontext =~ '->'
+	elseif a:context =~ '->$'
         let prohibited_modifiers += ['static']
 	endif
 
@@ -828,7 +816,7 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, visibility) "
 	endfor
 
 	" limit based on context to static or normal attributes
-	if a:scontext =~ '::'
+	if a:context =~ '::$'
 		" variables must have static to be accessed as static unlike functions
 		let required_modifiers += ['static']
 	endif
@@ -852,7 +840,7 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, visibility) "
 		let c_var = matchstr(i,
 					\ '^\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		if c_var != ''
-			if a:scontext =~ '::'
+			if a:context =~ '::$'
 				let c_var = '$'.c_var
 			endif
 			let c_variables[c_var] = ''
@@ -936,11 +924,10 @@ function! phpcomplete#CompleteUserClass(scontext, base, sccontent, visibility) "
 endfunction
 " }}}
 
-function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
+function! phpcomplete#CompleteBuiltInClass(context, classname, base) " {{{
 	let class_info = g:php_builtin_classes[a:classname]
 	let res = []
-	let search = matchstr(a:base, '\(->\|::\)\zs.*$\ze')
-	if a:scontext =~ '->$' " complete for everything instance related
+	if a:context =~ '->$' " complete for everything instance related
 		" methods
 		for [method_name, method_info] in items(class_info.methods)
 			if a:base == '' || method_name =~? '^'.a:base
@@ -953,7 +940,7 @@ function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
 				call add(res, {'word':property_name, 'kind': 'v', 'menu': property_info.type, 'info': property_info.type })
 			endif
 		endfor
-	elseif a:scontext =~ '::$' " complete for everything static
+	elseif a:context =~ '::$' " complete for everything static
 		" methods
 		for [method_name, method_info] in items(class_info.static_methods)
 			if a:base == '' || method_name =~? '^'.a:base
@@ -977,6 +964,17 @@ function! phpcomplete#CompleteBuiltInClass(scontext, classname, base) " {{{
 endfunction
 " }}}
 
+function! phpcomplete#GetTaglist(pattern) " {{{
+	if g:phpcomplete_cache_taglists == 1 && has_key(s:cache_tags, a:pattern)
+		let tags = s:cache_tags[a:pattern]
+	else
+		let tags = taglist(a:pattern)
+		let s:cache_tags[a:pattern] = tags
+	endif
+	return tags
+endfunction
+" }}}
+
 function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 	" locate the current instruction (up until the previous non comment or string ";" or php region start (<?php or <?) without newlines
 	let line = getline('.')
@@ -988,6 +986,9 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 	let phpbegin_length = len(matchstr(getline(a:phpbegin[0]), '\zs<?\(php\)\?\ze'))
 	let phpbegin_end = [a:phpbegin[0], a:phpbegin[1] - 1 + phpbegin_length]
 
+	" will hold the first place where a coma could have ended the match
+	let first_coma_break_pos = -1
+
 	while !(line_number == 1 && col_number == 1)
 		let current_char = line[col_number]
 		let synIDName = synIDattr(synID(line_number, col_number + 1, 0), 'name')
@@ -996,14 +997,32 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 		if synIDName =~? 'comment'
 			let current_char = ''
 		endif
-		" break if we are reached the previous statemenet,
-		if current_char == ';' && synIDName !~? 'comment\|string' && parent_depth >= 0
-			break
+
+		" if the current char should be considered
+		if current_char != '' && parent_depth >= 0 && synIDName !~? 'comment\|string'
+
+			" break if we are reached the previous statemenet,
+			if current_char == ';'
+				break
+			endif
+
+			" save the coma position for later use if theres a "naked" , possibly separating a parameter and it is not in a parented part
+			if first_coma_break_pos == -1 && current_char == ','
+				let first_coma_break_pos = len(instruction)
+			endif
+
+			" break if theres a "naked" = signaling end of rvalue, and it's not in a parented part
+			if current_char == '='
+				break
+			endif
+
+			" break if theres an unbalanced ( signaling a conditional or function call not part of the instruction
+			if current_char == '('
+				break
+			endif
+
 		endif
-		" break if we are reached the php block start (<?php or <?)
-		if [line_number, col_number] == phpbegin_end
-			break
-		endif
+
 		" count nested darenthesis so we can tell if we need to break on a ';' or not (think of for (;;) loops)
 		if (current_char == '(' || current_char == ')') && synIDName =~? 'phpBraceFunc\|phpParent\|Delimiter'
 			if current_char == '('
@@ -1015,6 +1034,11 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 
 		" stop collecting chars if we see a function start { (think of first line in a function)
 		if (current_char == '{' || current_char == '}') && synIDName =~? 'phpBraceFunc\|phpParent\|Delimiter'
+			break
+		endif
+
+		" break if we are reached the php block start (<?php or <?)
+		if [line_number, col_number] == phpbegin_end
 			break
 		endif
 
@@ -1031,9 +1055,17 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 	" strip leading whitespace
 	let instruction = substitute(instruction, '^\s\+', '', '')
 
+	" there were a "naked" coma in the instruction
+	if first_coma_break_pos != -1
+		if instruction !~? '^use' " use ... statements should not be broken up
+			let pos = -1 * first_coma_break_pos + 1
+			let instruction = instruction[pos :]
+		endif
+	endif
+
 	" HACK to remove one line conditionals from code like "if ($foo) echo 'bar'"
 	" what the plugin really need is a proper php tokenizer
-	if instruction =~? '^\(if\|while\|foreach\|for\)\s*('
+	if instruction =~? '\c^\(if\|while\|foreach\|for\)\s*('
 		" clear everything up until the first (
 		let instruction = substitute(instruction, '^\(if\|while\|foreach\|for\)\s*(\s*', '', '')
 
@@ -1053,33 +1085,15 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 			let i += 1
 		endwhile
 		let instruction = instruction[i + 1 : len(instruction)]
-		let instruction = substitute(instruction, '^\s\+', '', '')
 	endif
+
+	" trim whitespace from the ends
+	let instruction = substitute(instruction, '\v^(^\s+)|(\s+)$', '', 'g')
+
+	" chop of the completion "base" from the end
+	let instruction = substitute(instruction, '\s*\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
+
 	return instruction
-endfunction " }}}
-
-function! phpcomplete#GetSubContext(context) " {{{
-	" chop down the last part of the context, this is basically the completion base
-	let scontext = substitute(a:context, '\$\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*$', '', '')
-
-	" normalize context for the first variable
-	let i = len(scontext) + 1
-	let re = ''
-	while i > 0
-		let i -= 1
-		let char = scontext[i]
-		" ignore newlines
-		if char == "\n"
-			continue
-		endif
-		" chars that should stop the variable search
-		if char == '=' || char == ','
-			break
-		endif
-
-		let re = char.re
-	endwhile
-	return substitute(re, '^\s\+\|\s\+$', '', 'g')
 endfunction " }}}
 
 function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
@@ -1173,16 +1187,15 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 	let class_candidate_namespace = a:current_namespace
 	let class_candidate_imports = a:imports
 	let methodstack = split(a:context, '\s*->\s*')
-	let scontext = phpcomplete#GetSubContext(a:context)
 
 	" add an empty string to the methodstack if the context ends with -> or ::
 	" representing the last segment the user typed so the methodstack has the same
 	" number of elements whenever the user typed some chars for the copletion or not
-	if scontext =~? '\(->\|::\)\s*$'
+	if a:context =~? '\(->\|::\)\s*$'
 		call add(methodstack, '')
 	endif
 
-	if scontext =~? '\$this->' || scontext =~? '\(self\|static\)::'
+	if a:context =~? '\$this->' || a:context =~? '\(self\|static\)::'
 		let i = 1
 		while i < line('.')
 			let line = getline(line('.')-i)
@@ -1208,20 +1221,20 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
 		endwhile
-	elseif scontext =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
-		let classname_candidate = matchstr(scontext, '\cnew\s\+\zs'.class_name_pattern.'\ze')
+	elseif a:context =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
+		let classname_candidate = matchstr(a:context, '\cnew\s\+\zs'.class_name_pattern.'\ze')
 		let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
 		" return absolute classname, without leading \
 		return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 	else
 		" check Constant lookup
-		let constant_object = matchstr(scontext, '\zs'.class_name_pattern.'\ze::')
+		let constant_object = matchstr(a:context, '\zs'.class_name_pattern.'\ze::')
 		if constant_object != ''
 			let classname_candidate = constant_object
 		endif
 
 		"extract the variable name from the context
-		let object = matchstr(scontext, '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
+		let object = matchstr(a:context, '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1

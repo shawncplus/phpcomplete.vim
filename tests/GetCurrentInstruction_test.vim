@@ -5,31 +5,31 @@ fun! TestCase_returns_instuction_string()
 
     call cursor(3, 8)
     let res = phpcomplete#GetCurrentInstruction([1, 1])
-    call VUAssertEquals('use Foo1', res, 'should read in the first line as-is')
+    call VUAssertEquals('use', res, 'should read in the first line as-is')
 
     call cursor(7, 7)
     let res = phpcomplete#GetCurrentInstruction([1, 1])
-    call VUAssertEquals('use Foo2,    Bar', res, 'should return the previous line if the instruction spans multiple line')
+    call VUAssertEquals('use Foo2,', res, 'should return the previous line if the instruction spans multiple line')
 
     call cursor(12, 7)
     let res = phpcomplete#GetCurrentInstruction([1, 1])
-    call VUAssertEquals('use Foo3,        Baz', res, 'should skip content of a comment inside an instruction')
+    call VUAssertEquals('use Foo3,', res, 'should skip content of a comment inside an instruction')
 
     call cursor(17, 7)
     let res = phpcomplete#GetCurrentInstruction([1, 1])
-    call VUAssertEquals('$a = new    Foo', res, 'should simply ignore empty lines')
+    call VUAssertEquals('new', res, 'should simply ignore empty lines')
 
-    call cursor(24, 17)
+    call cursor(23, 3)
     let res = phpcomplete#GetCurrentInstruction([1, 1])
     call VUAssertEquals(
-                \ 'array_merge(        array('';''),    $some_variable,    $object->call',
+                \ '$foo()->bar(        array('';''))->',
                 \ res,
                 \ 'semicolons in comments or string should be ignored')
 
     call cursor(37, 6)
     let res = phpcomplete#GetCurrentInstruction([1, 1])
     call VUAssertEquals(
-                \ '$some->foo = $some_long_variable->love()->me()->love()->me()->say()->that()->you()->love',
+                \ '$some_long_variable->love()->me()->love()->me()->say()->that()->you()->',
                 \ res)
 
     call cursor(42, 20)
@@ -38,10 +38,10 @@ fun! TestCase_returns_instuction_string()
                 \ '$this->foo->',
                 \ res)
 
-    call cursor(48, 10)
+    call cursor(48, 6)
     let res = phpcomplete#GetCurrentInstruction([1, 1])
     call VUAssertEquals(
-                \ '$a = "foo"',
+                \ '$foo->',
                 \ res)
 
     call cursor(53, 36)
@@ -64,6 +64,15 @@ fun! TestCase_returns_instuction_string()
     call VUAssertEquals(
                 \ '$date->',
                 \ res)
-
+    call cursor(64, 28)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '$bar2->',
+                \ res)
+    call cursor(65, 46)
+    let res = phpcomplete#GetCurrentInstruction([1, 1])
+    call VUAssertEquals(
+                \ '(new Foo)->',
+                \ res)
     silent! bw! %
 endf
