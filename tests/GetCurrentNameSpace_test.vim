@@ -32,7 +32,7 @@ fun! TestCase_returns_imported_namespaces_and_classes_with_their_info_from_tags(
 
     let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
     call VUAssertEquals({
-                \ 'ArrayAccess': {'name': 'ArrayAccess', 'kind': 'c', 'builtin': 1},
+                \ 'ArrayAccess': {'name': 'ArrayAccess', 'kind': 'i', 'builtin': 1},
                 \ 'AO': {'name': 'ArrayObject', 'kind': 'c', 'builtin': 1},
                 \ 'DateTimeZone': {'name': 'DateTimeZone', 'kind': 'c', 'builtin': 1},
                 \ 'DateTime': {'name': 'DateTime', 'kind': 'c', 'builtin': 1},

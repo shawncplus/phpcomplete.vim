@@ -1,8 +1,12 @@
 fun! SetUp()
     " normalize g:phpcomplete_min_num_of_chars_for_namespace_completion option
     let g:phpcomplete_min_num_of_chars_for_namespace_completion = 2
-    " disable built-in functions
+    " disable built-in classes
     let g:php_builtin_classnames = {}
+    " disable built-in interfaces
+    let g:php_builtin_interfaces = {}
+    " disable built-in interfaces
+    let g:php_builtin_interfacenames = {}
     " disable tags
     exe ':set tags='
 endf

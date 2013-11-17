@@ -163,8 +163,13 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 
 		return phpcomplete#CompleteUnknownClass(a:base, context)
 		" }}}
-	elseif context =~? '\(\s*new\|extends\)'
-		return phpcomplete#CompleteClassName(a:base, current_namespace, imports)
+	elseif context =~? 'implements'
+		return phpcomplete#CompleteClassName(a:base, ['i'], current_namespace, imports)
+	elseif context =~? 'extends'
+		let kinds = context =~? 'class\s' ? ['c'] : ['i']
+		return phpcomplete#CompleteClassName(a:base, kinds, current_namespace, imports)
+	elseif context =~? 'new'
+		return phpcomplete#CompleteClassName(a:base, ['c'], current_namespace, imports)
 	endif
 
 	if a:base =~ '^\$'
@@ -206,8 +211,8 @@ function! phpcomplete#CompleteUse(base) " {{{
 		for tag in tags
 			if tag.kind ==? 'n' && tag.name =~? '^'.namespace_match_pattern
 				call add(res, {'word': tag.name, 'kind': 'n', 'menu': tag.filename, 'info': tag.filename })
-			elseif has_key(tag, 'namespace') && tag.kind ==? 'c' && tag.namespace ==? namespace_for_class
-				call add(res, {'word': namespace_for_class.'\'.tag.name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
+			elseif has_key(tag, 'namespace') && (tag.kind ==? 'c' || tag.kind ==? 'i') && tag.namespace ==? namespace_for_class
+				call add(res, {'word': namespace_for_class.'\'.tag.name, 'kind': tag.kind, 'menu': tag.filename, 'info': tag.filename })
 			endif
 		endfor
 	endif
@@ -216,6 +221,10 @@ function! phpcomplete#CompleteUse(base) " {{{
 		let builtin_classnames = filter(keys(copy(g:php_builtin_classnames)), 'v:val =~? "^'.classname_match_pattern.'"')
 		for classname in builtin_classnames
 			call add(res, {'word': classname, 'kind': 'c'})
+		endfor
+		let builtin_interfacenames = filter(keys(copy(g:php_builtin_interfacenames)), 'v:val =~? "^'.classname_match_pattern.'"')
+		for interfacename in builtin_interfacenames
+			call add(res, {'word': interfacename, 'kind': 'i'})
 		endfor
 	endif
 
@@ -273,6 +282,7 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 	let ext_functions  = {}
 	let ext_constants  = {}
 	let ext_classes    = {}
+	let ext_interfaces = {}
 	let ext_namespaces = {}
 
 	let base = substitute(a:base, '^\\', '', '')
@@ -366,17 +376,27 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 						endif
 					endif
 				endif
-			elseif tag.kind ==? 'c'
+			elseif tag.kind ==? 'c' || tag.kind ==? 'i'
 				let info = ' - '.tag.filename
+
+				let key = ''
 				if !has_key(tag, 'namespace')
-					let ext_classes[tag.name] = info
+					let key = tag.name
 				else
 					if tag.namespace ==? namespace_for_tag
 						if leading_slash == ''
-							let ext_classes[relative_name] = info
+							let key = relative_name
 						else
-							let ext_classes['\'.full_name] = info
+							let key = '\'.full_name
 						endif
+					endif
+				endif
+
+				if key != ''
+					if tag.kind ==? 'c'
+						let ext_classes[key] = info
+					elseif tag.kind ==? 'i'
+						let ext_interfaces[key] = info
 					endif
 				endif
 			endif
@@ -385,6 +405,7 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 
 	let builtin_constants  = {}
 	let builtin_classnames = {}
+	let builtin_interfaces = {}
 	let builtin_functions  = {}
 	let builtin_keywords   = {}
 	if a:current_namespace == '\' || (a:base =~ '^\\' && a:base =~ '^\\[^\\]*$')
@@ -412,6 +433,11 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 				let builtin_classnames[leading_slash.classname] = info
 			endif
 		endfor
+		for [interfacename, info] in items(g:php_builtin_interfacenames)
+			if interfacename =~? '^'.base
+				let builtin_interfaces[leading_slash.classname] = info
+			endif
+		endfor
 
 		for [function_name, info] in items(g:php_builtin_functions)
 			if function_name =~? '^'.base
@@ -429,13 +455,21 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 
 	for [imported_name, import] in items(a:imports)
 		if imported_name =~? '^'.base
-			if import.kind == 'c'
+			if import.kind ==? 'c'
 				if import.builtin
 					let builtin_classnames[imported_name] = ' '.import.name
 				else
-					let ext_classes[imported_name] = ' '.import.name' - '.import.filename
+					let ext_classes[imported_name] = ' '.import.name.' - '.import.filename
+				endif
+			elseif import.kind ==? 'i'
+				if import.builtin
+					let builtin_interfaces[imported_name] = ' '.import.name
+				else
+					let ext_interfaces[imported_name] = ' '.import.name.' - '.import.filename
 				endif
 			endif
+
+			" no builtin interfaces
 			if import.kind == 'n'
 				let ext_namespaces[imported_name.'\'] = ' '.import.name.' - '.import.filename
 			endif
@@ -459,8 +493,14 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 	" Add external classes
 	call extend(all_values, ext_classes)
 
+	" Add external interfaces
+	call extend(all_values, ext_interfaces)
+
 	" Add built-in classes
 	call extend(all_values, builtin_classnames)
+
+	" Add built-in interfaces
+	call extend(all_values, builtin_interfaces)
 
 	" Add php keywords
 	call extend(all_values, builtin_keywords)
@@ -479,6 +519,9 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 		elseif has_key(ext_classes, i) || has_key(builtin_classnames, i)
 			let info = has_key(ext_classes, i) ? ext_classes[i] : builtin_classnames[i].' - builtin'
 			let final_list += [{'word':i, 'kind': 'c', 'menu': info, 'info': i.info}]
+		elseif has_key(ext_interfaces, i) || has_key(builtin_interfaces, i)
+			let info = has_key(ext_interfaces, i) ? ext_interfaces[i] : builtin_interfaces[i].' - builtin'
+			let final_list += [{'word':i, 'kind': 'i', 'menu': info, 'info': i.info}]
 		elseif has_key(int_constants, i) || has_key(builtin_constants, i)
 			let info = has_key(int_constants, i) ? int_constants[i] : ' - builtin'
 			let final_list += [{'word':i, 'kind': 'd', 'menu': info, 'info': i.info}]
@@ -657,7 +700,8 @@ function! phpcomplete#CompleteVariable(base) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#CompleteClassName(base, current_namespace, imports) " {{{
+function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports) " {{{
+	let kinds = sort(a:kinds)
 	" Complete class name
 	let res = []
 	if a:base =~? '^\'
@@ -670,16 +714,23 @@ function! phpcomplete#CompleteClassName(base, current_namespace, imports) " {{{
 
 	" Internal solution for finding classes in current file.
 	let file = getline(1, '$')
-	call filter(file,
-			\ 'v:val =~? "class\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*"')
+	let filterstr = ''
 
-	let jfile = join(file, ' ')
-	let int_values = split(jfile, 'class\_s\+')
-	let int_classes = {}
-	for i in int_values
-		let c_name = matchstr(i, '^[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
+	if kinds == ['c', 'i']
+		let filterstr = 'v:val =~? "\\(class\\|interface\\)\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*"'
+	elseif kinds == ['c']
+		let filterstr = 'v:val =~? "class\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*"'
+	elseif kinds == ['i']
+		let filterstr = 'v:val =~? "interface\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*"'
+	endif
+
+	call filter(file, filterstr)
+
+	for line in file
+		let c_name = matchstr(line, '\c\(class\|interface\)\s*\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
+		let kind = (line =~? '^\s*class' ? 'c' : 'i')
 		if c_name != '' && c_name =~? '^'.base
-			call add(res, {'word': c_name, 'kind': 'c'})
+			call add(res, {'word': c_name, 'kind': kind})
 		endif
 	endfor
 
@@ -693,10 +744,10 @@ function! phpcomplete#CompleteClassName(base, current_namespace, imports) " {{{
 
 	if len(tags)
 		for tag in tags
-			if !has_key(tag, 'namespace') && tag.kind ==? 'c' && tag.name =~? '^'.base
-				call add(res, {'word': leading_slash.tag.name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
+			if !has_key(tag, 'namespace') && index(kinds, tag.kind) != -1 && tag.name =~? '^'.base
+				call add(res, {'word': leading_slash.tag.name, 'kind': tag.kind, 'menu': tag.filename, 'info': tag.filename })
 			endif
-			if has_key(tag, 'namespace') && tag.kind ==? 'c' && tag.namespace ==? namespace_for_class
+			if has_key(tag, 'namespace') && index(kinds, tag.kind) != -1 && tag.namespace ==? namespace_for_class
 				let full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
 
 				let base_parts = split(a:base, '\')
@@ -707,29 +758,39 @@ function! phpcomplete#CompleteClassName(base, current_namespace, imports) " {{{
 				endif
 				let relative_name = (namespace_part == '' ? '' : namespace_part.'\').tag.name
 
-				call add(res, {'word': leading_slash == '\' ? leading_slash.full_name : relative_name, 'kind': 'c', 'menu': tag.filename, 'info': tag.filename })
+				call add(res, {'word': leading_slash == '\' ? leading_slash.full_name : relative_name, 'kind': tag.kind, 'menu': tag.filename, 'info': tag.filename })
 			endif
 		endfor
 	endif
 
-	" look for built in classnames
+	" look for built in classnames and interfaces
 	let base_parts = split(base, '\')
 	if a:current_namespace == '\' || (leading_slash == '\' && len(base_parts) < 2)
-		let builtin_classnames = filter(keys(copy(g:php_builtin_classes)), 'v:val =~? "^'.substitute(a:base, '\\', '', 'g').'"')
-		for classname in builtin_classnames
-			let menu = ''
-			" if we have a constructor for this class, add parameters as to the info
-			if has_key(g:php_builtin_classes[classname].methods, '__construct')
-				let menu = g:php_builtin_classes[classname]['methods']['__construct']['signature']
-			endif
-			call add(res, {'word': leading_slash.classname, 'kind': 'c', 'menu': menu})
-		endfor
+		if index(kinds, 'c') != -1
+			let builtin_classnames = filter(keys(copy(g:php_builtin_classes)), 'v:val =~? "^'.substitute(a:base, '\\', '', 'g').'"')
+			for classname in builtin_classnames
+				let menu = ''
+				" if we have a constructor for this class, add parameters as to the info
+				if has_key(g:php_builtin_classes[classname].methods, '__construct')
+					let menu = g:php_builtin_classes[classname]['methods']['__construct']['signature']
+				endif
+				call add(res, {'word': leading_slash.classname, 'kind': 'c', 'menu': menu})
+			endfor
+		endif
+
+		if index(kinds, 'i') != -1
+			let builtin_interfaces = filter(keys(copy(g:php_builtin_interfaces)), 'v:val =~? "^'.substitute(a:base, '\\', '', 'g').'"')
+			for interfacename in builtin_interfaces
+				call add(res, {'word': leading_slash.interfacename, 'kind': 'i', 'menu': ''})
+			endfor
+		endif
 	endif
 
 	" add matching imported things
 	for [imported_name, import] in items(a:imports)
-		if imported_name =~? '^'.base && import.kind == 'c'
-			call add(res, {'word': imported_name, 'kind': import.kind, 'menu': ''})
+		if imported_name =~? '^'.base && index(kinds, import.kind) != -1
+			let menu = import.name.(import.builtin ? ' - builtin' : '')
+			call add(res, {'word': imported_name, 'kind': import.kind, 'menu': menu})
 		endif
 	endfor
 
@@ -1786,6 +1847,9 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 					if has_key(g:php_builtin_classnames, import.name)
 						let import['kind'] = 'c'
 						let import['builtin'] = 1
+					elseif has_key(g:php_builtin_interfaces, import.name)
+						let import['kind'] = 'i'
+						let import['builtin'] = 1
 					else
 						" or can be a tag with exactly matchign name
 						let tags = phpcomplete#GetTaglist('^'.import['name'].'$')
@@ -1877,8 +1941,19 @@ let g:php_builtin_object_functions = {}
 " variable) we need a list of built-in classes in a format of {'classname':''}
 " for performance reasons we precompile this too
 let g:php_builtin_classnames = {}
-for [classname, class_info] in extend(items(g:php_builtin_classes), items(g:php_builtin_interfaces))
+for [classname, class_info] in items(g:php_builtin_classes)
 	let g:php_builtin_classnames[classname] = ''
+	for [method_name, method_info] in items(class_info.methods)
+		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
+	endfor
+	for [method_name, method_info] in items(class_info.static_methods)
+		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
+	endfor
+endfor
+
+let g:php_builtin_interfacenames = {}
+for [interfacename, info] in items(g:php_builtin_interfaces)
+	let g:php_builtin_interfacenames[interfacename] = ''
 	for [method_name, method_info] in items(class_info.methods)
 		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
 	endfor

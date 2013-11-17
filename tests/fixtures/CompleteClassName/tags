@@ -5,9 +5,12 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	Development	//
 BarClass	foo.class.php	/^class BarClass {$/;"	c
+BarInterface	foo.class.php	/^interface BarInterface {$/;"	i
 FooClass	foo.class.php	/^class FooClass {$/;"	c
 NS1	namespaced.foo.php	/^namespace NS1;$/;"	n
 NS1\SubNS	subnamespace.php	/^namespace NS1\\SubNS;$/;"	n
 NameSpacedFoo	namespaced.foo.php	/^class NameSpacedFoo {$/;"	c	namespace:NS1
+NameSpacedFooInterface	namespaced.foo.php	/^interface NameSpacedFooInterface {$/;"	i	namespace:NS1
 SubNameSpaced	subnamespace.php	/^class SubNameSpaced {$/;"	c	namespace:NS1\SubNS
+SubNameSpacedInterface	subnamespace.php	/^interface SubNameSpacedInterface {$/;"	i	namespace:NS1\SubNS
 TagClass	tagclass.php	/^class TagClass {$/;"	c

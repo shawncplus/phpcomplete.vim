@@ -2,6 +2,8 @@ fun! SetUp()
     " disable built-in functions
     let g:php_builtin_classnames = {}
     " disable built-in functions
+    let g:php_builtin_interfacenames = {}
+    " disable built-in functions
     let g:php_builtin_functions = {}
     " disable built-in constants
     let g:php_constants = {}
@@ -337,37 +339,37 @@ fun! TestCase_returns_tags_from_imported_namespaces() " {{{
     exe ':set tags='.expand('%:p:h').'/'.'fixtures/common/namespaced_foo_tags'
 
     " class in imported namespace without renaming
-    let res = phpcomplete#CompleteGeneral('SUBNS\F', '', {'SUBNS': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
+    let res = phpcomplete#CompleteGeneral('SUBNS\F', '\', {'SUBNS': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
     call VUAssertEquals([
                 \ {'word': 'SUBNS\FooSub', 'menu': ' - fixtures/common/namespaced_foo.php', 'info': 'SUBNS\FooSub - fixtures/common/namespaced_foo.php', 'kind': 'c'}],
                 \ res)
 
     " class in imported namespace when the import is renamed
-    let res = phpcomplete#CompleteGeneral('SUB\F', '', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
+    let res = phpcomplete#CompleteGeneral('SUB\F', '\', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
     call VUAssertEquals([
                 \ {'word': 'SUB\FooSub', 'menu': ' - fixtures/common/namespaced_foo.php', 'info': 'SUB\FooSub - fixtures/common/namespaced_foo.php', 'kind': 'c'}],
                 \ res)
 
     " class in sub-namespace of the imported namespace when the import is renamed
-    let res = phpcomplete#CompleteGeneral('SUB\SUBSUB\F', '', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
+    let res = phpcomplete#CompleteGeneral('SUB\SUBSUB\F', '\', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
     call VUAssertEquals([
                 \ {'word': 'SUB\SUBSUB\FooSubSub', 'menu': ' - fixtures/common/namespaced_foo.php', 'info': 'SUB\SUBSUB\FooSubSub - fixtures/common/namespaced_foo.php', 'kind': 'c'}],
                 \ res)
 
     " imported namespace name
-    let res = phpcomplete#CompleteGeneral('SUB', '', {'SUBNS': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
+    let res = phpcomplete#CompleteGeneral('SUB', '\', {'SUBNS': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
     call VUAssertEquals([
                 \ {'word': 'SUBNS\', 'menu': ' NS1\SUBNS - fixtures/common/namespaced_foo.php', 'info': ' NS1\SUBNS - fixtures/common/namespaced_foo.php', 'kind': 'n'}],
                 \ res)
 
     " imported and renamed namespace name
-    let res = phpcomplete#CompleteGeneral('SU', '', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
+    let res = phpcomplete#CompleteGeneral('SU', '\', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
     call VUAssertEquals([
                 \ {'word': 'SUB\', 'menu': ' NS1\SUBNS - fixtures/common/namespaced_foo.php', 'info': ' NS1\SUBNS - fixtures/common/namespaced_foo.php', 'kind': 'n'}],
                 \ res)
 
     " sub namespace of imported and renamed namespace name
-    let res = phpcomplete#CompleteGeneral('SUB\SUB', '', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
+    let res = phpcomplete#CompleteGeneral('SUB\SUB', '\', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'}})
     call VUAssertEquals([
                 \ {'word': 'SUB\SUBSUB\', 'menu': 'NS1\SUBNS\SUBSUB - fixtures/common/namespaced_foo.php', 'info': 'NS1\SUBNS\SUBSUB - fixtures/common/namespaced_foo.php', 'kind': 'n'}],
                 \ res)

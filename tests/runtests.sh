@@ -6,12 +6,12 @@ if [ ! -f $VU ]; then
 	echo "Could not run tests. Vimunit executeable not found at: '$VU'"
 else
     if [[ $# > 0 ]]; then
-        for f in $*; do
-            $VU -v $f
+        for f in $@; do
+            $VU $f
         done
     else
         for f in ./*.vim; do
-            $VU -v $f
+            $VU $f
         done
     fi
 fi
