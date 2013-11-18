@@ -5,11 +5,11 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
  * Real support for `self::` and `$this->` with the aforementioned context restriction
  * Constant variable completion (not just `define(VARIABLE, 1)` but `const VARIABLE = 1`)
  * Better class detection:
-	 - Recognize `/* @var $yourvar YourClass */` type mark comments
-	 - Recognize `$instance = new Class;` class instantiations
-	 - Recognize `$instance = Class::getInstance();` singleton instances
-	 - Recognize `$date = DateTime::createFromFormat(...)` built-in class return types
-	 - Recognize type hinting in function prototypes
+     - Recognize `/* @var $yourvar YourClass */` type mark comments
+     - Recognize `$instance = new Class;` class instantiations
+     - Recognize `$instance = Class::getInstance();` singleton instances
+     - Recognize `$date = DateTime::createFromFormat(...)` built-in class return types
+     - Recognize type hinting in function prototypes
      - Recognize types in `@param` lines in function docblocks
      - Recognize `$object = SomeClass::staticCall(...)` return types from docblocks
  * Displays docblock info in the preview for methods and properties
@@ -70,3 +70,34 @@ Enabling this option will add return types to the completion menu for functions 
 When enabled the taglist() lookups will be cached and subsequent searches
 for the same pattern will not check the tagfiles any more, thus making the
 lookups faster (no cache expiration implemented as of now).
+
+**let g:phpcomplete\_add\_function\_extensions = [...]**<br>
+**let g:phpcomplete\_add\_class\_extensions = [...]**<br>
+**let g:phpcomplete\_add\_interface\_extensions = [...]**<br>
+**let g:phpcomplete\_add\_constant\_extensions = [...]**<br>
+**let g:phpcomplete\_remove\_function\_extensions = [...]**<br>
+**let g:phpcomplete\_remove\_class\_extensions = [...]**<br>
+**let g:phpcomplete\_remove\_interface\_extensions = [...]**<br>
+**let g:phpcomplete\_remove\_constant\_extensions = [...]**<br>
+Built-in functions, classes, interfaces and constatns are grouped together by the extension.
+Only the enabled extensions will be loaded for the plugin, the defaultly enabled ones can be
+found in.
+
+    g:phpcomplete_active_function_extensions
+    g:phpcomplete_active_class_extensions
+    g:phpcomplete_active_interface_extensions
+    g:phpcomplete_active_constant_extensions
+
+If you want to enable an extension that is disabled you can add it to the enabled lists
+in your vimrc. Let's say you want to have the mongo extension's classes and functions
+to be completed by the plugin, you can add it like this (in your `.vimrc`):
+
+    let g:phpcomplete_add_class_extensions = ['mongo']
+    let g:phpcomplete_add_function_extensions = ['mongo']
+
+If you want to disable an otherwise enabled one, use the ..._remove_... version of these options:
+
+    let g:phpcomplete_remove_function_extensions = ['xslt_php_4']
+    let g:phpcomplete_remove_constant_extensions = ['xslt_php_4']
+
+For the available extension files, check the directories under `misc/`

@@ -1,0 +1,16 @@
+call extend(g:php_builtin_functions, {
+\ 'mailparse_determine_best_xfer_encoding(': 'resource $fp | string',
+\ 'mailparse_msg_create(': 'void | resource',
+\ 'mailparse_msg_extract_part_file(': 'resource $mimemail, mixed $filename [, callable $callbackfunc] | string',
+\ 'mailparse_msg_extract_part(': 'resource $mimemail, string $msgbody [, callable $callbackfunc] | void',
+\ 'mailparse_msg_extract_whole_part_file(': 'resource $mimemail, string $filename [, callable $callbackfunc] | string',
+\ 'mailparse_msg_free(': 'resource $mimemail | bool',
+\ 'mailparse_msg_get_part_data(': 'resource $mimemail | array',
+\ 'mailparse_msg_get_part(': 'resource $mimemail, string $mimesection | resource',
+\ 'mailparse_msg_get_structure(': 'resource $mimemail | array',
+\ 'mailparse_msg_parse_file(': 'string $filename | resource',
+\ 'mailparse_msg_parse(': 'resource $mimemail, string $data | bool',
+\ 'mailparse_rfc822_parse_addresses(': 'string $addresses | array',
+\ 'mailparse_stream_encode(': 'resource $sourcefp, resource $destfp, string $encoding | bool',
+\ 'mailparse_uudecode_all(': 'resource $fp | array',
+\ })

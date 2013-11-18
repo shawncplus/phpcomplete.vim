@@ -1,6 +1,6 @@
 <?php
 
-function extract_class_signatures($files) {
+function extract_class_signatures($files, $extensions) {
     $class_signatures = array();
     $interface_signatures = array();
 
@@ -17,9 +17,14 @@ function extract_class_signatures($files) {
         $fields    = extract_class_fields($xpath, $classname, $file);
         $methods   = extract_class_methods($xpath, $classname, $file);
 
-        if (!isset($class_signatures[$classname])) {
+        $extension_name = get_extension_name($file, $extensions);
+
+        if (!isset($class_signatures[$extension_name][$classname])) {
             if ($is_interface) {
-                $interface_signatures[$classname] = array(
+                if (!isset($interface_signatures[$extension_name])) {
+                    $interface_signatures[$extension_name] = array();
+                }
+                $interface_signatures[$extension_name][$classname] = array(
                     'constants'         => $fields['constants'],
                     'properties'        => $fields['properties'],
                     'static_properties' => $fields['static_properties'],
@@ -27,7 +32,10 @@ function extract_class_signatures($files) {
                     'static_methods'    => $methods['static_methods'],
                 );
             } else {
-                $class_signatures[$classname] = array(
+                if (!isset($class_signatures[$extension_name])) {
+                    $class_signatures[$extension_name] = array();
+                }
+                $class_signatures[$extension_name][$classname] = array(
                     'constants'         => $fields['constants'],
                     'properties'        => $fields['properties'],
                     'static_properties' => $fields['static_properties'],
@@ -39,8 +47,7 @@ function extract_class_signatures($files) {
             // there are some duplicate class names in extensions, use only the first one
         }
     }
-    ksort($class_signatures);
-    ksort($interface_signatures);
+
     return array($class_signatures, $interface_signatures);
 }
 
@@ -240,46 +247,59 @@ function handle_class_const($xpath, $node, $file) {
     return $re;
 }
 
-function write_class_signatures_to_vim_hash($signatures, $outpath, $vim_varname) {
-    $fd = fopen($outpath, 'w');
-
-    fwrite($fd, "let $vim_varname = {\n");
-    foreach ($signatures as $classname => $class_info) {
-        fwrite($fd, "\\'{$classname}': {\n");
-
-        fwrite($fd, "\\   'constants': {\n");
-        foreach ($class_info['constants'] as $constant => $constant_info) {
-            fwrite($fd, "\\     '{$constant}': '".vimstring_escape($constant_info['initializer'])."',\n");
-        }
-        fwrite($fd, "\\   },\n");
-
-        fwrite($fd, "\\   'properties': {\n");
-        foreach ($class_info['properties'] as $property => $property_info) {
-            fwrite($fd, "\\     '{$property}': { 'initializer': '".vimstring_escape($property_info['initializer'])."', 'type': '".vimstring_escape($property_info['type'])."'},\n");
-        }
-        fwrite($fd, "\\   },\n");
-
-        fwrite($fd, "\\   'static_properties': {\n");
-        foreach ($class_info['static_properties'] as $property => $property_info) {
-            fwrite($fd, "\\     '{$property}': { 'initializer': '".vimstring_escape($property_info['initializer'])."', 'type': '".vimstring_escape($property_info['type'])."'},\n");
-        }
-        fwrite($fd, "\\   },\n");
-
-        fwrite($fd, "\\   'methods': {\n");
-        foreach ($class_info['methods'] as $methodname => $method_info) {
-            fwrite($fd, "\\     '{$methodname}': { 'signature': '".format_method_signature($method_info)."', 'return_type': '".vimstring_escape($method_info['return_type'])."'},\n");
-        }
-        fwrite($fd, "\\   },\n");
-
-        fwrite($fd, "\\   'static_methods': {\n");
-        foreach ($class_info['static_methods'] as $methodname => $method_info) {
-            fwrite($fd, "\\     '{$methodname}': { 'signature': '".format_method_signature($method_info)."', 'return_type': '".vimstring_escape($method_info['return_type'])."'},\n");
-        }
-        fwrite($fd, "\\   },\n");
-
-        fwrite($fd, "\\},\n");
+function write_class_signatures_to_vim_hash($signatures, $outdir, $vim_varname) {
+    if (!is_dir($outdir)) {
+        mkdir($outdir);
     }
-    fwrite($fd, "\\}\n");
-    fclose($fd);
+    $old_files = glob($outdir.'/*.vim');
+    array_map('unlink', $old_files);
+
+    foreach ($signatures as $extension_name => $classes) {
+        if (empty($classes)) {
+            continue;
+        }
+
+        $outpath = $outdir.'/'.filenameize($extension_name).'.vim';
+        $fd = fopen($outpath, 'w');
+
+        fwrite($fd, "call extend($vim_varname, {\n");
+        foreach ($classes as $classname => $class_info) {
+            fwrite($fd, "\\'{$classname}': {\n");
+
+            fwrite($fd, "\\   'constants': {\n");
+            foreach ($class_info['constants'] as $constant => $constant_info) {
+                fwrite($fd, "\\     '{$constant}': '".vimstring_escape($constant_info['initializer'])."',\n");
+            }
+            fwrite($fd, "\\   },\n");
+
+            fwrite($fd, "\\   'properties': {\n");
+            foreach ($class_info['properties'] as $property => $property_info) {
+                fwrite($fd, "\\     '{$property}': { 'initializer': '".vimstring_escape($property_info['initializer'])."', 'type': '".vimstring_escape($property_info['type'])."'},\n");
+            }
+            fwrite($fd, "\\   },\n");
+
+            fwrite($fd, "\\   'static_properties': {\n");
+            foreach ($class_info['static_properties'] as $property => $property_info) {
+                fwrite($fd, "\\     '{$property}': { 'initializer': '".vimstring_escape($property_info['initializer'])."', 'type': '".vimstring_escape($property_info['type'])."'},\n");
+            }
+            fwrite($fd, "\\   },\n");
+
+            fwrite($fd, "\\   'methods': {\n");
+            foreach ($class_info['methods'] as $methodname => $method_info) {
+                fwrite($fd, "\\     '{$methodname}': { 'signature': '".format_method_signature($method_info)."', 'return_type': '".vimstring_escape($method_info['return_type'])."'},\n");
+            }
+            fwrite($fd, "\\   },\n");
+
+            fwrite($fd, "\\   'static_methods': {\n");
+            foreach ($class_info['static_methods'] as $methodname => $method_info) {
+                fwrite($fd, "\\     '{$methodname}': { 'signature': '".format_method_signature($method_info)."', 'return_type': '".vimstring_escape($method_info['return_type'])."'},\n");
+            }
+            fwrite($fd, "\\   },\n");
+
+            fwrite($fd, "\\},\n");
+        }
+        fwrite($fd, "\\})\n");
+        fclose($fd);
+    }
 }
 

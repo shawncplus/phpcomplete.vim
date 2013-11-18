@@ -1,0 +1,16 @@
+call extend(g:php_constants, {
+\ 'MCRYPT_ENCRYPT': '',
+\ 'MCRYPT_DECRYPT': '',
+\ 'MCRYPT_RAND': '',
+\ 'MCRYPT_DEV_RANDOM': '',
+\ 'MCRYPT_DEV_URANDOM': '',
+\ 'CFB': '',
+\ 'OFB': '',
+\ 'CBC': '',
+\ 'MCRYPT_MODE_ECB': '',
+\ 'MCRYPT_MODE_CBC': '',
+\ 'MCRYPT_MODE_CFB': '',
+\ 'MCRYPT_MODE_OFB': '',
+\ 'MCRYPT_MODE_NOFB': '',
+\ 'MCRYPT_MODE_STREAM': '',
+\ })

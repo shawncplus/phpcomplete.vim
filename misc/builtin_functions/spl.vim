@@ -1,0 +1,16 @@
+call extend(g:php_builtin_functions, {
+\ 'class_implements(': 'mixed $class [, bool $autoload = true] | array',
+\ 'class_parents(': 'mixed $class [, bool $autoload = true] | array',
+\ 'class_uses(': 'mixed $class [, bool $autoload = true] | array',
+\ 'iterator_apply(': 'Traversable $iterator, callable $function [, array $args] | int',
+\ 'iterator_count(': 'Traversable $iterator | int',
+\ 'iterator_to_array(': 'Traversable $iterator [, bool $use_keys = true] | array',
+\ 'spl_autoload_call(': 'string $class_name | void',
+\ 'spl_autoload_extensions(': '[ string $file_extensions] | string',
+\ 'spl_autoload_functions(': 'void | array',
+\ 'spl_autoload_register(': '[ callable $autoload_function [, bool $throw = true [, bool $prepend = false]]] | bool',
+\ 'spl_autoload_unregister(': 'mixed $autoload_function | bool',
+\ 'spl_autoload(': 'string $class_name [, string $file_extensions = spl_autoload_extensions()] | void',
+\ 'spl_classes(': 'void | array',
+\ 'spl_object_hash(': 'object $obj | string',
+\ })

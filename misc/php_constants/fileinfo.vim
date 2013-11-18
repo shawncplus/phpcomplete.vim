@@ -1,0 +1,12 @@
+call extend(g:php_constants, {
+\ 'FILEINFO_NONE': '',
+\ 'FILEINFO_SYMLINK': '',
+\ 'FILEINFO_MIME_TYPE': '',
+\ 'FILEINFO_MIME_ENCODING': '',
+\ 'FILEINFO_MIME': '',
+\ 'FILEINFO_COMPRESS': '',
+\ 'FILEINFO_DEVICES': '',
+\ 'FILEINFO_CONTINUE': '',
+\ 'FILEINFO_PRESERVE_ATIME': '',
+\ 'FILEINFO_RAW': '',
+\ })

@@ -1,0 +1,6 @@
+call extend(g:php_constants, {
+\ 'CYRUS_CONN_NONSYNCLITERAL': '',
+\ 'CYRUS_CONN_INITIALRESPONSE': '',
+\ 'CYRUS_CALLBACK_NUMBERED': '',
+\ 'CYRUS_CALLBACK_NOLITERAL': '',
+\ })

@@ -1,0 +1,12 @@
+call extend(g:php_constants, {
+\ 'MAXDB_COMPNAME': '',
+\ 'MAXDB_APPLICATION': '',
+\ 'MAXDB_APPVERSION': '',
+\ 'MAXDB_SQLMODE': '',
+\ 'MAXDB_UNICODE': '',
+\ 'MAXDB_TIMEOUT': '',
+\ 'MAXDB_ISOLATIONLEVEL': '',
+\ 'MAXDB_PACKETCOUNT': '',
+\ 'MAXDB_STATEMENTCACHESIZE': '',
+\ 'MAXDB_CURSORPREFIX': '',
+\ })

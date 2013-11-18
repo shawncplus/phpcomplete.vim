@@ -1,6 +1,6 @@
 <?php
 
-function extract_constant_names($files) {
+function extract_constant_names($files, $extensions) {
     $constants = array();
     $class_constants = array();
 
@@ -18,51 +18,85 @@ function extract_constant_names($files) {
             // regexp lifted from http://php.net/manual/en/language.constants.php added ":" so we can pick up class constants
             if (preg_match('/^[a-zA-Z_\x7f-\xff][:a-zA-Z0-9_\x7f-\xff]*$/', trim($node->textContent))) {
                 $constant = trim($node->textContent);
+
+                // these are so common they are in almost every file,
+                // to trim down the number of non-empty extensions we handle them elsewhere
+                if (strpos($constant, 'E_') === 0 || strpos($constant, '__') === 0 || in_array($constant, array('NULL', 'TRUE', 'FALSE'))) {
+                    $constants['common'][$constant] = true;
+                    continue;
+                }
+                $extension_name = get_extension_name($file, $extensions);
                 if (strpos($constant, "::") !== false) {
-                    $class_constants[$constant] = true;
+                    if (!isset($class_constants[$extension_name])) {
+                         $class_constants[$extension_name] = array();
+                    }
+                    $class_constants[$extension_name][$constant] = true;
                 } else {
-                    $constants[$constant] = true;
+                    if (!isset($constants[$extension_name])) {
+                         $constants[$extension_name] = array();
+                    }
+                    $constants[$extension_name][$constant] = true;
                 }
             }
         }
     }
-    ksort($constants);
-    ksort($class_constants);
-    return array(array_keys($constants), array_keys($class_constants));
+    return array($constants, $class_constants);
 }
 
-function inject_class_constants(&$classes, $class_constants, $generate_warnings = true) {
+function inject_class_constants(&$class_groups, $class_constant_groups, $generate_warnings = true) {
     // a lowercaseclassname => LowerCaseClassName map
-    $classnames = array_combine(array_map('strtolower', array_keys($classes)), array_keys($classes));
+    $classnames = array();
+    foreach ($class_groups as $extension => $classes) {
+        $classnames = array_merge($classnames, array_combine(array_map('strtolower', array_keys($classes)), array_keys($classes)));
+    }
 
-    foreach ($class_constants as $constant) {
-        list($classname, $constantname) = explode('::', $constant);
-        if (!isset($classnames[strtolower($classname)])) {
-           if ($generate_warnings) {
-               fwrite(STDERR, "\ncan't place class constant: '{$constant}', no such class found: '{$classname}'\n");
-           }
-           continue;
+    foreach ($class_constant_groups as $const_extension => $class_constants) {
+        foreach ($class_constants as $constant => $__not_used) {
+            list($classname, $constantname) = explode('::', $constant);
+            $lowercase_classname = strtolower($classname);
+            if (!isset($classnames[$lowercase_classname])) {
+                if ($generate_warnings) {
+                    fwrite(STDERR, "\nNOTICE: can't place class constant: '{$constant}', no such class found: '{$classname} ({$lowercase_classname})'");
+                }
+                continue;
+            }
+
+            $classname = $classnames[$lowercase_classname];
+            foreach ($class_groups as $class_extension => $classes) {
+                if (isset($classes[$classname])) {
+                    $class_groups[$class_extension][$classname]['constants'][$constantname] = array('initializer' => '');
+                    continue 2;
+                }
+            }
+
+            // this line only reached if the previous loop fails to place the constatn
+            if ($generate_warnings) {
+                fwrite(STDERR, "\nNOTICE: can't place class constant: '{$constant}', no such class found: '{$classname}' 2");
+            }
         }
-
-        $classname = $classnames[strtolower($classname)];
-        if (!isset($classes[$classname])) {
-           if ($generate_warnings) {
-               fwrite(STDERR, "\ncan't place class constant: '{$constant}', no such class found: '{$classname}'\n");
-           }
-           continue;
-        }
-
-        $classes[$classname]['constants'][$constantname] = array('initializer' => '');
     }
 }
 
-function write_constant_names_to_vim_hash($constants, $outpath) {
-    $fd = fopen($outpath, 'w');
-
-    fwrite($fd, "let g:php_constants = {\n");
-    foreach ($constants as $constant) {
-        fwrite($fd, "\\ '{$constant}': '',\n");
+function write_constant_names_to_vim_hash($constant_groups, $outdir) {
+    if (!is_dir($outdir)) {
+        mkdir($outdir);
     }
-    fwrite($fd, "\\ }\n");
-    fclose($fd);
+    $old_files = glob($outdir.'/*.vim');
+    array_map('unlink', $old_files);
+
+    foreach ($constant_groups as $extension_name => $constants) {
+        if (empty($constants)) {
+            continue;
+        }
+
+        $outpath = $outdir.'/'.filenameize($extension_name).'.vim';
+        $fd = fopen($outpath, 'w');
+
+        fwrite($fd, "call extend(g:php_constants, {\n");
+        foreach ($constants as $constant => $__not_used) {
+            fwrite($fd, "\\ '{$constant}': '',\n");
+        }
+        fwrite($fd, "\\ })\n");
+        fclose($fd);
+    }
 }

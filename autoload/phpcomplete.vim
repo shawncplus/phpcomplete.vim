@@ -33,6 +33,39 @@
 "			for the same pattern will not check the tagfiles any more, thus making the
 "			lookups faster (no cache expiration implemented as of now).
 "
+"		let g:phpcomplete_add_function_extensions = [...]
+"		let g:phpcomplete_add_class_extensions = [...]
+"		let g:phpcomplete_add_interface_extensions = []
+"		let g:phpcomplete_add_constant_extensions = [...]
+"		let g:phpcomplete_remove_function_extensions = [...]
+"		let g:phpcomplete_remove_class_extensions = [...]
+"		let g:phpcomplete_remove_interface_extensions = []
+"		let g:phpcomplete_remove_constant_extensions = [...]
+"			Built-in functions, classes, interfaces and constatns are grouped together by the extension.
+"			Only the enabled extensions will be loaded for the plugin, the defaultly enabled ones can be
+"			found in.
+"
+"				g:phpcomplete_active_function_extensions
+"				g:phpcomplete_active_class_extensions
+"				g:phpcomplete_active_interface_extensions
+"				g:phpcomplete_active_constant_extensions
+"
+"			If you want to enable an extension that is disabled you can add it to the enabled lists
+"			in your vimrc. Let's say you want to have the mongo extension's classes and functions
+"			to be completed by the plugin, you can add it like this (in your `.vimrc`):
+"
+"				let g:phpcomplete_add_class_extensions = ['mongo']
+"				let g:phpcomplete_add_function_extensions = ['mongo']
+"
+"			If you want to disable an otherwise enabled one, use the ..._remove_... version of these options:
+"
+"				let g:phpcomplete_remove_function_extensions = ['xslt_php_4']
+"				let g:phpcomplete_remove_constant_extensions = ['xslt_php_4']
+"
+"
+"			For the available extension files, check the directories under `misc/`
+"
+"
 "	TODO:
 "	- Switching to HTML (XML?) completion (SQL) inside of phpStrings
 "	- allow also for XML completion <- better do html_flavor for HTML
@@ -69,6 +102,62 @@ endif
 if !exists('s:cache_tags')
 	let s:cache_tags = {}
 endif
+
+
+let g:phpcomplete_active_function_extensions = [
+			\'apache', 'apc', 'apd', 'arrays', 'bc_math', 'bzip2', 'calendar', 'classes_objects', 'ctype', 'curl', 'date_time', 'dba', 'dbase',
+			\'directories', 'dom', 'enchant', 'error_handling', 'exif', 'fastcgi_process_manager', 'fileinfo', 'filesystem', 'filter', 'ftp',
+			\'function_handling', 'gd', 'geoip', 'gettext', 'gmp', 'hash', 'iconv', 'iis', 'json', 'ldap', 'libxml', 'mail', 'math', 'mcrypt',
+			\'memcache', 'mhash', 'misc', 'mongo', 'msql', 'mssql', 'multibyte_string', 'mysql', 'mysqli', 'network', 'nsapi', 'oci8', 'odbc',
+			\'openssl', 'output_control', 'parsekit', 'password_hashing', 'pcntl', 'pcre', 'php_options_info', 'posix', 'posix_regex', 'postgresql',
+			\'program_execution', 'ps', 'pspell', 'readline', 'recode', 'runkit', 'sessions', 'shared_memory', 'simplexml', 'snmp', 'soap', 'sockets',
+			\'solr', 'spl', 'sqlite', 'sqlsrv', 'streams', 'strings', 'tidy', 'tokenizer', 'urls', 'variable_handling', 'wddx', 'xml_parser',
+			\'xmlwriter', 'xslt_php_4', 'zip', 'zlib']
+let g:phpcomplete_active_class_extensions = [
+			\'apc', 'curl', 'date_time', 'directories', 'dom', 'imagemagick', 'libxml', 'memcache', 'memcached', 'mongo', 'mysqli', 'pdo', 'phar',
+			\'predefined_exceptions', 'predefined_interfaces_and_classes', 'reflection', 'sessions', 'simplexml', 'snmp', 'soap', 'solr', 'sphinx',
+			\'spl', 'sqlite3', 'streams', 'tidy', 'varnish', 'xmlreader', 'xsl', 'zip']
+let g:phpcomplete_active_interface_extensions = [
+			\'json', 'predefined_interfaces_and_classes', 'spl']
+let g:phpcomplete_active_constant_extensions = [
+			\'apc', 'apd', 'arrays', 'calendar', 'classkit', 'command_line_usage', 'common', 'curl', 'date_time', 'directories', 'dom', 'error_handling', 'exif',
+			\'fileinfo', 'filesystem', 'filter', 'ftp', 'gd', 'geoip', 'gmp', 'handling_file_uploads', 'hash', 'iconv', 'iis', 'imagemagick', 'imap',
+			\'json', 'ldap', 'libxml', 'list_of_parser_tokens', 'list_of_reserved_words', 'math', 'mcrypt', 'memcache', 'mhash', 'misc', 'ms_sql_server_pdo',
+			\'msql', 'mssql', 'multibyte_string', 'mysql', 'mysql_pdo', 'mysqli', 'network', 'odbc', 'openssl', 'output_control', 'parsekit', 'password_hashing',
+			\'pcntl', 'pcre', 'pdo', 'php_options_info', 'phpini_directives', 'posix', 'posix_regex', 'postgresql', 'program_execution', 'pspell', 'runkit',
+			\'sessions', 'snmp', 'soap', 'sockets', 'solr', 'sphinx', 'spl', 'sqlite', 'sqlite3', 'sqlsrv', 'streams', 'strings', 'tidy', 'types', 'urls',
+			\'variable_handling', 'varnish', 'xml_parser', 'xsl', 'xslt_php_4', 'zlib']
+
+if exists('g:phpcomplete_add_function_extensions')
+	let g:phpcomplete_active_function_extensions += g:phpcomplete_add_function_extensions
+endif
+if exists('g:phpcomplete_remove_function_extensions')
+	call filter(g:phpcomplete_active_function_extensions, 'index(g:phpcomplete_remove_function_extensions, v:val) == -1')
+endif
+
+if exists('g:phpcomplete_add_class_extensions')
+	let g:phpcomplete_active_class_extensions += g:phpcomplete_add_class_extensions
+endif
+if exists('g:phpcomplete_remove_class_extensions')
+	call filter(g:phpcomplete_active_class_extensions, 'index(g:phpcomplete_remove_class_extensions, v:val) == -1')
+endif
+
+if exists('g:phpcomplete_add_interface_extensions')
+	let g:phpcomplete_active_interface_extensions += g:phpcomplete_add_interface_extensions
+endif
+if exists('g:phpcomplete_remove_interface_extensions')
+	call filter(g:phpcomplete_active_interface_extensions, 'index(g:phpcomplete_remove_interface_extensions, v:val) == -1')
+endif
+
+if exists('g:phpcomplete_add_constant_extensions')
+	let g:phpcomplete_active_constant_extensions += g:phpcomplete_add_constant_extensions
+endif
+if exists('g:phpcomplete_remove_constant_extensions')
+	call filter(g:phpcomplete_active_constant_extensions, 'index(g:phpcomplete_remove_constant_extensions, v:val) == -1')
+endif
+
+
+let s:script_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if a:findstart
@@ -1914,22 +2003,26 @@ endfunction
 " }}}
 
 function! phpcomplete#LoadData() " {{{
+
 " Keywords/reserved words, all other special things
-" Later it is possible to add some help to values, or type of
-" defined variable
+" Later it is possible to add some help to values, or type of defined variable
 runtime! misc/php_keywords.vim
 
 " Built in functions
-" You can regenerate this list with the bin/extract_functions.php
-runtime! misc/php_builtin_functions.vim
+let g:php_builtin_functions = {}
+call phpcomplete#LoadDataFiles('builtin_functions', g:phpcomplete_active_function_extensions)
 
 " Built in classs
-" You can regenerate this list with the bin/extract_functions.php
-runtime! misc/php_builtin_classes.vim
+let g:php_builtin_classes = {}
+call phpcomplete#LoadDataFiles('builtin_classes', g:phpcomplete_active_class_extensions)
 
 " Built in interfaces
-" You can regenerate this list with the bin/extract_functions.php
-runtime! misc/php_builtin_interfaces.vim
+let g:php_builtin_interfaces = {}
+call phpcomplete#LoadDataFiles('builtin_interfaces', g:phpcomplete_active_interface_extensions)
+
+" Built in constants
+let g:php_constants = {}
+call phpcomplete#LoadDataFiles('php_constants', g:phpcomplete_active_constant_extensions)
 
 " When the classname not found or found but the tags dosen't contain that
 " class we will try to complate any method of any builtin class. To speed up
@@ -1941,6 +2034,7 @@ let g:php_builtin_object_functions = {}
 " variable) we need a list of built-in classes in a format of {'classname':''}
 " for performance reasons we precompile this too
 let g:php_builtin_classnames = {}
+
 for [classname, class_info] in items(g:php_builtin_classes)
 	let g:php_builtin_classnames[classname] = ''
 	for [method_name, method_info] in items(class_info.methods)
@@ -1961,10 +2055,6 @@ for [interfacename, info] in items(g:php_builtin_interfaces)
 		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
 	endfor
 endfor
-
-" Constants defined in PHP and it's extension
-" You can regenerate this list with the bin/extract_functions.php
-runtime! misc/php_constants.vim
 
 
 " Add control structures (they are outside regular pattern of PHP functions)
@@ -1999,7 +2089,19 @@ let g:php_builtin_vars ={
 			\ '$this':'',
 			\ }
 " }}}
-
 endfunction
 " }}}
+
+function! phpcomplete#LoadDataFiles(dir, enabled_files) " {{{
+	let files = split(glob(s:script_path.'/../misc/'.a:dir.'/*.vim'), "\n")
+	let enabled_files = map(a:enabled_files, 'v:val.".vim"')
+	for file in files
+		let basename = fnamemodify(file, ':t')
+		if index(enabled_files, basename) != -1
+			exec 'source '.file
+		endif
+	endfor
+endfunction
+" }}}
+
 " vim: foldmethod=marker:noexpandtab:ts=4:sts=4:tw=4

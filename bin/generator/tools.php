@@ -32,6 +32,83 @@ function format_method_signature($signature) {
     return trim($istr);
 }
 
+function get_extension_names($docs_dir) {
+    $re = array();
+    $doc = new DOMDocument('1.0', 'utf-8');
+    $doc->loadHTMLFile($docs_dir.'/extensions.membership.html');
+    $xpath = new DOMXPath($doc);
+
+    $links_nodes = $xpath->query('//ul[@class="itemizedlist"]//a[@class="xref"]');
+    foreach ($links_nodes as $link_node) {
+        $re[$link_node->getAttribute('href')] = $link_node->textContent;
+    }
+
+    $doc = new DOMDocument('1.0', 'utf-8');
+    @$doc->loadHTMLFile($docs_dir.'/funcref.html');
+    $xpath = new DOMXPath($doc);
+    $link_nodes = $xpath->query('//ul[@class="chunklist chunklist_set chunklist_children"]/li/a');
+    foreach ($link_nodes as $link_node) {
+        $re[$link_node->getAttribute('href')] = $link_node->textContent;
+    }
+
+    foreach (array('langref.html', 'appendices.html', 'features.html') as $file) {
+        $doc = new DOMDocument('1.0', 'utf-8');
+        $doc->loadHTMLFile($docs_dir.'/'.$file);
+        $xpath = new DOMXPath($doc);
+
+        $category_nodes = $xpath->query('//ul[@class="chunklist chunklist_book"]/li');
+        foreach ($category_nodes as $category_node) {
+            $category_name_node = $xpath->query('a', $category_node)->item(0);
+            $category_name = trim($category_name_node->textContent);
+            $re[$category_name_node->getAttribute('href')] = $category_name;
+
+            $link_nodes = $xpath->query('ul[@class="chunklist chunklist_book chunklist_children"]/li/a', $category_node);
+            if ($link_nodes->length > 0) {
+                foreach ($link_nodes as $link_node) {
+                    // save sub-category file names under the category name
+                    $re[$link_node->getAttribute('href')] = $category_name;
+                }
+            }
+        }
+    }
+
+    return $re;
+}
+
+function get_extension_name($file, $extensions) {
+    $doc_dir = dirname($file);
+    $current_file = basename($file);
+    $files_checked = array();
+
+    do {
+        if (isset($extensions[$current_file])) {
+            return $extensions[$current_file];
+        }
+
+        $doc = new DOMDocument;
+        $doc->loadHTMLFile($doc_dir.'/'.$current_file);
+        $xpath = new DOMXPath($doc);
+
+        $up_link = $xpath->query('//div[@class="up"]/a');
+        if ($up_link->length == 0) {
+            fwrite(STDERR, "\ncan't find up link in ".$current_file.' started ascending from '.$file);
+            exit;
+        }
+
+        $up_href = $up_link->item(0)->getAttribute('href');
+        if ($current_file == $up_href) {
+            fwrite(STDERR, "\nup link traversal got stuck at ".$current_file." started ascending from ".$file);
+            exit;
+        }
+
+        $files_checked[] = $current_file;
+        $current_file = $up_href;
+
+    } while ($current_file != 'index.html');
+
+    fwrite(STDERR, "\nNOTICE: can't find extension name for ".$file." files checked: ".join(", ", $files_checked));
+    return '_unknow';
+}
 
 function array_index_by_col($arr, $col, $overwrite_duplicate = true) {
     $tmp = array();
@@ -45,4 +122,12 @@ function array_index_by_col($arr, $col, $overwrite_duplicate = true) {
 
 function vimstring_escape($str) {
     return str_replace("'", "''", $str);
+}
+
+function filenameize($str) {
+	$clean = preg_replace('/[^a-zA-Z0-9\/_|+ -]/', '', $str);
+	$clean = strtolower(trim($clean, '_'));
+	$clean = preg_replace('/[\/_|+ -]+/', '_', $clean);
+
+	return $clean;
 }

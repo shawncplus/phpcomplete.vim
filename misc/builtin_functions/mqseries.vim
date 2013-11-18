@@ -1,0 +1,16 @@
+call extend(g:php_builtin_functions, {
+\ 'mqseries_back(': 'resource $hconn, resource &$compCode, resource &$reason | void',
+\ 'mqseries_begin(': 'resource $hconn, array $beginOptions, resource &$compCode, resource &$reason | void',
+\ 'mqseries_close(': 'resource $hconn, resource $hobj, int $options, resource &$compCode, resource &$reason | void',
+\ 'mqseries_cmit(': 'resource $hconn, resource &$compCode, resource &$reason | void',
+\ 'mqseries_conn(': 'string $qManagerName, resource &$hconn, resource &$compCode, resource &$reason | void',
+\ 'mqseries_connx(': 'string $qManagerName, array &$connOptions, resource &$hconn, resource &$compCode, resource &$reason | void',
+\ 'mqseries_disc(': 'resource $hconn, resource &$compCode, resource &$reason | void',
+\ 'mqseries_get(': 'resource $hConn, resource $hObj, array &$md, array &$gmo, int &$bufferLength, string &$msg, int &$data_length, resource &$compCode, resource &$reason | void',
+\ 'mqseries_inq(': 'resource $hconn, resource $hobj, int $selectorCount, array $selectors, int $intAttrCount, resource &$intAttr, int $charAttrLength, resource &$charAttr, resource &$compCode, resource &$reason | void',
+\ 'mqseries_open(': 'resource $hconn, array &$objDesc, int $option, resource &$hobj, resource &$compCode, resource &$reason | void',
+\ 'mqseries_put(': 'resource $hConn, resource $hObj, array &$md, array &$pmo, string $message, resource &$compCode, resource &$reason | void',
+\ 'mqseries_put1(': 'resource $hconn, resource &$objDesc, resource &$msgDesc, resource &$pmo, string $buffer, resource &$compCode, resource &$reason | void',
+\ 'mqseries_set(': 'resource $hconn, resource $hobj, int $selectorcount, array $selectors, int $intattrcount, array $intattrs, int $charattrlength, array $charattrs, resource &$compCode, resource &$reason | void',
+\ 'mqseries_strerror(': 'int $reason | string',
+\ })

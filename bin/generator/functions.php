@@ -1,8 +1,13 @@
 <?php
 
-function extract_function_signatures($files) {
+function extract_function_signatures($files, $extensions) {
     $signatures = array();
     foreach ($files as $file) {
+        $extension_name = get_extension_name($file, $extensions);
+        if (!isset($signatures[$extension_name])) {
+            $signatures[$extension_name] = array();
+        }
+
         $doc = new DOMDocument;
         $doc->loadHTMLFile($file);
         $xpath = new DOMXpath($doc);
@@ -11,17 +16,17 @@ function extract_function_signatures($files) {
             // no signature found, maybe its an alias?
             $nodes = $xpath->query('//div[contains(@class, "description")]/p[@class="simpara"][contains(text(), "This function is an alias of:")]');
             if ($nodes->length) {
-                $signatures[] = handle_func_alias($xpath, $nodes, $file);
+                $signatures[$extension_name][] = handle_func_alias($xpath, $nodes, $file);
             }
         } else if ($nodes->length == 1) {
-            $signatures[] = handle_func_def($xpath, $nodes->item(0), $file);
+            $signatures[$extension_name][] = handle_func_def($xpath, $nodes->item(0), $file);
         } else if ($nodes->length > 1) {
             // more than one signature for a single function name
             // maybe its a procedural style of a method like  xmlwriter_text -> XMLWriter::text
             // search for the first non object style synopsis and extract from that
             foreach ($nodes as $node) {
                 if (!preg_match('/\w+::\w+/', $node->textContent)) {
-                    $signatures[] = handle_func_def($xpath, $node, $file);
+                    $signatures[$extension_name][] = handle_func_def($xpath, $node, $file);
                     break;
                 }
             }
@@ -94,22 +99,36 @@ function handle_func_alias($xpath, $nodes, $file) {
     );
 }
 
-function write_function_signatures_to_vim_hash($signatures, $outpath) {
-    $fd = fopen($outpath, 'w');
-    // weed out duplicates, (like nthmac) only keep the first occurance
-    $signatures = array_index_by_col($signatures, 'name', false);
-
-    fwrite($fd, "let g:php_builtin_functions = {\n");
-    foreach ($signatures as $signature) {
-        if ($signature['type'] == 'function') {
-            fwrite($fd, "\\ '{$signature['name']}(': '".format_method_signature($signature)."',\n");
-        } else if ($signature['type'] == 'alias') {
-            fwrite($fd, "\\ '{$signature['name']}(': '".vimstring_escape($signature['full_signature'])."',\n");
-        } else {
-            fwrite(STDERR, 'unknown signature type '.var_export($signature, true));
-            exit;
-        }
+function write_function_signatures_to_vim_hash($signatures, $outdir) {
+    if (!is_dir($outdir)) {
+        mkdir($outdir);
     }
-    fwrite($fd, "\\ }\n");
-    fclose($fd);
+    $old_files = glob($outdir.'/*.vim');
+    array_map('unlink', $old_files);
+
+    foreach ($signatures as $extension_name => $functions) {
+        if (empty($functions)) {
+            continue;
+        }
+
+        $outpath = $outdir.'/'.filenameize($extension_name).'.vim';
+        $fd = fopen($outpath, 'w');
+
+        // weed out duplicates, (like nthmac) only keep the first occurance
+        $functions = array_index_by_col($functions, 'name', false);
+
+        fwrite($fd, "call extend(g:php_builtin_functions, {\n");
+        foreach ($functions as $function) {
+            if ($function['type'] == 'function') {
+                fwrite($fd, "\\ '{$function['name']}(': '".format_method_signature($function)."',\n");
+            } else if ($function['type'] == 'alias') {
+                fwrite($fd, "\\ '{$function['name']}(': '".vimstring_escape($function['full_signature'])."',\n");
+            } else {
+                fwrite(STDERR, 'unknown signature type '.var_export($function, true));
+                exit;
+            }
+        }
+        fwrite($fd, "\\ })\n");
+        fclose($fd);
+    }
 }

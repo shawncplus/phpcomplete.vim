@@ -1,0 +1,17 @@
+call extend(g:php_builtin_functions, {
+\ 'dba_close(': 'resource $handle | void',
+\ 'dba_delete(': 'string $key, resource $handle | bool',
+\ 'dba_exists(': 'string $key, resource $handle | bool',
+\ 'dba_fetch(': 'string $key, resource $handle | string',
+\ 'dba_firstkey(': 'resource $handle | string',
+\ 'dba_handlers(': '[ bool $full_info = false] | array',
+\ 'dba_insert(': 'string $key, string $value, resource $handle | bool',
+\ 'dba_key_split(': 'mixed $key | mixed',
+\ 'dba_list(': 'void | array',
+\ 'dba_nextkey(': 'resource $handle | string',
+\ 'dba_open(': 'string $path, string $mode [, string $handler [, mixed $...]] | resource',
+\ 'dba_optimize(': 'resource $handle | bool',
+\ 'dba_popen(': 'string $path, string $mode [, string $handler [, mixed $...]] | resource',
+\ 'dba_replace(': 'string $key, string $value, resource $handle | bool',
+\ 'dba_sync(': 'resource $handle | bool',
+\ })

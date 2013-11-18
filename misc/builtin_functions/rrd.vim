@@ -1,0 +1,15 @@
+call extend(g:php_builtin_functions, {
+\ 'rrd_create(': 'string $filename, array $options | bool',
+\ 'rrd_error(': 'void | string',
+\ 'rrd_fetch(': 'string $filename, array $options | array',
+\ 'rrd_first(': 'string $file [, int $raaindex = 0] | int',
+\ 'rrd_graph(': 'string $filename, array $options | array',
+\ 'rrd_info(': 'string $filename | array',
+\ 'rrd_last(': 'string $filename | int',
+\ 'rrd_lastupdate(': 'string $filename | array',
+\ 'rrd_restore(': 'string $xml_file, string $rrd_file [, array $options] | bool',
+\ 'rrd_tune(': 'string $filename, array $options | bool',
+\ 'rrd_update(': 'string $filename, array $options | bool',
+\ 'rrd_version(': 'void | string',
+\ 'rrd_xport(': 'array $options | array',
+\ })
