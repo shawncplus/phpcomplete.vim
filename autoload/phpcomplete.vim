@@ -10,7 +10,7 @@
 "			This generates E_STRICT level warning, but php calls these methods nontheless.
 "
 "		let g:phpcomplete_complete_for_unknown_classes = 1/0 [default 1]
-"			Enables completion of variables and functions in "everything under the sun" fassion
+"			Enables completion of variables and functions in "everything under the sun" fashion
 "			when completing for an instance or static class context but the code can't tell the class
 "			or locate the file that it lives in.
 "			The completion list generated this way is only filtered by the completion base
@@ -35,11 +35,11 @@
 "
 "		let g:phpcomplete_add_function_extensions = [...]
 "		let g:phpcomplete_add_class_extensions = [...]
-"		let g:phpcomplete_add_interface_extensions = []
+"		let g:phpcomplete_add_interface_extensions = [...]
 "		let g:phpcomplete_add_constant_extensions = [...]
 "		let g:phpcomplete_remove_function_extensions = [...]
 "		let g:phpcomplete_remove_class_extensions = [...]
-"		let g:phpcomplete_remove_interface_extensions = []
+"		let g:phpcomplete_remove_interface_extensions = [...]
 "		let g:phpcomplete_remove_constant_extensions = [...]
 "			Built-in functions, classes, interfaces and constatns are grouped together by the extension.
 "			Only the enabled extensions will be loaded for the plugin, the defaultly enabled ones can be
@@ -61,7 +61,6 @@
 "
 "				let g:phpcomplete_remove_function_extensions = ['xslt_php_4']
 "				let g:phpcomplete_remove_constant_extensions = ['xslt_php_4']
-"
 "
 "			For the available extension files, check the directories under `misc/`
 "
