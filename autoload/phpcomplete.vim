@@ -155,7 +155,6 @@ if exists('g:phpcomplete_remove_constant_extensions')
 	call filter(g:phpcomplete_active_constant_extensions, 'index(g:phpcomplete_remove_constant_extensions, v:val) == -1')
 endif
 
-
 let s:script_path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 function! phpcomplete#CompletePHP(findstart, base) " {{{
@@ -1321,6 +1320,70 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 	endif
 endfunction " }}}
 
+function! phpcomplete#GetMethodStack(line) " {{{
+	let methodstack = []
+	let i = 0
+	let end = len(a:line)
+
+	let current_part = ''
+
+	let parent_depth = 0
+	let in_string = 0
+	let string_start = ''
+
+	let next_char = ''
+
+	while i	< end
+		let current_char = a:line[i]
+		let next_char = i + 1 < end ? a:line[i + 1] : ''
+		let prev_char = i >= 1 ? a:line[i - 1] : ''
+		let prev_prev_char = i >= 2 ? a:line[i - 2] : ''
+
+		if in_string == 0 && parent_depth == 0 && ((current_char == '-' && next_char == '>') || (current_char == ':' && next_char == ':'))
+			call add(methodstack, current_part)
+			let current_part = ''
+			let i += 2
+			continue
+		endif
+
+		" if it's looks like a string
+		if current_char == "'" || current_char == '"'
+			" and it is not escaped
+			if prev_char != '\' || (prev_char == '\' && prev_prev_char == '\')
+				" and we are in a string already
+				if in_string
+					" and that string started with this char too
+					if current_char == string_start
+						" clear the string mark
+						let in_string = 0
+					endif
+				else " ... and we are not in a string
+					" set the string mark
+					let in_string = 1
+					let string_start = current_char
+				endif
+			endif
+		endif
+
+		if !in_string && a:line[i] == '('
+			let parent_depth += 1
+		endif
+		if !in_string && a:line[i] == ')'
+			let parent_depth -= 1
+		endif
+
+		let current_part .= current_char
+		let i += 1
+	endwhile
+
+	" add the last remaining part, this can be an empty string and this is expected
+	" the empty string represents the completion base (which happen to be an empty string)
+	call add(methodstack, current_part)
+
+	return methodstack
+endfunction
+" }}}
+
 function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 	" Get class name
 	" Class name can be detected in few ways:
@@ -1335,14 +1398,7 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 	let classname_candidate = ''
 	let class_candidate_namespace = a:current_namespace
 	let class_candidate_imports = a:imports
-	let methodstack = split(a:context, '\s*->\s*')
-
-	" add an empty string to the methodstack if the context ends with -> or ::
-	" representing the last segment the user typed so the methodstack has the same
-	" number of elements whenever the user typed some chars for the copletion or not
-	if a:context =~? '\(->\|::\)\s*$'
-		call add(methodstack, '')
-	endif
+	let methodstack = phpcomplete#GetMethodStack(a:context)
 
 	if a:context =~? '\$this->' || a:context =~? '\(self\|static\)::'
 		let i = 1
