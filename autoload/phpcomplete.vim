@@ -2092,8 +2092,8 @@ endfunction
 " }}}
 
 function! phpcomplete#LoadDataFiles(dir, enabled_files) " {{{
+	let enabled_files = map(copy(a:enabled_files), 'v:val.".vim"')
 	let files = split(glob(s:script_path.'/../misc/'.a:dir.'/*.vim'), "\n")
-	let enabled_files = map(a:enabled_files, 'v:val.".vim"')
 	for file in files
 		let basename = fnamemodify(file, ':t')
 		if index(enabled_files, basename) != -1
