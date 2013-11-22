@@ -1824,31 +1824,69 @@ function! phpcomplete#ParseDocBlock(docblock) " {{{
 	for param_line in param_lines
 		let parts = matchlist(param_line, '@param\s\+\(\S\+\)\s\+\(\S\+\)\s*\(.*\)')
 		if len(parts) > 0
-			call add(res.params, {'line': parts[0], 'type': get(parts, 1, ''), 'name': get(parts, 2, ''), 'description': get(parts, 3, '')})
+			call add(res.params, {
+						\ 'line': parts[0],
+						\ 'type': phpcomplete#GetTypeFromDocBlockParam(get(parts, 1, '')),
+						\ 'name': get(parts, 2, ''),
+						\ 'description': get(parts, 3, '')})
 		endif
 	endfor
 
 	let return_line = filter(copy(docblock_lines), 'v:val =~? "^@return"')
 	if len(return_line) > 0
 		let return_parts = matchlist(return_line[0], '@return\s\+\(\S\+\)\s*\(.*\)')
-		let res['return'] = {'line': return_parts[0], 'type': get(return_parts, 1, ''), 'description': get(return_parts, 2, '')}
+		let res['return'] = {
+					\ 'line': return_parts[0],
+					\ 'type': phpcomplete#GetTypeFromDocBlockParam(get(return_parts, 1, '')),
+					\ 'description': get(return_parts, 2, '')}
 	endif
 
 	let exception_lines = filter(copy(docblock_lines), 'v:val =~? "^\\(@throws\\|@exception\\)"')
 	for exception_line in exception_lines
 		let parts = matchlist(exception_line, '^\(@throws\|@exception\)\s\+\(\S\+\)\s*\(.*\)')
 		if len(parts) > 0
-			call add(res.throws, {'line': parts[0], 'type': get(parts, 2, ''), 'description': get(parts, 3, '')})
+			call add(res.throws, {
+						\ 'line': parts[0],
+						\ 'type': phpcomplete#GetTypeFromDocBlockParam(get(parts, 2, '')),
+						\ 'description': get(parts, 3, '')})
 		endif
 	endfor
 
 	let var_line = filter(copy(docblock_lines), 'v:val =~? "^@var"')
 	if len(var_line) > 0
 		let var_parts = matchlist(var_line[0], '@var\s\+\(\S\+\)\s*\(.*\)')
-		let res['var'] = {'line': var_parts[0], 'type': get(var_parts, 1, ''), 'description': get(var_parts, 2, '')}
+		let res['var'] = {
+					\ 'line': var_parts[0],
+					\ 'type': phpcomplete#GetTypeFromDocBlockParam(get(var_parts, 1, '')),
+					\ 'description': get(var_parts, 2, '')}
 	endif
 
 	return res
+endfunction
+" }}}
+
+function! phpcomplete#GetTypeFromDocBlockParam(docblock_type) " {{{
+	if a:docblock_type !~ '|'
+		return a:docblock_type
+	endif
+
+	let primitive_types = [
+				\ 'string', 'float', 'double', 'int',
+				\ 'scalar', 'array', 'bool', 'void', 'mixed',
+				\ 'null', 'callable', 'resource', 'object']
+
+	" add array of primitives to the list too, like string[]
+	let primitive_types += map(copy(primitive_types), 'v:val."[]"')
+	let types = split(a:docblock_type, '|')
+	for type in types
+		if index(primitive_types, type) == -1
+			return type
+		endif
+	endfor
+
+	" only primitive types found, return the first one
+	return types[0]
+
 endfunction
 " }}}
 
