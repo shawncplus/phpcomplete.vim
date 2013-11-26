@@ -66,10 +66,10 @@ When enabled the preview window's content will include information
 extracted from docblock comments of the completions.
 Enabling this option will add return types to the completion menu for functions too.
 
-**let g:phpcomplete\_cache\_taglists = 1/0 [default 0]**<br>
+**let g:phpcomplete\_cache\_taglists = 1/0 [default 1]**<br>
 When enabled the taglist() lookups will be cached and subsequent searches
 for the same pattern will not check the tagfiles any more, thus making the
-lookups faster (no cache expiration implemented as of now).
+lookups faster. Cache expiration is based on the mtimes of the tag files.
 
 **let g:phpcomplete\_add\_function\_extensions = [...]**<br>
 **let g:phpcomplete\_add\_class\_extensions = [...]**<br>

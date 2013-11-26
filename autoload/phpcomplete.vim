@@ -28,10 +28,10 @@
 "			extracted from docblock comments of the completions.
 "			Enabling this option will add return types to the completion menu for functions too.
 "
-"		let g:phpcomplete_cache_taglists = 1/0 [default 0]
+"		let g:phpcomplete_cache_taglists = 1/0 [default 1]
 "			When enabled the taglist() lookups will be cached and subsequent searches
 "			for the same pattern will not check the tagfiles any more, thus making the
-"			lookups faster (no cache expiration implemented as of now).
+"			lookups faster. Cache expiration is based on the mtimes of the tag files.
 "
 "		let g:phpcomplete_add_function_extensions = [...]
 "		let g:phpcomplete_add_class_extensions = [...]
@@ -91,7 +91,7 @@ if !exists('g:phpcomplete_parse_docblock_comments')
 endif
 
 if !exists('g:phpcomplete_cache_taglists')
-	let g:phpcomplete_cache_taglists = 0
+	let g:phpcomplete_cache_taglists = 1
 endif
 
 if !exists('s:cache_classstructures')
@@ -100,6 +100,10 @@ endif
 
 if !exists('s:cache_tags')
 	let s:cache_tags = {}
+endif
+
+if !exists('s:cache_tags_checksum')
+	let s:cache_tags_checksum = ''
 endif
 
 
@@ -1113,12 +1117,31 @@ endfunction
 " }}}
 
 function! phpcomplete#GetTaglist(pattern) " {{{
-	if g:phpcomplete_cache_taglists == 1 && has_key(s:cache_tags, a:pattern)
-		let tags = s:cache_tags[a:pattern]
-	else
-		let tags = taglist(a:pattern)
-		let s:cache_tags[a:pattern] = tags
+
+	let cache_checksum = ''
+	if g:phpcomplete_cache_taglists == 1
+		" build a string with  format of "<tagfile>:<mtime>$<tagfile2>:<mtime2>..."
+		" to validate that the tags are not changed since the time we saved the results in cache
+		for tagfile in sort(tagfiles())
+			let cache_checksum .= fnamemodify(tagfile, ':p').':'.getftime(tagfile).'$'
+		endfor
+
+		if s:cache_tags_checksum != cache_checksum
+			" tag file(s) changed
+			" since we don't know where individual tags coming from when calling taglist() we zap the whole cache
+			" no way to clear only the entries originating from the changed tag file
+			let s:cache_tags = {}
+		endif
+
+		if has_key(s:cache_tags, a:pattern)
+			return s:cache_tags[a:pattern]
+		endif
 	endif
+
+	let tags = taglist(a:pattern)
+	let s:cache_tags[a:pattern] = tags
+	let has_key = has_key(s:cache_tags, a:pattern)
+	let s:cache_tags_checksum = cache_checksum
 	return tags
 endfunction
 " }}}
