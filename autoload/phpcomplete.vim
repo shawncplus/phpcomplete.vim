@@ -208,7 +208,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
 
-	if context =~? '^use'
+	if context =~? '^use\s'
 		return phpcomplete#CompleteUse(a:base)
 	endif
 
