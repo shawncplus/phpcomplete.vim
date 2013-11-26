@@ -88,3 +88,12 @@ $doc->createAttribute()->ownerElement->
 
 $d = new DateTime;
 $d->add()->getTimezone()->
+
+// ----
+$tz = DateTime::createFromFormat()->getTimezone();
+$tz->
+
+// ---
+$foo = Foo::$static_bar2->return_foo();
+$foo->
+

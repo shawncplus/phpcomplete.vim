@@ -465,5 +465,13 @@ fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detect
     let classname = phpcomplete#GetClassName('$d->add()->getTimezone()->', '\', {})
     call VUAssertEquals('DateTimeZone', classname)
 
+    exe ':94'
+    let classname = phpcomplete#GetClassName('$tz->', '\', {})
+    call VUAssertEquals('DateTimeZone', classname)
+
+    exe ':98'
+    let classname = phpcomplete#GetClassName('$foo->', '\', {})
+    call VUAssertEquals('Foo', classname)
+
     silent! bw! %
 endf

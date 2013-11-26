@@ -1247,7 +1247,7 @@ endfunction " }}}
 function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, imports, methodstack) " {{{
 	" Tries to get the classname and namespace for a chained method call like:
 	"	$this->foo()->bar()->baz()->
-	"
+
 	let classname_candidate = a:classname_candidate
 	let class_candidate_namespace = a:class_candidate_namespace
 	let methodstack = a:methodstack
@@ -1439,15 +1439,15 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 		endif
 
 		"extract the variable name from the context
-		let object = matchstr(a:context, '\s*\zs'.class_name_pattern.'\ze\s*\(::\|->\)')
+		let object = methodstack[0]
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1
 		while i < line('.')
 			let line = getline(line('.')-i)
 			" in file lookup for /* @var $foo Class */
-			if line =~# '@var\s\+\$'.object.'\s\+'.class_name_pattern
-				let classname_candidate = matchstr(line, '@var\s\+\$'.object.'\s\+\zs'.class_name_pattern.'\ze')
+			if line =~# '@var\s\+'.object.'\s\+'.class_name_pattern
+				let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\ze')
 				break
 			endif
 			let i += 1
@@ -1465,59 +1465,53 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 			let line = getline(line('.')-i)
 
 			" do in-file lookup of $var = new Class
-			if line =~# '^\s*\$'.object.'\s*=\s*new\s\+'.class_name_pattern
-				let classname_candidate = matchstr(line, '\$'.object.'\s*=\s*new \zs'.class_name_pattern.'\ze')
+			if line =~# '^\s*'.object.'\s*=\s*new\s\+'.class_name_pattern
+				let classname_candidate = matchstr(line, object.'\s*=\s*new \zs'.class_name_pattern.'\ze')
 				break
 			endif
 
 			" in-file lookup for Class::getInstance()
-			if line =~# '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::getInstance\+'
-				let classname_candidate = matchstr(line, '\$'.object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze::getInstance\+')
+			if line =~# '^\s*'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::getInstance\+'
+				let classname_candidate = matchstr(line, object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze::getInstance\+')
 				break
 			endif
 
 			" do in-file lookup for static method invocation of a built-in class, like: $d = DateTime::createFromFormat()
-			if line =~# '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::[a-zA-Z_0-9\x7f-\xff]\+('
-				let classname  = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+\zs'.class_name_pattern.'\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
-				let methodname = matchstr(line, '^\s*\$'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::\zs[a-zA-Z_0-9\x7f-\xff]\+\ze(')
+			if line =~# '^\s*'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::[a-zA-Z_0-9\x7f-\xff]\+('
+				let classname  = matchstr(line, '^\s*'.object.'\s*=&\?\s*\s\+\zs'.class_name_pattern.'\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
 				if has_key(a:imports, classname) && a:imports[classname].kind == 'c'
 					let classname = a:imports[classname].name
 				endif
-				if has_key(g:php_builtin_classes, classname) && has_key(g:php_builtin_classes[classname].static_methods, methodname)
-					return g:php_builtin_classes[classname].static_methods[methodname].return_type
+				if has_key(g:php_builtin_classes, classname)
+					let sub_methodstack = phpcomplete#GetMethodStack(matchstr(line, '^\s*'.object.'\s*=&\?\s*\s\+\zs.*'))
+					" add empty element to simulate the now-typing-in environment that GetCallChainReturnType() wants
+					call add(sub_methodstack, '')
+					let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname, '\', {}, sub_methodstack)
+					return classname_candidate
 				else
 					" try to get the class name from the static method's docblock
 					let [classname, namespace_for_class] = phpcomplete#ExpandClassName(classname, a:current_namespace, a:imports)
-					let classlocation = phpcomplete#GetClassLocation(classname, namespace_for_class)
-					if filereadable(classlocation)
-						let file_contents = readfile(classlocation)
-						" types in the docblock should be resolved as according to the namespace and import inside it's class's file
-						let [class_namespace, class_imports] = phpcomplete#GetCurrentNameSpace(file_contents)
-						let doc_str = phpcomplete#GetDocBlock(file_contents, 'function\s\+'.methodname)
-						if doc_str != ''
-							let docblock = phpcomplete#ParseDocBlock(doc_str)
-							if has_key(docblock.return, 'type')
-								" the class name in the comment can contain namespaces, so we have to resolve that string too
-								let [classname, namespace_for_class] = phpcomplete#ExpandClassName(docblock.return.type, class_namespace, class_imports)
-								let classname_candidate = classname
-								let class_candidate_namespace = class_namespace
-								let class_candidate_imports = class_imports
-							endif
-						endif
-					endif
-					break
+					let sub_methodstack = phpcomplete#GetMethodStack(matchstr(line, '^\s*'.object.'\s*=&\?\s*\s\+\zs.*'))
+					" add empty element to simulate the now-typing-in environment that GetCallChainReturnType() wants
+					call add(sub_methodstack, '')
+					let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(
+						\ classname,
+						\ a:current_namespace,
+						\ a:imports,
+						\ sub_methodstack)
+					return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 				endif
 			endif
 
 			" in-file lookup for typehinted function arguments
 			"   - the function can have a name or be anonymous (e.g., function qux() { ... } vs. function () { ... })
 			"   - the type-hinted argument can be anywhere in the arguments list.
-			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+\$'.object
+			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+'.object
 				let f_args = matchstr(line, '\cfunction\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
 				let args = split(f_args, '\s*\zs,\ze\s*')
 				for arg in args
-					if arg =~# '\$'.object.'\(,\|$\)'
-						let classname_candidate = matchstr(arg, '\s*\zs'.class_name_pattern.'\ze\s\+\$'.object)
+					if arg =~# object.'\(,\|$\)'
+						let classname_candidate = matchstr(arg, '\s*\zs'.class_name_pattern.'\ze\s\+'.object)
 						break
 					endif
 				endfor
@@ -1527,14 +1521,14 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 			endif
 
 			" if we see a function declaration, try loading the docblock for it and look for matching @params
-			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}\$'.object
+			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.object
 				let match_line = substitute(line, '\\', '\\\\', 'g')
 				let sccontent = getline(0, line('.') - i)
 				let doc_str = phpcomplete#GetDocBlock(sccontent, match_line)
 				if doc_str != ''
 					let docblock = phpcomplete#ParseDocBlock(doc_str)
 					for param in docblock.params
-						if param.name =~? '\$\?'.object
+						if param.name =~? object
 							let classname_candidate = param.type
 							break
 						endif
