@@ -187,13 +187,19 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 			while start >= 0 && line[start - 1] =~ '[\\a-zA-Z_0-9\x7f-\xff$]'
 				let start -= 1
 			endwhile
-			let b:compl_context = phpcomplete#GetCurrentInstruction(phpbegin)
+			let b:phpbegin = phpbegin
+			let b:compl_context = phpcomplete#GetCurrentInstruction(line('.'), col('.') - 1, phpbegin)
+
+			" chop of the "base" from the end of the current instruction
+			let b:compl_context = substitute(b:compl_context, '\s*\$\?\([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\)*$', '', '')
+
 			return start
 			" We can be also inside of phpString with HTML tags. Deal with
 			" it later (time, not lines).
 		endif
-
 	endif
+
+
 	" If exists b:php_menu it means completion was already constructed we
 	" don't need to do anything more
 	if exists("b:php_menu")
@@ -219,7 +225,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if context =~ '\(->\|::\)$'
 		" {{{
 		" Get name of the class
-		let classname = phpcomplete#GetClassName(context, current_namespace, imports)
+		let classname = phpcomplete#GetClassName(line('.'), context, current_namespace, imports)
 
 		" Get location of class definition, we have to iterate through all
 		if classname != ''
@@ -1146,11 +1152,11 @@ function! phpcomplete#GetTaglist(pattern) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
+function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) " {{{
 	" locate the current instruction (up until the previous non comment or string ";" or php region start (<?php or <?) without newlines
-	let line = getline('.')
-	let col_number = col('.') - 1
-	let line_number = line('.')
+	let col_number = a:col_number
+	let line_number = a:line_number
+	let line = getline(a:line_number)
 	let instruction = ''
 	let parent_depth = 0
 
@@ -1261,9 +1267,6 @@ function! phpcomplete#GetCurrentInstruction(phpbegin) " {{{
 	" trim whitespace from the ends
 	let instruction = substitute(instruction, '\v^(^\s+)|(\s+)$', '', 'g')
 
-	" chop of the completion "base" from the end
-	let instruction = substitute(instruction, '\s*\$\?\([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\)*$', '', '')
-
 	return instruction
 endfunction " }}}
 
@@ -1276,7 +1279,7 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 	let methodstack = a:methodstack
 	let unknown_result = ['', '']
 
-	if (len(methodstack) == 2)
+	if (len(methodstack) == 1)
 		let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, a:imports)
 		return [classname_candidate, class_candidate_namespace]
 	else
@@ -1401,13 +1404,15 @@ function! phpcomplete#GetMethodStack(line) " {{{
 
 	" add the last remaining part, this can be an empty string and this is expected
 	" the empty string represents the completion base (which happen to be an empty string)
-	call add(methodstack, current_part)
+	if current_part != ''
+		call add(methodstack, current_part)
+	endif
 
 	return methodstack
 endfunction
 " }}}
 
-function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
+function! phpcomplete#GetClassName(start_line, context, current_namespace, imports) " {{{
 	" Get class name
 	" Class name can be detected in few ways:
 	" @var $myVar class
@@ -1425,8 +1430,8 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 
 	if a:context =~? '\$this->' || a:context =~? '\(self\|static\)::'
 		let i = 1
-		while i < line('.')
-			let line = getline(line('.')-i)
+		while i < a:start_line
+			let line = getline(a:start_line - i)
 
 			" Don't complete self:: or $this if outside of a class
 			" (assumes correct indenting)
@@ -1466,8 +1471,8 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1
-		while i < line('.')
-			let line = getline(line('.') - i)
+		while i < a:start_line
+			let line = getline(a:start_line - i)
 			" in file lookup for /* @var $foo Class */
 			if line =~# '@var\s\+'.object.'\s\+'.class_name_pattern
 				let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\ze')
@@ -1488,39 +1493,35 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 
 		" scan the file backwards from the current line
 		let i = 1
-		while i < line('.')
-			let line = getline(line('.')-i)
+		while i < a:start_line
+			let line = getline(a:start_line - i)
 
 			" do in-file lookup of $var = new Class
 			if line =~# '^\s*'.object.'\s*=\s*new\s\+'.class_name_pattern
-				let classname_candidate = matchstr(line, object.'\s*=\s*new \zs'.class_name_pattern.'\ze')
+				let classname_candidate = matchstr(line, object.'\c\s*=\s*new\s*\zs'.class_name_pattern.'\ze')
 				break
 			endif
 
 			" in-file lookup for Class::getInstance()
-			if line =~# '^\s*'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::getInstance\+'
-				let classname_candidate = matchstr(line, object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze::getInstance\+')
+			if line =~# '^\s*'.object.'\s*=&\?\s*'.class_name_pattern.'\s*::\s*getInstance'
+				let classname_candidate = matchstr(line, object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze\s*::\s*getInstance')
 				break
 			endif
 
 			" do in-file lookup for static method invocation of a built-in class, like: $d = DateTime::createFromFormat()
-			if line =~# '^\s*'.object.'\s*=&\?\s*\s\+'.class_name_pattern.'::[a-zA-Z_0-9\x7f-\xff]\+('
-				let classname  = matchstr(line, '^\s*'.object.'\s*=&\?\s*\s\+\zs'.class_name_pattern.'\ze::[a-zA-Z_0-9\x7f-\xff]\+(')
+			if line =~# '^\s*'.object.'\s*=&\?\s*'.class_name_pattern.'\s*::\s*$\?[a-zA-Z_0-9\x7f-\xff]\+'
+				let classname  = matchstr(line, '^\s*'.object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze\s*::')
 				if has_key(a:imports, classname) && a:imports[classname].kind == 'c'
 					let classname = a:imports[classname].name
 				endif
 				if has_key(g:php_builtin_classes, classname)
 					let sub_methodstack = phpcomplete#GetMethodStack(matchstr(line, '^\s*'.object.'\s*=&\?\s*\s\+\zs.*'))
-					" add empty element to simulate the now-typing-in environment that GetCallChainReturnType() wants
-					call add(sub_methodstack, '')
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname, '\', {}, sub_methodstack)
 					return classname_candidate
 				else
 					" try to get the class name from the static method's docblock
 					let [classname, namespace_for_class] = phpcomplete#ExpandClassName(classname, a:current_namespace, a:imports)
 					let sub_methodstack = phpcomplete#GetMethodStack(matchstr(line, '^\s*'.object.'\s*=&\?\s*\s\+\zs.*'))
-					" add empty element to simulate the now-typing-in environment that GetCallChainReturnType() wants
-					call add(sub_methodstack, '')
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(
 						\ classname,
 						\ a:current_namespace,
@@ -1550,7 +1551,7 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 			" if we see a function declaration, try loading the docblock for it and look for matching @params
 			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.object
 				let match_line = substitute(line, '\\', '\\\\', 'g')
-				let sccontent = getline(0, line('.') - i)
+				let sccontent = getline(0, a:start_line - i)
 				let doc_str = phpcomplete#GetDocBlock(sccontent, match_line)
 				if doc_str != ''
 					let docblock = phpcomplete#ParseDocBlock(doc_str)
@@ -1564,6 +1565,12 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 						break
 					endif
 				endif
+			endif
+
+			if line =~# '^\s*'.object.'\s*=&\?\s*\$[a-zA-Z_0-9\x7f-\xff]'
+				let tailing_semicolon = match(line, ';\s*$')
+				let prev_context = phpcomplete#GetCurrentInstruction(a:start_line - i, tailing_semicolon - 1, b:phpbegin)
+				return phpcomplete#GetClassName(a:start_line - i, prev_context, a:current_namespace, a:imports)
 			endif
 
 			let i += 1

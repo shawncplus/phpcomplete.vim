@@ -16,10 +16,10 @@ fun! TestCase_ignores_arrows_and_double_colons_and_parents_inside_strings()
     call VUAssertEquals(['Foo', 'bar($foobar->foo(" ) -> :: '' \" \\"))', 'baz'], res)
 endf
 
-fun! TestCase_have_an_empty_element_on_the_end_if_the_context_ended_with_an_arrow_or_double_colon()
+fun! TestCase_have_no_empty_element_on_the_end_if_the_context_ended_with_an_arrow_or_double_colon()
     let res = phpcomplete#GetMethodStack('Foo::bar()->')
-    call VUAssertEquals(['Foo', 'bar()', ''], res)
+    call VUAssertEquals(['Foo', 'bar()'], res)
 
     let res = phpcomplete#GetMethodStack('Foo::bar::')
-    call VUAssertEquals(['Foo', 'bar', ''], res)
+    call VUAssertEquals(['Foo', 'bar'], res)
 endf

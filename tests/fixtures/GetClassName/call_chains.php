@@ -65,7 +65,7 @@ class Foo {
 // just some example of that path
 
 $foo = new Foo;
-$foo->return_bar()->return_foo()->return_bar()->f
+$foo->return_bar()->return_foo()->return_bar()->
 
 // @var $foo Foo
 $foo->return_bar()->return_foo()->return_bar()->
@@ -94,6 +94,12 @@ $tz = DateTime::createFromFormat()->getTimezone();
 $tz->
 
 // ---
-$foo = Foo::$static_bar2->return_foo();
-$foo->
+$foobar = Foo::$static_bar2->return_foo();
+$foobar->bar
 
+
+// ----
+
+$foobar2 = new Foo;
+$barfoo = $foobar2->return_bar();
+$barfoo->
