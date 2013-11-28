@@ -1467,10 +1467,14 @@ function! phpcomplete#GetClassName(context, current_namespace, imports) " {{{
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1
 		while i < line('.')
-			let line = getline(line('.')-i)
+			let line = getline(line('.') - i)
 			" in file lookup for /* @var $foo Class */
 			if line =~# '@var\s\+'.object.'\s\+'.class_name_pattern
 				let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\ze')
+				break
+			elseif line !~ '^\s*$'
+				" type indicator comments should be next to the variable
+				" non empty lines break the search
 				break
 			endif
 			let i += 1

@@ -8,6 +8,6 @@ $bar2->
 // @var $bar3 Renamed
 $bar3->
 
-// @var $foo_conflicting_sources Foo
 $foo_conflicting_sources = Baz::getInstance();
+// @var $foo_conflicting_sources Foo
 $foo_conflicting_sources->
