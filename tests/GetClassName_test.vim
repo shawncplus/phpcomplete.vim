@@ -477,8 +477,12 @@ fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detect
     " completion function for the current completion
     exe 'let b:phpbegin = [0, 0]'
     exe ':105'
-    let classname = phpcomplete#GetClassName(105, '$barfoo->', '\', {})
+    let classname = phpcomplete#GetClassName(105, '$bar2->', '\', {})
     call VUAssertEquals('Bar', classname)
+
+    exe ':109'
+    let classname = phpcomplete#GetClassName(109, '$bar3->return_foo()->', '\', {})
+    call VUAssertEquals('Foo', classname)
 
     silent! bw! %
 endf

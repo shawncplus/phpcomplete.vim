@@ -100,6 +100,10 @@ $foobar->bar
 
 // ----
 
-$foobar2 = new Foo;
-$barfoo = $foobar2->return_bar();
-$barfoo->
+$foo2 = new Foo;
+$bar2 = $foo2->return_bar();
+$bar2->
+
+$foo3 = new Foo;
+$bar3 = $foo3->return_bar();
+$bar3->return_foo()->

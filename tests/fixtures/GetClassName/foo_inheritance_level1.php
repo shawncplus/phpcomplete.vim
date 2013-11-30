@@ -6,7 +6,7 @@ use NS2\SubNS\Level2;
 class Level1 extends Level2 {
 
 	protected function level1Method() {
-		// 
+		//
 	}
 
 	public function doSometing() {
@@ -16,6 +16,3 @@ class Level1 extends Level2 {
 	}
 
 }
-
-
-?>

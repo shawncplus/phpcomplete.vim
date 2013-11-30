@@ -1315,7 +1315,7 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 			for classstructure in classcontents
 				let doclock_target_pattern = 'function\s\+'.method.'\|\(public\|private\|protected\|var\).\+\$'.method
 				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), doclock_target_pattern)
-				if (doc_str!='')
+				if doc_str != ''
 					break
 				endif
 			endfor
@@ -1323,18 +1323,31 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 				let docblock = phpcomplete#ParseDocBlock(doc_str)
 				if has_key(docblock.return, 'type') || has_key(docblock.var, 'type')
 					let type = has_key(docblock.return, 'type') ? docblock.return.type : docblock.var.type
-					let returnclass = matchstr(type, '\zs[A-Za-z0-9]\+\ze$')
-					if has_key(classstructure.imports, returnclass)
-						if has_key(classstructure.imports[returnclass], 'namespace')
-							let fullnamespace = classstructure.imports[returnclass].namespace
+
+					" there's a namespace in the type, threat the type as FQCN
+					if type =~ '\\'
+						let parts = split(substitute(type, '^\\', '', ''), '\')
+						let class_candidate_namespace = join(parts[0:-2], '\')
+						let classname_candidate = parts[-1]
+						" check for renamed namepsace in imports
+						if has_key(classstructure.imports, class_candidate_namespace)
+							let class_candidate_namespace = classstructure.imports[class_candidate_namespace].name
+						endif
+					else
+						" no namespace in the type, threat it as a relative classname
+						let returnclass = type
+						if has_key(classstructure.imports, returnclass)
+							if has_key(classstructure.imports[returnclass], 'namespace')
+								let fullnamespace = classstructure.imports[returnclass].namespace
+							else
+								let fullnamespace = class_candidate_namespace
+							endif
 						else
 							let fullnamespace = class_candidate_namespace
 						endif
-					else
-						let fullnamespace = class_candidate_namespace
+						let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(returnclass, fullnamespace, a:imports)
 					endif
 
-					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(returnclass, fullnamespace, a:imports)
 					return phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, a:imports, methodstack)
 				endif
 			endif
@@ -1570,7 +1583,15 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			if line =~# '^\s*'.object.'\s*=&\?\s*\$[a-zA-Z_0-9\x7f-\xff]'
 				let tailing_semicolon = match(line, ';\s*$')
 				let prev_context = phpcomplete#GetCurrentInstruction(a:start_line - i, tailing_semicolon - 1, b:phpbegin)
-				return phpcomplete#GetClassName(a:start_line - i, prev_context, a:current_namespace, a:imports)
+				let prev_class = phpcomplete#GetClassName(a:start_line - i, prev_context, a:current_namespace, a:imports)
+				if stridx(prev_class, '\') != -1
+					let classname_parts = split(prev_class, '\\\+')
+					let classname_candidate = classname_parts[-1]
+					let class_candidate_namespace = join(classname_parts[0:-2], '\')
+				else
+					let classname_candidate = prev_class
+					let class_candidate_namespace = '\'
+				endif
 			endif
 
 			let i += 1
@@ -1690,9 +1711,8 @@ function! phpcomplete#ClearCachedClassContents(full_file_path) " {{{
 endfunction " }}}
 
 function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_name) " {{{
-	" works like 'GetClassContents' but returns a dictionary containing
-	" content, namespace, and imports for the class and all parent classes.
-	"
+	" dictionary containing content, namespace and imports for the class and all parent classes.
+	" Example:
 	" [
 	"	{
 	"		class: 'foo',
