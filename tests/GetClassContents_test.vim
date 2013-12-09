@@ -97,3 +97,25 @@ fun! TestCase_reads_in_the_extended_classes_with_imports()
     let contents = phpcomplete#GetClassContents(location, 'NamespacedFoo2')
     call VUAssertEquals(expected, contents)
 endf
+
+fun! TestCase_handles_matching_class_name_extends_with_different_namespaces()
+    call SetUp()
+
+    " tags used to find the extended classes
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/same_classname/tags'
+    let location         =  expand('%:p:h')."/".'fixtures/GetClassContents/same_classname/foo.class.php'
+    let extends_location =  expand('%:p:h')."/".'fixtures/GetClassContents/same_classname/ns1_foo.class.php'
+
+    let class_contents = readfile(location)[2:10]
+    let expected  = join(class_contents, "\n")."\n"
+    let expected .= readfile(extends_location)[4]
+
+    below 1new
+    exe ":silent! edit ".location
+
+    exe ':7'
+    let structure = phpcomplete#GetClassContentsStructure(location, class_contents, 'Foo')
+    call VUAssertEquals(expected, structure[0].content."\n".structure[1].content)
+
+    silent! bw! %
+endf
