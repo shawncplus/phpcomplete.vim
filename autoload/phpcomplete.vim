@@ -1627,11 +1627,18 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 		return 'VIMPHP_BUILTINOBJECT'
 	endif
 
+	if a:namespace == ''
+		let search_namespace = '\'
+	else
+		let search_namespace = tolower(a:namespace)
+	endif
+	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
+
 	" do in-file lookup for class definition
 	let i = 1
 	while i < line('.')
 		let line = getline(line('.')-i)
-		if line =~ '^\s*class ' . a:classname  . '\(\s\+\|$\)'
+		if line =~ '^\s*class ' . a:classname  . '\(\s\+\|$\)' && tolower(current_namespace) == search_namespace
 			return expand('%:p')
 		else
 			let i += 1
@@ -1647,7 +1654,7 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 			if !has_key(tag, 'namespace')
 				let no_namespace_candidate = tag.filename
 			else
-				if a:namespace ==? tag.namespace
+				if search_namespace == tolower(tag.namespace)
 					return tag.filename
 				endif
 			endif
@@ -1776,11 +1783,14 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 
 	if extends_class != ''
 		let [extends_class, namespace] = phpcomplete#ExpandClassName(extends_class, current_namespace, imports)
+		if namespace == ''
+			let namespace = '\'
+		endif
 		let classlocation = phpcomplete#GetClassLocation(extends_class, namespace)
 		if filereadable(classlocation)
 			let full_file_path = fnamemodify(classlocation, ':p')
 			let result += phpcomplete#GetClassContentsStructure(full_file_path, readfile(full_file_path), extends_class)
-		else
+		elseif tolower(current_namespace) == tolower(namespace)
 			" try to find the declaration in the same file.
 			let result += phpcomplete#GetClassContentsStructure(full_file_path, a:file_lines, extends_class)
 		endif
