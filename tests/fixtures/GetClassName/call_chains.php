@@ -95,7 +95,7 @@ $tz->
 
 // ---
 $foobar = Foo::$static_bar2->return_foo();
-$foobar->bar
+$foobar->
 
 
 // ----

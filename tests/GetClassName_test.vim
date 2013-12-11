@@ -486,3 +486,42 @@ fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detect
 
     silent! bw! %
 endf
+
+fun! TestCase_handles_array_completion()
+    call phpcomplete#LoadData()
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/arrays.php"
+
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':12'
+    let classname = phpcomplete#GetClassName(12, '$a[42]->', '\', {})
+    call VUAssertEquals('Foo', classname)
+
+    exe ':24'
+    let classname2 = phpcomplete#GetClassName(24, '$foo[0]->', '\', {})
+    call VUAssertEquals('Foo', classname2)
+
+    exe ':28'
+    let classname3 = phpcomplete#GetClassName(28, '$foo2->fooarray[42]->', '\', {})
+    call VUAssertEquals('Foo', classname3)
+
+    exe ':33'
+    let classname4 = phpcomplete#GetClassName(33, '$foo4[42]->', '\', {})
+    call VUAssertEquals('Foo', classname4)
+
+    exe ':39'
+    let classname5 = phpcomplete#GetClassName(39, '$f->', '\', {})
+    call VUAssertEquals('Foo', classname5)
+
+    exe ':45'
+    let classname6 = phpcomplete#GetClassName(45, '$f->', '\', {})
+    call VUAssertEquals('Foo', classname6)
+
+    exe ':51'
+    let classname7 = phpcomplete#GetClassName(51, '$f->', '\', {})
+    call VUAssertEquals('Foo', classname7)
+
+    silent! bw! %
+endf

@@ -1285,7 +1285,9 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 	else
 		" Remove the first item from the stack
 		call remove(methodstack, 0)
-		let method = matchstr(methodstack[0], '\zs\w\+\ze')
+		let method_is_array = (methodstack[0] =~ '\v^[^[]+\[' ? 1 : 0)
+		let method = matchstr(methodstack[0], '\v^\$*\zs[^[(]+\ze')
+
 		let classlocation = phpcomplete#GetClassLocation(classname_candidate, class_candidate_namespace)
 
 		if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, classname_candidate)
@@ -1323,6 +1325,16 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 				let docblock = phpcomplete#ParseDocBlock(doc_str)
 				if has_key(docblock.return, 'type') || has_key(docblock.var, 'type')
 					let type = has_key(docblock.return, 'type') ? docblock.return.type : docblock.var.type
+
+					" if we are looking for an array ...
+					if method_is_array
+						" ... and we got one, just return the class name
+						if type =~ '\[\]$'
+							let type = matchstr(type, '\v^[^[]+')
+						else
+							return unknown_result
+						endif
+					endif
 
 					" there's a namespace in the type, threat the type as FQCN
 					if type =~ '\\'
@@ -1481,6 +1493,10 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 		"extract the variable name from the context
 		let object = methodstack[0]
+		let object_is_array = (object =~ '\v^[^[]+\[' ? 1 : 0)
+		if object_is_array
+			let object = matchstr(object, '\v^[^[]+')
+		endif
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1
@@ -1488,7 +1504,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			let line = getline(a:start_line - i)
 			" in file lookup for /* @var $foo Class */
 			if line =~# '@var\s\+'.object.'\s\+'.class_name_pattern
-				let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\ze')
+				let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\ze\(\[\]\)\?')
 				break
 			elseif line !~ '^\s*$'
 				" type indicator comments should be next to the variable
@@ -1510,13 +1526,13 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			let line = getline(a:start_line - i)
 
 			" do in-file lookup of $var = new Class
-			if line =~# '^\s*'.object.'\s*=\s*new\s\+'.class_name_pattern
+			if line =~# '^\s*'.object.'\s*=\s*new\s\+'.class_name_pattern && !object_is_array
 				let classname_candidate = matchstr(line, object.'\c\s*=\s*new\s*\zs'.class_name_pattern.'\ze')
 				break
 			endif
 
 			" in-file lookup for Class::getInstance()
-			if line =~# '^\s*'.object.'\s*=&\?\s*'.class_name_pattern.'\s*::\s*getInstance'
+			if line =~# '^\s*'.object.'\s*=&\?\s*'.class_name_pattern.'\s*::\s*getInstance' && !object_is_array
 				let classname_candidate = matchstr(line, object.'\s*=&\?\s*\zs'.class_name_pattern.'\ze\s*::\s*getInstance')
 				break
 			endif
@@ -1547,7 +1563,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			" in-file lookup for typehinted function arguments
 			"   - the function can have a name or be anonymous (e.g., function qux() { ... } vs. function () { ... })
 			"   - the type-hinted argument can be anywhere in the arguments list.
-			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+'.object
+			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+'.object && !object_is_array
 				let f_args = matchstr(line, '\cfunction\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
 				let args = split(f_args, '\s*\zs,\ze\s*')
 				for arg in args
@@ -1570,7 +1586,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					let docblock = phpcomplete#ParseDocBlock(doc_str)
 					for param in docblock.params
 						if param.name =~? object
-							let classname_candidate = param.type
+							let classname_candidate = matchstr(param.type, class_name_pattern.'\ze\(\[\]\)\?')
 							break
 						endif
 					endfor
@@ -1584,6 +1600,30 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				let tailing_semicolon = match(line, ';\s*$')
 				let prev_context = phpcomplete#GetCurrentInstruction(a:start_line - i, tailing_semicolon - 1, b:phpbegin)
 				let prev_class = phpcomplete#GetClassName(a:start_line - i, prev_context, a:current_namespace, a:imports)
+
+				if object_is_array
+					if prev_class =~ '\[\]$'
+						let prev_class = matchstr(prev_class, '\v^[^[]+')
+					else
+						let prev_class = ''
+						break
+					endif
+				endif
+
+				if stridx(prev_class, '\') != -1
+					let classname_parts = split(prev_class, '\\\+')
+					let classname_candidate = classname_parts[-1]
+					let class_candidate_namespace = join(classname_parts[0:-2], '\')
+				else
+					let classname_candidate = prev_class
+					let class_candidate_namespace = '\'
+				endif
+			endif
+
+			if line =~? 'foreach\s*(.\{-}\s\+'.object.'\s*)'
+				let sub_context = matchstr(line, 'foreach\s*(\s*\zs.\{-}\ze\s\+as')
+				let prev_class = phpcomplete#GetClassName(a:start_line - i - 1, sub_context, a:current_namespace, a:imports)
+
 				if stridx(prev_class, '\') != -1
 					let classname_parts = split(prev_class, '\\\+')
 					let classname_candidate = classname_parts[-1]
@@ -1711,7 +1751,7 @@ function! phpcomplete#ClearCachedClassContents(full_file_path) " {{{
 endfunction " }}}
 
 function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_name) " {{{
-	" dictionary containing content, namespace and imports for the class and all parent classes.
+	" returns dictionary containing content, namespace and imports for the class and all parent classes.
 	" Example:
 	" [
 	"	{
