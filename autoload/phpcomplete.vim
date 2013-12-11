@@ -1171,7 +1171,7 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 		let synIDName = synIDattr(synID(line_number, col_number + 1, 0), 'name')
 
 		" skip comments
-		if synIDName =~? 'comment'
+		if synIDName =~? 'comment\|phpDocTags'
 			let current_char = ''
 		endif
 
