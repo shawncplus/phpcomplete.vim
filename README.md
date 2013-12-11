@@ -12,6 +12,7 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
      - Recognize type hinting in function prototypes
      - Recognize types in `@param` lines in function docblocks
      - Recognize `$object = SomeClass::staticCall(...)` return types from docblocks
+     - Recognize array of objects via docblock like `$foo[42]->` or for variables created in `foreach`
  * Displays docblock info in the preview for methods and properties
  * Updated built-in class support with constants, methods and properties
  * Updated list of PHP constants
