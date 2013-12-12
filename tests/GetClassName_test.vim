@@ -511,16 +511,20 @@ fun! TestCase_handles_array_completion()
     let classname4 = phpcomplete#GetClassName(33, '$foo4[42]->', '\', {})
     call VUAssertEquals('Foo', classname4)
 
-    exe ':39'
-    let classname5 = phpcomplete#GetClassName(39, '$f->', '\', {})
+    exe ':38'
+    let classname5 = phpcomplete#GetClassName(38, '$f->', '\', {})
     call VUAssertEquals('Foo', classname5)
 
-    exe ':45'
-    let classname6 = phpcomplete#GetClassName(45, '$f->', '\', {})
+    exe ':43'
+    let classname6 = phpcomplete#GetClassName(43, '$f->', '\', {})
     call VUAssertEquals('Foo', classname6)
 
-    exe ':51'
-    let classname7 = phpcomplete#GetClassName(51, '$f->', '\', {})
+    exe ':48'
+    let classname7 = phpcomplete#GetClassName(48, '$f->', '\', {})
+    call VUAssertEquals('Foo', classname7)
+
+    exe ':53'
+    let classname7 = phpcomplete#GetClassName(53, '$f->', '\', {})
     call VUAssertEquals('Foo', classname7)
 
     silent! bw! %

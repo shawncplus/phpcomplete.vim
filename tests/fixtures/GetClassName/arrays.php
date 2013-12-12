@@ -33,20 +33,22 @@ $foo4 = $foo2->fooarray[42]->findme();
 $foo4[42]->
 ;
 
-// @var $foo Foo[]
-$foo;
-foreach ($foo as $f) {
+// @var $foo5 Foo[]
+foreach ($foo5 as $f) {
     $f->
 }
 
-// @var $foo Foo[]
-$foo;
-foreach ($foo as $i => $f) {
+// @var $foo6 Foo[]
+foreach ($foo6 as $i => $f) {
     $f->
 }
 
-// @var $foo Foo[]
-$foo
-foreach ($foo[0]->fooarray as $i => $f) {
+// @var $foo7 Foo[]
+foreach ($foo7[0]->fooarray as $i => $f) {
+    $f->
+}
+
+// @var $foo7 Foo[]
+foreach ($foo7[0]->fooarray[42]->findme() as $i => $f) {
     $f->
 }
