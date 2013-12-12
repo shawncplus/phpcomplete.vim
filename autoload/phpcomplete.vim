@@ -939,7 +939,7 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 
 	" limit based on context to static or normal methods
     let static_con = ''
-	if a:context =~ '::$'
+	if a:context =~ '::$' && a:context !~? 'parent::$'
 		if g:phpcomplete_relax_static_constraint != 1
             let required_modifiers += ['static']
 		endif
@@ -974,7 +974,7 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 	endfor
 
 	" limit based on context to static or normal attributes
-	if a:context =~ '::$'
+	if a:context =~ '::$' && a:context !~? 'parent::$'
 		" variables must have static to be accessed as static unlike functions
 		let required_modifiers += ['static']
 	endif
@@ -1453,7 +1453,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 	let class_candidate_imports = a:imports
 	let methodstack = phpcomplete#GetMethodStack(a:context)
 
-	if a:context =~? '\$this->' || a:context =~? '\(self\|static\)::'
+	if a:context =~? '\$this->' || a:context =~? '\(self\|static\)::' || a:context =~? 'parent::'
 		let i = 1
 		while i < a:start_line
 			let line = getline(a:start_line - i)
@@ -1464,10 +1464,11 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				return ''
 			endif
 
-			if line =~? '^\s*abstract\s*class'
-				let classname_candidate = matchstr(line, '\c^\s*abstract\s*class\s*\zs'.class_name_pattern.'\ze')
-			elseif line =~? '^\s*class'
-				let classname_candidate = matchstr(line, '\c^\s*class\s*\zs'.class_name_pattern.'\ze')
+			if line =~? '\(abstract\s\+\|final\s\+\)*class'
+				let class_name = matchstr(line, '\c\s*class\s*\zs'.class_name_pattern.'\ze')
+				let extended_class = matchstr(line, '\cclass\s\+'.class_name_pattern.'\s\+extends\s\+\zs'.class_name_pattern.'\ze')
+
+				let classname_candidate = a:context =~? 'parent::' ? extended_class : class_name
 			else
 				let i += 1
 				continue

@@ -525,3 +525,17 @@ fun! TestCase_handles_array_completion()
 
     silent! bw! %
 endf
+
+fun! TestCase_handles_parent_keyword()
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/parent.php"
+
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':6'
+    let classname = phpcomplete#GetClassName(6, 'parent::', '\', {})
+    call VUAssertEquals('FooBase', classname)
+
+    silent! bw! %
+endf
