@@ -1183,6 +1183,11 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 				break
 			endif
 
+			" break if on standallon '!' -s, they separate statemenets
+			if current_char == '!'
+				break
+			endif
+
 			" save the coma position for later use if theres a "naked" , possibly separating a parameter and it is not in a parented part
 			if first_coma_break_pos == -1 && current_char == ','
 				let first_coma_break_pos = len(instruction)
@@ -1278,7 +1283,7 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 	let class_candidate_namespace = a:class_candidate_namespace
 	let methodstack = a:methodstack
 	let unknown_result = ['', '']
-	let prev_method_is_array = (methodstack[0] =~ '\v^[^[]+\[' ? 1 : 0)
+	let prev_method_is_array = (methodstack[0] =~ '\v^[^([]+\[' ? 1 : 0)
 	let classname_candidate_is_array = (classname_candidate =~ '\[\]$' ? 1 : 0)
 
 	if prev_method_is_array
