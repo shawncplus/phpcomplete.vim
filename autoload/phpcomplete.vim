@@ -1157,8 +1157,16 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 	let col_number = a:col_number
 	let line_number = a:line_number
 	let line = getline(a:line_number)
+	let current_char = -1
 	let instruction = ''
 	let parent_depth = 0
+	let bracket_depth = 0
+	let stop_chars = [
+				\ '!', '@', '%', '^', '&',
+				\ '*', '/', '-', '+', '=',
+				\ ':', '>', '<', '.', '?',
+				\ ';', '(',  '|', '['
+				\ ]
 
 	let phpbegin_length = len(matchstr(getline(a:phpbegin[0]), '\zs<?\(php\)\?\ze'))
 	let phpbegin_end = [a:phpbegin[0], a:phpbegin[1] - 1 + phpbegin_length]
@@ -1167,50 +1175,61 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 	let first_coma_break_pos = -1
 
 	while !(line_number == 1 && col_number == 1)
+		if current_char != -1
+			let next_char = current_char
+		endif
+
 		let current_char = line[col_number]
 		let synIDName = synIDattr(synID(line_number, col_number + 1, 0), 'name')
+
+		if col_number - 1 == -1
+			let prev_line_number = line_number - 1
+			let prev_line = getline(line_number - 1)
+			let prev_col_number = strlen(prev_line)
+		else
+			let prev_line_number = line_number
+			let prev_col_number = col_number - 1
+			let prev_line = line
+		endif
+		let prev_char = prev_line[prev_col_number]
 
 		" skip comments
 		if synIDName =~? 'comment\|phpDocTags'
 			let current_char = ''
 		endif
 
+		" break on the last char of the "and" and "or" operators
+		if synIDName == 'phpOperator' && (current_char == 'r' || current_char == 'd')
+			break
+		endif
+
 		" if the current char should be considered
-		if current_char != '' && parent_depth >= 0 && synIDName !~? 'comment\|string'
-
-			" break if we are reached the previous statemenet,
-			if current_char == ';'
-				break
-			endif
-
-			" break if on standallon '!' -s, they separate statemenets
-			if current_char == '!'
-				break
+		if current_char != '' && parent_depth >= 0 && bracket_depth >= 0 && synIDName !~? 'comment\|string'
+			" break if we are on a "naked" stop_char (operators, colon, openparent...)
+			if index(stop_chars, current_char) != -1
+				" and if it does not look like a "->" we the should break here
+				if !(prev_char == '-' && current_char == '>') && !(current_char == '-' && next_char == '>')
+					break
+				endif
 			endif
 
 			" save the coma position for later use if theres a "naked" , possibly separating a parameter and it is not in a parented part
 			if first_coma_break_pos == -1 && current_char == ','
 				let first_coma_break_pos = len(instruction)
 			endif
-
-			" break if theres a "naked" = signaling end of rvalue, and it's not in a parented part
-			if current_char == '='
-				break
-			endif
-
-			" break if theres an unbalanced ( signaling a conditional or function call not part of the instruction
-			if current_char == '('
-				break
-			endif
-
 		endif
 
-		" count nested darenthesis so we can tell if we need to break on a ';' or not (think of for (;;) loops)
-		if (current_char == '(' || current_char == ')') && synIDName =~? 'phpBraceFunc\|phpParent\|Delimiter'
+		" count nested darenthesis and brackets so we can tell if we need to break on a ';' or not (think of for (;;) loops)
+		if synIDName =~? 'phpBraceFunc\|phpParent\|Delimiter'
 			if current_char == '('
 				let parent_depth += 1
 			elseif current_char == ')'
 				let parent_depth -= 1
+
+			elseif current_char == '['
+				let bracket_depth += 1
+			elseif current_char == ']'
+				let bracket_depth -= 1
 			endif
 		endif
 
@@ -1234,6 +1253,7 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 			let col_number = strlen(line)
 		endif
 	endwhile
+
 	" strip leading whitespace
 	let instruction = substitute(instruction, '^\s\+', '', '')
 
@@ -1603,6 +1623,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 			if line =~# '^\s*'.object.'\s*=&\?\s*\$[a-zA-Z_0-9\x7f-\xff]'
 				let tailing_semicolon = match(line, ';\s*$')
+				let tailing_semicolon = tailing_semicolon != -1 ? tailing_semicolon : strlen(getline(a:start_line - i))
 				let prev_context = phpcomplete#GetCurrentInstruction(a:start_line - i, tailing_semicolon - 1, b:phpbegin)
 				let prev_class = phpcomplete#GetClassName(a:start_line - i, prev_context, a:current_namespace, a:imports)
 

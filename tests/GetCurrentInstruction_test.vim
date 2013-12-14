@@ -74,5 +74,55 @@ fun! TestCase_returns_instuction_string()
     call VUAssertEquals(
                 \ '(new Foo)->',
                 \ res)
+    call cursor(68, 8)
+    let res = phpcomplete#GetCurrentInstruction(68, 8, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
+    call cursor(70, 8)
+    let res = phpcomplete#GetCurrentInstruction(70, 8, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
+    call cursor(72, 14)
+    let res = phpcomplete#GetCurrentInstruction(72, 14, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
+    call cursor(74, 14)
+    let res = phpcomplete#GetCurrentInstruction(74, 14, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
+    call cursor(76, 28)
+    let res = phpcomplete#GetCurrentInstruction(76, 28, [1, 1])
+    call VUAssertEquals(
+                \ '$baz->',
+                \ res)
+    call cursor(78, 14)
+    let res = phpcomplete#GetCurrentInstruction(78, 14, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
+    call cursor(80, 15)
+    let res = phpcomplete#GetCurrentInstruction(80, 15, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
+    call cursor(82, 16)
+    let res = phpcomplete#GetCurrentInstruction(82, 16, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
+    call cursor(84, 13)
+    let res = phpcomplete#GetCurrentInstruction(84, 13, [1, 1])
+    call VUAssertEquals(
+                \ '$foo[$bar]->',
+                \ res)
+    call cursor(86, 12)
+    let res = phpcomplete#GetCurrentInstruction(86, 12, [1, 1])
+    call VUAssertEquals(
+                \ '$bar->',
+                \ res)
     silent! bw! %
 endf

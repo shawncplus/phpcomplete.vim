@@ -63,3 +63,24 @@ for ($i = 0; $i < 10; ++$i) $date-> // cursor before the comment
 
 $foo = $bar->baz($f, $bar2-> // cursor before the comment
 $foo = $bar->baz($foo = call(), (new foo)->  // cursor before the comment
+;
+
+!$foo-> // cursor here
+;
+@$foo-> // cursor here
+;
+$foo + $foo-> // cursor here
+;
+$foo * $foo-> // cursor here
+;
+$foo = $foo ? $bar : $baz-> //cursor here
+;
+$foo > $foo-> // cursor here
+;
+$foo or $foo-> // cursor here
+;
+$foo and $foo-> // cursor here
+;
+$foo[$bar]-> // cursor here
+;
+$foo[$bar-> // cursor here
