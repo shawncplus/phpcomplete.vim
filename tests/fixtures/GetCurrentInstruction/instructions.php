@@ -84,3 +84,5 @@ $foo and $foo-> // cursor here
 $foo[$bar]-> // cursor here
 ;
 $foo[$bar-> // cursor here
+;
+DateTime::createFromFormat()-> // cursor here

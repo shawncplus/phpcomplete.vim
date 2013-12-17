@@ -1207,8 +1207,17 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 		if current_char != '' && parent_depth >= 0 && bracket_depth >= 0 && synIDName !~? 'comment\|string'
 			" break if we are on a "naked" stop_char (operators, colon, openparent...)
 			if index(stop_chars, current_char) != -1
-				" and if it does not look like a "->" we the should break here
-				if !(prev_char == '-' && current_char == '>') && !(current_char == '-' && next_char == '>')
+				let do_break = 1
+				" dont break does not look like a "->"
+				if (prev_char == '-' && current_char == '>') || (current_char == '-' && next_char == '>')
+					let do_break = 0
+				endif
+				" dont break if its looks like a "::"
+				if (prev_char == ':' && current_char == ':') || (current_char == ':' && next_char == ':')
+					let do_break = 0
+				endif
+
+				if do_break
 					break
 				endif
 			endif

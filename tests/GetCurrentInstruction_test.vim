@@ -124,5 +124,10 @@ fun! TestCase_returns_instuction_string()
     call VUAssertEquals(
                 \ '$bar->',
                 \ res)
+    call cursor(88, 31)
+    let res = phpcomplete#GetCurrentInstruction(88, 31, [1, 1])
+    call VUAssertEquals(
+                \ 'DateTime::createFromFormat()->',
+                \ res)
     silent! bw! %
 endf
