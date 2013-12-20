@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Lua': {
+\'lua': {
+\   'name': 'Lua',
 \   'constants': {
 \     'LUA_VERSION': 'Lua 5.1.4',
 \   },
@@ -20,7 +21,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'LuaClosure': {
+\'luaclosure': {
+\   'name': 'LuaClosure',
 \   'constants': {
 \   },
 \   'properties': {

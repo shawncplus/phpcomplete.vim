@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'RarArchive': {
+\'rararchive': {
+\   'name': 'RarArchive',
 \   'constants': {
 \   },
 \   'properties': {
@@ -20,7 +21,8 @@ call extend(g:php_builtin_classes, {
 \     'open': { 'signature': 'string $filename [, string $password = NULL [, callable $volume_callback = NULL]] | RarArchive', 'return_type': 'RarArchive'},
 \   },
 \},
-\'RarEntry': {
+\'rarentry': {
+\   'name': 'RarEntry',
 \   'constants': {
 \     'HOST_MSDOS': '0',
 \     'HOST_OS2': '1',
@@ -87,7 +89,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RarException': {
+\'rarexception': {
+\   'name': 'RarException',
 \   'constants': {
 \   },
 \   'properties': {

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Gender\Gender': {
+\'gender\gender': {
+\   'name': 'Gender\Gender',
 \   'constants': {
 \     'IS_FEMALE': '70',
 \     'IS_MOSTLY_FEMALE': '102',

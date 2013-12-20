@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Lapack': {
+\'lapack': {
+\   'name': 'Lapack',
 \   'constants': {
 \   },
 \   'properties': {
@@ -19,6 +20,7 @@ call extend(g:php_builtin_classes, {
 \   },
 \},
 \'lapackexception': {
+\   'name': 'lapackexception',
 \   'constants': {
 \   },
 \   'properties': {

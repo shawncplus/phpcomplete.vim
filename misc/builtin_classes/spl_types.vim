@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SplBool': {
+\'splbool': {
+\   'name': 'SplBool',
 \   'constants': {
 \     '__default': 'false',
 \     'false': 'false',
@@ -15,7 +16,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplEnum': {
+\'splenum': {
+\   'name': 'SplEnum',
 \   'constants': {
 \     '__default': 'null',
 \   },
@@ -30,7 +32,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplFloat': {
+\'splfloat': {
+\   'name': 'SplFloat',
 \   'constants': {
 \     '__default': '0',
 \   },
@@ -44,7 +47,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplInt': {
+\'splint': {
+\   'name': 'SplInt',
 \   'constants': {
 \     '__default': '0',
 \   },
@@ -58,7 +62,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplString': {
+\'splstring': {
+\   'name': 'SplString',
 \   'constants': {
 \     '__default': '0',
 \   },
@@ -72,7 +77,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplType': {
+\'spltype': {
+\   'name': 'SplType',
 \   'constants': {
 \     '__default': 'null',
 \   },

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_interfaces, {
-\'Countable': {
+\'countable': {
+\   'name': 'Countable',
 \   'constants': {
 \   },
 \   'properties': {
@@ -12,7 +13,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'OuterIterator': {
+\'outeriterator': {
+\   'name': 'OuterIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -30,7 +32,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveIterator': {
+\'recursiveiterator': {
+\   'name': 'RecursiveIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -49,7 +52,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'SeekableIterator': {
+\'seekableiterator': {
+\   'name': 'SeekableIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -67,7 +71,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'SplObserver': {
+\'splobserver': {
+\   'name': 'SplObserver',
 \   'constants': {
 \   },
 \   'properties': {
@@ -80,7 +85,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'SplSubject': {
+\'splsubject': {
+\   'name': 'SplSubject',
 \   'constants': {
 \   },
 \   'properties': {

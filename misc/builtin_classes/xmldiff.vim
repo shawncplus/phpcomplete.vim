@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'XMLDiff\Base': {
+\'xmldiff\base': {
+\   'name': 'XMLDiff\Base',
 \   'constants': {
 \   },
 \   'properties': {
@@ -14,7 +15,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'XMLDiff\DOM': {
+\'xmldiff\dom': {
+\   'name': 'XMLDiff\DOM',
 \   'constants': {
 \   },
 \   'properties': {
@@ -29,7 +31,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'XMLDiff\File': {
+\'xmldiff\file': {
+\   'name': 'XMLDiff\File',
 \   'constants': {
 \   },
 \   'properties': {
@@ -44,7 +47,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'XMLDiff\Memory': {
+\'xmldiff\memory': {
+\   'name': 'XMLDiff\Memory',
 \   'constants': {
 \   },
 \   'properties': {

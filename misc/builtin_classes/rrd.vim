@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'RRDCreator': {
+\'rrdcreator': {
+\   'name': 'RRDCreator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -15,7 +16,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RRDGraph': {
+\'rrdgraph': {
+\   'name': 'RRDGraph',
 \   'constants': {
 \   },
 \   'properties': {
@@ -31,7 +33,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RRDUpdater': {
+\'rrdupdater': {
+\   'name': 'RRDUpdater',
 \   'constants': {
 \   },
 \   'properties': {

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'TokyoTyrant': {
+\'tokyotyrant': {
+\   'name': 'TokyoTyrant',
 \   'constants': {
 \     'RDBDEF_PORT': '1978',
 \     'RDBQC_STREQ': '0',
@@ -76,6 +77,7 @@ call extend(g:php_builtin_classes, {
 \   },
 \},
 \'tokyotyrantexception': {
+\   'name': 'tokyotyrantexception',
 \   'constants': {
 \   },
 \   'properties': {
@@ -100,7 +102,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'TokyoTyrantIterator': {
+\'tokyotyrantiterator': {
+\   'name': 'TokyoTyrantIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -140,7 +143,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'TokyoTyrantQuery': {
+\'tokyotyrantquery': {
+\   'name': 'TokyoTyrantQuery',
 \   'constants': {
 \   },
 \   'properties': {
@@ -166,7 +170,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'TokyoTyrantTable': {
+\'tokyotyranttable': {
+\   'name': 'TokyoTyrantTable',
 \   'constants': {
 \   },
 \   'properties': {

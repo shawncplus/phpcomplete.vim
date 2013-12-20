@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Gmagick': {
+\'gmagick': {
+\   'name': 'Gmagick',
 \   'constants': {
 \   },
 \   'properties': {
@@ -151,7 +152,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'GmagickDraw': {
+\'gmagickdraw': {
+\   'name': 'GmagickDraw',
 \   'constants': {
 \   },
 \   'properties': {
@@ -197,7 +199,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'GmagickPixel': {
+\'gmagickpixel': {
+\   'name': 'GmagickPixel',
 \   'constants': {
 \   },
 \   'properties': {

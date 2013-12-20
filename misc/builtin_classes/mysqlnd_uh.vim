@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'MysqlndUhConnection': {
+\'mysqlnduhconnection': {
+\   'name': 'MysqlndUhConnection',
 \   'constants': {
 \   },
 \   'properties': {
@@ -62,7 +63,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MysqlndUhPreparedStatement': {
+\'mysqlnduhpreparedstatement': {
+\   'name': 'MysqlndUhPreparedStatement',
 \   'constants': {
 \   },
 \   'properties': {

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Memcache': {
+\'memcache': {
+\   'name': 'Memcache',
 \   'constants': {
 \   },
 \   'properties': {

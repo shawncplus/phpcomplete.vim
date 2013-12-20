@@ -1,5 +1,6 @@
 call extend(g:php_builtin_interfaces, {
-\'ArrayAccess': {
+\'arrayaccess': {
+\   'name': 'ArrayAccess',
 \   'constants': {
 \   },
 \   'properties': {
@@ -15,7 +16,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'Iterator': {
+\'iterator': {
+\   'name': 'Iterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -32,7 +34,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'IteratorAggregate': {
+\'iteratoraggregate': {
+\   'name': 'IteratorAggregate',
 \   'constants': {
 \   },
 \   'properties': {
@@ -45,7 +48,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'Serializable': {
+\'serializable': {
+\   'name': 'Serializable',
 \   'constants': {
 \   },
 \   'properties': {
@@ -59,7 +63,8 @@ call extend(g:php_builtin_interfaces, {
 \   'static_methods': {
 \   },
 \},
-\'Traversable': {
+\'traversable': {
+\   'name': 'Traversable',
 \   'constants': {
 \   },
 \   'properties': {

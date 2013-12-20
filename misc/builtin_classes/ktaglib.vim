@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'KTaglib_ID3v2_Frame': {
+\'ktaglib_id3v2_frame': {
+\   'name': 'KTaglib_ID3v2_Frame',
 \   'constants': {
 \   },
 \   'properties': {
@@ -27,7 +28,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'KTaglib_Tag': {
+\'ktaglib_tag': {
+\   'name': 'KTaglib_Tag',
 \   'constants': {
 \   },
 \   'properties': {
@@ -49,7 +51,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'KTaglib_MPEG_AudioProperties': {
+\'ktaglib_mpeg_audioproperties': {
+\   'name': 'KTaglib_MPEG_AudioProperties',
 \   'constants': {
 \   },
 \   'properties': {
@@ -70,7 +73,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'KTaglib_MPEG_File': {
+\'ktaglib_mpeg_file': {
+\   'name': 'KTaglib_MPEG_File',
 \   'constants': {
 \   },
 \   'properties': {

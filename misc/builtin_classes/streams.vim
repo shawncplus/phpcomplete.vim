@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
 \'php_user_filter': {
+\   'name': 'php_user_filter',
 \   'constants': {
 \   },
 \   'properties': {

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SQLite3': {
+\'sqlite3': {
+\   'name': 'SQLite3',
 \   'constants': {
 \   },
 \   'properties': {
@@ -29,7 +30,8 @@ call extend(g:php_builtin_classes, {
 \     'version': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
-\'SQLite3Result': {
+\'sqlite3result': {
+\   'name': 'SQLite3Result',
 \   'constants': {
 \   },
 \   'properties': {
@@ -47,7 +49,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SQLite3Stmt': {
+\'sqlite3stmt': {
+\   'name': 'SQLite3Stmt',
 \   'constants': {
 \   },
 \   'properties': {

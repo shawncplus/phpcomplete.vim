@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'WeakMap': {
+\'weakmap': {
+\   'name': 'WeakMap',
 \   'constants': {
 \   },
 \   'properties': {
@@ -22,7 +23,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'WeakRef': {
+\'weakref': {
+\   'name': 'WeakRef',
 \   'constants': {
 \   },
 \   'properties': {

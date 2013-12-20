@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SolrClient': {
+\'solrclient': {
+\   'name': 'SolrClient',
 \   'constants': {
 \     'SEARCH_SERVLET_TYPE': '1',
 \     'UPDATE_SERVLET_TYPE': '2',
@@ -40,7 +41,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrClientException': {
+\'solrclientexception': {
+\   'name': 'SolrClientException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -69,7 +71,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrDocument': {
+\'solrdocument': {
+\   'name': 'SolrDocument',
 \   'constants': {
 \     'SORT_DEFAULT': '1',
 \     'SORT_ASC': '1',
@@ -117,7 +120,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrDocumentField': {
+\'solrdocumentfield': {
+\   'name': 'SolrDocumentField',
 \   'constants': {
 \   },
 \   'properties': {
@@ -134,7 +138,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrException': {
+\'solrexception': {
+\   'name': 'SolrException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -163,7 +168,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrGenericResponse': {
+\'solrgenericresponse': {
+\   'name': 'SolrGenericResponse',
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
@@ -202,7 +208,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrIllegalArgumentException': {
+\'solrillegalargumentexception': {
+\   'name': 'SolrIllegalArgumentException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -231,7 +238,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrIllegalOperationException': {
+\'solrillegaloperationexception': {
+\   'name': 'SolrIllegalOperationException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -260,7 +268,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrInputDocument': {
+\'solrinputdocument': {
+\   'name': 'SolrInputDocument',
 \   'constants': {
 \     'SORT_DEFAULT': '1',
 \     'SORT_ASC': '1',
@@ -296,7 +305,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrModifiableParams': {
+\'solrmodifiableparams': {
+\   'name': 'SolrModifiableParams',
 \   'constants': {
 \   },
 \   'properties': {
@@ -321,7 +331,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrObject': {
+\'solrobject': {
+\   'name': 'SolrObject',
 \   'constants': {
 \   },
 \   'properties': {
@@ -340,7 +351,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrParams': {
+\'solrparams': {
+\   'name': 'SolrParams',
 \   'constants': {
 \   },
 \   'properties': {
@@ -363,7 +375,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrPingResponse': {
+\'solrpingresponse': {
+\   'name': 'SolrPingResponse',
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
@@ -390,7 +403,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrQuery': {
+\'solrquery': {
+\   'name': 'SolrQuery',
 \   'constants': {
 \     'ORDER_ASC': '0',
 \     'ORDER_DESC': '1',
@@ -562,7 +576,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrQueryResponse': {
+\'solrqueryresponse': {
+\   'name': 'SolrQueryResponse',
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
@@ -601,7 +616,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrResponse': {
+\'solrresponse': {
+\   'name': 'SolrResponse',
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
@@ -636,7 +652,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrUpdateResponse': {
+\'solrupdateresponse': {
+\   'name': 'SolrUpdateResponse',
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
@@ -675,7 +692,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SolrUtils': {
+\'solrutils': {
+\   'name': 'SolrUtils',
 \   'constants': {
 \   },
 \   'properties': {

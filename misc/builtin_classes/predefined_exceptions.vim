@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'ErrorException': {
+\'errorexception': {
+\   'name': 'ErrorException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -27,7 +28,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Exception': {
+\'exception': {
+\   'name': 'Exception',
 \   'constants': {
 \   },
 \   'properties': {

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Reflection': {
+\'reflection': {
+\   'name': 'Reflection',
 \   'constants': {
 \   },
 \   'properties': {
@@ -13,7 +14,8 @@ call extend(g:php_builtin_classes, {
 \     'getModifierNames': { 'signature': 'int $modifiers | array', 'return_type': 'array'},
 \   },
 \},
-\'ReflectionClass': {
+\'reflectionclass': {
+\   'name': 'ReflectionClass',
 \   'constants': {
 \     'IS_IMPLICIT_ABSTRACT': '16',
 \     'IS_EXPLICIT_ABSTRACT': '32',
@@ -78,7 +80,8 @@ call extend(g:php_builtin_classes, {
 \     'export': { 'signature': 'mixed $argument [, bool $return = false] | string', 'return_type': 'string'},
 \   },
 \},
-\'ReflectionException': {
+\'reflectionexception': {
+\   'name': 'ReflectionException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -103,7 +106,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ReflectionExtension': {
+\'reflectionextension': {
+\   'name': 'ReflectionExtension',
 \   'constants': {
 \   },
 \   'properties': {
@@ -131,7 +135,8 @@ call extend(g:php_builtin_classes, {
 \     'export': { 'signature': 'string $name [, string $return = false] | string', 'return_type': 'string'},
 \   },
 \},
-\'ReflectionFunction': {
+\'reflectionfunction': {
+\   'name': 'ReflectionFunction',
 \   'constants': {
 \     'IS_DEPRECATED': '262144',
 \   },
@@ -175,7 +180,8 @@ call extend(g:php_builtin_classes, {
 \     'export': { 'signature': 'string $name [, string $return] | string', 'return_type': 'string'},
 \   },
 \},
-\'ReflectionFunctionAbstract': {
+\'reflectionfunctionabstract': {
+\   'name': 'ReflectionFunctionAbstract',
 \   'constants': {
 \   },
 \   'properties': {
@@ -212,7 +218,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ReflectionMethod': {
+\'reflectionmethod': {
+\   'name': 'ReflectionMethod',
 \   'constants': {
 \     'IS_STATIC': '1',
 \     'IS_PUBLIC': '256',
@@ -273,7 +280,8 @@ call extend(g:php_builtin_classes, {
 \     'export': { 'signature': 'string $class, string $name [, bool $return = false] | string', 'return_type': 'string'},
 \   },
 \},
-\'ReflectionObject': {
+\'reflectionobject': {
+\   'name': 'ReflectionObject',
 \   'constants': {
 \     'IS_IMPLICIT_ABSTRACT': '16',
 \     'IS_EXPLICIT_ABSTRACT': '32',
@@ -338,7 +346,8 @@ call extend(g:php_builtin_classes, {
 \     'export': { 'signature': 'mixed $argument [, bool $return = false] | string', 'return_type': 'string'},
 \   },
 \},
-\'ReflectionParameter': {
+\'reflectionparameter': {
+\   'name': 'ReflectionParameter',
 \   'constants': {
 \   },
 \   'properties': {
@@ -370,7 +379,8 @@ call extend(g:php_builtin_classes, {
 \     'export': { 'signature': 'string $function, string $parameter [, bool $return] | string', 'return_type': 'string'},
 \   },
 \},
-\'ReflectionProperty': {
+\'reflectionproperty': {
+\   'name': 'ReflectionProperty',
 \   'constants': {
 \     'IS_STATIC': '1',
 \     'IS_PUBLIC': '256',
@@ -404,7 +414,8 @@ call extend(g:php_builtin_classes, {
 \     'export': { 'signature': 'mixed $class, string $name [, bool $return] | string', 'return_type': 'string'},
 \   },
 \},
-\'ReflectionZendExtension': {
+\'reflectionzendextension': {
+\   'name': 'ReflectionZendExtension',
 \   'constants': {
 \   },
 \   'properties': {
@@ -426,7 +437,8 @@ call extend(g:php_builtin_classes, {
 \     'export': { 'signature': 'string $name [, string $return] | string', 'return_type': 'string'},
 \   },
 \},
-\'Reflector': {
+\'reflector': {
+\   'name': 'Reflector',
 \   'constants': {
 \   },
 \   'properties': {

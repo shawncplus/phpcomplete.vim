@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'GearmanClient': {
+\'gearmanclient': {
+\   'name': 'GearmanClient',
 \   'constants': {
 \   },
 \   'properties': {
@@ -57,7 +58,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'GearmanException': {
+\'gearmanexception': {
+\   'name': 'GearmanException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -82,7 +84,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'GearmanJob': {
+\'gearmanjob': {
+\   'name': 'GearmanJob',
 \   'constants': {
 \   },
 \   'properties': {
@@ -114,7 +117,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'GearmanTask': {
+\'gearmantask': {
+\   'name': 'GearmanTask',
 \   'constants': {
 \   },
 \   'properties': {
@@ -143,7 +147,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'GearmanWorker': {
+\'gearmanworker': {
+\   'name': 'GearmanWorker',
 \   'constants': {
 \   },
 \   'properties': {

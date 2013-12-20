@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Event': {
+\'event': {
+\   'name': 'Event',
 \   'constants': {
 \     'ET': '32',
 \     'PERSIST': '16',
@@ -33,7 +34,8 @@ call extend(g:php_builtin_classes, {
 \     'timer': { 'signature': 'EventBase $base, callable $cb [, mixed $arg] | Event', 'return_type': 'Event'},
 \   },
 \},
-\'EventBase': {
+\'eventbase': {
+\   'name': 'EventBase',
 \   'constants': {
 \     'LOOP_ONCE': '1',
 \     'LOOP_NONBLOCK': '2',
@@ -63,7 +65,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EventBuffer': {
+\'eventbuffer': {
+\   'name': 'EventBuffer',
 \   'constants': {
 \     'EOL_ANY': '0',
 \     'EOL_CRLF': '1',
@@ -104,7 +107,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EventBufferEvent': {
+\'eventbufferevent': {
+\   'name': 'EventBufferEvent',
 \   'constants': {
 \     'READING': '1',
 \     'WRITING': '2',
@@ -156,7 +160,8 @@ call extend(g:php_builtin_classes, {
 \     'sslSocket': { 'signature': 'EventBase $base, mixed $socket, EventSslContext $ctx, int $state [, int $options] | EventBufferEvent', 'return_type': 'EventBufferEvent'},
 \   },
 \},
-\'EventConfig': {
+\'eventconfig': {
+\   'name': 'EventConfig',
 \   'constants': {
 \     'FEATURE_ET': '1',
 \     'FEATURE_O1': '2',
@@ -175,7 +180,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EventDnsBase': {
+\'eventdnsbase': {
+\   'name': 'EventDnsBase',
 \   'constants': {
 \     'OPTION_SEARCH': '1',
 \     'OPTION_NAMESERVERS': '2',
@@ -201,7 +207,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EventHttp': {
+\'eventhttp': {
+\   'name': 'EventHttp',
 \   'constants': {
 \   },
 \   'properties': {
@@ -224,7 +231,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EventHttpConnection': {
+\'eventhttpconnection': {
+\   'name': 'EventHttpConnection',
 \   'constants': {
 \   },
 \   'properties': {
@@ -247,7 +255,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EventHttpRequest': {
+\'eventhttprequest': {
+\   'name': 'EventHttpRequest',
 \   'constants': {
 \     'CMD_GET': '1',
 \     'CMD_POST': '2',
@@ -291,7 +300,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EventListener': {
+\'eventlistener': {
+\   'name': 'EventListener',
 \   'constants': {
 \     'OPT_LEAVE_SOCKETS_BLOCKING': '1',
 \     'OPT_CLOSE_ON_FREE': '2',
@@ -316,7 +326,8 @@ call extend(g:php_builtin_classes, {
 \     'getSocketName': { 'signature': 'string &$address [, mixed &$port] | bool', 'return_type': 'bool'},
 \   },
 \},
-\'EventSslContext': {
+\'eventsslcontext': {
+\   'name': 'EventSslContext',
 \   'constants': {
 \     'SSLv2_CLIENT_METHOD': '1',
 \     'SSLv3_CLIENT_METHOD': '2',
@@ -348,7 +359,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EventUtil': {
+\'eventutil': {
+\   'name': 'EventUtil',
 \   'constants': {
 \     'AF_INET': '2',
 \     'AF_INET6': '10',

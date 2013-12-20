@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'ZMQ': {
+\'zmq': {
+\   'name': 'ZMQ',
 \   'constants': {
 \     'SOCKET_PAIR': '',
 \     'SOCKET_PUB': '',
@@ -71,7 +72,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ZMQContext': {
+\'zmqcontext': {
+\   'name': 'ZMQContext',
 \   'constants': {
 \   },
 \   'properties': {
@@ -88,7 +90,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ZMQDevice': {
+\'zmqdevice': {
+\   'name': 'ZMQDevice',
 \   'constants': {
 \   },
 \   'properties': {
@@ -108,7 +111,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ZMQPoll': {
+\'zmqpoll': {
+\   'name': 'ZMQPoll',
 \   'constants': {
 \   },
 \   'properties': {
@@ -126,7 +130,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ZMQSocket': {
+\'zmqsocket': {
+\   'name': 'ZMQSocket',
 \   'constants': {
 \   },
 \   'properties': {

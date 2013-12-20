@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'XSLTProcessor': {
+\'xsltprocessor': {
+\   'name': 'XSLTProcessor',
 \   'constants': {
 \   },
 \   'properties': {

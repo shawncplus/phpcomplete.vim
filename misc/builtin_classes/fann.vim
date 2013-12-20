@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'FANNConnection': {
+\'fannconnection': {
+\   'name': 'FANNConnection',
 \   'constants': {
 \   },
 \   'properties': {

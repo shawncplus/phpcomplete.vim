@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Closure': {
+\'closure': {
+\   'name': 'Closure',
 \   'constants': {
 \   },
 \   'properties': {
@@ -14,7 +15,8 @@ call extend(g:php_builtin_classes, {
 \     'bind': { 'signature': 'Closure $closure, object $newthis [, mixed $newscope = ''static''] | Closure', 'return_type': 'Closure'},
 \   },
 \},
-\'Generator': {
+\'generator': {
+\   'name': 'Generator',
 \   'constants': {
 \   },
 \   'properties': {

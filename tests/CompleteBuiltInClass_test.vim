@@ -1,7 +1,8 @@
 fun! TestCase_returns_methods()
     " setup
     let g:php_builtin_classes = {
-    \'DateTime': {
+    \'datetime': {
+    \   'name': 'DateTime',
     \   'constants': {
     \   },
     \   'properties': {
@@ -27,7 +28,8 @@ endfun
 fun! TestCase_returns_properties()
     " setup
     let g:php_builtin_classes = {
-    \'DOMDocument': {
+    \'domdocument': {
+    \   'name': 'DOMDocument',
     \   'constants': {
     \   },
     \   'properties': {
@@ -54,7 +56,8 @@ endfun
 fun! TestCase_returns_static_methods()
     " setup
     let g:php_builtin_classes = {
-    \'DateTime': {
+    \'datetime': {
+    \   'name': 'DateTime',
     \   'constants': {
     \   },
     \   'properties': {
@@ -81,7 +84,8 @@ endfun
 fun! TestCase_returns_static_properties()
     " setup
     let g:php_builtin_classes = {
-    \'MongoCursor': {
+    \'mongocursor': {
+    \   'name': 'MongoCursor',
     \   'constants': {
     \   },
     \   'properties': {
@@ -108,7 +112,8 @@ endfun
 fun! TestCase_returns_constants()
     " setup
     let g:php_builtin_classes = {
-    \'DateTime': {
+    \ 'datetime': {
+    \   'name': 'DateTime',
     \   'constants': {
     \     'ATOM': '"Y-m-d\TH:i:sP"',
     \   },

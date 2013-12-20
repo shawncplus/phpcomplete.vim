@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'OAuth': {
+\'oauth': {
+\   'name': 'OAuth',
 \   'constants': {
 \   },
 \   'properties': {
@@ -40,7 +41,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'OAuthException': {
+\'oauthexception': {
+\   'name': 'OAuthException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -67,7 +69,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'OAuthProvider': {
+\'oauthprovider': {
+\   'name': 'OAuthProvider',
 \   'constants': {
 \   },
 \   'properties': {

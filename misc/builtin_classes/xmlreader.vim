@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'XMLReader': {
+\'xmlreader': {
+\   'name': 'XMLReader',
 \   'constants': {
 \     'NONE': '0',
 \     'ELEMENT': '1',

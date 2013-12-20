@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Phar': {
+\'phar': {
+\   'name': 'Phar',
 \   'constants': {
 \   },
 \   'properties': {
@@ -67,7 +68,8 @@ call extend(g:php_builtin_classes, {
 \     'webPhar': { 'signature': '[ string $alias [, string $index = "index.php" [, string $f404 [, array $mimetypes [, callable $rewrites]]]]] | void', 'return_type': 'void'},
 \   },
 \},
-\'PharData': {
+\'phardata': {
+\   'name': 'PharData',
 \   'constants': {
 \   },
 \   'properties': {
@@ -135,7 +137,8 @@ call extend(g:php_builtin_classes, {
 \     'webPhar': { 'signature': '[ string $alias [, string $index = "index.php" [, string $f404 [, array $mimetypes [, callable $rewrites]]]]] | void', 'return_type': 'void'},
 \   },
 \},
-\'PharException': {
+\'pharexception': {
+\   'name': 'PharException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -160,7 +163,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'PharFileInfo': {
+\'pharfileinfo': {
+\   'name': 'PharFileInfo',
 \   'constants': {
 \   },
 \   'properties': {

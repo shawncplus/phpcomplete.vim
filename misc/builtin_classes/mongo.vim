@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Mongo': {
+\'mongo': {
+\   'name': 'Mongo',
 \   'constants': {
 \   },
 \   'properties': {
@@ -32,7 +33,8 @@ call extend(g:php_builtin_classes, {
 \     'getConnections': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
-\'MongoBinData': {
+\'mongobindata': {
+\   'name': 'MongoBinData',
 \   'constants': {
 \     'FUNC': '1',
 \     'BYTE_ARRAY': '2',
@@ -53,7 +55,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoClient': {
+\'mongoclient': {
+\   'name': 'MongoClient',
 \   'constants': {
 \     'VERSION': '',
 \     'DEFAULT_HOST': '"localhost"',
@@ -91,7 +94,8 @@ call extend(g:php_builtin_classes, {
 \     'getConnections': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
-\'MongoCode': {
+\'mongocode': {
+\   'name': 'MongoCode',
 \   'constants': {
 \   },
 \   'properties': {
@@ -105,7 +109,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoCollection': {
+\'mongocollection': {
+\   'name': 'MongoCollection',
 \   'constants': {
 \     'ASCENDING': '1',
 \     'DESCENDING': '-1',
@@ -151,7 +156,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoConnectionException': {
+\'mongoconnectionexception': {
+\   'name': 'MongoConnectionException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -163,7 +169,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoCursor': {
+\'mongocursor': {
+\   'name': 'MongoCursor',
 \   'constants': {
 \   },
 \   'properties': {
@@ -208,7 +215,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoCursorException': {
+\'mongocursorexception': {
+\   'name': 'MongoCursorException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -220,7 +228,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoCursorTimeoutException': {
+\'mongocursortimeoutexception': {
+\   'name': 'MongoCursorTimeoutException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -232,7 +241,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoDate': {
+\'mongodate': {
+\   'name': 'MongoDate',
 \   'constants': {
 \   },
 \   'properties': {
@@ -248,7 +258,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoDB': {
+\'mongodb': {
+\   'name': 'MongoDB',
 \   'constants': {
 \     'PROFILING_OFF': '0',
 \     'PROFILING_SLOW': '1',
@@ -291,7 +302,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoDBRef': {
+\'mongodbref': {
+\   'name': 'MongoDBRef',
 \   'constants': {
 \   },
 \   'properties': {
@@ -306,7 +318,8 @@ call extend(g:php_builtin_classes, {
 \     'isRef': { 'signature': 'mixed $ref | bool', 'return_type': 'bool'},
 \   },
 \},
-\'MongoException': {
+\'mongoexception': {
+\   'name': 'MongoException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -318,7 +331,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoGridFSException': {
+\'mongogridfsexception': {
+\   'name': 'MongoGridFSException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -330,7 +344,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoGridFSFile': {
+\'mongogridfsfile': {
+\   'name': 'MongoGridFSFile',
 \   'constants': {
 \   },
 \   'properties': {
@@ -350,7 +365,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoId': {
+\'mongoid': {
+\   'name': 'MongoId',
 \   'constants': {
 \   },
 \   'properties': {
@@ -370,7 +386,8 @@ call extend(g:php_builtin_classes, {
 \     '__set_state': { 'signature': 'array $props | MongoId', 'return_type': 'MongoId'},
 \   },
 \},
-\'MongoInt32': {
+\'mongoint32': {
+\   'name': 'MongoInt32',
 \   'constants': {
 \   },
 \   'properties': {
@@ -385,7 +402,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoInt64': {
+\'mongoint64': {
+\   'name': 'MongoInt64',
 \   'constants': {
 \   },
 \   'properties': {
@@ -400,7 +418,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoLog': {
+\'mongolog': {
+\   'name': 'MongoLog',
 \   'constants': {
 \     'NONE': '0',
 \     'ALL': '31',
@@ -430,7 +449,8 @@ call extend(g:php_builtin_classes, {
 \     'setModule': { 'signature': 'int $module | void', 'return_type': 'void'},
 \   },
 \},
-\'MongoMaxKey': {
+\'mongomaxkey': {
+\   'name': 'MongoMaxKey',
 \   'constants': {
 \   },
 \   'properties': {
@@ -442,7 +462,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoMinKey': {
+\'mongominkey': {
+\   'name': 'MongoMinKey',
 \   'constants': {
 \   },
 \   'properties': {
@@ -454,7 +475,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoPool': {
+\'mongopool': {
+\   'name': 'MongoPool',
 \   'constants': {
 \   },
 \   'properties': {
@@ -469,7 +491,8 @@ call extend(g:php_builtin_classes, {
 \     'setSize': { 'signature': 'int $size | bool', 'return_type': 'bool'},
 \   },
 \},
-\'MongoRegex': {
+\'mongoregex': {
+\   'name': 'MongoRegex',
 \   'constants': {
 \   },
 \   'properties': {
@@ -485,7 +508,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoResultException': {
+\'mongoresultexception': {
+\   'name': 'MongoResultException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -503,7 +527,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MongoTimestamp': {
+\'mongotimestamp': {
+\   'name': 'MongoTimestamp',
 \   'constants': {
 \   },
 \   'properties': {

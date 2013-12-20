@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'HaruAnnotation': {
+\'haruannotation': {
+\   'name': 'HaruAnnotation',
 \   'constants': {
 \   },
 \   'properties': {
@@ -15,7 +16,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HaruDestination': {
+\'harudestination': {
+\   'name': 'HaruDestination',
 \   'constants': {
 \   },
 \   'properties': {
@@ -35,7 +37,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HaruDoc': {
+\'harudoc': {
+\   'name': 'HaruDoc',
 \   'constants': {
 \   },
 \   'properties': {
@@ -91,7 +94,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HaruEncoder': {
+\'haruencoder': {
+\   'name': 'HaruEncoder',
 \   'constants': {
 \   },
 \   'properties': {
@@ -107,7 +111,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HaruException': {
+\'haruexception': {
+\   'name': 'HaruException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -128,7 +133,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HaruFont': {
+\'harufont': {
+\   'name': 'HaruFont',
 \   'constants': {
 \   },
 \   'properties': {
@@ -149,7 +155,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HaruImage': {
+\'haruimage': {
+\   'name': 'HaruImage',
 \   'constants': {
 \   },
 \   'properties': {
@@ -168,7 +175,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HaruOutline': {
+\'haruoutline': {
+\   'name': 'HaruOutline',
 \   'constants': {
 \   },
 \   'properties': {
@@ -182,7 +190,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HaruPage': {
+\'harupage': {
+\   'name': 'HaruPage',
 \   'constants': {
 \   },
 \   'properties': {

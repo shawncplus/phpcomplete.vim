@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Cond': {
+\'cond': {
+\   'name': 'Cond',
 \   'constants': {
 \   },
 \   'properties': {
@@ -16,7 +17,8 @@ call extend(g:php_builtin_classes, {
 \     'wait': { 'signature': 'long $condition, long $mutex [, long $timeout] | boolean', 'return_type': 'boolean'},
 \   },
 \},
-\'Mutex': {
+\'mutex': {
+\   'name': 'Mutex',
 \   'constants': {
 \   },
 \   'properties': {
@@ -33,7 +35,8 @@ call extend(g:php_builtin_classes, {
 \     'unlock': { 'signature': 'long $mutex [, boolean $destroy] | boolean', 'return_type': 'boolean'},
 \   },
 \},
-\'Stackable': {
+\'stackable': {
+\   'name': 'Stackable',
 \   'constants': {
 \   },
 \   'properties': {
@@ -58,7 +61,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Thread': {
+\'thread': {
+\   'name': 'Thread',
 \   'constants': {
 \   },
 \   'properties': {
@@ -89,7 +93,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Worker': {
+\'worker': {
+\   'name': 'Worker',
 \   'constants': {
 \   },
 \   'properties': {

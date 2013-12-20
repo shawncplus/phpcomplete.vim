@@ -243,7 +243,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		endif
 
 		if classlocation != ''
-			if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, classname)
+			if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, tolower(classname))
 				return phpcomplete#CompleteBuiltInClass(context, classname, a:base)
 			endif
 
@@ -864,12 +864,12 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 	let base_parts = split(base, '\')
 	if a:current_namespace == '\' || (leading_slash == '\' && len(base_parts) < 2)
 		if index(kinds, 'c') != -1
-			let builtin_classnames = filter(keys(copy(g:php_builtin_classes)), 'v:val =~? "^'.substitute(a:base, '\\', '', 'g').'"')
+			let builtin_classnames = filter(keys(copy(g:php_builtin_classnames)), 'v:val =~? "^'.substitute(a:base, '\\', '', 'g').'"')
 			for classname in builtin_classnames
 				let menu = ''
 				" if we have a constructor for this class, add parameters as to the info
-				if has_key(g:php_builtin_classes[classname].methods, '__construct')
-					let menu = g:php_builtin_classes[classname]['methods']['__construct']['signature']
+				if has_key(g:php_builtin_classes[tolower(classname)].methods, '__construct')
+					let menu = g:php_builtin_classes[tolower(classname)]['methods']['__construct']['signature']
 				endif
 				call add(res, {'word': leading_slash.classname, 'kind': 'c', 'menu': menu})
 			endfor
@@ -1083,7 +1083,7 @@ endfunction
 " }}}
 
 function! phpcomplete#CompleteBuiltInClass(context, classname, base) " {{{
-	let class_info = g:php_builtin_classes[a:classname]
+	let class_info = g:php_builtin_classes[tolower(a:classname)]
 	let res = []
 	if a:context =~ '->$' " complete for everything instance related
 		" methods
@@ -1333,8 +1333,8 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 
 		let classlocation = phpcomplete#GetClassLocation(classname_candidate, class_candidate_namespace)
 
-		if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, classname_candidate)
-			let class_info = g:php_builtin_classes[classname_candidate]
+		if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, tolower(classname_candidate))
+			let class_info = g:php_builtin_classes[tolower(classname_candidate)]
 			if has_key(class_info['methods'], method)
 				return phpcomplete#GetCallChainReturnType(class_info['methods'][method].return_type, '\', a:imports, methodstack)
 			endif
@@ -1577,7 +1577,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				if has_key(a:imports, classname) && a:imports[classname].kind == 'c'
 					let classname = a:imports[classname].name
 				endif
-				if has_key(g:php_builtin_classes, classname)
+				if has_key(g:php_builtin_classes, tolower(classname))
 					let sub_methodstack = phpcomplete#GetMethodStack(matchstr(line, '^\s*'.object.'\s*=&\?\s*\s\+\zs.*'))
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname, '\', {}, sub_methodstack)
 					return classname_candidate
@@ -1629,7 +1629,6 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					endif
 				endif
 			endif
-
 			if line =~# '^\s*'.object.'\s*=&\?\s*\$[a-zA-Z_0-9\x7f-\xff]'
 				let tailing_semicolon = match(line, ';\s*$')
 				let tailing_semicolon = tailing_semicolon != -1 ? tailing_semicolon : strlen(getline(a:start_line - i))
@@ -1698,7 +1697,7 @@ endfunction
 
 function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 	" Check classname may be name of built in object
-	if has_key(g:php_builtin_classes, a:classname) && (a:namespace == '' || a:namespace == '\')
+	if has_key(g:php_builtin_classes, tolower(a:classname)) && (a:namespace == '' || a:namespace == '\')
 		return 'VIMPHP_BUILTINOBJECT'
 	endif
 
@@ -2159,7 +2158,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 					endif
 				else
 					" if no \ in the name, it can be a built in class
-					if has_key(g:php_builtin_classnames, import.name)
+					if has_key(g:php_builtin_classnames, tolower(import.name))
 						let import['kind'] = 'c'
 						let import['builtin'] = 1
 					elseif has_key(g:php_builtin_interfaces, import.name)
@@ -2182,7 +2181,11 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 		endif
 		let i += 1
 	endwhile
-	return [current_namespace, imports]
+	let sorted_imports = {}
+	for name in sort(keys(imports))
+		let sorted_imports[name] = imports[name]
+	endfor
+	return [current_namespace, sorted_imports]
 endfunction
 " }}}
 
@@ -2262,7 +2265,7 @@ let g:php_builtin_object_functions = {}
 let g:php_builtin_classnames = {}
 
 for [classname, class_info] in items(g:php_builtin_classes)
-	let g:php_builtin_classnames[classname] = ''
+	let g:php_builtin_classnames[class_info.name] = ''
 	for [method_name, method_info] in items(class_info.methods)
 		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
 	endfor

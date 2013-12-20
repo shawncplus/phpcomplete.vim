@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SimpleXMLElement': {
+\'simplexmlelement': {
+\   'name': 'SimpleXMLElement',
 \   'constants': {
 \   },
 \   'properties': {
@@ -23,7 +24,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SimpleXMLIterator': {
+\'simplexmliterator': {
+\   'name': 'SimpleXMLIterator',
 \   'constants': {
 \   },
 \   'properties': {

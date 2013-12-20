@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'OCI-Collection': {
+\'oci-collection': {
+\   'name': 'OCI-Collection',
 \   'constants': {
 \   },
 \   'properties': {
@@ -19,7 +20,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'OCI-Lob': {
+\'oci-lob': {
+\   'name': 'OCI-Lob',
 \   'constants': {
 \   },
 \   'properties': {

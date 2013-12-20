@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SoapClient': {
+\'soapclient': {
+\   'name': 'SoapClient',
 \   'constants': {
 \   },
 \   'properties': {
@@ -24,7 +25,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SoapFault': {
+\'soapfault': {
+\   'name': 'SoapFault',
 \   'constants': {
 \   },
 \   'properties': {
@@ -51,7 +53,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SoapHeader': {
+\'soapheader': {
+\   'name': 'SoapHeader',
 \   'constants': {
 \   },
 \   'properties': {
@@ -65,7 +68,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SoapParam': {
+\'soapparam': {
+\   'name': 'SoapParam',
 \   'constants': {
 \   },
 \   'properties': {
@@ -79,7 +83,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SoapServer': {
+\'soapserver': {
+\   'name': 'SoapServer',
 \   'constants': {
 \   },
 \   'properties': {
@@ -101,7 +106,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SoapVar': {
+\'soapvar': {
+\   'name': 'SoapVar',
 \   'constants': {
 \   },
 \   'properties': {

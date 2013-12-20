@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Ev': {
+\'ev': {
+\   'name': 'Ev',
 \   'constants': {
 \     'FLAG_AUTO': '0',
 \     'FLAG_NOENV': '16777216',
@@ -62,7 +63,8 @@ call extend(g:php_builtin_classes, {
 \     'verify': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \},
-\'EvCheck': {
+\'evcheck': {
+\   'name': 'EvCheck',
 \   'constants': {
 \   },
 \   'properties': {
@@ -88,7 +90,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'string $callback [, string $data [, string $priority]] | object', 'return_type': 'object'},
 \   },
 \},
-\'EvChild': {
+\'evchild': {
+\   'name': 'EvChild',
 \   'constants': {
 \   },
 \   'properties': {
@@ -118,7 +121,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'int $pid, bool $trace, callable $callback [, mixed $data [, int $priority]] | object', 'return_type': 'object'},
 \   },
 \},
-\'EvEmbed': {
+\'evembed': {
+\   'name': 'EvEmbed',
 \   'constants': {
 \   },
 \   'properties': {
@@ -143,7 +147,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'object $other [, callable $callback [, mixed $data [, int $priority]]] | void', 'return_type': 'void'},
 \   },
 \},
-\'EvFork': {
+\'evfork': {
+\   'name': 'EvFork',
 \   'constants': {
 \   },
 \   'properties': {
@@ -169,7 +174,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'string $callback [, string $data [, string $priority]] | object', 'return_type': 'object'},
 \   },
 \},
-\'EvIdle': {
+\'evidle': {
+\   'name': 'EvIdle',
 \   'constants': {
 \   },
 \   'properties': {
@@ -195,7 +201,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'string $callback [, mixed $data [, int $priority]] | object', 'return_type': 'object'},
 \   },
 \},
-\'EvIo': {
+\'evio': {
+\   'name': 'EvIo',
 \   'constants': {
 \   },
 \   'properties': {
@@ -224,7 +231,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'mixed $fd, int $events, callable $callback [, mixed $data = NULL [, int $priority = 0]] | EvIo', 'return_type': 'EvIo'},
 \   },
 \},
-\'EvLoop': {
+\'evloop': {
+\   'name': 'EvLoop',
 \   'constants': {
 \   },
 \   'properties': {
@@ -267,7 +275,8 @@ call extend(g:php_builtin_classes, {
 \     'defaultLoop': { 'signature': '[ int $flags = Ev::FLAG_AUTO [, mixed $data = NULL [, double $io_interval = 0. [, double $timeout_interval = 0.]]]] | EvLoop', 'return_type': 'EvLoop'},
 \   },
 \},
-\'EvPeriodic': {
+\'evperiodic': {
+\   'name': 'EvPeriodic',
 \   'constants': {
 \   },
 \   'properties': {
@@ -298,7 +307,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'double $offset, double $interval, callable $reschedule_cb, callable $callback [, mixed $data = NULL [, int $priority = 0]] | EvPeriodic', 'return_type': 'EvPeriodic'},
 \   },
 \},
-\'EvPrepare': {
+\'evprepare': {
+\   'name': 'EvPrepare',
 \   'constants': {
 \   },
 \   'properties': {
@@ -324,7 +334,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'callable $callback [, mixed $data = NULL [, int $priority = 0]] | EvPrepare', 'return_type': 'EvPrepare'},
 \   },
 \},
-\'EvSignal': {
+\'evsignal': {
+\   'name': 'EvSignal',
 \   'constants': {
 \   },
 \   'properties': {
@@ -352,7 +363,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'int $signum, callable $callback [, mixed $data = NULL [, int $priority = 0]] | EvSignal', 'return_type': 'EvSignal'},
 \   },
 \},
-\'EvStat': {
+\'evstat': {
+\   'name': 'EvStat',
 \   'constants': {
 \   },
 \   'properties': {
@@ -384,7 +396,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'string $path, double $interval, callable $callback [, mixed $data = NULL [, int $priority = 0]] | void', 'return_type': 'void'},
 \   },
 \},
-\'EvTimer': {
+\'evtimer': {
+\   'name': 'EvTimer',
 \   'constants': {
 \   },
 \   'properties': {
@@ -414,7 +427,8 @@ call extend(g:php_builtin_classes, {
 \     'createStopped': { 'signature': 'double $after, double $repeat, callable $callback [, mixed $data = NULL [, int $priority = 0]] | EvTimer', 'return_type': 'EvTimer'},
 \   },
 \},
-\'EvWatcher': {
+\'evwatcher': {
+\   'name': 'EvWatcher',
 \   'constants': {
 \   },
 \   'properties': {

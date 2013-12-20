@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SVM': {
+\'svm': {
+\   'name': 'SVM',
 \   'constants': {
 \     'C_SVC': '',
 \     'NU_SVC': '',
@@ -39,7 +40,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SVMModel': {
+\'svmmodel': {
+\   'name': 'SVMModel',
 \   'constants': {
 \   },
 \   'properties': {

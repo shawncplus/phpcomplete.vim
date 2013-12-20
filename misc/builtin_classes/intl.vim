@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Collator': {
+\'collator': {
+\   'name': 'Collator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -25,7 +26,8 @@ call extend(g:php_builtin_classes, {
 \     'create': { 'signature': 'string $locale | Collator', 'return_type': 'Collator'},
 \   },
 \},
-\'IntlBreakIterator': {
+\'intlbreakiterator': {
+\   'name': 'IntlBreakIterator',
 \   'constants': {
 \     'DONE': '-1',
 \     'WORD_NONE': '0',
@@ -79,7 +81,8 @@ call extend(g:php_builtin_classes, {
 \     'createWordInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
 \   },
 \},
-\'IntlCalendar': {
+\'intlcalendar': {
+\   'name': 'IntlCalendar',
 \   'constants': {
 \     'FIELD_ERA': '0',
 \     'FIELD_YEAR': '1',
@@ -175,7 +178,8 @@ call extend(g:php_builtin_classes, {
 \     'getNow': { 'signature': 'void | float', 'return_type': 'float'},
 \   },
 \},
-\'IntlCodePointBreakIterator': {
+\'intlcodepointbreakiterator': {
+\   'name': 'IntlCodePointBreakIterator',
 \   'constants': {
 \     'DONE': '-1',
 \     'WORD_NONE': '0',
@@ -230,7 +234,8 @@ call extend(g:php_builtin_classes, {
 \     'createWordInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
 \   },
 \},
-\'IntlDateFormatter': {
+\'intldateformatter': {
+\   'name': 'IntlDateFormatter',
 \   'constants': {
 \   },
 \   'properties': {
@@ -264,7 +269,8 @@ call extend(g:php_builtin_classes, {
 \     'formatObject': { 'signature': 'object $object [, mixed $format = NULL [, string $locale = NULL]] | string', 'return_type': 'string'},
 \   },
 \},
-\'IntlException': {
+\'intlexception': {
+\   'name': 'IntlException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -289,7 +295,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'IntlIterator': {
+\'intliterator': {
+\   'name': 'IntlIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -306,7 +313,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'IntlPartsIterator': {
+\'intlpartsiterator': {
+\   'name': 'IntlPartsIterator',
 \   'constants': {
 \     'KEY_SEQUENTIAL': '0',
 \     'KEY_LEFT': '1',
@@ -327,7 +335,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'IntlRuleBasedBreakIterator': {
+\'intlrulebasedbreakiterator': {
+\   'name': 'IntlRuleBasedBreakIterator',
 \   'constants': {
 \     'DONE': '-1',
 \     'WORD_NONE': '0',
@@ -385,7 +394,8 @@ call extend(g:php_builtin_classes, {
 \     'createWordInstance': { 'signature': '[ string $"locale"] | ReturnType', 'return_type': 'ReturnType'},
 \   },
 \},
-\'IntlTimeZone': {
+\'intltimezone': {
+\   'name': 'IntlTimeZone',
 \   'constants': {
 \     'DISPLAY_SHORT': '1',
 \     'DISPLAY_LONG': '2',
@@ -418,7 +428,8 @@ call extend(g:php_builtin_classes, {
 \     'getTZDataVersion': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
 \},
-\'Locale': {
+\'locale': {
+\   'name': 'Locale',
 \   'constants': {
 \   },
 \   'properties': {
@@ -448,7 +459,8 @@ call extend(g:php_builtin_classes, {
 \     'setDefault': { 'signature': 'string $locale | bool', 'return_type': 'bool'},
 \   },
 \},
-\'MessageFormatter': {
+\'messageformatter': {
+\   'name': 'MessageFormatter',
 \   'constants': {
 \   },
 \   'properties': {
@@ -471,7 +483,8 @@ call extend(g:php_builtin_classes, {
 \     'parseMessage': { 'signature': 'string $locale, string $pattern, string $source | array', 'return_type': 'array'},
 \   },
 \},
-\'Normalizer': {
+\'normalizer': {
+\   'name': 'Normalizer',
 \   'constants': {
 \   },
 \   'properties': {
@@ -485,7 +498,8 @@ call extend(g:php_builtin_classes, {
 \     'normalize': { 'signature': 'string $input [, string $form = Normalizer::FORM_C] | string', 'return_type': 'string'},
 \   },
 \},
-\'NumberFormatter': {
+\'numberformatter': {
+\   'name': 'NumberFormatter',
 \   'constants': {
 \   },
 \   'properties': {
@@ -514,7 +528,8 @@ call extend(g:php_builtin_classes, {
 \     'create': { 'signature': 'string $locale, int $style [, string $pattern] | NumberFormatter', 'return_type': 'NumberFormatter'},
 \   },
 \},
-\'ResourceBundle': {
+\'resourcebundle': {
+\   'name': 'ResourceBundle',
 \   'constants': {
 \   },
 \   'properties': {
@@ -533,7 +548,8 @@ call extend(g:php_builtin_classes, {
 \     'create': { 'signature': 'string $locale, string $bundlename [, bool $fallback] | ResourceBundle', 'return_type': 'ResourceBundle'},
 \   },
 \},
-\'Spoofchecker': {
+\'spoofchecker': {
+\   'name': 'Spoofchecker',
 \   'constants': {
 \     'SINGLE_SCRIPT_CONFUSABLE': '1',
 \     'MIXED_SCRIPT_CONFUSABLE': '2',
@@ -557,7 +573,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Transliterator': {
+\'transliterator': {
+\   'name': 'Transliterator',
 \   'constants': {
 \     'FORWARD': '0',
 \     'REVERSE': '1',
@@ -580,7 +597,8 @@ call extend(g:php_builtin_classes, {
 \     'listIDs': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
-\'UConverter': {
+\'uconverter': {
+\   'name': 'UConverter',
 \   'constants': {
 \     'REASON_UNASSIGNED': '0',
 \     'REASON_ILLEGAL': '1',

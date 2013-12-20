@@ -1,6 +1,8 @@
 fun! SetUp()
     let g:phpcomplete_min_num_of_chars_for_namespace_completion = 1
     " disable builtin information
+    let g:php_builtin_classnames = { }
+    " disable builtin information
     let g:php_builtin_classes = { }
     " disable builtin information
     let g:php_builtin_interfaces = { }
@@ -61,8 +63,10 @@ fun! TestCase_complete_classes_from_built_in_classes()
     exe ":silent! edit ".path
 
     " set up example built-in list
+    let g:php_builtin_classnames = { 'DateTime':'' }
     let g:php_builtin_classes = {
-    \'DateTime': {
+    \'datetime': {
+    \   'name': 'DateTime',
     \   'methods': {
     \   },
     \ },
@@ -112,8 +116,10 @@ fun! TestCase_adds_arguments_of_constructors_for_built_in_classes()
     exe ":silent! edit ".path
 
     " set up example built-in list
+    let g:php_builtin_classnames = { 'DateTime':'' }
     let g:php_builtin_classes = {
-    \'DateTime': {
+    \'datetime': {
+    \   'name': 'DateTime',
     \   'methods': {
     \     '__construct': { 'signature': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'return_type': ''},
     \   },

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'VarnishAdmin': {
+\'varnishadmin': {
+\   'name': 'VarnishAdmin',
 \   'constants': {
 \   },
 \   'properties': {
@@ -30,7 +31,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'VarnishLog': {
+\'varnishlog': {
+\   'name': 'VarnishLog',
 \   'constants': {
 \     'TAG_Debug': '0',
 \     'TAG_Error': '1',
@@ -97,7 +99,8 @@ call extend(g:php_builtin_classes, {
 \     'getTagName': { 'signature': 'int $index | string', 'return_type': 'string'},
 \   },
 \},
-\'VarnishStat': {
+\'varnishstat': {
+\   'name': 'VarnishStat',
 \   'constants': {
 \   },
 \   'properties': {

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'QuickHashIntHash': {
+\'quickhashinthash': {
+\   'name': 'QuickHashIntHash',
 \   'constants': {
 \     'CHECK_FOR_DUPES': '1',
 \     'DO_NOT_USE_ZEND_ALLOC': '2',
@@ -28,7 +29,8 @@ call extend(g:php_builtin_classes, {
 \     'loadFromString': { 'signature': 'string $contents [, int $options] | QuickHashIntHash', 'return_type': 'QuickHashIntHash'},
 \   },
 \},
-\'QuickHashIntSet': {
+\'quickhashintset': {
+\   'name': 'QuickHashIntSet',
 \   'constants': {
 \     'CHECK_FOR_DUPES': '1',
 \     'DO_NOT_USE_ZEND_ALLOC': '2',
@@ -54,7 +56,8 @@ call extend(g:php_builtin_classes, {
 \     'loadFromString': { 'signature': 'string $contents [, int $size [, int $options]] | QuickHashIntSet', 'return_type': 'QuickHashIntSet'},
 \   },
 \},
-\'QuickHashIntStringHash': {
+\'quickhashintstringhash': {
+\   'name': 'QuickHashIntStringHash',
 \   'constants': {
 \     'CHECK_FOR_DUPES': '1',
 \     'DO_NOT_USE_ZEND_ALLOC': '2',
@@ -83,7 +86,8 @@ call extend(g:php_builtin_classes, {
 \     'loadFromString': { 'signature': 'string $contents [, int $size = 0 [, int $options = 0]] | QuickHashIntStringHash', 'return_type': 'QuickHashIntStringHash'},
 \   },
 \},
-\'QuickHashStringIntHash': {
+\'quickhashstringinthash': {
+\   'name': 'QuickHashStringIntHash',
 \   'constants': {
 \     'CHECK_FOR_DUPES': '1',
 \     'DO_NOT_USE_ZEND_ALLOC': '2',

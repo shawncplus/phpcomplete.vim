@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
 \'tidy': {
+\   'name': 'tidy',
 \   'constants': {
 \   },
 \   'properties': {
@@ -31,7 +32,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'tidyNode': {
+\'tidynode': {
+\   'name': 'tidyNode',
 \   'constants': {
 \   },
 \   'properties': {

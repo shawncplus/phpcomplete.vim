@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'DOMAttr': {
+\'domattr': {
+\   'name': 'DOMAttr',
 \   'constants': {
 \   },
 \   'properties': {
@@ -35,7 +36,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMCdataSection': {
+\'domcdatasection': {
+\   'name': 'DOMCdataSection',
 \   'constants': {
 \   },
 \   'properties': {
@@ -50,7 +52,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMCharacterData': {
+\'domcharacterdata': {
+\   'name': 'DOMCharacterData',
 \   'constants': {
 \   },
 \   'properties': {
@@ -86,7 +89,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMComment': {
+\'domcomment': {
+\   'name': 'DOMComment',
 \   'constants': {
 \   },
 \   'properties': {
@@ -121,7 +125,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMDocument': {
+\'domdocument': {
+\   'name': 'DOMDocument',
 \   'constants': {
 \   },
 \   'properties': {
@@ -200,7 +205,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMDocumentFragment': {
+\'domdocumentfragment': {
+\   'name': 'DOMDocumentFragment',
 \   'constants': {
 \   },
 \   'properties': {
@@ -230,7 +236,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMDocumentType': {
+\'domdocumenttype': {
+\   'name': 'DOMDocumentType',
 \   'constants': {
 \   },
 \   'properties': {
@@ -265,7 +272,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMElement': {
+\'domelement': {
+\   'name': 'DOMElement',
 \   'constants': {
 \   },
 \   'properties': {
@@ -315,7 +323,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMEntity': {
+\'domentity': {
+\   'name': 'DOMEntity',
 \   'constants': {
 \   },
 \   'properties': {
@@ -350,7 +359,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMEntityReference': {
+\'domentityreference': {
+\   'name': 'DOMEntityReference',
 \   'constants': {
 \   },
 \   'properties': {
@@ -380,7 +390,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMException': {
+\'domexception': {
+\   'name': 'DOMException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -402,7 +413,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMImplementation': {
+\'domimplementation': {
+\   'name': 'DOMImplementation',
 \   'constants': {
 \   },
 \   'properties': {
@@ -418,7 +430,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMNamedNodeMap': {
+\'domnamednodemap': {
+\   'name': 'DOMNamedNodeMap',
 \   'constants': {
 \   },
 \   'properties': {
@@ -434,7 +447,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMNode': {
+\'domnode': {
+\   'name': 'DOMNode',
 \   'constants': {
 \   },
 \   'properties': {
@@ -479,7 +493,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMNodeList': {
+\'domnodelist': {
+\   'name': 'DOMNodeList',
 \   'constants': {
 \   },
 \   'properties': {
@@ -493,7 +508,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMNotation': {
+\'domnotation': {
+\   'name': 'DOMNotation',
 \   'constants': {
 \   },
 \   'properties': {
@@ -524,7 +540,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMProcessingInstruction': {
+\'domprocessinginstruction': {
+\   'name': 'DOMProcessingInstruction',
 \   'constants': {
 \   },
 \   'properties': {
@@ -556,7 +573,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMText': {
+\'domtext': {
+\   'name': 'DOMText',
 \   'constants': {
 \   },
 \   'properties': {
@@ -589,7 +607,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DOMXPath': {
+\'domxpath': {
+\   'name': 'DOMXPath',
 \   'constants': {
 \   },
 \   'properties': {

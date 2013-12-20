@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'libXMLError': {
+\'libxmlerror': {
+\   'name': 'libXMLError',
 \   'constants': {
 \   },
 \   'properties': {

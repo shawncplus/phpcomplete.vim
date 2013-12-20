@@ -1,5 +1,6 @@
 call extend(g:php_builtin_interfaces, {
-\'JsonSerializable': {
+\'jsonserializable': {
+\   'name': 'JsonSerializable',
 \   'constants': {
 \   },
 \   'properties': {

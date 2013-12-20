@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'APCIterator': {
+\'apciterator': {
+\   'name': 'APCIterator',
 \   'constants': {
 \   },
 \   'properties': {

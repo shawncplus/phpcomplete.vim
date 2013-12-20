@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Cairo': {
+\'cairo': {
+\   'name': 'Cairo',
 \   'constants': {
 \   },
 \   'properties': {
@@ -16,7 +17,8 @@ call extend(g:php_builtin_classes, {
 \     'versionString': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
 \},
-\'CairoAntialias': {
+\'cairoantialias': {
+\   'name': 'CairoAntialias',
 \   'constants': {
 \     'MODE_DEFAULT': '0',
 \     'MODE_NONE': '1',
@@ -32,7 +34,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoContent': {
+\'cairocontent': {
+\   'name': 'CairoContent',
 \   'constants': {
 \     'COLOR': '4096',
 \     'ALPHA': '8192',
@@ -47,7 +50,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoContext': {
+\'cairocontext': {
+\   'name': 'CairoContext',
 \   'constants': {
 \   },
 \   'properties': {
@@ -156,7 +160,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoException': {
+\'cairoexception': {
+\   'name': 'CairoException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -181,7 +186,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoExtend': {
+\'cairoextend': {
+\   'name': 'CairoExtend',
 \   'constants': {
 \     'NONE': '0',
 \     'REPEAT': '1',
@@ -197,7 +203,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoFillRule': {
+\'cairofillrule': {
+\   'name': 'CairoFillRule',
 \   'constants': {
 \     'WINDING': '0',
 \     'EVEN_ODD': '1',
@@ -211,7 +218,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoFilter': {
+\'cairofilter': {
+\   'name': 'CairoFilter',
 \   'constants': {
 \     'FAST': '0',
 \     'GOOD': '1',
@@ -229,7 +237,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoFontFace': {
+\'cairofontface': {
+\   'name': 'CairoFontFace',
 \   'constants': {
 \   },
 \   'properties': {
@@ -244,7 +253,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoFontOptions': {
+\'cairofontoptions': {
+\   'name': 'CairoFontOptions',
 \   'constants': {
 \   },
 \   'properties': {
@@ -269,7 +279,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoFontSlant': {
+\'cairofontslant': {
+\   'name': 'CairoFontSlant',
 \   'constants': {
 \     'NORMAL': '0',
 \     'ITALIC': '1',
@@ -284,7 +295,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoFontType': {
+\'cairofonttype': {
+\   'name': 'CairoFontType',
 \   'constants': {
 \     'TOY': '0',
 \     'FT': '1',
@@ -300,7 +312,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoFontWeight': {
+\'cairofontweight': {
+\   'name': 'CairoFontWeight',
 \   'constants': {
 \     'NORMAL': '0',
 \     'BOLD': '1',
@@ -314,7 +327,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoFormat': {
+\'cairoformat': {
+\   'name': 'CairoFormat',
 \   'constants': {
 \     'ARGB32': '0',
 \     'RGB24': '1',
@@ -331,7 +345,8 @@ call extend(g:php_builtin_classes, {
 \     'strideForWidth': { 'signature': 'int $format, int $width | int', 'return_type': 'int'},
 \   },
 \},
-\'CairoGradientPattern': {
+\'cairogradientpattern': {
+\   'name': 'CairoGradientPattern',
 \   'constants': {
 \   },
 \   'properties': {
@@ -354,7 +369,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoHintMetrics': {
+\'cairohintmetrics': {
+\   'name': 'CairoHintMetrics',
 \   'constants': {
 \     'METRICS_DEFAULT': '0',
 \     'METRICS_OFF': '1',
@@ -369,7 +385,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoHintStyle': {
+\'cairohintstyle': {
+\   'name': 'CairoHintStyle',
 \   'constants': {
 \     'STYLE_DEFAULT': '0',
 \     'STYLE_NONE': '1',
@@ -386,7 +403,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoImageSurface': {
+\'cairoimagesurface': {
+\   'name': 'CairoImageSurface',
 \   'constants': {
 \   },
 \   'properties': {
@@ -421,7 +439,8 @@ call extend(g:php_builtin_classes, {
 \     'createFromPng': { 'signature': 'string $file | CairoImageSurface', 'return_type': 'CairoImageSurface'},
 \   },
 \},
-\'CairoLinearGradient': {
+\'cairolineargradient': {
+\   'name': 'CairoLinearGradient',
 \   'constants': {
 \   },
 \   'properties': {
@@ -441,7 +460,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoLineCap': {
+\'cairolinecap': {
+\   'name': 'CairoLineCap',
 \   'constants': {
 \     'BUTT': '0',
 \     'ROUND': '1',
@@ -456,7 +476,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoLineJoin': {
+\'cairolinejoin': {
+\   'name': 'CairoLineJoin',
 \   'constants': {
 \     'MITER': '0',
 \     'ROUND': '1',
@@ -471,7 +492,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoMatrix': {
+\'cairomatrix': {
+\   'name': 'CairoMatrix',
 \   'constants': {
 \   },
 \   'properties': {
@@ -495,7 +517,8 @@ call extend(g:php_builtin_classes, {
 \     'multiply': { 'signature': 'CairoMatrix $matrix1, CairoMatrix $matrix2 | CairoMatrix', 'return_type': 'CairoMatrix'},
 \   },
 \},
-\'CairoOperator': {
+\'cairooperator': {
+\   'name': 'CairoOperator',
 \   'constants': {
 \     'CLEAR': '0',
 \     'SOURCE': '1',
@@ -521,7 +544,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoPath': {
+\'cairopath': {
+\   'name': 'CairoPath',
 \   'constants': {
 \   },
 \   'properties': {
@@ -533,7 +557,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoPattern': {
+\'cairopattern': {
+\   'name': 'CairoPattern',
 \   'constants': {
 \   },
 \   'properties': {
@@ -550,7 +575,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoPatternType': {
+\'cairopatterntype': {
+\   'name': 'CairoPatternType',
 \   'constants': {
 \     'SOLID': '0',
 \     'SURFACE': '1',
@@ -566,7 +592,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoPdfSurface': {
+\'cairopdfsurface': {
+\   'name': 'CairoPdfSurface',
 \   'constants': {
 \   },
 \   'properties': {
@@ -595,7 +622,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoPsLevel': {
+\'cairopslevel': {
+\   'name': 'CairoPsLevel',
 \   'constants': {
 \     'LEVEL_2': '0',
 \     'LEVEL_3': '1',
@@ -609,7 +637,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoPsSurface': {
+\'cairopssurface': {
+\   'name': 'CairoPsSurface',
 \   'constants': {
 \   },
 \   'properties': {
@@ -646,7 +675,8 @@ call extend(g:php_builtin_classes, {
 \     'levelToString': { 'signature': 'int $level | string', 'return_type': 'string'},
 \   },
 \},
-\'CairoRadialGradient': {
+\'cairoradialgradient': {
+\   'name': 'CairoRadialGradient',
 \   'constants': {
 \   },
 \   'properties': {
@@ -666,7 +696,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoScaledFont': {
+\'cairoscaledfont': {
+\   'name': 'CairoScaledFont',
 \   'constants': {
 \   },
 \   'properties': {
@@ -689,7 +720,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoSolidPattern': {
+\'cairosolidpattern': {
+\   'name': 'CairoSolidPattern',
 \   'constants': {
 \   },
 \   'properties': {
@@ -707,7 +739,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoStatus': {
+\'cairostatus': {
+\   'name': 'CairoStatus',
 \   'constants': {
 \     'SUCCESS': '0',
 \     'NO_MEMORY': '1',
@@ -744,7 +777,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoSubpixelOrder': {
+\'cairosubpixelorder': {
+\   'name': 'CairoSubpixelOrder',
 \   'constants': {
 \     'ORDER_DEFAULT': '0',
 \     'ORDER_RGB': '1',
@@ -761,7 +795,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoSurface': {
+\'cairosurface': {
+\   'name': 'CairoSurface',
 \   'constants': {
 \   },
 \   'properties': {
@@ -789,7 +824,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoSurfacePattern': {
+\'cairosurfacepattern': {
+\   'name': 'CairoSurfacePattern',
 \   'constants': {
 \   },
 \   'properties': {
@@ -811,7 +847,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoSurfaceType': {
+\'cairosurfacetype': {
+\   'name': 'CairoSurfaceType',
 \   'constants': {
 \     'IMAGE': '0',
 \     'PDF': '1',
@@ -837,7 +874,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoSvgSurface': {
+\'cairosvgsurface': {
+\   'name': 'CairoSvgSurface',
 \   'constants': {
 \   },
 \   'properties': {
@@ -868,7 +906,8 @@ call extend(g:php_builtin_classes, {
 \     'versionToString': { 'signature': 'int $version | string', 'return_type': 'string'},
 \   },
 \},
-\'CairoSvgVersion': {
+\'cairosvgversion': {
+\   'name': 'CairoSvgVersion',
 \   'constants': {
 \     'VERSION_1_1': '0',
 \     'VERSION_1_2': '1',
@@ -882,7 +921,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CairoToyFontFace': {
+\'cairotoyfontface': {
+\   'name': 'CairoToyFontFace',
 \   'constants': {
 \   },
 \   'properties': {

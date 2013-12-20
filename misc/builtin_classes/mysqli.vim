@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
 \'mysqli_driver': {
+\   'name': 'mysqli_driver',
 \   'constants': {
 \   },
 \   'properties': {
@@ -20,6 +21,7 @@ call extend(g:php_builtin_classes, {
 \   },
 \},
 \'mysqli_result': {
+\   'name': 'mysqli_result',
 \   'constants': {
 \   },
 \   'properties': {
@@ -47,6 +49,7 @@ call extend(g:php_builtin_classes, {
 \   },
 \},
 \'mysqli_sql_exception': {
+\   'name': 'mysqli_sql_exception',
 \   'constants': {
 \   },
 \   'properties': {
@@ -64,6 +67,7 @@ call extend(g:php_builtin_classes, {
 \   },
 \},
 \'mysqli_stmt': {
+\   'name': 'mysqli_stmt',
 \   'constants': {
 \   },
 \   'properties': {
@@ -101,6 +105,7 @@ call extend(g:php_builtin_classes, {
 \   },
 \},
 \'mysqli_warning': {
+\   'name': 'mysqli_warning',
 \   'constants': {
 \   },
 \   'properties': {
@@ -118,6 +123,7 @@ call extend(g:php_builtin_classes, {
 \   },
 \},
 \'mysqli': {
+\   'name': 'mysqli',
 \   'constants': {
 \   },
 \   'properties': {

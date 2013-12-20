@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'V8Js': {
+\'v8js': {
+\   'name': 'V8Js',
 \   'constants': {
 \     'V8_VERSION': '',
 \     'FLAG_NONE': '1',
@@ -19,7 +20,8 @@ call extend(g:php_builtin_classes, {
 \     'registerExtension': { 'signature': 'string $extension_name, string $script [, array $dependencies = array() [, bool $auto_enable = FALSE]] | bool', 'return_type': 'bool'},
 \   },
 \},
-\'V8JsException': {
+\'v8jsexception': {
+\   'name': 'V8JsException',
 \   'constants': {
 \   },
 \   'properties': {

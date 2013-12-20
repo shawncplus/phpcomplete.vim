@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'PDO': {
+\'pdo': {
+\   'name': 'PDO',
 \   'constants': {
 \     'FETCH_ORI_ABS': '',
 \     'ATTR_PERSISTENT': '',
@@ -128,7 +129,8 @@ call extend(g:php_builtin_classes, {
 \     'getAvailableDrivers': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
 \},
-\'PDOException': {
+\'pdoexception': {
+\   'name': 'PDOException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -154,7 +156,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'PDOStatement': {
+\'pdostatement': {
+\   'name': 'PDOStatement',
 \   'constants': {
 \   },
 \   'properties': {

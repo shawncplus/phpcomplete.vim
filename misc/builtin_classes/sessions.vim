@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SessionHandler': {
+\'sessionhandler': {
+\   'name': 'SessionHandler',
 \   'constants': {
 \   },
 \   'properties': {
@@ -17,7 +18,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SessionHandlerInterface': {
+\'sessionhandlerinterface': {
+\   'name': 'SessionHandlerInterface',
 \   'constants': {
 \   },
 \   'properties': {

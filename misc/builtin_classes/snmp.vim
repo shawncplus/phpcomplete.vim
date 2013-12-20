@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SNMP': {
+\'snmp': {
+\   'name': 'SNMP',
 \   'constants': {
 \     'ERRNO_NOERROR': '',
 \     'ERRNO_GENERIC': '',
@@ -40,7 +41,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SNMPException': {
+\'snmpexception': {
+\   'name': 'SNMPException',
 \   'constants': {
 \   },
 \   'properties': {

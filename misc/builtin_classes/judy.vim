@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Judy': {
+\'judy': {
+\   'name': 'Judy',
 \   'constants': {
 \     'BITSET': '1',
 \     'INT_TO_INT': '2',

@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Imagick': {
+\'imagick': {
+\   'name': 'Imagick',
 \   'constants': {
 \   },
 \   'properties': {
@@ -334,7 +335,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ImagickDraw': {
+\'imagickdraw': {
+\   'name': 'ImagickDraw',
 \   'constants': {
 \   },
 \   'properties': {
@@ -461,7 +463,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ImagickPixel': {
+\'imagickpixel': {
+\   'name': 'ImagickPixel',
 \   'constants': {
 \   },
 \   'properties': {
@@ -486,7 +489,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ImagickPixelIterator': {
+\'imagickpixeliterator': {
+\   'name': 'ImagickPixelIterator',
 \   'constants': {
 \   },
 \   'properties': {

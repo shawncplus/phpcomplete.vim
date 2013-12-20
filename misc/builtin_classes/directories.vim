@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Directory': {
+\'directory': {
+\   'name': 'Directory',
 \   'constants': {
 \   },
 \   'properties': {

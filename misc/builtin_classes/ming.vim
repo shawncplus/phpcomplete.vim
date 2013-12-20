@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'SWFAction': {
+\'swfaction': {
+\   'name': 'SWFAction',
 \   'constants': {
 \   },
 \   'properties': {
@@ -12,7 +13,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFBitmap': {
+\'swfbitmap': {
+\   'name': 'SWFBitmap',
 \   'constants': {
 \   },
 \   'properties': {
@@ -27,7 +29,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFButton': {
+\'swfbutton': {
+\   'name': 'SWFButton',
 \   'constants': {
 \   },
 \   'properties': {
@@ -49,7 +52,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFDisplayItem': {
+\'swfdisplayitem': {
+\   'name': 'SWFDisplayItem',
 \   'constants': {
 \   },
 \   'properties': {
@@ -88,7 +92,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFFill': {
+\'swffill': {
+\   'name': 'SWFFill',
 \   'constants': {
 \   },
 \   'properties': {
@@ -105,7 +110,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFFont': {
+\'swffont': {
+\   'name': 'SWFFont',
 \   'constants': {
 \   },
 \   'properties': {
@@ -124,7 +130,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFFontChar': {
+\'swffontchar': {
+\   'name': 'SWFFontChar',
 \   'constants': {
 \   },
 \   'properties': {
@@ -138,7 +145,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFGradient': {
+\'swfgradient': {
+\   'name': 'SWFGradient',
 \   'constants': {
 \   },
 \   'properties': {
@@ -152,7 +160,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFMorph': {
+\'swfmorph': {
+\   'name': 'SWFMorph',
 \   'constants': {
 \   },
 \   'properties': {
@@ -167,7 +176,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFMovie': {
+\'swfmovie': {
+\   'name': 'SWFMovie',
 \   'constants': {
 \   },
 \   'properties': {
@@ -199,7 +209,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFPrebuiltClip': {
+\'swfprebuiltclip': {
+\   'name': 'SWFPrebuiltClip',
 \   'constants': {
 \   },
 \   'properties': {
@@ -212,7 +223,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFShape': {
+\'swfshape': {
+\   'name': 'SWFShape',
 \   'constants': {
 \   },
 \   'properties': {
@@ -240,7 +252,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFSound': {
+\'swfsound': {
+\   'name': 'SWFSound',
 \   'constants': {
 \   },
 \   'properties': {
@@ -253,7 +266,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFSoundInstance': {
+\'swfsoundinstance': {
+\   'name': 'SWFSoundInstance',
 \   'constants': {
 \   },
 \   'properties': {
@@ -269,7 +283,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFSprite': {
+\'swfsprite': {
+\   'name': 'SWFSprite',
 \   'constants': {
 \   },
 \   'properties': {
@@ -289,7 +304,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFText': {
+\'swftext': {
+\   'name': 'SWFText',
 \   'constants': {
 \   },
 \   'properties': {
@@ -314,7 +330,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFTextField': {
+\'swftextfield': {
+\   'name': 'SWFTextField',
 \   'constants': {
 \   },
 \   'properties': {
@@ -341,7 +358,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SWFVideoStream': {
+\'swfvideostream': {
+\   'name': 'SWFVideoStream',
 \   'constants': {
 \   },
 \   'properties': {

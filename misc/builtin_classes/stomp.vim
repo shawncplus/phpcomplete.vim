@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Stomp': {
+\'stomp': {
+\   'name': 'Stomp',
 \   'constants': {
 \   },
 \   'properties': {
@@ -26,7 +27,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'StompException': {
+\'stompexception': {
+\   'name': 'StompException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -48,7 +50,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'StompFrame': {
+\'stompframe': {
+\   'name': 'StompFrame',
 \   'constants': {
 \   },
 \   'properties': {

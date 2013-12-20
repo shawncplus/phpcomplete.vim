@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'AMQPChannel': {
+\'amqpchannel': {
+\   'name': 'AMQPChannel',
 \   'constants': {
 \   },
 \   'properties': {
@@ -19,7 +20,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'AMQPConnection': {
+\'amqpconnection': {
+\   'name': 'AMQPConnection',
 \   'constants': {
 \   },
 \   'properties': {
@@ -48,7 +50,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'AMQPEnvelope': {
+\'amqpenvelope': {
+\   'name': 'AMQPEnvelope',
 \   'constants': {
 \   },
 \   'properties': {
@@ -78,7 +81,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'AMQPExchange': {
+\'amqpexchange': {
+\   'name': 'AMQPExchange',
 \   'constants': {
 \   },
 \   'properties': {
@@ -105,7 +109,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'AMQPQueue': {
+\'amqpqueue': {
+\   'name': 'AMQPQueue',
 \   'constants': {
 \   },
 \   'properties': {

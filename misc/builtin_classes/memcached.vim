@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Memcached': {
+\'memcached': {
+\   'name': 'Memcached',
 \   'constants': {
 \   },
 \   'properties': {
@@ -62,7 +63,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MemcachedException': {
+\'memcachedexception': {
+\   'name': 'MemcachedException',
 \   'constants': {
 \   },
 \   'properties': {

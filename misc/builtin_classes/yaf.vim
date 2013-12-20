@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'Yaf_Action_Abstract': {
+\'yaf_action_abstract': {
+\   'name': 'Yaf_Action_Abstract',
 \   'constants': {
 \   },
 \   'properties': {
@@ -30,7 +31,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Application': {
+\'yaf_application': {
+\   'name': 'Yaf_Application',
 \   'constants': {
 \   },
 \   'properties': {
@@ -66,7 +68,8 @@ call extend(g:php_builtin_classes, {
 \     'app': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \},
-\'Yaf_Bootstrap_Abstract': {
+\'yaf_bootstrap_abstract': {
+\   'name': 'Yaf_Bootstrap_Abstract',
 \   'constants': {
 \   },
 \   'properties': {
@@ -78,7 +81,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Config_Abstract': {
+\'yaf_config_abstract': {
+\   'name': 'Yaf_Config_Abstract',
 \   'constants': {
 \   },
 \   'properties': {
@@ -96,7 +100,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Config_Ini': {
+\'yaf_config_ini': {
+\   'name': 'Yaf_Config_Ini',
 \   'constants': {
 \   },
 \   'properties': {
@@ -126,7 +131,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Config_Simple': {
+\'yaf_config_simple': {
+\   'name': 'Yaf_Config_Simple',
 \   'constants': {
 \   },
 \   'properties': {
@@ -157,7 +163,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Controller_Abstract': {
+\'yaf_controller_abstract': {
+\   'name': 'Yaf_Controller_Abstract',
 \   'constants': {
 \   },
 \   'properties': {
@@ -192,7 +199,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Dispatcher': {
+\'yaf_dispatcher': {
+\   'name': 'Yaf_Dispatcher',
 \   'constants': {
 \   },
 \   'properties': {
@@ -239,7 +247,8 @@ call extend(g:php_builtin_classes, {
 \     'getInstance': { 'signature': 'void | Yaf_Dispatcher', 'return_type': 'Yaf_Dispatcher'},
 \   },
 \},
-\'Yaf_Exception_DispatchFailed': {
+\'yaf_exception_dispatchfailed': {
+\   'name': 'Yaf_Exception_DispatchFailed',
 \   'constants': {
 \   },
 \   'properties': {
@@ -253,7 +262,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception_LoadFailed_Action': {
+\'yaf_exception_loadfailed_action': {
+\   'name': 'Yaf_Exception_LoadFailed_Action',
 \   'constants': {
 \   },
 \   'properties': {
@@ -267,7 +277,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception_LoadFailed_Controller': {
+\'yaf_exception_loadfailed_controller': {
+\   'name': 'Yaf_Exception_LoadFailed_Controller',
 \   'constants': {
 \   },
 \   'properties': {
@@ -281,7 +292,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception_LoadFailed_Module': {
+\'yaf_exception_loadfailed_module': {
+\   'name': 'Yaf_Exception_LoadFailed_Module',
 \   'constants': {
 \   },
 \   'properties': {
@@ -295,7 +307,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception_LoadFailed_View': {
+\'yaf_exception_loadfailed_view': {
+\   'name': 'Yaf_Exception_LoadFailed_View',
 \   'constants': {
 \   },
 \   'properties': {
@@ -309,7 +322,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception_LoadFailed': {
+\'yaf_exception_loadfailed': {
+\   'name': 'Yaf_Exception_LoadFailed',
 \   'constants': {
 \   },
 \   'properties': {
@@ -323,7 +337,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception_RouterFailed': {
+\'yaf_exception_routerfailed': {
+\   'name': 'Yaf_Exception_RouterFailed',
 \   'constants': {
 \   },
 \   'properties': {
@@ -337,7 +352,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception_StartupError': {
+\'yaf_exception_startuperror': {
+\   'name': 'Yaf_Exception_StartupError',
 \   'constants': {
 \   },
 \   'properties': {
@@ -351,7 +367,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception_TypeError': {
+\'yaf_exception_typeerror': {
+\   'name': 'Yaf_Exception_TypeError',
 \   'constants': {
 \   },
 \   'properties': {
@@ -365,7 +382,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Exception': {
+\'yaf_exception': {
+\   'name': 'Yaf_Exception',
 \   'constants': {
 \   },
 \   'properties': {
@@ -391,7 +409,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Loader': {
+\'yaf_loader': {
+\   'name': 'Yaf_Loader',
 \   'constants': {
 \   },
 \   'properties': {
@@ -420,7 +439,8 @@ call extend(g:php_builtin_classes, {
 \     'import': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \},
-\'Yaf_Plugin_Abstract': {
+\'yaf_plugin_abstract': {
+\   'name': 'Yaf_Plugin_Abstract',
 \   'constants': {
 \   },
 \   'properties': {
@@ -439,7 +459,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Registry': {
+\'yaf_registry': {
+\   'name': 'Yaf_Registry',
 \   'constants': {
 \   },
 \   'properties': {
@@ -459,7 +480,8 @@ call extend(g:php_builtin_classes, {
 \     'set': { 'signature': 'string $name, string $value | bool', 'return_type': 'bool'},
 \   },
 \},
-\'Yaf_Request_Abstract': {
+\'yaf_request_abstract': {
+\   'name': 'Yaf_Request_Abstract',
 \   'constants': {
 \     'SCHEME_HTTP': 'http',
 \     'SCHEME_HTTPS': 'https',
@@ -513,7 +535,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Request_Http': {
+\'yaf_request_http': {
+\   'name': 'Yaf_Request_Http',
 \   'constants': {
 \   },
 \   'properties': {
@@ -562,7 +585,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Request_Simple': {
+\'yaf_request_simple': {
+\   'name': 'Yaf_Request_Simple',
 \   'constants': {
 \     'SCHEME_HTTP': 'http',
 \     'SCHEME_HTTPS': 'https',
@@ -613,7 +637,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Response_Abstract': {
+\'yaf_response_abstract': {
+\   'name': 'Yaf_Response_Abstract',
 \   'constants': {
 \     'DEFAULT_BODY': '"content"',
 \   },
@@ -644,7 +669,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Route_Interface': {
+\'yaf_route_interface': {
+\   'name': 'Yaf_Route_Interface',
 \   'constants': {
 \   },
 \   'properties': {
@@ -657,7 +683,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Route_Map': {
+\'yaf_route_map': {
+\   'name': 'Yaf_Route_Map',
 \   'constants': {
 \   },
 \   'properties': {
@@ -673,7 +700,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Route_Regex': {
+\'yaf_route_regex': {
+\   'name': 'Yaf_Route_Regex',
 \   'constants': {
 \   },
 \   'properties': {
@@ -691,7 +719,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Route_Rewrite': {
+\'yaf_route_rewrite': {
+\   'name': 'Yaf_Route_Rewrite',
 \   'constants': {
 \   },
 \   'properties': {
@@ -708,7 +737,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Route_Simple': {
+\'yaf_route_simple': {
+\   'name': 'Yaf_Route_Simple',
 \   'constants': {
 \   },
 \   'properties': {
@@ -725,7 +755,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Route_Static': {
+\'yaf_route_static': {
+\   'name': 'Yaf_Route_Static',
 \   'constants': {
 \   },
 \   'properties': {
@@ -739,7 +770,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Route_Supervar': {
+\'yaf_route_supervar': {
+\   'name': 'Yaf_Route_Supervar',
 \   'constants': {
 \   },
 \   'properties': {
@@ -754,7 +786,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Router': {
+\'yaf_router': {
+\   'name': 'Yaf_Router',
 \   'constants': {
 \   },
 \   'properties': {
@@ -775,7 +808,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_Session': {
+\'yaf_session': {
+\   'name': 'Yaf_Session',
 \   'constants': {
 \   },
 \   'properties': {
@@ -812,7 +846,8 @@ call extend(g:php_builtin_classes, {
 \     'getInstance': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
 \},
-\'Yaf_View_Interface': {
+\'yaf_view_interface': {
+\   'name': 'Yaf_View_Interface',
 \   'constants': {
 \   },
 \   'properties': {
@@ -829,7 +864,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'Yaf_View_Simple': {
+\'yaf_view_simple': {
+\   'name': 'Yaf_View_Simple',
 \   'constants': {
 \   },
 \   'properties': {

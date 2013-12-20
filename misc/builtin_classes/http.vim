@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'HttpDeflateStream': {
+\'httpdeflatestream': {
+\   'name': 'HttpDeflateStream',
 \   'constants': {
 \   },
 \   'properties': {
@@ -16,7 +17,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HttpInflateStream': {
+\'httpinflatestream': {
+\   'name': 'HttpInflateStream',
 \   'constants': {
 \   },
 \   'properties': {
@@ -33,7 +35,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HttpMessage': {
+\'httpmessage': {
+\   'name': 'HttpMessage',
 \   'constants': {
 \   },
 \   'properties': {
@@ -75,7 +78,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HttpQueryString': {
+\'httpquerystring': {
+\   'name': 'HttpQueryString',
 \   'constants': {
 \   },
 \   'properties': {
@@ -95,7 +99,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HttpRequest': {
+\'httprequest': {
+\   'name': 'HttpRequest',
 \   'constants': {
 \   },
 \   'properties': {
@@ -159,7 +164,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HttpRequestPool': {
+\'httprequestpool': {
+\   'name': 'HttpRequestPool',
 \   'constants': {
 \   },
 \   'properties': {
@@ -181,7 +187,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'HttpResponse': {
+\'httpresponse': {
+\   'name': 'HttpResponse',
 \   'constants': {
 \   },
 \   'properties': {

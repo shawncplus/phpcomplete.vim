@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'CURLFile': {
+\'curlfile': {
+\   'name': 'CURLFile',
 \   'constants': {
 \   },
 \   'properties': {

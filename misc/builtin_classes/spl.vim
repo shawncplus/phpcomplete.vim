@@ -1,5 +1,6 @@
 call extend(g:php_builtin_classes, {
-\'AppendIterator': {
+\'appenditerator': {
+\   'name': 'AppendIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -21,7 +22,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ArrayIterator': {
+\'arrayiterator': {
+\   'name': 'ArrayIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -57,7 +59,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ArrayObject': {
+\'arrayobject': {
+\   'name': 'ArrayObject',
 \   'constants': {
 \     'STD_PROP_LIST': '1',
 \     'ARRAY_AS_PROPS': '2',
@@ -93,7 +96,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'BadFunctionCallException': {
+\'badfunctioncallexception': {
+\   'name': 'BadFunctionCallException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -118,7 +122,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'BadMethodCallException': {
+\'badmethodcallexception': {
+\   'name': 'BadMethodCallException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -143,7 +148,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CachingIterator': {
+\'cachingiterator': {
+\   'name': 'CachingIterator',
 \   'constants': {
 \     'CALL_TOSTRING': '1',
 \     'CATCH_GET_CHILD': '16',
@@ -178,7 +184,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'CallbackFilterIterator': {
+\'callbackfilteriterator': {
+\   'name': 'CallbackFilterIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -198,7 +205,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DirectoryIterator': {
+\'directoryiterator': {
+\   'name': 'DirectoryIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -239,7 +247,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'DomainException': {
+\'domainexception': {
+\   'name': 'DomainException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -264,7 +273,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'EmptyIterator': {
+\'emptyiterator': {
+\   'name': 'EmptyIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -281,7 +291,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'FilesystemIterator': {
+\'filesystemiterator': {
+\   'name': 'FilesystemIterator',
 \   'constants': {
 \     'CURRENT_AS_PATHNAME': '32',
 \     'CURRENT_AS_FILEINFO': '0',
@@ -335,7 +346,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'FilterIterator': {
+\'filteriterator': {
+\   'name': 'FilterIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -355,7 +367,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'GlobIterator': {
+\'globiterator': {
+\   'name': 'GlobIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -375,7 +388,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'InfiniteIterator': {
+\'infiniteiterator': {
+\   'name': 'InfiniteIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -394,7 +408,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'InvalidArgumentException': {
+\'invalidargumentexception': {
+\   'name': 'InvalidArgumentException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -419,7 +434,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'IteratorIterator': {
+\'iteratoriterator': {
+\   'name': 'IteratorIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -438,7 +454,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'LengthException': {
+\'lengthexception': {
+\   'name': 'LengthException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -463,7 +480,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'LimitIterator': {
+\'limititerator': {
+\   'name': 'LimitIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -484,7 +502,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'LogicException': {
+\'logicexception': {
+\   'name': 'LogicException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -509,7 +528,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'MultipleIterator': {
+\'multipleiterator': {
+\   'name': 'MultipleIterator',
 \   'constants': {
 \     'MIT_NEED_ANY': '0',
 \     'MIT_NEED_ALL': '1',
@@ -537,7 +557,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'NoRewindIterator': {
+\'norewinditerator': {
+\   'name': 'NoRewindIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -556,7 +577,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'OutOfBoundsException': {
+\'outofboundsexception': {
+\   'name': 'OutOfBoundsException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -581,7 +603,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'OutOfRangeException': {
+\'outofrangeexception': {
+\   'name': 'OutOfRangeException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -606,7 +629,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'OverflowException': {
+\'overflowexception': {
+\   'name': 'OverflowException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -631,7 +655,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'ParentIterator': {
+\'parentiterator': {
+\   'name': 'ParentIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -649,7 +674,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RangeException': {
+\'rangeexception': {
+\   'name': 'RangeException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -674,7 +700,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveArrayIterator': {
+\'recursivearrayiterator': {
+\   'name': 'RecursiveArrayIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -712,7 +739,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveCachingIterator': {
+\'recursivecachingiterator': {
+\   'name': 'RecursiveCachingIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -743,7 +771,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveCallbackFilterIterator': {
+\'recursivecallbackfilteriterator': {
+\   'name': 'RecursiveCallbackFilterIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -759,7 +788,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveDirectoryIterator': {
+\'recursivedirectoryiterator': {
+\   'name': 'RecursiveDirectoryIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -782,7 +812,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveFilterIterator': {
+\'recursivefilteriterator': {
+\   'name': 'RecursiveFilterIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -804,7 +835,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveIteratorIterator': {
+\'recursiveiteratoriterator': {
+\   'name': 'RecursiveIteratorIterator',
 \   'constants': {
 \     'LEAVES_ONLY': '0',
 \     'SELF_FIRST': '1',
@@ -838,7 +870,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveRegexIterator': {
+\'recursiveregexiterator': {
+\   'name': 'RecursiveRegexIterator',
 \   'constants': {
 \   },
 \   'properties': {
@@ -861,7 +894,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RecursiveTreeIterator': {
+\'recursivetreeiterator': {
+\   'name': 'RecursiveTreeIterator',
 \   'constants': {
 \     'BYPASS_CURRENT': '4',
 \     'BYPASS_KEY': '8',
@@ -903,7 +937,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RegexIterator': {
+\'regexiterator': {
+\   'name': 'RegexIterator',
 \   'constants': {
 \     'MATCH': '0',
 \     'GET_MATCH': '1',
@@ -936,7 +971,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'RuntimeException': {
+\'runtimeexception': {
+\   'name': 'RuntimeException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -961,7 +997,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplDoublyLinkedList': {
+\'spldoublylinkedlist': {
+\   'name': 'SplDoublyLinkedList',
 \   'constants': {
 \   },
 \   'properties': {
@@ -996,7 +1033,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplFileInfo': {
+\'splfileinfo': {
+\   'name': 'SplFileInfo',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1037,7 +1075,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplFileObject': {
+\'splfileobject': {
+\   'name': 'SplFileObject',
 \   'constants': {
 \     'DROP_NEW_LINE': '1',
 \     'READ_AHEAD': '2',
@@ -1111,7 +1150,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplFixedArray': {
+\'splfixedarray': {
+\   'name': 'SplFixedArray',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1139,7 +1179,8 @@ call extend(g:php_builtin_classes, {
 \     'fromArray': { 'signature': 'array $array [, bool $save_indexes = true] | SplFixedArray', 'return_type': 'SplFixedArray'},
 \   },
 \},
-\'SplHeap': {
+\'splheap': {
+\   'name': 'SplHeap',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1164,7 +1205,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplMaxHeap': {
+\'splmaxheap': {
+\   'name': 'SplMaxHeap',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1188,7 +1230,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplMinHeap': {
+\'splminheap': {
+\   'name': 'SplMinHeap',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1212,7 +1255,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplObjectStorage': {
+\'splobjectstorage': {
+\   'name': 'SplObjectStorage',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1245,7 +1289,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplPriorityQueue': {
+\'splpriorityqueue': {
+\   'name': 'SplPriorityQueue',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1271,7 +1316,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplQueue': {
+\'splqueue': {
+\   'name': 'SplQueue',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1308,7 +1354,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplStack': {
+\'splstack': {
+\   'name': 'SplStack',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1343,7 +1390,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'SplTempFileObject': {
+\'spltempfileobject': {
+\   'name': 'SplTempFileObject',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1386,7 +1434,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'UnderflowException': {
+\'underflowexception': {
+\   'name': 'UnderflowException',
 \   'constants': {
 \   },
 \   'properties': {
@@ -1411,7 +1460,8 @@ call extend(g:php_builtin_classes, {
 \   'static_methods': {
 \   },
 \},
-\'UnexpectedValueException': {
+\'unexpectedvalueexception': {
+\   'name': 'UnexpectedValueException',
 \   'constants': {
 \   },
 \   'properties': {
