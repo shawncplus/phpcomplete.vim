@@ -185,6 +185,10 @@ function extract_class_name($xpath) {
     if (stripos(trim($title->textContent), 'interface') === 0) {
         $is_interface = true;
     }
+    $title2 = $xpath->query('//div[@class="reference"]/h1[@class="title"]')->item(0);
+    if (preg_match('/interface$/i', trim($title2->textContent))) {
+        $is_interface = true;
+    }
     return array($classname, $is_interface);
 }
 

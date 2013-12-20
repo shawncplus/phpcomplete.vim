@@ -121,7 +121,7 @@ let g:phpcomplete_active_class_extensions = [
 			\'predefined_exceptions', 'predefined_interfaces_and_classes', 'reflection', 'sessions', 'simplexml', 'snmp', 'soap', 'solr', 'sphinx',
 			\'spl', 'sqlite3', 'streams', 'tidy', 'varnish', 'xmlreader', 'xsl', 'zip']
 let g:phpcomplete_active_interface_extensions = [
-			\'json', 'predefined_interfaces_and_classes', 'spl']
+			\'json', 'predefined_interfaces_and_classes', 'spl', 'date_time', 'reflection']
 let g:phpcomplete_active_constant_extensions = [
 			\'apc', 'apd', 'arrays', 'calendar', 'classkit', 'command_line_usage', 'common', 'curl', 'date_time', 'directories', 'dom', 'error_handling', 'exif',
 			\'fileinfo', 'filesystem', 'filter', 'ftp', 'gd', 'geoip', 'gmp', 'handling_file_uploads', 'hash', 'iconv', 'iis', 'imagemagick', 'imap',
