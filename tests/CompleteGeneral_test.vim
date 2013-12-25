@@ -150,7 +150,7 @@ fun! TestCase_completes_builtin_class_names() " {{{
                 \ res)
 endf " }}}
 
-fun! TestCase_completes_builtin_functions_when_in_namespace_and_base_starts_with_slash() " {{{
+fun! TestCase_completes_builtin_functions_when_in_namespace() " {{{
     call SetUp()
 
     " the filter_* one should not be picked up
@@ -160,14 +160,22 @@ fun! TestCase_completes_builtin_functions_when_in_namespace_and_base_starts_with
                 \ 'filter_var(': 'mixed $variable [, int $filter = FILTER_DEFAULT [, mixed $options]] | mixed',
                 \ }
 
+    " should find completions when base prefixed with \
     let res = phpcomplete#CompleteGeneral('\array_', 'SomeNameSpace', {})
     call VUAssertEquals([
                 \ {'word': '\array_flip(',    'info': '\array_flip(array $trans | array',     'menu': 'array $trans | array',  'kind': 'f'},
                 \ {'word': '\array_product(', 'info': '\array_product(array $array | number', 'menu': 'array $array | number', 'kind': 'f'}],
                 \ res)
+
+    " should find completions even without \ in the beginning of base
+    let res = phpcomplete#CompleteGeneral('array_', 'SomeNameSpace', {})
+    call VUAssertEquals([
+                \ {'word': 'array_flip(',    'info': 'array_flip(array $trans | array',     'menu': 'array $trans | array',  'kind': 'f'},
+                \ {'word': 'array_product(', 'info': 'array_product(array $array | number', 'menu': 'array $array | number', 'kind': 'f'}],
+                \ res)
 endf " }}}
 
-fun! TestCase_completes_builtin_constants_when_in_namespace_and_base_starts_with_slash() " {{{
+fun! TestCase_completes_builtin_constants_when_in_namespace() " {{{
     call SetUp()
 
     " the FILE_* ones should not be picked up
@@ -178,11 +186,20 @@ fun! TestCase_completes_builtin_constants_when_in_namespace_and_base_starts_with
                 \ 'FILTER_DEFAULT': '',
                 \ }
 
+    " should find completions when base prefixed with \
     let res = phpcomplete#CompleteGeneral('\FILTER_', 'SomeNameSpace', {})
     call VUAssertEquals([
                 \ {'word': '\FILTER_CALLBACK', 'kind': 'd', 'info': '\FILTER_CALLBACK - builtin', 'menu': ' - builtin'},
                 \ {'word': '\FILTER_DEFAULT', 'kind': 'd', 'info': '\FILTER_DEFAULT - builtin', 'menu': ' - builtin'}],
                 \ res)
+
+    " should find completions even without \ in the beginning of base
+    let res = phpcomplete#CompleteGeneral('FILTER_', 'SomeNameSpace', {})
+    call VUAssertEquals([
+                \ {'word': 'FILTER_CALLBACK', 'kind': 'd', 'info': 'FILTER_CALLBACK - builtin', 'menu': ' - builtin'},
+                \ {'word': 'FILTER_DEFAULT', 'kind': 'd', 'info': 'FILTER_DEFAULT - builtin', 'menu': ' - builtin'}],
+                \ res)
+
 endf " }}}
 
 fun! TestCase_doesnt_complete_keywords_when_theres_a_leading_slash() " {{{
