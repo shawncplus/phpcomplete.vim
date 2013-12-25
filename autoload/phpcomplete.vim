@@ -505,24 +505,8 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 	let builtin_interfaces = {}
 	let builtin_functions  = {}
 	let builtin_keywords   = {}
+	let base = substitute(a:base, '^\', '', '')
 	if a:current_namespace == '\' || (a:base =~ '^\\' && a:base =~ '^\\[^\\]*$')
-		let base = substitute(a:base, '^\', '', '')
-
-		" Prepare list of constants from built-in constants
-		for [constant, info] in items(g:php_constants)
-			if constant =~# '^'.base
-				let builtin_constants[leading_slash.constant] = info
-			endif
-		endfor
-
-		if leading_slash == '' " keywords should not be completed when base starts with '\'
-			" Treat keywords as constants
-			for [constant, info] in items(g:php_keywords)
-				if constant =~? '^'.a:base
-					let builtin_keywords[constant] = info
-				endif
-			endfor
-		endif
 
 		" Add builtin class names
 		for [classname, info] in items(g:php_builtin_classnames)
@@ -535,13 +519,29 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 				let builtin_interfaces[leading_slash.classname] = info
 			endif
 		endfor
+	endif
 
-		for [function_name, info] in items(g:php_builtin_functions)
-			if function_name =~? '^'.base
-				let builtin_functions[leading_slash.function_name] = info
+	" Prepare list of constants from built-in constants
+	for [constant, info] in items(g:php_constants)
+		if constant =~# '^'.base
+			let builtin_constants[leading_slash.constant] = info
+		endif
+	endfor
+
+	if leading_slash == '' " keywords should not be completed when base starts with '\'
+		" Treat keywords as constants
+		for [constant, info] in items(g:php_keywords)
+			if constant =~? '^'.a:base
+				let builtin_keywords[constant] = info
 			endif
 		endfor
 	endif
+
+	for [function_name, info] in items(g:php_builtin_functions)
+		if function_name =~? '^'.base
+			let builtin_functions[leading_slash.function_name] = info
+		endif
+	endfor
 
 	" All constants
 	call extend(int_constants, ext_constants)
