@@ -168,7 +168,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		let pos = getpos('.')
 		let phpbegin = searchpairpos('<?', '', '?>', 'bWn',
 				\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\|comment"')
-		let phpend   = searchpairpos('<?', '', '?>', 'Wn',
+		let phpend = searchpairpos('<?', '', '?>', 'Wn',
 				\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\|comment"')
 
 		if phpbegin == [0,0] && phpend == [0,0]
@@ -938,13 +938,13 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 	endif
 
 	" limit based on context to static or normal methods
-    let static_con = ''
+	let static_con = ''
 	if a:context =~ '::$' && a:context !~? 'parent::$'
 		if g:phpcomplete_relax_static_constraint != 1
-            let required_modifiers += ['static']
+			let required_modifiers += ['static']
 		endif
 	elseif a:context =~ '->$'
-        let prohibited_modifiers += ['static']
+		let prohibited_modifiers += ['static']
 	endif
 
 	let all_function = filter(deepcopy(a:sccontent),
