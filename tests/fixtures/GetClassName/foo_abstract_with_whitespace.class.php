@@ -8,6 +8,7 @@
     {
         public function foo() {
             $this->
+            ;
             self::
         }
     }

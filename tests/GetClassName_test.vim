@@ -74,8 +74,8 @@ fun! TestCase_finds_abstract_classes()
     let classname = phpcomplete#GetClassName(10, '$this->', '\', {})
     call VUAssertEquals('FooAbstract', classname)
 
-    exe ':11'
-    let classname = phpcomplete#GetClassName(11, 'self::', '\', {})
+    exe ':12'
+    let classname = phpcomplete#GetClassName(12, 'self::', '\', {})
     call VUAssertEquals('FooAbstract', classname)
 
     silent! bw! %

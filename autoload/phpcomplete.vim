@@ -1497,7 +1497,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				return ''
 			endif
 
-			if line =~? '\(abstract\s\+\|final\s\+\)*class'
+			if line =~? '\v^\s*(abstract\s+|final\s+)*\s*class'
 				let class_name = matchstr(line, '\c\s*class\s*\zs'.class_name_pattern.'\ze')
 				let extended_class = matchstr(line, '\cclass\s\+'.class_name_pattern.'\s\+extends\s\+\zs'.class_name_pattern.'\ze')
 
