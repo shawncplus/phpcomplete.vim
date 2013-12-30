@@ -1173,6 +1173,7 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 
 	" will hold the first place where a coma could have ended the match
 	let first_coma_break_pos = -1
+	let next_char = len(line) < col_number ? line[col_number + 1] : ''
 
 	while !(line_number == 1 && col_number == 1)
 		if current_char != -1
