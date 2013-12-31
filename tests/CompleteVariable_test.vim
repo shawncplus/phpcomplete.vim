@@ -37,10 +37,10 @@ fun! TestCase_complete_variables_built_in_global_variable()
     " fill with test data '$this' is in the list to test that filtering
     " actually happens to the '$_' base
     let g:php_builtin_vars = {
-			\ '$_GET':'',
-			\ '$_POST':'',
-            \ '$this':'',
-            \ }
+                \ '$_GET':'',
+                \ '$_POST':'',
+                \ '$this':'',
+                \ }
 
     let res = phpcomplete#CompleteVariable('$_')
     call VUAssertEquals([

@@ -348,10 +348,10 @@ fun! TestCase_returns_static_function_calls_retun_type_with_namespaces()
 endf
 
 fun! TestCase_resolves_call_chains_return_type_with_this()
-	let g:php_builtin_classes = {}
-	let g:php_builtin_classnames = {}
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
 
-	let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_method_chains.php"
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_method_chains.php"
     below 1new
     exe ":silent! edit ".path
 
@@ -371,11 +371,11 @@ fun! TestCase_resolves_call_chains_return_type_with_this()
 endf
 
 fun! TestCase_resolves_call_chains_return_type_with_tags()
-	let g:php_builtin_classes = {}
-	let g:php_builtin_classnames = {}
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
 
     exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassName/tags_inheritance'
-	let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_inheritance_level1.php"
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_inheritance_level1.php"
     below 1new
     exe ":silent! edit ".path
 
@@ -395,10 +395,10 @@ fun! TestCase_resolves_call_chains_return_type_with_tags()
 endf
 
 fun! TestCase_resolves_call_chains_return_type_with_php5_4_new()
-	let g:php_builtin_classes = {}
-	let g:php_builtin_classnames = {}
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
 
-	let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_new_oneline_chain.php"
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_new_oneline_chain.php"
 
     below 1new
     exe ":silent! edit ".path
@@ -411,10 +411,10 @@ fun! TestCase_resolves_call_chains_return_type_with_php5_4_new()
 endf
 
 fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detectable()
-	let g:php_builtin_classes = {}
-	let g:php_builtin_classnames = {}
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
 
-	let path = expand('%:p:h')."/"."fixtures/GetClassName/call_chains.php"
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/call_chains.php"
 
     below 1new
     exe ":silent! edit ".path
