@@ -1481,6 +1481,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
 	let function_name_pattern = '[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*'
+	let varialbe_name_pattern = '\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*'
 
 	let classname_candidate = ''
 	let class_candidate_namespace = a:current_namespace
@@ -1532,6 +1533,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 		if object_is_array
 			let object = matchstr(object, '\v^[^[]+')
 		endif
+		let object = matchstr(object, varialbe_name_pattern)
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1
