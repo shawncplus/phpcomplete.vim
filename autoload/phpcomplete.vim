@@ -1486,7 +1486,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
 	let function_name_pattern = '[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*'
-	let varialbe_name_pattern = '\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*'
+	let variable_name_pattern = '\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*'
 
 	let classname_candidate = ''
 	let class_candidate_namespace = a:current_namespace
@@ -1535,10 +1535,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 		" extract the variable name from the context
 		let object = methodstack[0]
 		let object_is_array = (object =~ '\v^[^[]+\[' ? 1 : 0)
-		if object_is_array
-			let object = matchstr(object, '\v^[^[]+')
-		endif
-		let object = matchstr(object, varialbe_name_pattern)
+		let object = matchstr(object, variable_name_pattern)
 
 		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
 		let i = 1 " start from the current line - 1
@@ -1637,7 +1634,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					endif
 				endif
 			endif
-			if line =~# '^\s*'.object.'\s*=&\?\s*\$[a-zA-Z_0-9\x7f-\xff]'
+			if line =~# '^\s*'.object.'\s*=&\?\s*'.variable_name_pattern
 				let tailing_semicolon = match(line, ';\s*$')
 				let tailing_semicolon = tailing_semicolon != -1 ? tailing_semicolon : strlen(getline(a:start_line - i))
 				let prev_context = phpcomplete#GetCurrentInstruction(a:start_line - i, tailing_semicolon - 1, b:phpbegin)
