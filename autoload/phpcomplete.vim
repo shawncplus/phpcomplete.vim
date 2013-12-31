@@ -1204,6 +1204,11 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 			break
 		endif
 
+		" break on statements as "return" or "throws"
+		if synIDName == 'phpStatement' || synIDName == 'phpException'
+			break
+		endif
+
 		" if the current char should be considered
 		if current_char != '' && parent_depth >= 0 && bracket_depth >= 0 && synIDName !~? 'comment\|string'
 			" break if we are on a "naked" stop_char (operators, colon, openparent...)

@@ -129,5 +129,15 @@ fun! TestCase_returns_instuction_string()
     call VUAssertEquals(
                 \ 'DateTime::createFromFormat()->',
                 \ res)
+    call cursor(91, 13)
+    let res = phpcomplete#GetCurrentInstruction(91, 13, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
+    call cursor(93, 14)
+    let res = phpcomplete#GetCurrentInstruction(93, 14, [1, 1])
+    call VUAssertEquals(
+                \ '$foo->',
+                \ res)
     silent! bw! %
 endf
