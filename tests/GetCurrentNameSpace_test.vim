@@ -32,6 +32,7 @@ fun! TestCase_returns_imported_namespaces_and_classes_with_their_info_from_tags(
 
     let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
     call VUAssertEquals({
+                \ 'Foo': {'cmd': '/^class Foo {$/', 'static': 0, 'name': 'Foo', 'namespace': 'NS1', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/common/namespaced_foo.php'},
                 \ 'ArrayAccess': {'name': 'ArrayAccess', 'kind': ''},
                 \ 'AO': {'name': 'ArrayObject', 'kind': ''},
                 \ 'DateTimeZone': {'name': 'DateTimeZone', 'kind': ''},
@@ -42,4 +43,20 @@ fun! TestCase_returns_imported_namespaces_and_classes_with_their_info_from_tags(
                 \ 'E': {'name': 'Exception', 'kind': ''}},
                 \ imports)
 
+    " with old style tags, no namespace matches will be returned and the first
+    " and the class tags are matched regardeless of their namespace while
+    " namespace import just not recognized with the kind 'n' and filename
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/common/old_style_namespaced_foo_tags'
+    let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
+    call VUAssertEquals({
+                \ 'Foo': {'cmd': '/^class Foo {$/', 'static': 0, 'name': 'Foo', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/common/fixtures/common/namespaced_foo.php'},
+                \ 'ArrayAccess': {'name': 'ArrayAccess', 'kind': ''},
+                \ 'AO': {'name': 'ArrayObject', 'kind': ''},
+                \ 'DateTimeZone': {'name': 'DateTimeZone', 'kind': ''},
+                \ 'LE': {'name': 'LogicException', 'kind': ''},
+                \ 'DateTime': {'name': 'DateTime', 'kind': ''},
+                \ 'SUBNS': {'name': 'SUBNS', 'namespace': 'NS1', 'kind': '', 'builtin': 0},
+                \ 'EE': {'name': 'ErrorException', 'kind': ''},
+                \ 'E': {'name': 'Exception', 'kind': ''}},
+                \ imports)
 endf

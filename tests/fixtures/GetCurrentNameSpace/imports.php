@@ -12,4 +12,6 @@ use Exception as E,
 
 use NS1\SUBNS; // importing namespaces, the name will be the segment after the last \
 
+use NS1\Foo; // imported class
+
 // lets pretend we are here when completing

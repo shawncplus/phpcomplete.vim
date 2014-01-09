@@ -31,7 +31,6 @@ endf
 
 fun! TestCase_matches_classname_from_imported_names()
     call SetUp()
-    exe ':set tags='.expand('%:p:h').'/'.'fixtures/common/namespaced_foo_tags'
 
     " imported builtin
     let [classname, namespace] = phpcomplete#ExpandClassName('AO', 'Mahou', {'AO': {'name': 'ArrayObject', 'kind': 'c', 'builtin': 1,}})

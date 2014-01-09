@@ -71,8 +71,16 @@ endf
 
 fun! TestCase_completes_namespaces_and_classes_from_tags_when_a_leading_namespace_is_already_typed_in()
     call SetUp()
-    exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteUse/tags'
 
+    exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteUse/tags'
+    let res = phpcomplete#CompleteUse('Assetic\Asset\Ba')
+    call VUAssertEquals([
+                \ {'word': 'Assetic\Asset\BaseAsset', 'menu': 'fixtures/CompleteUse/foo.php', 'info': 'fixtures/CompleteUse/foo.php', 'kind': 'c'}],
+                \ res)
+
+    " should complete tags matching the word after the last \ when no
+    " namespaces found in tags file
+    exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteUse/old_style_tags'
     let res = phpcomplete#CompleteUse('Assetic\Asset\Ba')
     call VUAssertEquals([
                 \ {'word': 'Assetic\Asset\BaseAsset', 'menu': 'fixtures/CompleteUse/foo.php', 'info': 'fixtures/CompleteUse/foo.php', 'kind': 'c'}],

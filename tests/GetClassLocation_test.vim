@@ -40,13 +40,25 @@ endf
 
 fun! TestCase_return_class_location_from_tags()
     call SetUp()
-    exe ':set tags='.expand('%:p:h').'/'.'fixtures/GetClassLocation/tags'
 
+    let tags_path = expand('%:p:h').'/'.'fixtures/GetClassLocation/tags'
+    let old_style_tags_path = expand('%:p:h').'/'.'fixtures/GetClassLocation/old_style_tags'
     let path = expand('%:p:h').'/'.'fixtures/GetClassLocation/empty.php'
+
+    exe ':set tags='.tags_path
     below 1new
     exe ":silent! edit ".path
     exe ':3'
 
+    let res = phpcomplete#GetClassLocation('Foo', '')
+    call VUAssertEquals('fixtures/GetClassLocation/foo.class.php', res)
+
+    let res = phpcomplete#GetClassLocation('FooInterface', '')
+    call VUAssertEquals('fixtures/GetClassLocation/foo.class.php', res)
+
+    " when there are no namespaces to match for the classes from the tags file
+    " should return the first class's location where the name matches
+    exe ':set tags='.old_style_tags_path
     let res = phpcomplete#GetClassLocation('Foo', '')
     call VUAssertEquals('fixtures/GetClassLocation/foo.class.php', res)
 
