@@ -48,8 +48,8 @@ Check out the **[wiki page about the patched ctags](https://github.com/shawncplu
 Enables completion for non-static methods when completing for static context (`::`).
 This generates `E_STRICT` level warning, but php calls these methods nontheless.
 
-**let g:phpcomplete\_complete\_for\_unknown\_classes = 1/0 [default 1]** <br>
-Enables completion of variables and functions in "everything under the sun" fassion
+**let g:phpcomplete\_complete\_for\_unknown\_classes = 1/0 [default 0]** <br>
+Enables completion of variables and functions in "everything under the sun" fashion
 when completing for an instance or static class context but the code can't tell the class
 or locate the file that it lives in.
 The completion list generated this way is only filtered by the completion base

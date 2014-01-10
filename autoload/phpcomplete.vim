@@ -9,7 +9,7 @@
 "			Enables completion for non-static methods when completing for static context (::).
 "			This generates E_STRICT level warning, but php calls these methods nontheless.
 "
-"		let g:phpcomplete_complete_for_unknown_classes = 1/0 [default 1]
+"		let g:phpcomplete_complete_for_unknown_classes = 1/0 [default 0]
 "			Enables completion of variables and functions in "everything under the sun" fashion
 "			when completing for an instance or static class context but the code can't tell the class
 "			or locate the file that it lives in.
@@ -79,7 +79,7 @@ if !exists('g:phpcomplete_relax_static_constraint')
 endif
 
 if !exists('g:phpcomplete_complete_for_unknown_classes')
-	let g:phpcomplete_complete_for_unknown_classes = 1
+	let g:phpcomplete_complete_for_unknown_classes = 0
 endif
 
 if !exists('g:phpcomplete_min_num_of_chars_for_namespace_completion')
