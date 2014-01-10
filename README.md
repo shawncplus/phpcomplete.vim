@@ -55,6 +55,12 @@ or locate the file that it lives in.
 The completion list generated this way is only filtered by the completion base
 and generally not much more accurate then simple keyword completion.
 
+**let g:phpcomplete\_search\_tags\_for\_variables = 1/0 [default 0]** <br>
+Enables use of tags when the plugin tries to find variables.
+When enabled the plugin will search for the variables in the tag files with kind 'v',
+lines like `$some_var = new Foo;` but these usually yield highly inaccurate results and
+can	be fairly slow.
+
 **let g:phpcomplete\_min\_num\_of\_chars\_for\_namespace\_completion = n [default 1]** *Requires [patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Patched-ctags)* <br>
 This option controls the number of characters the user needs to type before
 the tags will be searched for namespaces and classes in typed out namespaces in

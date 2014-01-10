@@ -16,6 +16,12 @@
 "			The completion list generated this way is only filtered by the completion base
 "			and generally not much more accurate then simple keyword completion.
 "
+"		let	g:phpcomplete_search_tags_for_variables = 1/0 [default 0]
+"			Enables use of tags when the plugin tries to find variables.
+"			When enabled the plugin will search for the variables in the tag files with kind 'v',
+"			lines like $some_var = new Foo; but these usually yield highly inaccurate results and
+"			can	be fairly slow.
+"
 "		let g:phpcomplete_min_num_of_chars_for_namespace_completion = n [default 1]
 "			This option controls the number of characters the user needs to type before
 "			the tags will be searched for namespaces and classes in typed out namespaces in
@@ -80,6 +86,10 @@ endif
 
 if !exists('g:phpcomplete_complete_for_unknown_classes')
 	let g:phpcomplete_complete_for_unknown_classes = 0
+endif
+
+if !exists('g:phpcomplete_search_tags_for_variables')
+	let g:phpcomplete_search_tags_for_variables = 0
 endif
 
 if !exists('g:phpcomplete_min_num_of_chars_for_namespace_completion')
@@ -771,21 +781,22 @@ function! phpcomplete#CompleteVariable(base) " {{{
 	call extend(int_vars, g:php_builtin_vars)
 
 	" ctags has support for PHP, use tags file for external variables
-	let ext_vars = {}
-	let tags = phpcomplete#GetTaglist('\C^'.substitute(a:base, '^\$', '', ''))
-	for tag in tags
-		if tag.kind ==? 'v'
-			let item = tag.name
-			let m_menu = ''
-			if tag.cmd =~? tag['name'].'\s*=\s*new\s\+'
-				let m_menu = matchstr(tag.cmd,
-							\ '\c=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+	if  g:phpcomplete_search_tags_for_variables
+		let ext_vars = {}
+		let tags = phpcomplete#GetTaglist('\C^'.substitute(a:base, '^\$', '', ''))
+		for tag in tags
+			if tag.kind ==? 'v'
+				let item = tag.name
+				let m_menu = ''
+				if tag.cmd =~? tag['name'].'\s*=\s*new\s\+'
+					let m_menu = matchstr(tag.cmd,
+								\ '\c=\s*new\s\+\zs[a-zA-Z_0-9\x7f-\xff]\+\ze')
+				endif
+				let ext_vars['$'.item] = m_menu
 			endif
-			let ext_vars['$'.item] = m_menu
-		endif
-	endfor
-
-	call extend(int_vars, ext_vars)
+		endfor
+		call extend(int_vars, ext_vars)
+	endif
 
 	for m in sort(keys(int_vars))
 		if m =~# '^\'.a:base
@@ -1712,16 +1723,18 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 		" OK, first way failed, now check tags file(s)
 		" This method is useless when local variables are not indexed by ctags and
 		" pretty inaccurate even if it is
-		let tags = phpcomplete#GetTaglist('^'.substitute(object, '^\$', '', ''))
-		if len(tags) == 0
-			return
-		else
-			for tag in tags
-				if tag.kind ==? 'v' && tag.cmd =~? '=\s*new\s\+\zs'.class_name_pattern.'\ze'
-					let classname = matchstr(tag.cmd, '=\s*new\s\+\zs'.class_name_pattern.'\ze')
-					return classname
-				endif
-			endfor
+		if g:phpcomplete_search_tags_for_variables
+			let tags = phpcomplete#GetTaglist('^'.substitute(object, '^\$', '', ''))
+			if len(tags) == 0
+				return
+			else
+				for tag in tags
+					if tag.kind ==? 'v' && tag.cmd =~? '=\s*new\s\+\zs'.class_name_pattern.'\ze'
+						let classname = matchstr(tag.cmd, '=\s*new\s\+\zs'.class_name_pattern.'\ze')
+						return classname
+					endif
+				endfor
+			endif
 		endif
 	endif
 endfunction
