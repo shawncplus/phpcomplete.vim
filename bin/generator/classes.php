@@ -251,22 +251,14 @@ function handle_class_const($xpath, $node, $file) {
     return $re;
 }
 
-function write_class_signatures_to_vim_hash($signatures, $outdir, $vim_varname) {
-    if (!is_dir($outdir)) {
-        mkdir($outdir);
-    }
-    $old_files = glob($outdir.'/*.vim');
-    array_map('unlink', $old_files);
-
+function write_class_signatures_to_vim_hash($signatures, $outpath, $keyname) {
+    $fd = fopen($outpath, 'a');
     foreach ($signatures as $extension_name => $classes) {
         if (empty($classes)) {
             continue;
         }
 
-        $outpath = $outdir.'/'.filenameize($extension_name).'.vim';
-        $fd = fopen($outpath, 'w');
-
-        fwrite($fd, "call extend($vim_varname, {\n");
+        fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."'] = {\n");
         foreach ($classes as $classname => $class_info) {
             fwrite($fd, "\\'".strtolower($classname)."': {\n");
 
@@ -304,8 +296,8 @@ function write_class_signatures_to_vim_hash($signatures, $outdir, $vim_varname) 
 
             fwrite($fd, "\\},\n");
         }
-        fwrite($fd, "\\})\n");
-        fclose($fd);
+        fwrite($fd, "\\}\n");
     }
+    fclose($fd);
 }
 

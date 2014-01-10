@@ -99,25 +99,17 @@ function handle_func_alias($xpath, $nodes, $file) {
     );
 }
 
-function write_function_signatures_to_vim_hash($signatures, $outdir) {
-    if (!is_dir($outdir)) {
-        mkdir($outdir);
-    }
-    $old_files = glob($outdir.'/*.vim');
-    array_map('unlink', $old_files);
-
+function write_function_signatures_to_vim_hash($signatures, $outpath, $keyname) {
+    $fd = fopen($outpath, 'a');
     foreach ($signatures as $extension_name => $functions) {
         if (empty($functions)) {
             continue;
         }
 
-        $outpath = $outdir.'/'.filenameize($extension_name).'.vim';
-        $fd = fopen($outpath, 'w');
-
         // weed out duplicates, (like nthmac) only keep the first occurance
         $functions = array_index_by_col($functions, 'name', false);
 
-        fwrite($fd, "call extend(g:php_builtin_functions, {\n");
+        fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."'] = {\n");
         foreach ($functions as $function) {
             if ($function['type'] == 'function') {
                 fwrite($fd, "\\ '{$function['name']}(': '".format_method_signature($function)."',\n");
@@ -128,7 +120,7 @@ function write_function_signatures_to_vim_hash($signatures, $outdir) {
                 exit;
             }
         }
-        fwrite($fd, "\\ })\n");
-        fclose($fd);
+        fwrite($fd, "\\ }\n");
     }
+    fclose($fd);
 }

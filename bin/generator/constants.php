@@ -77,26 +77,18 @@ function inject_class_constants(&$class_groups, $class_constant_groups, $generat
     }
 }
 
-function write_constant_names_to_vim_hash($constant_groups, $outdir) {
-    if (!is_dir($outdir)) {
-        mkdir($outdir);
-    }
-    $old_files = glob($outdir.'/*.vim');
-    array_map('unlink', $old_files);
-
+function write_constant_names_to_vim_hash($constant_groups, $outpath, $keyname) {
+    $fd = fopen($outpath, 'a');
     foreach ($constant_groups as $extension_name => $constants) {
         if (empty($constants)) {
             continue;
         }
 
-        $outpath = $outdir.'/'.filenameize($extension_name).'.vim';
-        $fd = fopen($outpath, 'w');
-
-        fwrite($fd, "call extend(g:php_constants, {\n");
+        fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."'] = {\n");
         foreach ($constants as $constant => $__not_used) {
             fwrite($fd, "\\ '{$constant}': '',\n");
         }
-        fwrite($fd, "\\ })\n");
-        fclose($fd);
+        fwrite($fd, "\\ }\n");
     }
+    fclose($fd);
 }

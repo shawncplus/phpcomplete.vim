@@ -2281,26 +2281,36 @@ endfunction
 " }}}
 
 function! phpcomplete#LoadData() " {{{
-
 " Keywords/reserved words, all other special things
 " Later it is possible to add some help to values, or type of defined variable
 runtime! misc/php_keywords.vim
 
+" One giant hash of all built-in function, class, interface and constant grouped by extension
+runtime! misc/builtin.vim
+
 " Built in functions
 let g:php_builtin_functions = {}
-call phpcomplete#LoadDataFiles('builtin_functions', g:phpcomplete_active_function_extensions)
+for ext in g:phpcomplete_active_function_extensions
+	call extend(g:php_builtin_functions, g:phpcomplete_builtin['functions'][ext])
+endfor
 
 " Built in classs
 let g:php_builtin_classes = {}
-call phpcomplete#LoadDataFiles('builtin_classes', g:phpcomplete_active_class_extensions)
+for ext in g:phpcomplete_active_class_extensions
+	call extend(g:php_builtin_classes, g:phpcomplete_builtin['classes'][ext])
+endfor
 
 " Built in interfaces
 let g:php_builtin_interfaces = {}
-call phpcomplete#LoadDataFiles('builtin_interfaces', g:phpcomplete_active_interface_extensions)
+for ext in g:phpcomplete_active_interface_extensions
+	call extend(g:php_builtin_interfaces, g:phpcomplete_builtin['interfaces'][ext])
+endfor
 
 " Built in constants
 let g:php_constants = {}
-call phpcomplete#LoadDataFiles('php_constants', g:phpcomplete_active_constant_extensions)
+for ext in g:phpcomplete_active_constant_extensions
+	call extend(g:php_constants, g:phpcomplete_builtin['constants'][ext])
+endfor
 
 " When the classname not found or found but the tags dosen't contain that
 " class we will try to complate any method of any builtin class. To speed up
@@ -2367,18 +2377,6 @@ let g:php_builtin_vars ={
 			\ '$this':'',
 			\ }
 " }}}
-endfunction
-" }}}
-
-function! phpcomplete#LoadDataFiles(dir, enabled_files) " {{{
-	let enabled_files = map(copy(a:enabled_files), 'v:val.".vim"')
-	let files = split(glob(s:script_path.'/../misc/'.a:dir.'/*.vim'), "\n")
-	for file in files
-		let basename = fnamemodify(file, ':t')
-		if index(enabled_files, basename) != -1
-			exec 'source '.file
-		endif
-	endfor
 endfunction
 " }}}
 

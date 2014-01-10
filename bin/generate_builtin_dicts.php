@@ -64,16 +64,27 @@ function main($argv){
     inject_class_constants($interfaces, $class_constants, false);
     inject_class_constants($classes, $class_constants, false);
 
-    write_function_signatures_to_vim_hash($functions, $argv[2].'/misc/builtin_functions/');
+    $outfile = $argv[2].'/misc/builtin.vim';
+    file_put_contents(
+        $outfile,
+        "let g:phpcomplete_builtin = {\n"
+        ."\ 'functions':{},\n"
+        ."\ 'classes':{},\n"
+        ."\ 'interfaces':{},\n"
+        ."\ 'constants':{},\n"
+        ."\ }\n"
+    );
+
+    write_function_signatures_to_vim_hash($functions, $outfile, 'functions');
     print "\nextracted ".array_sum(array_map(function($a){ return count($a); }, $functions))." built-in function";
 
-    write_class_signatures_to_vim_hash($classes, $argv[2].'/misc/builtin_classes/', 'g:php_builtin_classes');
+    write_class_signatures_to_vim_hash($classes, $outfile, 'classes');
     print "\nextracted ".array_sum(array_map(function($a){ return count($a); }, $classes))." built-in class";
 
-    write_class_signatures_to_vim_hash($interfaces, $argv[2].'/misc/builtin_interfaces/', 'g:php_builtin_interfaces');
+    write_class_signatures_to_vim_hash($interfaces, $outfile, 'interfaces');
     print "\nextracted ".array_sum(array_map(function($a){ return count($a); }, $interfaces))." built-in interface";
 
-    write_constant_names_to_vim_hash($constants, $argv[2].'/misc/php_constants/');
+    write_constant_names_to_vim_hash($constants, $outfile, 'constants');
     print "\nextracted ".array_sum(array_map(function($a){ return count($a); }, $constants))." built-in constants";
 
     return 0;

@@ -1,9 +1,0 @@
-call extend(g:php_constants, {
-\ 'PARAM_ISOLATION_LEVEL': '',
-\ 'PARAM_LOCK_TIMEOUT': '',
-\ 'PARAM_MAX_STRING_LENGTH': '',
-\ 'PARAM_AUTO_COMMIT': '',
-\ 'AUTO_INCREMENT': '',
-\ 'CUBRID_AUTOCOMMIT_FALSE': '',
-\ 'CUBRID_AUTOCOMMIT_TRUE': '',
-\ })
