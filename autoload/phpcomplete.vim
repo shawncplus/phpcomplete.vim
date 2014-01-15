@@ -2,6 +2,7 @@
 " Language:	PHP
 " Maintainer:	Mikolaj Machowski ( mikmach AT wp DOT pl )
 " Maintainer:	Shawn Biddle ( shawn AT shawnbiddle DOT com )
+" Maintainer:	Szabó Dávid ( complex857 AT gmail DOT com )
 "
 "	OPTIONS:
 "
