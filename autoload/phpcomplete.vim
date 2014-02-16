@@ -1673,6 +1673,8 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					endif
 				endif
 			endif
+
+			" assignment for the variable in question
 			if line =~# '^\s*'.object.'\s*=&\?\s*'.variable_name_pattern
 				let tailing_semicolon = match(line, ';\s*$')
 				let tailing_semicolon = tailing_semicolon != -1 ? tailing_semicolon : strlen(getline(a:start_line - i))
@@ -1690,6 +1692,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				break
 			endif
 
+			" foreach with the variable in question
 			if line =~? 'foreach\s*(.\{-}\s\+'.object.'\s*)'
 				let sub_context = matchstr(line, 'foreach\s*(\s*\zs.\{-}\ze\s\+as')
 				let prev_class = phpcomplete#GetClassName(a:start_line - i, sub_context, a:current_namespace, a:imports)
@@ -1707,6 +1710,20 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					let class_candidate_namespace = join(classname_parts[0:-2], '\')
 				else
 					let classname_candidate = prev_class
+					let class_candidate_namespace = '\'
+				endif
+				break
+			endif
+
+			" catch clause with the variable in question
+			if line =~? 'catch\s*(\zs'.class_name_pattern.'\ze\s\+'.object
+				let classname = matchstr(line, 'catch\s*(\zs'.class_name_pattern.'\ze\s\+'.object)
+				if stridx(classname, '\') != -1
+					let classname_parts = split(classname, '\\\+')
+					let classname_candidate = classname_parts[-1]
+					let class_candidate_namespace = join(classname_parts[0:-2], '\')
+				else
+					let classname_candidate = classname
 					let class_candidate_namespace = '\'
 				endif
 				break

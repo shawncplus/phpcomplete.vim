@@ -545,3 +545,21 @@ fun! TestCase_handles_parent_keyword()
 
     silent! bw! %
 endf
+
+fun! TestCase_catch_clause()
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/catch.php"
+
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':5'
+    let classname = phpcomplete#GetClassName(5, '$e->', '\', {})
+    call VUAssertEquals('Exception', classname)
+
+    exe ':11'
+    let classname = phpcomplete#GetClassName(11, '$e->', '\', {})
+    call VUAssertEquals('NS\Exception', classname)
+
+    silent! bw! %
+endf
