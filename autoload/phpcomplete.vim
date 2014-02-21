@@ -202,7 +202,9 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 			let b:compl_context = phpcomplete#GetCurrentInstruction(line('.'), col('.') - 2, phpbegin)
 
 			" chop of the "base" from the end of the current instruction
-			let b:compl_context = substitute(b:compl_context, '\s*\$\?\([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\)*$', '', '')
+			if a:base != ""
+				let b:compl_context = substitute(b:compl_context, '\s*\$\?\([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\)*$', '', '')
+			end
 
 			return start
 			" We can be also inside of phpString with HTML tags. Deal with
@@ -276,6 +278,9 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	elseif context =~? 'extends'
 		let kinds = context =~? 'class\s' ? ['c'] : ['i']
 		return phpcomplete#CompleteClassName(a:base, kinds, current_namespace, imports)
+	elseif context =~? 'class [a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
+		" special case when you've typed the class keyword and the name too, only extends and implements allowed there
+		return filter(['extends', 'implements'], 'stridx(v:val, a:base) == 0')
 	elseif context =~? 'new'
 		return phpcomplete#CompleteClassName(a:base, ['c'], current_namespace, imports)
 	endif
