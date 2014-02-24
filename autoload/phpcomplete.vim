@@ -201,11 +201,6 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 			let b:phpbegin = phpbegin
 			let b:compl_context = phpcomplete#GetCurrentInstruction(line('.'), col('.') - 2, phpbegin)
 
-			" chop of the "base" from the end of the current instruction
-			if a:base != ""
-				let b:compl_context = substitute(b:compl_context, '\s*\$\?\([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\)*$', '', '')
-			end
-
 			return start
 			" We can be also inside of phpString with HTML tags. Deal with
 			" it later (time, not lines).
@@ -227,7 +222,11 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	if exists("b:compl_context")
 		let context = b:compl_context
 		unlet! b:compl_context
-	endif
+		" chop of the "base" from the end of the current instruction
+		if a:base != ""
+			let context = substitute(context, '\s*\$\?\([a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\)*$', '', '')
+		end
+	end
 
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
 
