@@ -130,7 +130,7 @@ let g:phpcomplete_active_function_extensions = [
 let g:phpcomplete_active_class_extensions = [
 			\'apc', 'curl', 'date_time', 'directories', 'dom', 'imagemagick', 'libxml', 'memcache', 'memcached', 'mongo', 'mysqli', 'pdo', 'phar',
 			\'predefined_exceptions', 'predefined_interfaces_and_classes', 'reflection', 'sessions', 'simplexml', 'snmp', 'soap', 'solr', 'sphinx',
-			\'spl', 'sqlite3', 'streams', 'tidy', 'varnish', 'xmlreader', 'xsl', 'zip']
+			\'spl', 'sqlite3', 'streams', 'tidy', 'varnish', 'xmlreader', 'xmlwriter', 'xsl', 'zip']
 let g:phpcomplete_active_interface_extensions = [
 			\'json', 'predefined_interfaces_and_classes', 'spl', 'date_time', 'reflection']
 let g:phpcomplete_active_constant_extensions = [
@@ -2322,6 +2322,9 @@ runtime! misc/php_keywords.vim
 
 " One giant hash of all built-in function, class, interface and constant grouped by extension
 runtime! misc/builtin.vim
+
+" Extra builtin information that is not auto generated, for things that that is not automated
+runtime! misc/builtin_manual.vim
 
 " Built in functions
 let g:php_builtin_functions = {}
