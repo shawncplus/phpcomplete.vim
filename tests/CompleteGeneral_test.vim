@@ -1,7 +1,7 @@
 fun! SetUp()
-    " disable built-in functions
+    " disable built-in classes
     let g:php_builtin_classnames = {}
-    " disable built-in functions
+    " disable built-in interfaces
     let g:php_builtin_interfacenames = {}
     " disable built-in functions
     let g:php_builtin_functions = {}
@@ -146,6 +146,20 @@ fun! TestCase_completes_builtin_class_names() " {{{
     let res = phpcomplete#CompleteGeneral('date', '\', {})
     call VUAssertEquals([
                 \ {'word': 'DateTime', 'kind': 'c', 'menu': ' - builtin', 'info': 'DateTime - builtin'}],
+                \ res)
+endf " }}}
+
+fun! TestCase_completes_builtin_interface_names() " {{{
+    call SetUp()
+
+    " PDO should not be picked up
+    let g:php_builtin_interfacenames = {
+                \ 'Traversable':'',
+                \ }
+
+    let res = phpcomplete#CompleteGeneral('Tr', '\', {})
+    call VUAssertEquals([
+                \ {'word': 'Traversable', 'kind': 'i', 'menu': ' - builtin', 'info': 'Traversable - builtin'}],
                 \ res)
 endf " }}}
 

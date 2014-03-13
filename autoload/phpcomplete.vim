@@ -546,7 +546,7 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 		endfor
 		for [interfacename, info] in items(g:php_builtin_interfacenames)
 			if interfacename =~? '^'.base
-				let builtin_interfaces[leading_slash.classname] = info
+				let builtin_interfaces[leading_slash.interfacename] = info
 			endif
 		endfor
 	endif
