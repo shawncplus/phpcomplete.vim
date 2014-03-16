@@ -563,3 +563,89 @@ fun! TestCase_catch_clause()
 
     silent! bw! %
 endf
+
+fun! TestCase_builtin_function_return_type()
+    let g:php_builtin_functions = {
+        \ 'simplexml_load_string(': 'string $data [, string $class_name = "SimpleXMLElement" [, int $options = 0 [, string $ns = "" [, bool $is_prefix = false]]]] | SimpleXMLElement',
+        \}
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/builtin_function.php"
+
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':5'
+    let classname = phpcomplete#GetClassName(5, '$xml->', 'Foo', {})
+    call VUAssertEquals('SimpleXMLElement', classname)
+
+    silent! bw! %
+endf
+
+fun! TestCase_function_return_type()
+    let g:php_builtin_functions = {}
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/function_return_type.php"
+    let tags_path = expand('%:p:h')."/".'fixtures/GetClassName/function_return_type_tags'
+    let old_style_tags_path = expand('%:p:h')."/".'fixtures/GetClassName/old_style_function_return_type_tags'
+    exe 'set tags='.tags_path
+
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':29'
+    let classname = phpcomplete#GetClassName(29, '$foo->', 'Foo', {})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    exe ':32'
+    let classname = phpcomplete#GetClassName(32, '$foo2->', 'Foo', {'F': {'cmd': '/^class FooClass {$/', 'static': 0, 'name': 'FooClass', 'namespace': 'Foo', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/GetClassName/function_return_type.php'}})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    " the same should work with old style tags too, namespaces are extracted
+    " from the source
+    exe 'set tags='.old_style_tags_path
+    exe ':29'
+    let classname = phpcomplete#GetClassName(29, '$foo->', 'Foo', {})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    exe ':32'
+    let classname = phpcomplete#GetClassName(32, '$foo2->', 'Foo', {'F': {'cmd': '/^class FooClass {$/', 'static': 0, 'name': 'FooClass', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/GetClassName/function_return_type.php'}})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    silent! bw! %
+endf
+
+fun! TestCase_function_invocation_return_type()
+    let g:php_builtin_functions = {
+        \ 'simplexml_load_string(': 'string $data [, string $class_name = "SimpleXMLElement" [, int $options = 0 [, string $ns = "" [, bool $is_prefix = false]]]] | SimpleXMLElement',
+        \}
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/function_return_type.php"
+    let tags_path = expand('%:p:h')."/".'fixtures/GetClassName/function_return_type_tags'
+    let old_style_tags_path = expand('%:p:h')."/".'fixtures/GetClassName/old_style_function_return_type_tags'
+
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    " built-in function with class return type
+    exe ':35'
+    let classname = phpcomplete#GetClassName(35, 'simplexml_load_string()->', 'Foo', {})
+    call VUAssertEquals('SimpleXMLElement', classname)
+
+    exe ':38'
+    let classname = phpcomplete#GetClassName(38, 'make_a_foo()->', 'Foo', {})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    " renamed imports need tags to locate the renamed class
+    exe 'set tags='.tags_path
+    exe ':41'
+    let classname = phpcomplete#GetClassName(41, 'make_a_renamed_foo()->', 'Foo', {})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    " same import should work with old style tags too (namespace is ignored)
+    exe 'set tags='.old_style_tags_path
+    exe ':41'
+    let classname = phpcomplete#GetClassName(41, 'make_a_renamed_foo()->', 'Foo', {})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    silent! bw! %
+endf
