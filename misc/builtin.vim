@@ -83,7 +83,7 @@ let g:phpcomplete_builtin['functions']['strings'] = {
 \ 'lcfirst(': 'string $str | string',
 \ 'levenshtein(': 'string $str1, string $str2 | int',
 \ 'localeconv(': 'void | array',
-\ 'ltrim(': 'string $str [, string $charlist] | string',
+\ 'ltrim(': 'string $str [, string $character_mask] | string',
 \ 'md5_file(': 'string $filename [, bool $raw_output = false] | string',
 \ 'md5(': 'string $str [, bool $raw_output = false] | string',
 \ 'metaphone(': 'string $str [, int $phonemes = 0] | string',
@@ -98,7 +98,7 @@ let g:phpcomplete_builtin['functions']['strings'] = {
 \ 'quoted_printable_decode(': 'string $str | string',
 \ 'quoted_printable_encode(': 'string $str | string',
 \ 'quotemeta(': 'string $str | string',
-\ 'rtrim(': 'string $str [, string $charlist] | string',
+\ 'rtrim(': 'string $str [, string $character_mask] | string',
 \ 'setlocale(': 'int $category, string $locale [, string $...] | string',
 \ 'sha1_file(': 'string $filename [, bool $raw_output = false] | string',
 \ 'sha1(': 'string $str [, bool $raw_output = false] | string',
@@ -146,7 +146,7 @@ let g:phpcomplete_builtin['functions']['strings'] = {
 \ 'substr_count(': 'string $haystack, string $needle [, int $offset = 0 [, int $length]] | int',
 \ 'substr_replace(': 'mixed $string, mixed $replacement, mixed $start [, mixed $length] | mixed',
 \ 'substr(': 'string $string, int $start [, int $length] | string',
-\ 'trim(': 'string $str [, string $charlist = " \t\n\r\0\x0B"] | string',
+\ 'trim(': 'string $str [, string $character_mask = " \t\n\r\0\x0B"] | string',
 \ 'ucfirst(': 'string $str | string',
 \ 'ucwords(': 'string $str | string',
 \ 'vfprintf(': 'resource $handle, string $format, array $args | int',
@@ -240,7 +240,7 @@ let g:phpcomplete_builtin['functions']['arrays'] = {
 \ 'array_intersect_ukey(': 'array $array1, array $array2 [, array $... [, callable $key_compare_func]] | array',
 \ 'array_intersect(': 'array $array1, array $array2 [, array $...] | array',
 \ 'array_key_exists(': 'mixed $key, array $array | bool',
-\ 'array_keys(': 'array $array [, mixed $search_value = NULL [, bool $strict = false]] | array',
+\ 'array_keys(': 'array $array [, mixed $search_value [, bool $strict = false]] | array',
 \ 'array_map(': 'callable $callback, array $array1 [, array $...] | array',
 \ 'array_merge_recursive(': 'array $array1 [, array $...] | array',
 \ 'array_merge(': 'array $array1 [, array $...] | array',
@@ -2690,7 +2690,7 @@ let g:phpcomplete_builtin['functions']['multibyte_string'] = {
 \ 'mb_strimwidth(': 'string $str, int $start, int $width [, string $trimmarker = "" [, string $encoding = mb_internal_encoding()]] | string',
 \ 'mb_stripos(': 'string $haystack, string $needle [, int $offset = 0 [, string $encoding = mb_internal_encoding()]] | int',
 \ 'mb_stristr(': 'string $haystack, string $needle [, bool $before_needle = false [, string $encoding = mb_internal_encoding()]] | string',
-\ 'mb_strlen(': 'string $str [, string $encoding = mb_internal_encoding()] | int',
+\ 'mb_strlen(': 'string $str [, string $encoding = mb_internal_encoding()] | mixed',
 \ 'mb_strpos(': 'string $haystack, string $needle [, int $offset = 0 [, string $encoding = mb_internal_encoding()]] | int',
 \ 'mb_strrchr(': 'string $haystack, string $needle [, bool $part = false [, string $encoding = mb_internal_encoding()]] | string',
 \ 'mb_strrichr(': 'string $haystack, string $needle [, bool $part = false [, string $encoding = mb_internal_encoding()]] | string',
@@ -2902,7 +2902,7 @@ let g:phpcomplete_builtin['functions']['mysql'] = {
 \ 'mysql_num_rows(': 'resource $result | int',
 \ 'mysql_pconnect(': '[ string $server = ini_get("mysql.default_host") [, string $username = ini_get("mysql.default_user") [, string $password = ini_get("mysql.default_password") [, int $client_flags = 0]]]] | resource',
 \ 'mysql_ping(': '[ resource $link_identifier = NULL] | bool',
-\ 'mysql_query(': 'string $query [, resource $link_identifier = NULL] | resource',
+\ 'mysql_query(': 'string $query [, resource $link_identifier = NULL] | mixed',
 \ 'mysql_real_escape_string(': 'string $unescaped_string [, resource $link_identifier = NULL] | string',
 \ 'mysql_result(': 'resource $result, int $row [, mixed $field = 0] | string',
 \ 'mysql_select_db(': 'string $database_name [, resource $link_identifier = NULL] | bool',
@@ -3368,6 +3368,8 @@ let g:phpcomplete_builtin['functions']['odbc'] = {
 \ }
 let g:phpcomplete_builtin['functions']['opcache'] = {
 \ 'opcache_compile_file(': 'string $file | boolean',
+\ 'opcache_get_configuration(': 'void | array',
+\ 'opcache_get_status(': '[ boolean $get_scripts = TRUE] | array',
 \ 'opcache_invalidate(': 'string $script [, boolean $force = FALSE] | boolean',
 \ 'opcache_reset(': 'void | boolean',
 \ }
@@ -3436,8 +3438,8 @@ let g:phpcomplete_builtin['functions']['openssl'] = {
 \ 'openssl_public_encrypt(': 'string $data, string &$crypted, mixed $key [, int $padding = OPENSSL_PKCS1_PADDING] | bool',
 \ 'openssl_random_pseudo_bytes(': 'int $length [, bool &$crypto_strong] | string',
 \ 'openssl_seal(': 'string $data, string &$sealed_data, array &$env_keys, array $pub_key_ids [, string $method] | int',
-\ 'openssl_sign(': 'string $data, string &$signature, mixed $priv_key_id [, int $signature_alg = OPENSSL_ALGO_SHA1] | bool',
-\ 'openssl_verify(': 'string $data, string $signature, mixed $pub_key_id [, int $signature_alg = OPENSSL_ALGO_SHA1] | int',
+\ 'openssl_sign(': 'string $data, string &$signature, mixed $priv_key_id [, mixed $signature_alg = OPENSSL_ALGO_SHA1] | bool',
+\ 'openssl_verify(': 'string $data, string $signature, mixed $pub_key_id [, mixed $signature_alg = OPENSSL_ALGO_SHA1] | int',
 \ 'openssl_x509_check_private_key(': 'mixed $cert, mixed $key | bool',
 \ 'openssl_x509_checkpurpose(': 'mixed $x509cert, int $purpose [, array $cainfo = array() [, string $untrustedfile]] | int',
 \ 'openssl_x509_export_to_file(': 'mixed $x509, string $outfilename [, bool $notext = TRUE] | bool',
@@ -3711,9 +3713,10 @@ let g:phpcomplete_builtin['functions']['postgresql'] = {
 \ 'pg_lo_read(': 'resource $large_object [, int $len = 8192] | string',
 \ 'pg_lo_seek(': 'resource $large_object, int $offset [, int $whence = PGSQL_SEEK_CUR] | bool',
 \ 'pg_lo_tell(': 'resource $large_object | int',
+\ 'pg_lo_truncate(': 'resource $large_object, int $size | bool',
 \ 'pg_lo_unlink(': 'resource $connection, int $oid | bool',
 \ 'pg_lo_write(': 'resource $large_object, string $data [, int $len] | int',
-\ 'pg_meta_data(': 'resource $connection, string $table_name | array',
+\ 'pg_meta_data(': 'resource $connection, string $table_name [, bool $extended] | array',
 \ 'pg_num_fields(': 'resource $result | int',
 \ 'pg_num_rows(': 'resource $result | int',
 \ 'pg_options(': '[ resource $connection] | string',
@@ -4032,6 +4035,7 @@ let g:phpcomplete_builtin['functions']['rrd'] = {
 \ 'rrd_update(': 'string $filename, array $options | bool',
 \ 'rrd_version(': 'void | string',
 \ 'rrd_xport(': 'array $options | array',
+\ 'rrdc_disconnect(': 'void | void',
 \ }
 let g:phpcomplete_builtin['functions']['runkit'] = {
 \ 'runkit_class_adopt(': 'string $classname, string $parentname | bool',
@@ -5011,12 +5015,6 @@ let g:phpcomplete_builtin['functions']['zip'] = {
 let g:phpcomplete_builtin['classes']['oci8'] = {
 \'oci-collection': {
 \   'name': 'OCI-Collection',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'append': { 'signature': 'mixed $value | bool', 'return_type': 'bool'},
 \     'assign': { 'signature': 'OCI-Collection $from | bool', 'return_type': 'bool'},
@@ -5027,17 +5025,9 @@ let g:phpcomplete_builtin['classes']['oci8'] = {
 \     'size': { 'signature': 'void | int', 'return_type': 'int'},
 \     'trim': { 'signature': 'int $num | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'oci-lob': {
 \   'name': 'OCI-Lob',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'append': { 'signature': 'OCI-Lob $lob_from | bool', 'return_type': 'bool'},
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -5060,163 +5050,11 @@ let g:phpcomplete_builtin['classes']['oci8'] = {
 \     'write': { 'signature': 'string $data [, int $length] | int', 'return_type': 'int'},
 \     'writeTemporary': { 'signature': 'string $data [, int $lob_type = OCI_TEMP_CLOB] | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
-\},
-\}
-let g:phpcomplete_builtin['classes']['amqp'] = {
-\'amqpchannel': {
-\   'name': 'AMQPChannel',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'commitTransaction': { 'signature': 'void | void', 'return_type': 'void'},
-\     '__construct': { 'signature': 'AMQPConnection $amqp_connection', 'return_type': ''},
-\     'isConnected': { 'signature': 'void | void', 'return_type': 'void'},
-\     'qos': { 'signature': 'int $size, int $count | void', 'return_type': 'void'},
-\     'rollbackTransaction': { 'signature': 'void | void', 'return_type': 'void'},
-\     'setPrefetchCount': { 'signature': 'int $count | void', 'return_type': 'void'},
-\     'setPrefetchSize': { 'signature': 'int $size | void', 'return_type': 'void'},
-\     'startTransaction': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
-\   },
-\},
-\'amqpconnection': {
-\   'name': 'AMQPConnection',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'connect': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     '__construct': { 'signature': '[ array $credentials = array()]', 'return_type': ''},
-\     'disconnect': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'getHost': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getLogin': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getPassword': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getPort': { 'signature': 'void | int', 'return_type': 'int'},
-\     'getTimeout': { 'signature': 'void | int', 'return_type': 'int'},
-\     'getVhost': { 'signature': 'void | string', 'return_type': 'string'},
-\     'isConnected': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'reconnect': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'setHost': { 'signature': 'string $host | bool', 'return_type': 'bool'},
-\     'setLogin': { 'signature': 'string $login | bool', 'return_type': 'bool'},
-\     'setPassword': { 'signature': 'string $password | bool', 'return_type': 'bool'},
-\     'setPort': { 'signature': 'int $port | bool', 'return_type': 'bool'},
-\     'setTimeout': { 'signature': 'float $timeout | bool', 'return_type': 'bool'},
-\     'setVhost': { 'signature': 'string $vhost | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
-\   },
-\},
-\'amqpenvelope': {
-\   'name': 'AMQPEnvelope',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'getAppId': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getBody': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getContentEncoding': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getContentType': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getCorrelationId': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getDeliveryTag': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getExchange': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getExpiration': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getHeader': { 'signature': 'string $header_key | string', 'return_type': 'string'},
-\     'getHeaders': { 'signature': 'void | array', 'return_type': 'array'},
-\     'getMessageId': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getPriority': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getReplyTo': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getRoutingKey': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getTimeStamp': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getType': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getUserId': { 'signature': 'void | string', 'return_type': 'string'},
-\     'isRedelivery': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
-\   },
-\},
-\'amqpexchange': {
-\   'name': 'AMQPExchange',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'bind': { 'signature': 'string $destination_exchange_name, string $source_exchange_name, string $routing_key | bool', 'return_type': 'bool'},
-\     '__construct': { 'signature': 'AMQPChannel $amqp_channel', 'return_type': ''},
-\     'declare': { 'signature': 'void | int', 'return_type': 'int'},
-\     'delete': { 'signature': '[ int $flags = AMQP_NOPARAM] | bool', 'return_type': 'bool'},
-\     'getArgument': { 'signature': 'string $key | mixed', 'return_type': 'mixed'},
-\     'getArguments': { 'signature': 'void | array', 'return_type': 'array'},
-\     'getFlags': { 'signature': 'void | int', 'return_type': 'int'},
-\     'getName': { 'signature': 'void | string', 'return_type': 'string'},
-\     'getType': { 'signature': 'void | string', 'return_type': 'string'},
-\     'publish': { 'signature': 'string $message, string $routing_key [, int $flags = AMQP_NOPARAM [, array $attributes = array()]] | bool', 'return_type': 'bool'},
-\     'setArgument': { 'signature': 'string $key, mixed $value | void', 'return_type': 'void'},
-\     'setArguments': { 'signature': 'array $arguments | void', 'return_type': 'void'},
-\     'setFlags': { 'signature': 'int $flags | void', 'return_type': 'void'},
-\     'setName': { 'signature': 'string $exchange_name | void', 'return_type': 'void'},
-\     'setType': { 'signature': 'string $exchange_type | string', 'return_type': 'string'},
-\   },
-\   'static_methods': {
-\   },
-\},
-\'amqpqueue': {
-\   'name': 'AMQPQueue',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\     'ack': { 'signature': 'int $delivery_tag [, int $flags = AMQP_NOPARAM] | bool', 'return_type': 'bool'},
-\     'bind': { 'signature': 'string $exchange_name, string $routing_key | bool', 'return_type': 'bool'},
-\     'cancel': { 'signature': '[ string $consumer_tag = ""] | bool', 'return_type': 'bool'},
-\     '__construct': { 'signature': 'AMQPChannel $amqp_channel', 'return_type': ''},
-\     'consume': { 'signature': 'callable $callback [, int $flags = AMQP_NOPARAM] | void', 'return_type': 'void'},
-\     'declare': { 'signature': 'void | int', 'return_type': 'int'},
-\     'delete': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'get': { 'signature': '[ int $flags = ini_get("amqp.auto_ack")] | mixed', 'return_type': 'mixed'},
-\     'getArgument': { 'signature': 'string $key | mixed', 'return_type': 'mixed'},
-\     'getArguments': { 'signature': 'void | array', 'return_type': 'array'},
-\     'getFlags': { 'signature': 'void | int', 'return_type': 'int'},
-\     'getName': { 'signature': 'void | string', 'return_type': 'string'},
-\     'nack': { 'signature': 'string $delivery_tag [, string $flags = AMQP_NOPARAM] | void', 'return_type': 'void'},
-\     'purge': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'setArgument': { 'signature': 'string $key, mixed $value | void', 'return_type': 'void'},
-\     'setArguments': { 'signature': 'array $arguments | void', 'return_type': 'void'},
-\     'setFlags': { 'signature': 'int $flags | void', 'return_type': 'void'},
-\     'setName': { 'signature': 'string $queue_name | void', 'return_type': 'void'},
-\     'unbind': { 'signature': 'string $exchange_name, string $routing_key | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['apc'] = {
 \'apciterator': {
 \   'name': 'APCIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $cache [, mixed $search = null [, int $format = APC_ITER_ALL [, int $chunk_size = 100 [, int $list = APC_LIST_ACTIVE]]]]', 'return_type': ''},
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -5228,19 +5066,11 @@ let g:phpcomplete_builtin['classes']['apc'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['spl'] = {
 \'appenditerator': {
 \   'name': 'AppendIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'Traversable $iterator', 'return_type': ''},
 \     'append': { 'signature': 'Iterator $iterator | void', 'return_type': 'void'},
@@ -5253,17 +5083,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'arrayiterator': {
 \   'name': 'ArrayIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'append': { 'signature': 'mixed $value | void', 'return_type': 'void'},
 \     'asort': { 'signature': 'void | void', 'return_type': 'void'},
@@ -5290,18 +5112,12 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'unserialize': { 'signature': 'string $serialized | string', 'return_type': 'string'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'arrayobject': {
 \   'name': 'ArrayObject',
 \   'constants': {
 \     'STD_PROP_LIST': '1',
 \     'ARRAY_AS_PROPS': '2',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ mixed $input = [] [, int $flags = 0 [, string $iterator_class = "ArrayIterator"]]]', 'return_type': ''},
@@ -5327,20 +5143,14 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'uksort': { 'signature': 'callable $cmp_function | void', 'return_type': 'void'},
 \     'unserialize': { 'signature': 'string $serialized | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'badfunctioncallexception': {
 \   'name': 'BadFunctionCallException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5352,21 +5162,15 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'badmethodcallexception': {
 \   'name': 'BadMethodCallException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5378,8 +5182,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cachingiterator': {
@@ -5391,10 +5193,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'TOSTRING_USE_CURRENT': '4',
 \     'TOSTRING_USE_INNER': '8',
 \     'FULL_CACHE': '256',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'Iterator $iterator [, string $flags = self::CALL_TOSTRING]', 'return_type': ''},
@@ -5415,17 +5213,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'callbackfilteriterator': {
 \   'name': 'CallbackFilterIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'Iterator $iterator', 'return_type': ''},
 \     'accept': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -5436,17 +5226,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'directoryiterator': {
 \   'name': 'DirectoryIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $path', 'return_type': ''},
 \     'current': { 'signature': 'void | DirectoryIterator', 'return_type': 'DirectoryIterator'},
@@ -5478,20 +5260,14 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domainexception': {
 \   'name': 'DomainException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5504,25 +5280,15 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'emptyiterator': {
 \   'name': 'EmptyIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'current': { 'signature': 'void | void', 'return_type': 'void'},
 \     'key': { 'signature': 'void | void', 'return_type': 'void'},
 \     'next': { 'signature': 'void | void', 'return_type': 'void'},
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'filesystemiterator': {
@@ -5539,10 +5305,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'NEW_CURRENT_AND_KEY': '256',
 \     'SKIP_DOTS': '4096',
 \     'UNIX_PATHS': '8192',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $path [, int $flags = FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS]', 'return_type': ''},
@@ -5577,17 +5339,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'filteriterator': {
 \   'name': 'FilterIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'accept': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'Iterator $iterator', 'return_type': ''},
@@ -5598,17 +5352,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'globiterator': {
 \   'name': 'GlobIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $path [, int $flags = FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS]', 'return_type': ''},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
@@ -5619,17 +5365,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'setFlags': { 'signature': '[ int $flags] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'infiniteiterator': {
 \   'name': 'InfiniteIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'Traversable $iterator', 'return_type': ''},
 \     'next': { 'signature': 'void | void', 'return_type': 'void'},
@@ -5638,21 +5376,15 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'key': { 'signature': 'void | scalar', 'return_type': 'scalar'},
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'invalidargumentexception': {
 \   'name': 'InvalidArgumentException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5665,17 +5397,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'iteratoriterator': {
 \   'name': 'IteratorIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'Traversable $iterator', 'return_type': ''},
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -5685,20 +5409,14 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'lengthexception': {
 \   'name': 'LengthException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5711,17 +5429,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'limititerator': {
 \   'name': 'LimitIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'Iterator $iterator [, int $offset = 0 [, int $count = -1]]', 'return_type': ''},
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -5733,20 +5443,14 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'seek': { 'signature': 'int $position | int', 'return_type': 'int'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'logicexception': {
 \   'name': 'LogicException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5759,8 +5463,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'multipleiterator': {
 \   'name': 'MultipleIterator',
@@ -5769,10 +5471,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'MIT_NEED_ALL': '1',
 \     'MIT_KEYS_NUMERIC': '0',
 \     'MIT_KEYS_ASSOC': '2',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ int $flags = MultipleIterator::MIT_NEED_ALL|MultipleIterator::MIT_KEYS_NUMERIC]', 'return_type': ''},
@@ -5788,17 +5486,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'setFlags': { 'signature': 'int $flags | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'norewinditerator': {
 \   'name': 'NoRewindIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'Traversable $iterator', 'return_type': ''},
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -5808,20 +5498,14 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'outofboundsexception': {
 \   'name': 'OutOfBoundsException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5833,21 +5517,15 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'outofrangeexception': {
 \   'name': 'OutOfRangeException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5859,21 +5537,15 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'overflowexception': {
 \   'name': 'OverflowException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5886,17 +5558,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'parentiterator': {
 \   'name': 'ParentIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'accept': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'RecursiveIterator $iterator', 'return_type': ''},
@@ -5905,20 +5569,14 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'next': { 'signature': 'void | void', 'return_type': 'void'},
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'rangeexception': {
 \   'name': 'RangeException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -5931,17 +5589,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursivearrayiterator': {
 \   'name': 'RecursiveArrayIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getChildren': { 'signature': 'void | RecursiveArrayIterator', 'return_type': 'RecursiveArrayIterator'},
 \     'hasChildren': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -5970,17 +5620,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'unserialize': { 'signature': 'string $serialized | string', 'return_type': 'string'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursivecachingiterator': {
 \   'name': 'RecursiveCachingIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'Iterator $iterator [, string $flags = self::CALL_TOSTRING]', 'return_type': ''},
 \     'getChildren': { 'signature': 'void | RecursiveCachingIterator', 'return_type': 'RecursiveCachingIterator'},
@@ -6002,34 +5644,18 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursivecallbackfilteriterator': {
 \   'name': 'RecursiveCallbackFilterIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'RecursiveIterator $iterator, string $callback', 'return_type': ''},
 \     'getChildren': { 'signature': 'void | RecursiveCallbackFilterIterator', 'return_type': 'RecursiveCallbackFilterIterator'},
 \     'hasChildren': { 'signature': 'void | void', 'return_type': 'void'},
 \     'accept': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursivedirectoryiterator': {
 \   'name': 'RecursiveDirectoryIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $path [, int $flags = FilesystemIterator::KEY_AS_PATHNAME | FilesystemIterator::CURRENT_AS_FILEINFO | FilesystemIterator::SKIP_DOTS]', 'return_type': ''},
 \     'getChildren': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -6043,17 +5669,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'getFlags': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setFlags': { 'signature': '[ int $flags] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursivefilteriterator': {
 \   'name': 'RecursiveFilterIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'Iterator $iterator', 'return_type': ''},
 \     'getChildren': { 'signature': 'void | void', 'return_type': 'void'},
@@ -6066,8 +5684,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursiveiteratoriterator': {
 \   'name': 'RecursiveIteratorIterator',
@@ -6076,10 +5692,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'SELF_FIRST': '1',
 \     'CHILD_FIRST': '2',
 \     'CATCH_GET_CHILD': '16',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'beginChildren': { 'signature': 'void | void', 'return_type': 'void'},
@@ -6101,17 +5713,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'setMaxDepth': { 'signature': '[ string $max_depth = -1] | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursiveregexiterator': {
 \   'name': 'RecursiveRegexIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'RecursiveIterator $iterator, string $regex [, int $mode = self::MATCH [, int $flags = 0 [, int $preg_flags = 0]]]', 'return_type': ''},
 \     'getChildren': { 'signature': 'void | RecursiveIterator', 'return_type': 'RecursiveIterator'},
@@ -6125,8 +5729,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'setMode': { 'signature': 'int $mode | void', 'return_type': 'void'},
 \     'setPregFlags': { 'signature': 'int $preg_flags | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursivetreeiterator': {
 \   'name': 'RecursiveTreeIterator',
@@ -6139,10 +5741,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'PREFIX_END_HAS_NEXT': '3',
 \     'PREFIX_END_LAST': '4',
 \     'PREFIX_RIGHT': '5',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'beginChildren': { 'signature': 'void | void', 'return_type': 'void'},
@@ -6168,8 +5766,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'getSubIterator': { 'signature': '[ int $level] | RecursiveIterator', 'return_type': 'RecursiveIterator'},
 \     'setMaxDepth': { 'signature': '[ string $max_depth = -1] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'regexiterator': {
 \   'name': 'RegexIterator',
@@ -6180,10 +5776,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'SPLIT': '3',
 \     'REPLACE': '4',
 \     'USE_KEY': '1',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'Iterator $iterator', 'return_type': ''},
@@ -6202,20 +5794,14 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'runtimeexception': {
 \   'name': 'RuntimeException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -6228,17 +5814,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'spldoublylinkedlist': {
 \   'name': 'SplDoublyLinkedList',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'bottom': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -6264,17 +5842,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'unshift': { 'signature': 'mixed $value | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splfileinfo': {
 \   'name': 'SplFileInfo',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $file_name', 'return_type': ''},
 \     'getATime': { 'signature': 'void | int', 'return_type': 'int'},
@@ -6306,8 +5876,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'setInfoClass': { 'signature': '[ string $class_name] | void', 'return_type': 'void'},
 \     '__toString': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splfileobject': {
 \   'name': 'SplFileObject',
@@ -6316,10 +5884,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'READ_AHEAD': '2',
 \     'SKIP_EMPTY': '4',
 \     'READ_CSV': '8',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $file_name', 'return_type': ''},
@@ -6381,17 +5945,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'setFileClass': { 'signature': '[ string $class_name] | void', 'return_type': 'void'},
 \     'setInfoClass': { 'signature': '[ string $class_name] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splfixedarray': {
 \   'name': 'SplFixedArray',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ int $size = 0]', 'return_type': ''},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
@@ -6415,12 +5971,6 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \},
 \'splheap': {
 \   'name': 'SplHeap',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'compare': { 'signature': 'mixed $value1, mixed $value2 | int', 'return_type': 'int'},
@@ -6436,17 +5986,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'top': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splmaxheap': {
 \   'name': 'SplMaxHeap',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'compare': { 'signature': 'mixed $value1, mixed $value2 | int', 'return_type': 'int'},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
@@ -6460,18 +6002,10 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'top': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'splminheap': {
 \   'name': 'SplMinHeap',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'compare': { 'signature': 'mixed $value1, mixed $value2 | int', 'return_type': 'int'},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
@@ -6486,17 +6020,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'top': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splobjectstorage': {
 \   'name': 'SplObjectStorage',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addAll': { 'signature': 'SplObjectStorage $storage | void', 'return_type': 'void'},
 \     'attach': { 'signature': 'object $object [, mixed $data = NULL] | void', 'return_type': 'void'},
@@ -6520,17 +6046,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'unserialize': { 'signature': 'string $serialized | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splpriorityqueue': {
 \   'name': 'SplPriorityQueue',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'compare': { 'signature': 'mixed $priority1, mixed $priority2 | int', 'return_type': 'int'},
@@ -6547,17 +6065,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'top': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splqueue': {
 \   'name': 'SplQueue',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'dequeue': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -6585,17 +6095,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'unshift': { 'signature': 'mixed $value | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splstack': {
 \   'name': 'SplStack',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'setIteratorMode': { 'signature': 'int $mode | void', 'return_type': 'void'},
@@ -6621,17 +6123,9 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'unshift': { 'signature': 'mixed $value | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'spltempfileobject': {
 \   'name': 'SplTempFileObject',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $filename [, string $open_mode = "r" [, bool $use_include_path = false [, resource $context]]]', 'return_type': ''},
 \     'current': { 'signature': 'void | string|array', 'return_type': 'string|array'},
@@ -6665,20 +6159,14 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     '__toString': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'underflowexception': {
 \   'name': 'UnderflowException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -6690,21 +6178,15 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'unexpectedvalueexception': {
 \   'name': 'UnexpectedValueException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -6716,22 +6198,12 @@ let g:phpcomplete_builtin['classes']['spl'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['cairo'] = {
 \'cairo': {
 \   'name': 'Cairo',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'availableFonts': { 'signature': 'void | array', 'return_type': 'array'},
 \     'availableSurfaces': { 'signature': 'void | array', 'return_type': 'array'},
@@ -6748,14 +6220,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'MODE_GRAY': '2',
 \     'MODE_SUBPIXEL': '3',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairocontent': {
 \   'name': 'CairoContent',
@@ -6764,23 +6228,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'ALPHA': '8192',
 \     'COLOR_ALPHA': '12288',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairocontext': {
 \   'name': 'CairoContext',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'appendPath': { 'signature': 'CairoPath $path | void', 'return_type': 'void'},
 \     'arc': { 'signature': 'float $x, float $y, float $radius, float $angle1, float $angle2 | void', 'return_type': 'void'},
@@ -6880,20 +6330,14 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'userToDevice': { 'signature': 'string $x, string $y | array', 'return_type': 'array'},
 \     'userToDeviceDistance': { 'signature': 'string $x, string $y | array', 'return_type': 'array'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairoexception': {
 \   'name': 'CairoException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -6906,8 +6350,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairoextend': {
 \   'name': 'CairoExtend',
@@ -6917,28 +6359,12 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'REFLECT': '2',
 \     'PAD': '3',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairofillrule': {
 \   'name': 'CairoFillRule',
 \   'constants': {
 \     'WINDING': '0',
 \     'EVEN_ODD': '1',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cairofilter': {
@@ -6951,39 +6377,17 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'BILINEAR': '4',
 \     'GAUSSIAN': '5',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairofontface': {
 \   'name': 'CairoFontFace',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getType': { 'signature': 'void | int', 'return_type': 'int'},
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairofontoptions': {
 \   'name': 'CairoFontOptions',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'equal': { 'signature': 'string $other | bool', 'return_type': 'bool'},
@@ -6999,8 +6403,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'setSubpixelOrder': { 'signature': 'string $subpixel_order | void', 'return_type': 'void'},
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairofontslant': {
 \   'name': 'CairoFontSlant',
@@ -7008,14 +6410,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'NORMAL': '0',
 \     'ITALIC': '1',
 \     'OBLIQUE': '2',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cairofonttype': {
@@ -7026,28 +6420,12 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'WIN32': '2',
 \     'QUARTZ': '3',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairofontweight': {
 \   'name': 'CairoFontWeight',
 \   'constants': {
 \     'NORMAL': '0',
 \     'BOLD': '1',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cairoformat': {
@@ -7058,24 +6436,12 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'A8': '2',
 \     'A1': '3',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'strideForWidth': { 'signature': 'int $format, int $width | int', 'return_type': 'int'},
 \   },
 \},
 \'cairogradientpattern': {
 \   'name': 'CairoGradientPattern',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addColorStopRgb': { 'signature': 'string $offset, string $red, string $green, string $blue | void', 'return_type': 'void'},
 \     'addColorStopRgba': { 'signature': 'string $offset, string $red, string $green, string $blue, string $alpha | void', 'return_type': 'void'},
@@ -7089,8 +6455,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'setMatrix': { 'signature': 'string $matrix | void', 'return_type': 'void'},
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairohintmetrics': {
 \   'name': 'CairoHintMetrics',
@@ -7098,14 +6462,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'METRICS_DEFAULT': '0',
 \     'METRICS_OFF': '1',
 \     'METRICS_ON': '2',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cairohintstyle': {
@@ -7117,23 +6473,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'STYLE_MEDIUM': '3',
 \     'STYLE_FULL': '4',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairoimagesurface': {
 \   'name': 'CairoImageSurface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getData': { 'signature': 'void | string', 'return_type': 'string'},
@@ -7164,12 +6506,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \},
 \'cairolineargradient': {
 \   'name': 'CairoLinearGradient',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'float $x0, float $y0, float $x1, float $y1', 'return_type': ''},
 \     'getPoints': { 'signature': 'void | array', 'return_type': 'array'},
@@ -7180,8 +6516,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'getExtend': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setExtend': { 'signature': 'int $extend | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairolinecap': {
 \   'name': 'CairoLineCap',
@@ -7189,14 +6523,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'BUTT': '0',
 \     'ROUND': '1',
 \     'SQUARE': '2',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cairolinejoin': {
@@ -7206,23 +6532,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'ROUND': '1',
 \     'BEVEL': '2',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairomatrix': {
 \   'name': 'CairoMatrix',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ float $xx = 1.0 [, float $yx = 0.0 [, float $xy = 0.0 [, float $yy = 1.0 [, float $x0 = 0.0 [, float $y0 = 0.0]]]]]]', 'return_type': ''},
 \     'invert': { 'signature': 'void | void', 'return_type': 'void'},
@@ -7258,44 +6570,18 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'ADD': '12',
 \     'SATURATE': '13',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairopath': {
 \   'name': 'CairoPath',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairopattern': {
 \   'name': 'CairoPattern',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getMatrix': { 'signature': 'void | void', 'return_type': 'void'},
 \     'getType': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setMatrix': { 'signature': 'string $matrix | void', 'return_type': 'void'},
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cairopatterntype': {
@@ -7306,23 +6592,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'LINEAR': '2',
 \     'RADIAL': '3',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairopdfsurface': {
 \   'name': 'CairoPdfSurface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'setSize': { 'signature': 'string $width, string $height | void', 'return_type': 'void'},
@@ -7342,8 +6614,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
 \     'writeToPng': { 'signature': 'string $file | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairopslevel': {
 \   'name': 'CairoPsLevel',
@@ -7351,23 +6621,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'LEVEL_2': '0',
 \     'LEVEL_3': '1',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairopssurface': {
 \   'name': 'CairoPsSurface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'dscBeginPageSetup': { 'signature': 'void | void', 'return_type': 'void'},
@@ -7400,12 +6656,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \},
 \'cairoradialgradient': {
 \   'name': 'CairoRadialGradient',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'float $x0, float $y0, float $r0, float $x1, float $y1, float $r1', 'return_type': ''},
 \     'getCircles': { 'signature': 'void | array', 'return_type': 'array'},
@@ -7416,17 +6666,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'getExtend': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setExtend': { 'signature': 'int $extend | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairoscaledfont': {
 \   'name': 'CairoScaledFont',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'CairoFontFace $font_face, CairoMatrix $matrix, CairoMatrix $ctm, CairoFontOptions $options', 'return_type': ''},
 \     'extents': { 'signature': 'void | array', 'return_type': 'array'},
@@ -7440,17 +6682,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
 \     'textExtents': { 'signature': 'string $text | array', 'return_type': 'array'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairosolidpattern': {
 \   'name': 'CairoSolidPattern',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getRgba': { 'signature': 'void | array', 'return_type': 'array'},
@@ -7458,8 +6692,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'getType': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setMatrix': { 'signature': 'string $matrix | void', 'return_type': 'void'},
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cairostatus': {
@@ -7491,14 +6723,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'TEMP_FILE_ERROR': '23',
 \     'INVALID_STRIDE': '24',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairosubpixelorder': {
 \   'name': 'CairoSubpixelOrder',
@@ -7509,23 +6733,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'ORDER_VRGB': '3',
 \     'ORDER_VBGR': '4',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairosurface': {
 \   'name': 'CairoSurface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'copyPage': { 'signature': 'void | void', 'return_type': 'void'},
@@ -7544,17 +6754,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
 \     'writeToPng': { 'signature': 'string $file | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'cairosurfacepattern': {
 \   'name': 'CairoSurfacePattern',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getExtend': { 'signature': 'void | int', 'return_type': 'int'},
@@ -7566,8 +6768,6 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'getType': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setMatrix': { 'signature': 'string $matrix | void', 'return_type': 'void'},
 \     'status': { 'signature': 'void | int', 'return_type': 'int'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'cairosurfacetype': {
@@ -7588,23 +6788,9 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'WIN32_PRINTING': '12',
 \     'QUARTZ_IMAGE': '13',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairosvgsurface': {
 \   'name': 'CairoSvgSurface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'restrictToVersion': { 'signature': 'string $version | void', 'return_type': 'void'},
@@ -7635,55 +6821,23 @@ let g:phpcomplete_builtin['classes']['cairo'] = {
 \     'VERSION_1_1': '0',
 \     'VERSION_1_2': '1',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'cairotoyfontface': {
 \   'name': 'CairoToyFontFace',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['chdb'] = {
 \'chdb': {
 \   'name': 'chdb',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $pathname', 'return_type': ''},
 \     'get': { 'signature': 'string $key | string', 'return_type': 'string'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['predefined_interfaces_and_classes'] = {
 \'closure': {
 \   'name': 'Closure',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'bindTo': { 'signature': 'object $newthis [, mixed $newscope = ''static''] | Closure', 'return_type': 'Closure'},
@@ -7694,35 +6848,21 @@ let g:phpcomplete_builtin['classes']['predefined_interfaces_and_classes'] = {
 \},
 \'generator': {
 \   'name': 'Generator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'key': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'next': { 'signature': 'void | void', 'return_type': 'void'},
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'send': { 'signature': 'mixed $value | mixed', 'return_type': 'mixed'},
-\     'throw': { 'signature': 'Exception $exception | void', 'return_type': 'void'},
+\     'throw': { 'signature': 'Exception $exception | mixed', 'return_type': 'mixed'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__wakeup': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['intl'] = {
 \'collator': {
 \   'name': 'Collator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $locale', 'return_type': ''},
 \     'asort': { 'signature': 'array &$arr [, int $sort_flag] | bool', 'return_type': 'bool'},
@@ -7764,10 +6904,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'SENTENCE_TERM_LIMIT': '100',
 \     'SENTENCE_SEP': '100',
 \     'SENTENCE_SEP_LIMIT': '200',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -7840,54 +6976,93 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'WALLTIME_LAST': '0',
 \     'WALLTIME_NEXT_VALID': '2',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'int $field, int $amount | bool', 'return_type': 'bool'},
-\     'after': { 'signature': 'IntlCalendar $calendar | bool', 'return_type': 'bool'},
-\     'before': { 'signature': 'IntlCalendar $calendar | bool', 'return_type': 'bool'},
+\     'intlcal_add': { 'signature': 'IntlCalendar $cal, int $field, int $amount | bool', 'return_type': 'bool'},
+\     'after': { 'signature': 'IntlCalendar $other | bool', 'return_type': 'bool'},
+\     'intlcal_after': { 'signature': 'IntlCalendar $cal, IntlCalendar $other | bool', 'return_type': 'bool'},
+\     'before': { 'signature': 'IntlCalendar $other | bool', 'return_type': 'bool'},
+\     'intlcal_before': { 'signature': 'IntlCalendar $cal, IntlCalendar $other | bool', 'return_type': 'bool'},
 \     'clear': { 'signature': '[ int $field = NULL] | bool', 'return_type': 'bool'},
+\     'intlcal_clear': { 'signature': 'IntlCalendar $cal [, int $field = NULL] | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
-\     'equals': { 'signature': 'IntlCalendar $calendar | bool', 'return_type': 'bool'},
+\     'intlcal_create_instance': { 'signature': '[ mixed $timeZone = NULL [, string $locale = ""]] | IntlCalendar', 'return_type': 'IntlCalendar'},
+\     'equals': { 'signature': 'IntlCalendar $other | bool', 'return_type': 'bool'},
+\     'intlcal_equals': { 'signature': 'IntlCalendar $cal, IntlCalendar $other | bool', 'return_type': 'bool'},
 \     'fieldDifference': { 'signature': 'float $when, int $field | int', 'return_type': 'int'},
+\     'intlcal_field_difference': { 'signature': 'IntlCalendar $cal, float $when, int $field | int', 'return_type': 'int'},
+\     'intlcal_from_date_time': { 'signature': 'mixed $dateTime | IntlCalendar', 'return_type': 'IntlCalendar'},
 \     'get': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'intlcal_get': { 'signature': 'IntlCalendar> $cal, int $field | int', 'return_type': 'int'},
 \     'getActualMaximum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'intlcal_get_actual_maximum': { 'signature': 'IntlCalendar $cal, int $field | int', 'return_type': 'int'},
 \     'getActualMinimum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'intlcal_get_actual_minimum': { 'signature': 'IntlCalendar $cal, int $field | int', 'return_type': 'int'},
+\     'intlcal_get_available_locales': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getDayOfWeekType': { 'signature': 'int $dayOfWeek | int', 'return_type': 'int'},
+\     'intlcal_get_day_of_week_type': { 'signature': 'IntlCalendar $cal, int $dayOfWeek | int', 'return_type': 'int'},
 \     'getErrorCode': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getErrorMessage': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getFirstDayOfWeek': { 'signature': 'void | int', 'return_type': 'int'},
+\     'intlcal_get_first_day_of_week': { 'signature': 'IntlCalendar $cal | int', 'return_type': 'int'},
 \     'getGreatestMinimum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'intlcal_get_greatest_minimum': { 'signature': 'IntlCalendar $cal, int $field | int', 'return_type': 'int'},
+\     'intlcal_get_keyword_values_for_locale': { 'signature': 'string $key, string $locale, boolean $commonlyUsed | Iterator', 'return_type': 'Iterator'},
 \     'getLeastMaximum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'intlcal_get_least_maximum': { 'signature': 'IntlCalendar $cal, int $field | int', 'return_type': 'int'},
 \     'getLocale': { 'signature': 'int $localeType | string', 'return_type': 'string'},
+\     'intlcal_get_locale': { 'signature': 'IntlCalendar $cal, int $localeType | string', 'return_type': 'string'},
 \     'getMaximum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'intlcal_get_maximum': { 'signature': 'IntlCalendar $cal, int $field | int', 'return_type': 'int'},
 \     'getMinimalDaysInFirstWeek': { 'signature': 'void | int', 'return_type': 'int'},
+\     'intlcal_get_minimal_days_in_first_week': { 'signature': 'IntlCalendar $cal, int $minimalDays | bool', 'return_type': 'bool'},
 \     'getMinimum': { 'signature': 'int $field | int', 'return_type': 'int'},
+\     'intlcal_get_minimum': { 'signature': 'IntlCalendar $cal, int $field | int', 'return_type': 'int'},
+\     'intlcal_get_now': { 'signature': 'void | float', 'return_type': 'float'},
 \     'getRepeatedWallTimeOption': { 'signature': 'void | int', 'return_type': 'int'},
+\     'intlcal_get_repeated_wall_time_option': { 'signature': 'IntlCalendar $cal | int', 'return_type': 'int'},
 \     'getSkippedWallTimeOption': { 'signature': 'void | int', 'return_type': 'int'},
+\     'intlcal_get_skipped_wall_time_option': { 'signature': 'IntlCalendar $cal | int', 'return_type': 'int'},
 \     'getTime': { 'signature': 'void | float', 'return_type': 'float'},
+\     'intlcal_get_time': { 'signature': 'IntlCalendar $cal | float', 'return_type': 'float'},
 \     'getTimeZone': { 'signature': 'void | IntlTimeZone', 'return_type': 'IntlTimeZone'},
+\     'intlcal_get_time_zone': { 'signature': 'IntlCalendar $cal | IntlTimeZone', 'return_type': 'IntlTimeZone'},
 \     'getType': { 'signature': 'void | string', 'return_type': 'string'},
+\     'intlcal_get_type': { 'signature': 'IntlCalendar $cal | string', 'return_type': 'string'},
 \     'getWeekendTransition': { 'signature': 'string $dayOfWeek | int', 'return_type': 'int'},
+\     'intlcal_get_weekend_transition': { 'signature': 'IntlCalendar $cal, string $dayOfWeek | int', 'return_type': 'int'},
 \     'inDaylightTime': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'isEquivalentTo': { 'signature': 'IntlCalendar $calendar | bool', 'return_type': 'bool'},
+\     'intlcal_in_daylight_time': { 'signature': 'IntlCalendar $cal | bool', 'return_type': 'bool'},
+\     'isEquivalentTo': { 'signature': 'IntlCalendar $other | bool', 'return_type': 'bool'},
+\     'intlcal_is_equivalent_to': { 'signature': 'IntlCalendar $cal, IntlCalendar $other | bool', 'return_type': 'bool'},
 \     'isLenient': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'intlcal_is_lenient': { 'signature': 'IntlCalendar $cal | bool', 'return_type': 'bool'},
 \     'isSet': { 'signature': 'int $field | bool', 'return_type': 'bool'},
+\     'intlcal_is_set': { 'signature': 'IntlCalendar $cal, int $field | bool', 'return_type': 'bool'},
 \     'isWeekend': { 'signature': '[ float $date = NULL] | bool', 'return_type': 'bool'},
+\     'intlcal_is_weekend': { 'signature': 'IntlCalendar $cal [, float $date = NULL] | bool', 'return_type': 'bool'},
 \     'roll': { 'signature': 'int $field, mixed $amountOrUpOrDown | bool', 'return_type': 'bool'},
+\     'intlcal_roll': { 'signature': 'IntlCalendar $cal, int $field, mixed $amountOrUpOrDown | bool', 'return_type': 'bool'},
 \     'set': { 'signature': 'int $year, int $month [, int $dayOfMonth = NULL [, int $hour = NULL [, int $minute = NULL [, int $second = NULL]]]] | bool', 'return_type': 'bool'},
+\     'intlcal_set': { 'signature': 'IntlCalendar $cal, int $year, int $month [, int $dayOfMonth = NULL [, int $hour = NULL [, int $minute = NULL [, int $second = NULL]]]] | bool', 'return_type': 'bool'},
 \     'setFirstDayOfWeek': { 'signature': 'int $dayOfWeek | bool', 'return_type': 'bool'},
+\     'intlcal_set_first_day_of_week': { 'signature': 'IntlCalendar $cal, int $dayOfWeek | bool', 'return_type': 'bool'},
 \     'setLenient': { 'signature': 'string $isLenient | ReturnType', 'return_type': 'ReturnType'},
+\     'intlcal_set_lenient': { 'signature': 'IntlCalendar $cal, string $isLenient | ReturnType', 'return_type': 'ReturnType'},
+\     'setMinimalDaysInFirstWeek': { 'signature': 'int $minimalDays | bool', 'return_type': 'bool'},
 \     'setRepeatedWallTimeOption': { 'signature': 'int $wallTimeOption | bool', 'return_type': 'bool'},
+\     'intlcal_set_repeated_wall_time_option': { 'signature': 'IntlCalendar $cal, int $wallTimeOption | bool', 'return_type': 'bool'},
 \     'setSkippedWallTimeOption': { 'signature': 'int $wallTimeOption | bool', 'return_type': 'bool'},
+\     'intlcal_set_skipped_wall_time_option': { 'signature': 'IntlCalendar $cal, int $wallTimeOption | bool', 'return_type': 'bool'},
 \     'setTime': { 'signature': 'float $date | bool', 'return_type': 'bool'},
+\     'intlcal_set_time': { 'signature': 'IntlCalendar $cal, float $date | bool', 'return_type': 'bool'},
 \     'setTimeZone': { 'signature': 'mixed $timeZone | bool', 'return_type': 'bool'},
+\     'intlcal_set_time_zone': { 'signature': 'IntlCalendar $cal, mixed $timeZone | bool', 'return_type': 'bool'},
 \     'toDateTime': { 'signature': 'void | DateTime', 'return_type': 'DateTime'},
+\     'intlcal_to_date_time': { 'signature': 'IntlCalendar $cal | DateTime', 'return_type': 'DateTime'},
 \   },
 \   'static_methods': {
-\     'createInstance': { 'signature': '[ mixed $timeZone = NULL [, string $locale = NULL]] | IntlCalendar', 'return_type': 'IntlCalendar'},
+\     'createInstance': { 'signature': '[ mixed $timeZone = NULL [, string $locale = ""]] | IntlCalendar', 'return_type': 'IntlCalendar'},
 \     'fromDateTime': { 'signature': 'mixed $dateTime | IntlCalendar', 'return_type': 'IntlCalendar'},
 \     'getAvailableLocales': { 'signature': 'void | array', 'return_type': 'array'},
 \     'getKeywordValuesForLocale': { 'signature': 'string $key, string $locale, boolean $commonlyUsed | Iterator', 'return_type': 'Iterator'},
@@ -7916,10 +7091,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'SENTENCE_TERM_LIMIT': '100',
 \     'SENTENCE_SEP': '100',
 \     'SENTENCE_SEP_LIMIT': '200',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getLastCodePoint': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
@@ -7952,12 +7123,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \},
 \'intldateformatter': {
 \   'name': 'IntlDateFormatter',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $locale, int $datetype, int $timetype [, mixed $timezone = NULL [, mixed $calendar = NULL [, string $pattern = '''']]]', 'return_type': ''},
 \     'format': { 'signature': 'mixed $value | string', 'return_type': 'string'},
@@ -7987,15 +7152,11 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \},
 \'intlexception': {
 \   'name': 'IntlException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -8008,25 +7169,15 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'intliterator': {
 \   'name': 'IntlIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'current': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
 \     'key': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
 \     'next': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
 \     'rewind': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
 \     'valid': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'intlpartsiterator': {
@@ -8036,10 +7187,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'KEY_LEFT': '1',
 \     'KEY_RIGHT': '2',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getBreakIterator': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
 \     'current': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
@@ -8047,8 +7194,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'next': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
 \     'rewind': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
 \     'valid': { 'signature': 'void | ReturnType', 'return_type': 'ReturnType'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'intlrulebasedbreakiterator': {
@@ -8073,10 +7218,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'SENTENCE_TERM_LIMIT': '100',
 \     'SENTENCE_SEP': '100',
 \     'SENTENCE_SEP_LIMIT': '200',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -8116,10 +7257,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'DISPLAY_SHORT': '1',
 \     'DISPLAY_LONG': '2',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getDisplayName': { 'signature': '[ bool $isDaylight [, integer $style [, string $locale]]] | string', 'return_type': 'string'},
 \     'getDSTSavings': { 'signature': 'void | integer', 'return_type': 'integer'},
@@ -8146,14 +7283,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \},
 \'locale': {
 \   'name': 'Locale',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'acceptFromHttp': { 'signature': 'string $header | string', 'return_type': 'string'},
 \     'canonicalize': { 'signature': 'string $locale | string', 'return_type': 'string'},
@@ -8177,12 +7306,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \},
 \'messageformatter': {
 \   'name': 'MessageFormatter',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $locale, string $pattern', 'return_type': ''},
 \     'format': { 'signature': 'array $args | string', 'return_type': 'string'},
@@ -8201,14 +7324,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \},
 \'normalizer': {
 \   'name': 'Normalizer',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'isNormalized': { 'signature': 'string $input [, string $form = Normalizer::FORM_C] | bool', 'return_type': 'bool'},
 \     'normalize': { 'signature': 'string $input [, string $form = Normalizer::FORM_C] | string', 'return_type': 'string'},
@@ -8216,12 +7331,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \},
 \'numberformatter': {
 \   'name': 'NumberFormatter',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $locale, int $style [, string $pattern]', 'return_type': ''},
 \     'formatCurrency': { 'signature': 'float $value, string $currency | string', 'return_type': 'string'},
@@ -8246,12 +7355,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \},
 \'resourcebundle': {
 \   'name': 'ResourceBundle',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $locale, string $bundlename [, bool $fallback]', 'return_type': ''},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
@@ -8275,18 +7378,12 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'INVISIBLE': '32',
 \     'CHAR_LIMIT': '64',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'areConfusable': { 'signature': 'string $s1, string $s2 [, string &$error] | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'isSuspicious': { 'signature': 'string $text [, string &$error] | bool', 'return_type': 'bool'},
 \     'setAllowedLocales': { 'signature': 'string $locale_list | void', 'return_type': 'void'},
 \     'setChecks': { 'signature': 'string $checks | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'transliterator': {
@@ -8297,8 +7394,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \   },
 \   'properties': {
 \     'id': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -8358,10 +7453,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 \     'CESU8': '31',
 \     'IMAP_MAILBOX': '32',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $destination_encoding [, string $source_encoding]]', 'return_type': ''},
 \     'convert': { 'signature': 'string $str [, bool $reverse] | string', 'return_type': 'string'},
@@ -8390,14 +7481,6 @@ let g:phpcomplete_builtin['classes']['intl'] = {
 let g:phpcomplete_builtin['classes']['pthreads'] = {
 \'cond': {
 \   'name': 'Cond',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'broadcast': { 'signature': 'long $condition | boolean', 'return_type': 'boolean'},
 \     'create': { 'signature': 'void | long', 'return_type': 'long'},
@@ -8408,14 +7491,6 @@ let g:phpcomplete_builtin['classes']['pthreads'] = {
 \},
 \'mutex': {
 \   'name': 'Mutex',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'create': { 'signature': '[ boolean $lock] | long', 'return_type': 'long'},
 \     'destroy': { 'signature': 'long $mutex | boolean', 'return_type': 'boolean'},
@@ -8426,12 +7501,6 @@ let g:phpcomplete_builtin['classes']['pthreads'] = {
 \},
 \'stackable': {
 \   'name': 'Stackable',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'chunk': { 'signature': 'long $size, boolean $preserve | boolean', 'return_type': 'boolean'},
 \     'isRunning': { 'signature': 'void | boolean', 'return_type': 'boolean'},
@@ -8447,17 +7516,9 @@ let g:phpcomplete_builtin['classes']['pthreads'] = {
 \     'unlock': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'wait': { 'signature': '[ string $timeout] | boolean', 'return_type': 'boolean'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'thread': {
 \   'name': 'Thread',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'chunk': { 'signature': 'long $size, boolean $preserve | boolean', 'return_type': 'boolean'},
 \     'getCreatorId': { 'signature': 'void | long', 'return_type': 'long'},
@@ -8480,16 +7541,11 @@ let g:phpcomplete_builtin['classes']['pthreads'] = {
 \     'wait': { 'signature': '[ long $timeout] | boolean', 'return_type': 'boolean'},
 \   },
 \   'static_methods': {
+\     'getCurrentThreadId': { 'signature': 'void | long', 'return_type': 'long'},
 \   },
 \},
 \'worker': {
 \   'name': 'Worker',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'chunk': { 'signature': 'long $size, boolean $preserve | boolean', 'return_type': 'boolean'},
 \     'getCreatorId': { 'signature': 'void | long', 'return_type': 'long'},
@@ -8506,21 +7562,15 @@ let g:phpcomplete_builtin['classes']['pthreads'] = {
 \     'start': { 'signature': '[ long $options] | boolean', 'return_type': 'boolean'},
 \     'unstack': { 'signature': '[ Stackable $work] | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['curl'] = {
 \'curlfile': {
 \   'name': 'CURLFile',
-\   'constants': {
-\   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
 \     'mime': { 'initializer': '', 'type': ''},
 \     'postname': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $filename [, string $mimetype [, string $postname]]', 'return_type': ''},
@@ -8531,15 +7581,11 @@ let g:phpcomplete_builtin['classes']['curl'] = {
 \     'setPostFilename': { 'signature': 'string $postname | void', 'return_type': 'void'},
 \     '__wakeup': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['date_time'] = {
 \'dateinterval': {
 \   'name': 'DateInterval',
-\   'constants': {
-\   },
 \   'properties': {
 \     'y': { 'initializer': '', 'type': 'integer'},
 \     'm': { 'initializer': '', 'type': 'integer'},
@@ -8549,8 +7595,6 @@ let g:phpcomplete_builtin['classes']['date_time'] = {
 \     's': { 'initializer': '', 'type': 'integer'},
 \     'invert': { 'initializer': '', 'type': 'integer'},
 \     'days': { 'initializer': '', 'type': 'mixed'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $interval_spec', 'return_type': ''},
@@ -8565,14 +7609,8 @@ let g:phpcomplete_builtin['classes']['date_time'] = {
 \   'constants': {
 \     'EXCLUDE_START_DATE': '1',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $isostr [, int $options]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'datetime': {
@@ -8589,10 +7627,6 @@ let g:phpcomplete_builtin['classes']['date_time'] = {
 \     'RFC3339': '"Y-m-d\TH:i:sP"',
 \     'RSS': '"D, d M Y H:i:s O"',
 \     'W3C': '"Y-m-d\TH:i:sP"',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'return_type': ''},
@@ -8619,12 +7653,6 @@ let g:phpcomplete_builtin['classes']['date_time'] = {
 \},
 \'datetimeimmutable': {
 \   'name': 'DateTimeImmutable',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'return_type': ''},
 \     'add': { 'signature': 'DateInterval $interval | DateTimeImmutable', 'return_type': 'DateTimeImmutable'},
@@ -8666,10 +7694,6 @@ let g:phpcomplete_builtin['classes']['date_time'] = {
 \     'ALL_WITH_BC': '4095',
 \     'PER_COUNTRY': '4096',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $timezone', 'return_type': ''},
 \     'getLocation': { 'signature': 'void | array', 'return_type': 'array'},
@@ -8686,36 +7710,26 @@ let g:phpcomplete_builtin['classes']['date_time'] = {
 let g:phpcomplete_builtin['classes']['directories'] = {
 \'directory': {
 \   'name': 'Directory',
-\   'constants': {
-\   },
 \   'properties': {
 \     'path': { 'initializer': '', 'type': 'string'},
 \     'handle': { 'initializer': '', 'type': 'resource'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'close': { 'signature': '[ resource $dir_handle] | void', 'return_type': 'void'},
 \     'read': { 'signature': '[ resource $dir_handle] | string', 'return_type': 'string'},
 \     'rewind': { 'signature': '[ resource $dir_handle] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['dom'] = {
 \'domattr': {
 \   'name': 'DOMAttr',
-\   'constants': {
-\   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': 'string'},
 \     'ownerElement': { 'initializer': '', 'type': 'DOMElement'},
 \     'schemaTypeInfo': { 'initializer': '', 'type': 'bool'},
 \     'specified': { 'initializer': '', 'type': 'bool'},
 \     'value': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $name [, string $value]', 'return_type': ''},
@@ -8738,34 +7752,20 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domcdatasection': {
 \   'name': 'DOMCdataSection',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $value', 'return_type': ''},
 \     'isWhitespaceInElementContent': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'splitText': { 'signature': 'int $offset | DOMText', 'return_type': 'DOMText'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domcharacterdata': {
 \   'name': 'DOMCharacterData',
-\   'constants': {
-\   },
 \   'properties': {
 \     'data': { 'initializer': '', 'type': 'string'},
 \     'length': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'appendData': { 'signature': 'string $data | void', 'return_type': 'void'},
@@ -8791,17 +7791,9 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domcomment': {
 \   'name': 'DOMComment',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $value]', 'return_type': ''},
 \     'appendData': { 'signature': 'string $data | void', 'return_type': 'void'},
@@ -8827,13 +7819,9 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domdocument': {
 \   'name': 'DOMDocument',
-\   'constants': {
-\   },
 \   'properties': {
 \     'actualEncoding': { 'initializer': '', 'type': 'string'},
 \     'config': { 'initializer': '', 'type': 'DOMConfiguration'},
@@ -8854,8 +7842,6 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'xmlEncoding': { 'initializer': '', 'type': 'string'},
 \     'xmlStandalone': { 'initializer': '', 'type': 'bool'},
 \     'xmlVersion': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $version [, string $encoding]]', 'return_type': ''},
@@ -8907,17 +7893,9 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domdocumentfragment': {
 \   'name': 'DOMDocumentFragment',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'appendXML': { 'signature': 'string $data | bool', 'return_type': 'bool'},
 \     'appendChild': { 'signature': 'DOMNode $newnode | DOMNode', 'return_type': 'DOMNode'},
@@ -8938,13 +7916,9 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domdocumenttype': {
 \   'name': 'DOMDocumentType',
-\   'constants': {
-\   },
 \   'properties': {
 \     'publicId': { 'initializer': '', 'type': 'string'},
 \     'systemId': { 'initializer': '', 'type': 'string'},
@@ -8952,8 +7926,6 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'entities': { 'initializer': '', 'type': 'DOMNamedNodeMap'},
 \     'notations': { 'initializer': '', 'type': 'DOMNamedNodeMap'},
 \     'internalSubset': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'appendChild': { 'signature': 'DOMNode $newnode | DOMNode', 'return_type': 'DOMNode'},
@@ -8974,18 +7946,12 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domelement': {
 \   'name': 'DOMElement',
-\   'constants': {
-\   },
 \   'properties': {
 \     'schemaTypeInfo': { 'initializer': '', 'type': 'bool'},
 \     'tagName': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $name [, string $value [, string $namespaceURI]]', 'return_type': ''},
@@ -9025,13 +7991,9 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domentity': {
 \   'name': 'DOMEntity',
-\   'constants': {
-\   },
 \   'properties': {
 \     'publicId': { 'initializer': '', 'type': 'string'},
 \     'systemId': { 'initializer': '', 'type': 'string'},
@@ -9039,8 +8001,6 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'actualEncoding': { 'initializer': '', 'type': 'string'},
 \     'encoding': { 'initializer': '', 'type': 'string'},
 \     'version': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'appendChild': { 'signature': 'DOMNode $newnode | DOMNode', 'return_type': 'DOMNode'},
@@ -9061,17 +8021,9 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domentityreference': {
 \   'name': 'DOMEntityReference',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $name', 'return_type': ''},
 \     'appendChild': { 'signature': 'DOMNode $newnode | DOMNode', 'return_type': 'DOMNode'},
@@ -9092,17 +8044,11 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domexception': {
 \   'name': 'DOMException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'code': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -9115,47 +8061,29 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domimplementation': {
 \   'name': 'DOMImplementation',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'createDocument': { 'signature': '[ string $namespaceURI = NULL [, string $qualifiedName = NULL [, DOMDocumentType $doctype = NULL]]] | DOMDocument', 'return_type': 'DOMDocument'},
 \     'createDocumentType': { 'signature': '[ string $qualifiedName = NULL [, string $publicId = NULL [, string $systemId = NULL]]] | DOMDocumentType', 'return_type': 'DOMDocumentType'},
 \     'hasFeature': { 'signature': 'string $feature, string $version | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domnamednodemap': {
 \   'name': 'DOMNamedNodeMap',
-\   'constants': {
-\   },
 \   'properties': {
 \     'length': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getNamedItem': { 'signature': 'string $name | DOMNode', 'return_type': 'DOMNode'},
 \     'getNamedItemNS': { 'signature': 'string $namespaceURI, string $localName | DOMNode', 'return_type': 'DOMNode'},
 \     'item': { 'signature': 'int $index | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domnode': {
 \   'name': 'DOMNode',
-\   'constants': {
-\   },
 \   'properties': {
 \     'nodeName': { 'initializer': '', 'type': 'string'},
 \     'nodeValue': { 'initializer': '', 'type': 'string'},
@@ -9174,8 +8102,6 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'baseURI': { 'initializer': '', 'type': 'string'},
 \     'textContent': { 'initializer': '', 'type': 'string'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'appendChild': { 'signature': 'DOMNode $newnode | DOMNode', 'return_type': 'DOMNode'},
 \     'C14N': { 'signature': '[ bool $exclusive [, bool $with_comments [, array $xpath [, array $ns_prefixes]]]] | string', 'return_type': 'string'},
@@ -9194,34 +8120,22 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'normalize': { 'signature': 'void | void', 'return_type': 'void'},
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'domnodelist': {
 \   'name': 'DOMNodeList',
-\   'constants': {
-\   },
 \   'properties': {
 \     'length': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'item': { 'signature': 'int $index | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domnotation': {
 \   'name': 'DOMNotation',
-\   'constants': {
-\   },
 \   'properties': {
 \     'publicId': { 'initializer': '', 'type': 'string'},
 \     'systemId': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'appendChild': { 'signature': 'DOMNode $newnode | DOMNode', 'return_type': 'DOMNode'},
@@ -9242,18 +8156,12 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domprocessinginstruction': {
 \   'name': 'DOMProcessingInstruction',
-\   'constants': {
-\   },
 \   'properties': {
 \     'target': { 'initializer': '', 'type': 'string'},
 \     'data': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $name [, string $value]', 'return_type': ''},
@@ -9275,17 +8183,11 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domtext': {
 \   'name': 'DOMText',
-\   'constants': {
-\   },
 \   'properties': {
 \     'wholeText': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $value]', 'return_type': ''},
@@ -9309,17 +8211,11 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'removeChild': { 'signature': 'DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \     'replaceChild': { 'signature': 'DOMNode $newnode, DOMNode $oldnode | DOMNode', 'return_type': 'DOMNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'domxpath': {
 \   'name': 'DOMXPath',
-\   'constants': {
-\   },
 \   'properties': {
 \     'document': { 'initializer': '', 'type': 'DOMDocument'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'DOMDocument $doc', 'return_type': ''},
@@ -9328,23 +8224,17 @@ let g:phpcomplete_builtin['classes']['dom'] = {
 \     'registerNamespace': { 'signature': 'string $prefix, string $namespaceURI | bool', 'return_type': 'bool'},
 \     'registerPhpFunctions': { 'signature': '[ mixed $restrict] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['predefined_exceptions'] = {
 \'errorexception': {
 \   'name': 'ErrorException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'severity': { 'initializer': '', 'type': 'int'},
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $message = "" [, int $code = 0 [, int $severity = 1 [, string $filename = __FILE__ [, int $lineno = __LINE__ [, Exception $previous = NULL]]]]]]', 'return_type': ''},
@@ -9359,20 +8249,14 @@ let g:phpcomplete_builtin['classes']['predefined_exceptions'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'exception': {
 \   'name': 'Exception',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $message = "" [, int $code = 0 [, Exception $previous = NULL]]]', 'return_type': ''},
@@ -9385,8 +8269,6 @@ let g:phpcomplete_builtin['classes']['predefined_exceptions'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -9429,12 +8311,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \     'BACKEND_ALL': '63',
 \     'BACKEND_MASK': '65535',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'backend': { 'signature': 'void | int', 'return_type': 'int'},
 \     'depth': { 'signature': 'void | int', 'return_type': 'int'},
@@ -9457,15 +8333,11 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evcheck': {
 \   'name': 'EvCheck',
-\   'constants': {
-\   },
 \   'properties': {
 \     'is_active': { 'initializer': '', 'type': ''},
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -9484,8 +8356,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evchild': {
 \   'name': 'EvChild',
-\   'constants': {
-\   },
 \   'properties': {
 \     'pid': { 'initializer': '', 'type': ''},
 \     'rpid': { 'initializer': '', 'type': ''},
@@ -9494,8 +8364,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -9515,12 +8383,8 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evembed': {
 \   'name': 'EvEmbed',
-\   'constants': {
-\   },
 \   'properties': {
 \     'embed': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -9541,15 +8405,11 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evfork': {
 \   'name': 'EvFork',
-\   'constants': {
-\   },
 \   'properties': {
 \     'is_active': { 'initializer': '', 'type': ''},
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -9568,15 +8428,11 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evidle': {
 \   'name': 'EvIdle',
-\   'constants': {
-\   },
 \   'properties': {
 \     'is_active': { 'initializer': '', 'type': ''},
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -9595,8 +8451,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evio': {
 \   'name': 'EvIo',
-\   'constants': {
-\   },
 \   'properties': {
 \     'fd': { 'initializer': '', 'type': ''},
 \     'events': { 'initializer': '', 'type': ''},
@@ -9604,8 +8458,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -9625,8 +8477,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evloop': {
 \   'name': 'EvLoop',
-\   'constants': {
-\   },
 \   'properties': {
 \     'data': { 'initializer': '', 'type': ''},
 \     'backend': { 'initializer': '', 'type': ''},
@@ -9636,8 +8486,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \     'io_interval': { 'initializer': '', 'type': ''},
 \     'timeout_interval': { 'initializer': '', 'type': ''},
 \     'depth': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'backend': { 'signature': 'void | int', 'return_type': 'int'},
@@ -9669,8 +8517,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evperiodic': {
 \   'name': 'EvPeriodic',
-\   'constants': {
-\   },
 \   'properties': {
 \     'offset': { 'initializer': '', 'type': ''},
 \     'interval': { 'initializer': '', 'type': ''},
@@ -9678,8 +8524,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'again': { 'signature': 'void | void', 'return_type': 'void'},
@@ -9701,15 +8545,11 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evprepare': {
 \   'name': 'EvPrepare',
-\   'constants': {
-\   },
 \   'properties': {
 \     'is_active': { 'initializer': '', 'type': ''},
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -9728,16 +8568,12 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evsignal': {
 \   'name': 'EvSignal',
-\   'constants': {
-\   },
 \   'properties': {
 \     'signum': { 'initializer': '', 'type': ''},
 \     'is_active': { 'initializer': '', 'type': ''},
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -9757,8 +8593,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evstat': {
 \   'name': 'EvStat',
-\   'constants': {
-\   },
 \   'properties': {
 \     'path': { 'initializer': '', 'type': ''},
 \     'interval': { 'initializer': '', 'type': ''},
@@ -9766,8 +8600,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'attr': { 'signature': 'void | array', 'return_type': 'array'},
@@ -9790,8 +8622,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evtimer': {
 \   'name': 'EvTimer',
-\   'constants': {
-\   },
 \   'properties': {
 \     'repeat': { 'initializer': '', 'type': ''},
 \     'remaining': { 'initializer': '', 'type': ''},
@@ -9799,8 +8629,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'again': { 'signature': 'void | void', 'return_type': 'void'},
@@ -9821,15 +8649,11 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \},
 \'evwatcher': {
 \   'name': 'EvWatcher',
-\   'constants': {
-\   },
 \   'properties': {
 \     'is_active': { 'initializer': '', 'type': ''},
 \     'data': { 'initializer': '', 'type': ''},
 \     'is_pending': { 'initializer': '', 'type': ''},
 \     'priority': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'clear': { 'signature': 'void | int', 'return_type': 'int'},
@@ -9841,8 +8665,6 @@ let g:phpcomplete_builtin['classes']['ev'] = {
 \     'setCallback': { 'signature': 'callable $callback | void', 'return_type': 'void'},
 \     'start': { 'signature': 'void | void', 'return_type': 'void'},
 \     'stop': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -9860,14 +8682,12 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \   'properties': {
 \     'pending': { 'initializer': '', 'type': 'bool'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
-\     'add': { 'signature': '[ double $timeout] | void', 'return_type': 'void'},
+\     'add': { 'signature': '[ double $timeout] | bool', 'return_type': 'bool'},
 \     'addSignal': { 'signature': '[ double $timeout] | bool', 'return_type': 'bool'},
 \     'addTimer': { 'signature': '[ double $timeout] | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'EventBase $base, mixed $fd, int $what, callable $cb [, mixed $arg = NULL]', 'return_type': ''},
-\     'del': { 'signature': 'void | void', 'return_type': 'void'},
+\     'del': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'delSignal': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'delTimer': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'free': { 'signature': 'void | void', 'return_type': 'void'},
@@ -9877,7 +8697,7 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'setTimer': { 'signature': 'EventBase $base, callable $cb [, mixed $arg] | bool', 'return_type': 'bool'},
 \   },
 \   'static_methods': {
-\     'getSupportedMethods': { 'signature': 'void | void', 'return_type': 'void'},
+\     'getSupportedMethods': { 'signature': 'void | array', 'return_type': 'array'},
 \     'signal': { 'signature': 'EventBase $base, int $signum, callable $cb [, mixed $arg] | Event', 'return_type': 'Event'},
 \     'timer': { 'signature': 'EventBase $base, callable $cb [, mixed $arg] | Event', 'return_type': 'Event'},
 \   },
@@ -9892,25 +8712,19 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'NO_CACHE_TIME': '8',
 \     'EPOLL_USE_CHANGELIST': '16',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ EventConfig $cfg]', 'return_type': ''},
 \     'dispatch': { 'signature': 'void | void', 'return_type': 'void'},
-\     'exit': { 'signature': '[ double $timeout] | void', 'return_type': 'void'},
+\     'exit': { 'signature': '[ double $timeout] | bool', 'return_type': 'bool'},
 \     'getFeatures': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getMethod': { 'signature': '[ EventConfig $cfg] | string', 'return_type': 'string'},
 \     'getTimeOfDayCached': { 'signature': 'void | double', 'return_type': 'double'},
-\     'gotExit': { 'signature': 'void | void', 'return_type': 'void'},
-\     'gotStop': { 'signature': 'void | void', 'return_type': 'void'},
+\     'gotExit': { 'signature': 'void | bool', 'return_type': 'bool'},
+\     'gotStop': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'loop': { 'signature': '[ int $flags] | bool', 'return_type': 'bool'},
-\     'priorityInit': { 'signature': 'string $n_priorities | bool', 'return_type': 'bool'},
-\     'reInit': { 'signature': 'string $base | void', 'return_type': 'void'},
+\     'priorityInit': { 'signature': 'int $n_priorities | bool', 'return_type': 'bool'},
+\     'reInit': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'stop': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'eventbuffer': {
@@ -9927,32 +8741,28 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'length': { 'initializer': '', 'type': 'int'},
 \     'contiguous_space': { 'initializer': '', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'string $data | bool', 'return_type': 'bool'},
 \     'addBuffer': { 'signature': 'EventBuffer $buf | bool', 'return_type': 'bool'},
 \     'appendFrom': { 'signature': 'EventBuffer $buf, int $len | int', 'return_type': 'int'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'copyout': { 'signature': 'string &$data, int $max_bytes | int', 'return_type': 'int'},
-\     'drain': { 'signature': 'int $len | void', 'return_type': 'void'},
+\     'drain': { 'signature': 'int $len | bool', 'return_type': 'bool'},
 \     'enableLocking': { 'signature': 'void | void', 'return_type': 'void'},
 \     'expand': { 'signature': 'int $len | bool', 'return_type': 'bool'},
 \     'freeze': { 'signature': 'bool $at_front | bool', 'return_type': 'bool'},
 \     'lock': { 'signature': 'void | void', 'return_type': 'void'},
 \     'prepend': { 'signature': 'string $data | bool', 'return_type': 'bool'},
 \     'prependBuffer': { 'signature': 'EventBuffer $buf | bool', 'return_type': 'bool'},
-\     'pullup': { 'signature': 'string $size | void', 'return_type': 'void'},
-\     'read': { 'signature': 'mixed $fd, int $howmuch | string', 'return_type': 'string'},
-\     'readLine': { 'signature': 'string $eol_style | void', 'return_type': 'void'},
+\     'pullup': { 'signature': 'int $size | string', 'return_type': 'string'},
+\     'read': { 'signature': 'mixed $fd, int $howmuch | int', 'return_type': 'int'},
+\     'readLine': { 'signature': 'int $eol_style | string', 'return_type': 'string'},
 \     'search': { 'signature': 'string $what [, int $start = -1 [, int $end = -1]] | mixed', 'return_type': 'mixed'},
 \     'searchEol': { 'signature': '[ int $start = -1 [, int $eol_style = EventBuffer::EOL_ANY]] | mixed', 'return_type': 'mixed'},
 \     'substr': { 'signature': 'int $start [, int $length] | string', 'return_type': 'string'},
 \     'unfreeze': { 'signature': 'bool $at_front | bool', 'return_type': 'bool'},
 \     'unlock': { 'signature': 'void | bool', 'return_type': 'bool'},
-\     'write': { 'signature': 'mixed $fd [, int $howmuch] | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
+\     'write': { 'signature': 'mixed $fd [, int $howmuch] | int', 'return_type': 'int'},
 \   },
 \},
 \'eventbufferevent': {
@@ -9978,32 +8788,30 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'input': { 'initializer': '', 'type': 'EventBuffer'},
 \     'output': { 'initializer': '', 'type': 'EventBuffer'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'connect': { 'signature': 'string $addr | bool', 'return_type': 'bool'},
 \     'connectHost': { 'signature': 'EventDnsBase $dns_base, string $hostname, int $port [, int $family = EventUtil::AF_UNSPEC] | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'EventBase $base [, mixed $socket = NULL [, int $options = 0 [, callable $readcb = NULL [, callable $writecb = NULL [, callable $eventcb = NULL]]]]]', 'return_type': ''},
-\     'createPair': { 'signature': 'EventBase $base [, int $options = 0] | array', 'return_type': 'array'},
 \     'disable': { 'signature': 'int $events | bool', 'return_type': 'bool'},
-\     'enable': { 'signature': 'string $events | bool', 'return_type': 'bool'},
+\     'enable': { 'signature': 'int $events | bool', 'return_type': 'bool'},
 \     'free': { 'signature': 'void | void', 'return_type': 'void'},
 \     'getDnsErrorString': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getEnabled': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getInput': { 'signature': 'void | EventBuffer', 'return_type': 'EventBuffer'},
 \     'getOutput': { 'signature': 'void | EventBuffer', 'return_type': 'EventBuffer'},
-\     'read': { 'signature': 'string &$data, int $size | int', 'return_type': 'int'},
+\     'read': { 'signature': 'int $size | string', 'return_type': 'string'},
 \     'readBuffer': { 'signature': 'EventBuffer $buf | bool', 'return_type': 'bool'},
 \     'setCallbacks': { 'signature': 'callable $readcb, callable $writecb, callable $eventcb [, string $arg] | void', 'return_type': 'void'},
 \     'setPriority': { 'signature': 'int $priority | bool', 'return_type': 'bool'},
-\     'setTimeouts': { 'signature': 'int $timeout_read, int $timeout_write | bool', 'return_type': 'bool'},
+\     'setTimeouts': { 'signature': 'float $timeout_read, float $timeout_write | bool', 'return_type': 'bool'},
 \     'setWatermark': { 'signature': 'int $events, int $lowmark, int $highmark | void', 'return_type': 'void'},
-\     'sslError': { 'signature': 'void | void', 'return_type': 'void'},
+\     'sslError': { 'signature': 'void | string', 'return_type': 'string'},
 \     'sslRenegotiate': { 'signature': 'void | void', 'return_type': 'void'},
 \     'write': { 'signature': 'string $data | bool', 'return_type': 'bool'},
 \     'writeBuffer': { 'signature': 'EventBuffer $buf | bool', 'return_type': 'bool'},
 \   },
 \   'static_methods': {
+\     'createPair': { 'signature': 'EventBase $base [, int $options = 0] | array', 'return_type': 'array'},
 \     'sslFilter': { 'signature': 'EventBase $base, EventBufferEvent $underlying, EventSslContext $ctx, int $state [, int $options = 0] | EventBufferEvent', 'return_type': 'EventBufferEvent'},
 \     'sslSocket': { 'signature': 'EventBase $base, mixed $socket, EventSslContext $ctx, int $state [, int $options] | EventBufferEvent', 'return_type': 'EventBufferEvent'},
 \   },
@@ -10015,17 +8823,11 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'FEATURE_O1': '2',
 \     'FEATURE_FDS': '4',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'avoidMethod': { 'signature': 'int $method | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'requireFeatures': { 'signature': 'int $feature | bool', 'return_type': 'bool'},
 \     'setMaxDispatchInterval': { 'signature': 'int $max_interval, int $max_callbacks, int $min_priority | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'eventdnsbase': {
@@ -10037,32 +8839,20 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'OPTION_HOSTSFILE': '8',
 \     'OPTIONS_ALL': '15',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addNameserverIp': { 'signature': 'string $ip | bool', 'return_type': 'bool'},
 \     'addSearch': { 'signature': 'string $domain | void', 'return_type': 'void'},
 \     'clearSearch': { 'signature': 'void | void', 'return_type': 'void'},
 \     '__construct': { 'signature': 'EventBase $base, bool $initialize', 'return_type': ''},
-\     'countNameservers': { 'signature': 'void | void', 'return_type': 'void'},
+\     'countNameservers': { 'signature': 'void | int', 'return_type': 'int'},
 \     'loadHosts': { 'signature': 'string $hosts | bool', 'return_type': 'bool'},
 \     'parseResolvConf': { 'signature': 'int $flags, string $filename | bool', 'return_type': 'bool'},
 \     'setOption': { 'signature': 'string $option, string $value | bool', 'return_type': 'bool'},
 \     'setSearchNdots': { 'signature': 'int $ndots | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'eventhttp': {
 \   'name': 'EventHttp',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'accept': { 'signature': 'mixed $socket | bool', 'return_type': 'bool'},
 \     'addServerAlias': { 'signature': 'string $alias | bool', 'return_type': 'bool'},
@@ -10076,17 +8866,9 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'setMaxHeadersSize': { 'signature': 'int $value | void', 'return_type': 'void'},
 \     'setTimeout': { 'signature': 'int $value | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'eventhttpconnection': {
 \   'name': 'EventHttpConnection',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'EventBase $base, EventDnsBase $dns_base, string $address, int $port', 'return_type': ''},
 \     'getBase': { 'signature': 'void | EventBase', 'return_type': 'EventBase'},
@@ -10099,8 +8881,6 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'setMaxHeadersSize': { 'signature': 'string $max_size | void', 'return_type': 'void'},
 \     'setRetries': { 'signature': 'int $retries | void', 'return_type': 'void'},
 \     'setTimeout': { 'signature': 'int $timeout | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'eventhttprequest': {
@@ -10117,10 +8897,6 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'CMD_PATCH': '256',
 \     'INPUT_HEADER': '1',
 \     'OUTPUT_HEADER': '2',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'addHeader': { 'signature': 'string $key, string $value, int $type | bool', 'return_type': 'bool'},
@@ -10145,8 +8921,6 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'sendReplyEnd': { 'signature': 'void | void', 'return_type': 'void'},
 \     'sendReplyStart': { 'signature': 'int $code, string $reason | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'eventlistener': {
 \   'name': 'EventListener',
@@ -10159,8 +8933,6 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \   },
 \   'properties': {
 \     'fd': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'EventBase $base, callable $cb, mixed $data, int $flags, int $backlog, mixed $target', 'return_type': ''},
@@ -10199,12 +8971,8 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'local_cert': { 'initializer': '', 'type': 'string'},
 \     'local_pk': { 'initializer': '', 'type': 'string'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $method, string $options', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'eventutil': {
@@ -10235,10 +9003,6 @@ let g:phpcomplete_builtin['classes']['event'] = {
 \     'IPPROTO_IP': '0',
 \     'IPPROTO_IPV6': '41',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \   },
@@ -10255,14 +9019,10 @@ let g:phpcomplete_builtin['classes']['event'] = {
 let g:phpcomplete_builtin['classes']['fann'] = {
 \'fannconnection': {
 \   'name': 'FANNConnection',
-\   'constants': {
-\   },
 \   'properties': {
 \     'from_neuron': { 'initializer': '', 'type': ''},
 \     'to_neuron': { 'initializer': '', 'type': ''},
 \     'weight': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'int $from_neuron, int $to_neuron, float $weight', 'return_type': ''},
@@ -10271,19 +9031,11 @@ let g:phpcomplete_builtin['classes']['fann'] = {
 \     'getWeight': { 'signature': 'void | void', 'return_type': 'void'},
 \     'setWeight': { 'signature': 'float $weight | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['gearman'] = {
 \'gearmanclient': {
 \   'name': 'GearmanClient',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addOptions': { 'signature': 'int $options | bool', 'return_type': 'bool'},
 \     'addServer': { 'signature': '[ string $host = 127.0.0.1 [, int $port = 4730]] | bool', 'return_type': 'bool'},
@@ -10332,20 +9084,14 @@ let g:phpcomplete_builtin['classes']['gearman'] = {
 \     'setWorkloadCallback': { 'signature': 'callable $callback | bool', 'return_type': 'bool'},
 \     'timeout': { 'signature': 'void | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'gearmanexception': {
 \   'name': 'GearmanException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -10358,17 +9104,9 @@ let g:phpcomplete_builtin['classes']['gearman'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'gearmanjob': {
 \   'name': 'GearmanJob',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'complete': { 'signature': 'string $result | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -10391,17 +9129,9 @@ let g:phpcomplete_builtin['classes']['gearman'] = {
 \     'workload': { 'signature': 'void | string', 'return_type': 'string'},
 \     'workloadSize': { 'signature': 'void | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'gearmantask': {
 \   'name': 'GearmanTask',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'create': { 'signature': 'void | GearmanTask', 'return_type': 'GearmanTask'},
@@ -10421,17 +9151,9 @@ let g:phpcomplete_builtin['classes']['gearman'] = {
 \     'unique': { 'signature': 'void | string', 'return_type': 'string'},
 \     'uuid': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'gearmanworker': {
 \   'name': 'GearmanWorker',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addFunction': { 'signature': 'string $function_name, callable $function [, mixed &$context [, int $timeout]] | bool', 'return_type': 'bool'},
 \     'addOptions': { 'signature': 'int $option | bool', 'return_type': 'bool'},
@@ -10454,8 +9176,6 @@ let g:phpcomplete_builtin['classes']['gearman'] = {
 \     'unregisterAll': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'wait': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'work': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -10526,10 +9246,6 @@ let g:phpcomplete_builtin['classes']['gender'] = {
 \     'JAPAN': '52',
 \     'KOREA': '53',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'connect': { 'signature': 'string $dsn | boolean', 'return_type': 'boolean'},
 \     '__construct': { 'signature': '[ string $dsn]', 'return_type': ''},
@@ -10538,19 +9254,11 @@ let g:phpcomplete_builtin['classes']['gender'] = {
 \     'isNick': { 'signature': 'string $name0, string $name1 [, integer $country] | array', 'return_type': 'array'},
 \     'similarNames': { 'signature': 'string $name [, integer $country] | array', 'return_type': 'array'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['gmagick'] = {
 \'gmagick': {
 \   'name': 'Gmagick',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addimage': { 'signature': 'Gmagick $Gmagick | Gmagick', 'return_type': 'Gmagick'},
 \     'addnoiseimage': { 'signature': 'int $NOISE | Gmagick', 'return_type': 'Gmagick'},
@@ -10693,17 +9401,9 @@ let g:phpcomplete_builtin['classes']['gmagick'] = {
 \     'write': { 'signature': 'string $filename | void', 'return_type': 'void'},
 \     'writeimage': { 'signature': 'string $filename [, bool $all_frames = false] | Gmagick', 'return_type': 'Gmagick'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'gmagickdraw': {
 \   'name': 'GmagickDraw',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'annotate': { 'signature': 'float $x, float $y, string $text | GmagickDraw', 'return_type': 'GmagickDraw'},
 \     'arc': { 'signature': 'float $sx, float $sy, float $ex, float $ey, float $sd, float $ed | GmagickDraw', 'return_type': 'GmagickDraw'},
@@ -10740,17 +9440,9 @@ let g:phpcomplete_builtin['classes']['gmagick'] = {
 \     'settextdecoration': { 'signature': 'int $decoration | GmagickDraw', 'return_type': 'GmagickDraw'},
 \     'settextencoding': { 'signature': 'string $encoding | GmagickDraw', 'return_type': 'GmagickDraw'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'gmagickpixel': {
 \   'name': 'GmagickPixel',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $color]', 'return_type': ''},
 \     'getcolor': { 'signature': '[ bool $as_array [, bool $normalize_array]] | mixed', 'return_type': 'mixed'},
@@ -10759,36 +9451,20 @@ let g:phpcomplete_builtin['classes']['gmagick'] = {
 \     'setcolor': { 'signature': 'string $color | GmagickPixel', 'return_type': 'GmagickPixel'},
 \     'setcolorvalue': { 'signature': 'int $color, float $value | GmagickPixel', 'return_type': 'GmagickPixel'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['haru'] = {
 \'haruannotation': {
 \   'name': 'HaruAnnotation',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'setBorderStyle': { 'signature': 'float $width, int $dash_on, int $dash_off | bool', 'return_type': 'bool'},
 \     'setHighlightMode': { 'signature': 'int $mode | bool', 'return_type': 'bool'},
 \     'setIcon': { 'signature': 'int $icon | bool', 'return_type': 'bool'},
 \     'setOpened': { 'signature': 'bool $opened | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'harudestination': {
 \   'name': 'HaruDestination',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'setFit': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'setFitB': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -10799,17 +9475,9 @@ let g:phpcomplete_builtin['classes']['haru'] = {
 \     'setFitV': { 'signature': 'float $left | bool', 'return_type': 'bool'},
 \     'setXYZ': { 'signature': 'float $left, float $top, float $zoom | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'harudoc': {
 \   'name': 'HaruDoc',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addPage': { 'signature': 'void | object', 'return_type': 'object'},
 \     'addPageLabel': { 'signature': 'int $first_page, int $style, int $first_num [, string $prefix = ""] | bool', 'return_type': 'bool'},
@@ -10856,34 +9524,18 @@ let g:phpcomplete_builtin['classes']['haru'] = {
 \     'useKREncodings': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'useKRFonts': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'haruencoder': {
 \   'name': 'HaruEncoder',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getByteType': { 'signature': 'string $text, int $index | int', 'return_type': 'int'},
 \     'getType': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getUnicode': { 'signature': 'int $character | int', 'return_type': 'int'},
 \     'getWritingMode': { 'signature': 'void | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'haruexception': {
 \   'name': 'HaruException',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
@@ -10895,17 +9547,9 @@ let g:phpcomplete_builtin['classes']['haru'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'harufont': {
 \   'name': 'HaruFont',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getAscent': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getCapHeight': { 'signature': 'void | int', 'return_type': 'int'},
@@ -10917,17 +9561,9 @@ let g:phpcomplete_builtin['classes']['haru'] = {
 \     'getXHeight': { 'signature': 'void | int', 'return_type': 'int'},
 \     'measureText': { 'signature': 'string $text, float $width, float $font_size, float $char_space, float $word_space [, bool $word_wrap = false] | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'haruimage': {
 \   'name': 'HaruImage',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getBitsPerComponent': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getColorSpace': { 'signature': 'void | string', 'return_type': 'string'},
@@ -10937,32 +9573,16 @@ let g:phpcomplete_builtin['classes']['haru'] = {
 \     'setColorMask': { 'signature': 'int $rmin, int $rmax, int $gmin, int $gmax, int $bmin, int $bmax | bool', 'return_type': 'bool'},
 \     'setMaskImage': { 'signature': 'object $mask_image | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'haruoutline': {
 \   'name': 'HaruOutline',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'setDestination': { 'signature': 'object $destination | bool', 'return_type': 'bool'},
 \     'setOpened': { 'signature': 'bool $opened | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'harupage': {
 \   'name': 'HaruPage',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'arc': { 'signature': 'float $x, float $y, float $ray, float $ang1, float $ang2 | bool', 'return_type': 'bool'},
 \     'beginText': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -11051,19 +9671,11 @@ let g:phpcomplete_builtin['classes']['haru'] = {
 \     'textOut': { 'signature': 'float $x, float $y, string $text | bool', 'return_type': 'bool'},
 \     'textRect': { 'signature': 'float $left, float $top, float $right, float $bottom, string $text [, int $align = HaruPage::TALIGN_LEFT] | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['http'] = {
 \'httpdeflatestream': {
 \   'name': 'HttpDeflateStream',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ int $flags = 0]', 'return_type': ''},
 \     'factory': { 'signature': '[ int $flags = 0 [, string $class_name = "HttpDeflateStream"]] | HttpDeflateStream', 'return_type': 'HttpDeflateStream'},
@@ -11071,17 +9683,9 @@ let g:phpcomplete_builtin['classes']['http'] = {
 \     'flush': { 'signature': '[ string $data] | string', 'return_type': 'string'},
 \     'update': { 'signature': 'string $data | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'httpinflatestream': {
 \   'name': 'HttpInflateStream',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ int $flags = 0]', 'return_type': ''},
 \     'factory': { 'signature': '[ int $flags = 0 [, string $class_name = "HttpInflateStream"]] | HttpInflateStream', 'return_type': 'HttpInflateStream'},
@@ -11089,17 +9693,9 @@ let g:phpcomplete_builtin['classes']['http'] = {
 \     'flush': { 'signature': '[ string $data] | string', 'return_type': 'string'},
 \     'update': { 'signature': 'string $data | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'httpmessage': {
 \   'name': 'HttpMessage',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addHeaders': { 'signature': 'array $headers [, bool $append = false] | void', 'return_type': 'void'},
 \     '__construct': { 'signature': '[ string $message]', 'return_type': ''},
@@ -11132,17 +9728,9 @@ let g:phpcomplete_builtin['classes']['http'] = {
 \     'toMessageTypeObject': { 'signature': 'void | HttpRequest|HttpResponse', 'return_type': 'HttpRequest|HttpResponse'},
 \     'toString': { 'signature': '[ bool $include_parent = false] | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'httpquerystring': {
 \   'name': 'HttpQueryString',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ bool $global = true [, mixed $add]]', 'return_type': ''},
 \     'get': { 'signature': '[ string $key [, mixed $type = 0 [, mixed $defval = NULL [, bool $delete = false]]]] | mixed', 'return_type': 'mixed'},
@@ -11153,17 +9741,9 @@ let g:phpcomplete_builtin['classes']['http'] = {
 \     'toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     'xlate': { 'signature': 'string $ie, string $oe | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'httprequest': {
 \   'name': 'HttpRequest',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addCookies': { 'signature': 'array $cookies | bool', 'return_type': 'bool'},
 \     'addHeaders': { 'signature': 'array $headers | bool', 'return_type': 'bool'},
@@ -11218,17 +9798,9 @@ let g:phpcomplete_builtin['classes']['http'] = {
 \     'setSslOptions': { 'signature': '[ array $options] | bool', 'return_type': 'bool'},
 \     'setUrl': { 'signature': 'string $url | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'httprequestpool': {
 \   'name': 'HttpRequestPool',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'attach': { 'signature': 'HttpRequest $request | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': '[ HttpRequest $request [, HttpRequest $...]]', 'return_type': ''},
@@ -11241,19 +9813,9 @@ let g:phpcomplete_builtin['classes']['http'] = {
 \     'socketPerform': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'socketSelect': { 'signature': '[ float $timeout = 0] | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'httpresponse': {
 \   'name': 'HttpResponse',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'capture': { 'signature': 'void | void', 'return_type': 'void'},
 \     'getBufferSize': { 'signature': 'void | int', 'return_type': 'int'},
@@ -11295,12 +9857,6 @@ let g:phpcomplete_builtin['classes']['http'] = {
 let g:phpcomplete_builtin['classes']['imagemagick'] = {
 \'imagick': {
 \   'name': 'Imagick',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'adaptiveBlurImage': { 'signature': 'float $radius, float $sigma [, int $channel = Imagick::CHANNEL_DEFAULT] | bool', 'return_type': 'bool'},
 \     'adaptiveResizeImage': { 'signature': 'int $columns, int $rows [, bool $bestfit = false] | bool', 'return_type': 'bool'},
@@ -11626,17 +10182,9 @@ let g:phpcomplete_builtin['classes']['imagemagick'] = {
 \     'writeImages': { 'signature': 'string $filename, bool $adjoin | bool', 'return_type': 'bool'},
 \     'writeImagesFile': { 'signature': 'resource $filehandle | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'imagickdraw': {
 \   'name': 'ImagickDraw',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'affine': { 'signature': 'array $affine | bool', 'return_type': 'bool'},
 \     'annotation': { 'signature': 'float $x, float $y, string $text | bool', 'return_type': 'bool'},
@@ -11754,17 +10302,9 @@ let g:phpcomplete_builtin['classes']['imagemagick'] = {
 \     'skewY': { 'signature': 'float $degrees | bool', 'return_type': 'bool'},
 \     'translate': { 'signature': 'float $x, float $y | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'imagickpixel': {
 \   'name': 'ImagickPixel',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'clear': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': '[ string $color]', 'return_type': ''},
@@ -11780,17 +10320,9 @@ let g:phpcomplete_builtin['classes']['imagemagick'] = {
 \     'setColorValue': { 'signature': 'int $color, float $value | bool', 'return_type': 'bool'},
 \     'setHSL': { 'signature': 'float $hue, float $saturation, float $luminosity | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'imagickpixeliterator': {
 \   'name': 'ImagickPixelIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'clear': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'Imagick $wand', 'return_type': ''},
@@ -11807,8 +10339,6 @@ let g:phpcomplete_builtin['classes']['imagemagick'] = {
 \     'setIteratorRow': { 'signature': 'int $row | bool', 'return_type': 'bool'},
 \     'syncIterator': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['judy'] = {
@@ -11820,10 +10350,6 @@ let g:phpcomplete_builtin['classes']['judy'] = {
 \     'INT_TO_MIXED': '3',
 \     'STRING_TO_INT': '4',
 \     'STRING_TO_MIXED': '5',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'byCount': { 'signature': 'int $nth_index | int', 'return_type': 'int'},
@@ -11847,19 +10373,11 @@ let g:phpcomplete_builtin['classes']['judy'] = {
 \     'prevEmpty': { 'signature': 'mixed $index | int', 'return_type': 'int'},
 \     'size': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['ktaglib'] = {
 \'ktaglib_id3v2_frame': {
 \   'name': 'KTaglib_ID3v2_Frame',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getDescription': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getMimeType': { 'signature': 'string $type | string', 'return_type': 'string'},
@@ -11878,17 +10396,9 @@ let g:phpcomplete_builtin['classes']['ktaglib'] = {
 \     'getYear': { 'signature': 'void | int', 'return_type': 'int'},
 \     'isEmpty': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'ktaglib_tag': {
 \   'name': 'KTaglib_Tag',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getSize': { 'signature': 'void | int', 'return_type': 'int'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
@@ -11901,17 +10411,9 @@ let g:phpcomplete_builtin['classes']['ktaglib'] = {
 \     'getYear': { 'signature': 'void | int', 'return_type': 'int'},
 \     'isEmpty': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'ktaglib_mpeg_audioproperties': {
 \   'name': 'KTaglib_MPEG_AudioProperties',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getBitrate': { 'signature': 'void | int', 'return_type': 'int'},
 \     'getChannels': { 'signature': 'void | int', 'return_type': 'int'},
@@ -11923,37 +10425,19 @@ let g:phpcomplete_builtin['classes']['ktaglib'] = {
 \     'isOriginal': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isProtectionEnabled': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'ktaglib_mpeg_file': {
 \   'name': 'KTaglib_MPEG_File',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getAudioProperties': { 'signature': 'void | KTaglib_MPEG_File', 'return_type': 'KTaglib_MPEG_File'},
 \     'getID3v1Tag': { 'signature': '[ bool $create = false] | KTaglib_ID3v1_Tag', 'return_type': 'KTaglib_ID3v1_Tag'},
 \     'getID3v2Tag': { 'signature': '[ bool $create = false] | KTaglib_ID3v2_Tag', 'return_type': 'KTaglib_ID3v2_Tag'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['lapack'] = {
 \'lapack': {
 \   'name': 'Lapack',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'eigenValues': { 'signature': 'array $a [, array $left [, array $right]] | array', 'return_type': 'array'},
 \     'identity': { 'signature': 'int $n | array', 'return_type': 'array'},
@@ -11966,15 +10450,11 @@ let g:phpcomplete_builtin['classes']['lapack'] = {
 \},
 \'lapackexception': {
 \   'name': 'lapackexception',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -11987,15 +10467,11 @@ let g:phpcomplete_builtin['classes']['lapack'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['libxml'] = {
 \'libxmlerror': {
 \   'name': 'libXMLError',
-\   'constants': {
-\   },
 \   'properties': {
 \     'level': { 'initializer': '', 'type': 'int'},
 \     'code': { 'initializer': '', 'type': 'int'},
@@ -12004,12 +10480,6 @@ let g:phpcomplete_builtin['classes']['libxml'] = {
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['lua'] = {
@@ -12017,10 +10487,6 @@ let g:phpcomplete_builtin['classes']['lua'] = {
 \   'name': 'Lua',
 \   'constants': {
 \     'LUA_VERSION': 'Lua 5.1.4',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'assign': { 'signature': 'string $name, string $value | mixed', 'return_type': 'mixed'},
@@ -12032,33 +10498,17 @@ let g:phpcomplete_builtin['classes']['lua'] = {
 \     'include': { 'signature': 'string $file | mixed', 'return_type': 'mixed'},
 \     'registerCallback': { 'signature': 'string $name, callable $function | mixed', 'return_type': 'mixed'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'luaclosure': {
 \   'name': 'LuaClosure',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__invoke': { 'signature': 'mixed $arg [, mixed $...] | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['memcache'] = {
 \'memcache': {
 \   'name': 'Memcache',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'string $key, mixed $var [, int $flag [, int $expire]] | bool', 'return_type': 'bool'},
 \     'addServer': { 'signature': 'string $host [, int $port = 11211 [, bool $persistent [, int $weight [, int $timeout [, int $retry_interval [, bool $status [, callable $failure_callback [, int $timeoutms]]]]]]]] | bool', 'return_type': 'bool'},
@@ -12079,19 +10529,11 @@ let g:phpcomplete_builtin['classes']['memcache'] = {
 \     'setCompressThreshold': { 'signature': 'int $threshold [, float $min_savings] | bool', 'return_type': 'bool'},
 \     'setServerParams': { 'signature': 'string $host [, int $port = 11211 [, int $timeout [, int $retry_interval = false [, bool $status [, callable $failure_callback]]]]] | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['memcached'] = {
 \'memcached': {
 \   'name': 'Memcached',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $persistent_id]', 'return_type': ''},
 \     'add': { 'signature': 'string $key, mixed $value [, int $expiration] | bool', 'return_type': 'bool'},
@@ -12145,20 +10587,14 @@ let g:phpcomplete_builtin['classes']['memcached'] = {
 \     'touch': { 'signature': 'string $key, int $expiration | bool', 'return_type': 'bool'},
 \     'touchByKey': { 'signature': 'string $server_key, string $key, int $expiration | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'memcachedexception': {
 \   'name': 'MemcachedException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -12171,19 +10607,11 @@ let g:phpcomplete_builtin['classes']['memcached'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['mongo'] = {
 \'mongo': {
 \   'name': 'Mongo',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'connectUtil': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'getSlave': { 'signature': 'void | string', 'return_type': 'string'},
@@ -12213,9 +10641,11 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \'mongobindata': {
 \   'name': 'MongoBinData',
 \   'constants': {
+\     'GENERIC': '0',
 \     'FUNC': '1',
 \     'BYTE_ARRAY': '2',
 \     'UUID': '3',
+\     'UUID_RFC4122': '4',
 \     'MD5': '5',
 \     'CUSTOM': '128',
 \   },
@@ -12223,13 +10653,9 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'bin': { 'initializer': '', 'type': 'string'},
 \     'type': { 'initializer': '2', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $data [, int $type = 2]', 'return_type': ''},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'mongoclient': {
@@ -12249,8 +10675,6 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'status': { 'initializer': 'NULL', 'type': 'string'},
 \     'server': { 'initializer': 'NULL', 'type': 'string'},
 \     'persistent': { 'initializer': 'NULL', 'type': 'boolean'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $server = "mongodb://localhost:27017" [, array $options = array("connect" => TRUE)]]', 'return_type': ''},
@@ -12273,17 +10697,9 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \},
 \'mongocode': {
 \   'name': 'MongoCode',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $code [, array $scope = array()]', 'return_type': ''},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'mongocollection': {
@@ -12296,8 +10712,6 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'db': { 'initializer': 'NULL', 'type': 'MongoDB'},
 \     'w': { 'initializer': '', 'type': 'integer'},
 \     'wtimeout': { 'initializer': '', 'type': 'integer'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'aggregate': { 'signature': 'array $pipeline [, array $op [, array $...]] | array', 'return_type': 'array'},
@@ -12330,28 +10744,12 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'update': { 'signature': 'array $criteria, array $new_object [, array $options = array()] | bool|array', 'return_type': 'bool|array'},
 \     'validate': { 'signature': '[ bool $scan_data = FALSE] | array', 'return_type': 'array'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mongoconnectionexception': {
 \   'name': 'MongoConnectionException',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'mongocursor': {
 \   'name': 'MongoCursor',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
 \   'static_properties': {
 \     '$slaveOkay': { 'initializer': 'FALSE', 'type': 'boolean'},
 \     '$timeout': { 'initializer': '30000', 'type': 'integer'},
@@ -12389,50 +10787,22 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'timeout': { 'signature': 'int $ms | MongoCursor', 'return_type': 'MongoCursor'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mongocursorexception': {
 \   'name': 'MongoCursorException',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'mongocursortimeoutexception': {
 \   'name': 'MongoCursorTimeoutException',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'mongodate': {
 \   'name': 'MongoDate',
-\   'constants': {
-\   },
 \   'properties': {
 \     'sec': { 'initializer': '', 'type': 'int'},
 \     'usec': { 'initializer': '', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ int $sec = time() [, int $usec = 0]]', 'return_type': ''},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'mongodb': {
@@ -12445,8 +10815,6 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \   'properties': {
 \     'w': { 'initializer': '1', 'type': 'integer'},
 \     'wtimeout': { 'initializer': '10000', 'type': 'integer'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'authenticate': { 'signature': 'string $username, string $password | array', 'return_type': 'array'},
@@ -12476,19 +10844,9 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'setSlaveOkay': { 'signature': '[ bool $ok = true] | bool', 'return_type': 'bool'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mongodbref': {
 \   'name': 'MongoDBRef',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'create': { 'signature': 'string $collection, mixed $id [, string $database] | array', 'return_type': 'array'},
 \     'get': { 'signature': 'MongoDB $db, array $ref | array', 'return_type': 'array'},
@@ -12497,39 +10855,15 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \},
 \'mongoexception': {
 \   'name': 'MongoException',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'mongogridfsexception': {
 \   'name': 'MongoGridFSException',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'mongogridfsfile': {
 \   'name': 'MongoGridFSFile',
-\   'constants': {
-\   },
 \   'properties': {
 \     'file': { 'initializer': 'NULL', 'type': 'array'},
 \     'gridfs': { 'initializer': 'NULL', 'type': 'MongoGridFS'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'MongoGridFS $gridfs, array $file', 'return_type': ''},
@@ -12539,17 +10873,11 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'getSize': { 'signature': 'void | int', 'return_type': 'int'},
 \     'write': { 'signature': '[ string $filename = NULL] | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mongoid': {
 \   'name': 'MongoId',
-\   'constants': {
-\   },
 \   'properties': {
 \     'id': { 'initializer': 'NULL', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $id = NULL]', 'return_type': ''},
@@ -12560,39 +10888,28 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \   },
 \   'static_methods': {
 \     'getHostname': { 'signature': 'void | string', 'return_type': 'string'},
+\     'isValid': { 'signature': 'mixed $value | bool', 'return_type': 'bool'},
 \     '__set_state': { 'signature': 'array $props | MongoId', 'return_type': 'MongoId'},
 \   },
 \},
 \'mongoint32': {
 \   'name': 'MongoInt32',
-\   'constants': {
-\   },
 \   'properties': {
 \     'value': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $value', 'return_type': ''},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'mongoint64': {
 \   'name': 'MongoInt64',
-\   'constants': {
-\   },
 \   'properties': {
 \     'value': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $value', 'return_type': ''},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'mongolog': {
@@ -12613,10 +10930,6 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'level': { 'initializer': '', 'type': 'int'},
 \     'module': { 'initializer': '', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'getCallback': { 'signature': 'void | void', 'return_type': 'void'},
 \     'getLevel': { 'signature': 'void | int', 'return_type': 'int'},
@@ -12628,38 +10941,12 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \},
 \'mongomaxkey': {
 \   'name': 'MongoMaxKey',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'mongominkey': {
 \   'name': 'MongoMinKey',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'mongopool': {
 \   'name': 'MongoPool',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'info': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
@@ -12670,25 +10957,17 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \},
 \'mongoregex': {
 \   'name': 'MongoRegex',
-\   'constants': {
-\   },
 \   'properties': {
 \     'regex': { 'initializer': '', 'type': 'string'},
 \     'flags': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $regex', 'return_type': ''},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mongoresultexception': {
 \   'name': 'MongoResultException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'document': { 'initializer': '', 'type': ''},
 \     'message': { 'initializer': '', 'type': 'string'},
@@ -12696,37 +10975,25 @@ let g:phpcomplete_builtin['classes']['mongo'] = {
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getDocument': { 'signature': 'void | array', 'return_type': 'array'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'mongotimestamp': {
 \   'name': 'MongoTimestamp',
-\   'constants': {
-\   },
 \   'properties': {
 \     'sec': { 'initializer': '0', 'type': 'int'},
 \     'inc': { 'initializer': '0', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ int $sec = time() [, int $inc]]', 'return_type': ''},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['mysqli'] = {
 \'mysqli_driver': {
 \   'name': 'mysqli_driver',
-\   'constants': {
-\   },
 \   'properties': {
 \     'client_info': { 'initializer': '', 'type': 'string'},
 \     'client_version': { 'initializer': '', 'type': 'string'},
@@ -12735,26 +11002,18 @@ let g:phpcomplete_builtin['classes']['mysqli'] = {
 \     'reconnect': { 'initializer': '', 'type': 'bool'},
 \     'report_mode': { 'initializer': '', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'embedded_server_end': { 'signature': 'void | void', 'return_type': 'void'},
 \     'embedded_server_start': { 'signature': 'bool $start, array $arguments, array $groups | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mysqli_result': {
 \   'name': 'mysqli_result',
-\   'constants': {
-\   },
 \   'properties': {
 \     'current_field': { 'initializer': '', 'type': 'int'},
 \     'field_count': { 'initializer': '', 'type': 'int'},
 \     'lengths': { 'initializer': '', 'type': 'array'},
 \     'num_rows': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'data_seek': { 'signature': 'int $offset | bool', 'return_type': 'bool'},
@@ -12769,13 +11028,9 @@ let g:phpcomplete_builtin['classes']['mysqli'] = {
 \     'field_seek': { 'signature': 'int $fieldnr | bool', 'return_type': 'bool'},
 \     'free': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mysqli_sql_exception': {
 \   'name': 'mysqli_sql_exception',
-\   'constants': {
-\   },
 \   'properties': {
 \     'sqlstate': { 'initializer': '', 'type': 'string'},
 \     'message': { 'initializer': '', 'type': 'string'},
@@ -12783,17 +11038,9 @@ let g:phpcomplete_builtin['classes']['mysqli'] = {
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
 \   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'mysqli_stmt': {
 \   'name': 'mysqli_stmt',
-\   'constants': {
-\   },
 \   'properties': {
 \     'affected_rows': { 'initializer': '', 'type': 'int'},
 \     'errno': { 'initializer': '', 'type': 'int'},
@@ -12804,8 +11051,6 @@ let g:phpcomplete_builtin['classes']['mysqli'] = {
 \     'num_rows': { 'initializer': '', 'type': 'int'},
 \     'param_count': { 'initializer': '', 'type': 'int'},
 \     'sqlstate': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'attr_get': { 'signature': 'int $attr | int', 'return_type': 'int'},
@@ -12825,31 +11070,21 @@ let g:phpcomplete_builtin['classes']['mysqli'] = {
 \     'send_long_data': { 'signature': 'int $param_nr, string $data | bool', 'return_type': 'bool'},
 \     'store_result': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mysqli_warning': {
 \   'name': 'mysqli_warning',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': ''},
 \     'sqlstate': { 'initializer': '', 'type': ''},
 \     'errno': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'next': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mysqli': {
 \   'name': 'mysqli',
-\   'constants': {
-\   },
 \   'properties': {
 \     'affected_rows': { 'initializer': '', 'type': 'int'},
 \     'client_info': { 'initializer': '', 'type': 'string'},
@@ -12869,8 +11104,6 @@ let g:phpcomplete_builtin['classes']['mysqli'] = {
 \     'sqlstate': { 'initializer': '', 'type': 'string'},
 \     'thread_id': { 'initializer': '', 'type': 'int'},
 \     'warning_count': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $host = ini_get("mysqli.default_host") [, string $username = ini_get("mysqli.default_user") [, string $passwd = ini_get("mysqli.default_pw") [, string $dbname = "" [, int $port = ini_get("mysqli.default_port") [, string $socket = ini_get("mysqli.default_socket")]]]]]]', 'return_type': ''},
@@ -12919,12 +11152,6 @@ let g:phpcomplete_builtin['classes']['mysqli'] = {
 let g:phpcomplete_builtin['classes']['mysqlnd_uh'] = {
 \'mysqlnduhconnection': {
 \   'name': 'MysqlndUhConnection',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'changeUser': { 'signature': 'mysqlnd_connection $connection, string $user, string $password, string $database, bool $silent, int $passwd_len | bool', 'return_type': 'bool'},
 \     'charsetName': { 'signature': 'mysqlnd_connection $connection | string', 'return_type': 'string'},
@@ -12978,37 +11205,23 @@ let g:phpcomplete_builtin['classes']['mysqlnd_uh'] = {
 \     'txRollback': { 'signature': 'mysqlnd_connection $connection | bool', 'return_type': 'bool'},
 \     'useResult': { 'signature': 'mysqlnd_connection $connection | resource', 'return_type': 'resource'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'mysqlnduhpreparedstatement': {
 \   'name': 'MysqlndUhPreparedStatement',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'execute': { 'signature': 'mysqlnd_prepared_statement $statement | bool', 'return_type': 'bool'},
 \     'prepare': { 'signature': 'mysqlnd_prepared_statement $statement, string $query | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['oauth'] = {
 \'oauth': {
 \   'name': 'OAuth',
-\   'constants': {
-\   },
 \   'properties': {
 \     'debug': { 'initializer': '', 'type': ''},
 \     'sslChecks': { 'initializer': '', 'type': ''},
 \     'debugInfo': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $consumer_key, string $consumer_secret [, string $signature_method = OAUTH_SIG_METHOD_HMACSHA1 [, int $auth_type = 0]]', 'return_type': ''},
@@ -13038,13 +11251,9 @@ let g:phpcomplete_builtin['classes']['oauth'] = {
 \     'setToken': { 'signature': 'string $token, string $token_secret | bool', 'return_type': 'bool'},
 \     'setVersion': { 'signature': 'string $version | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'oauthexception': {
 \   'name': 'OAuthException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'lastResponse': { 'initializer': '', 'type': ''},
 \     'debugInfo': { 'initializer': '', 'type': ''},
@@ -13052,8 +11261,6 @@ let g:phpcomplete_builtin['classes']['oauth'] = {
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -13066,17 +11273,9 @@ let g:phpcomplete_builtin['classes']['oauth'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'oauthprovider': {
 \   'name': 'OAuthProvider',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addRequiredParameter': { 'signature': 'string $req_params | bool', 'return_type': 'bool'},
 \     'callconsumerHandler': { 'signature': 'void | void', 'return_type': 'void'},
@@ -13206,10 +11405,6 @@ let g:phpcomplete_builtin['classes']['pdo'] = {
 \     'SQLSRV_ATTR_QUERY_TIMEOUT': '',
 \     'SQLSRV_ATTR_DIRECT_QUERY': '',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $dsn [, string $username [, string $password [, array $driver_options]]]', 'return_type': ''},
 \     'beginTransaction': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -13232,16 +11427,12 @@ let g:phpcomplete_builtin['classes']['pdo'] = {
 \},
 \'pdoexception': {
 \   'name': 'PDOException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'errorInfo': { 'initializer': '', 'type': 'array'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -13254,17 +11445,11 @@ let g:phpcomplete_builtin['classes']['pdo'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'pdostatement': {
 \   'name': 'PDOStatement',
-\   'constants': {
-\   },
 \   'properties': {
 \     'queryString': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'bindColumn': { 'signature': 'mixed $column, mixed &$param [, int $type [, int $maxlen [, mixed $driverdata]]] | bool', 'return_type': 'bool'},
@@ -13287,19 +11472,11 @@ let g:phpcomplete_builtin['classes']['pdo'] = {
 \     'setAttribute': { 'signature': 'int $attribute, mixed $value | bool', 'return_type': 'bool'},
 \     'setFetchMode': { 'signature': 'int $mode | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['phar'] = {
 \'phar': {
 \   'name': 'Phar',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addEmptyDir': { 'signature': 'string $dirname | void', 'return_type': 'void'},
 \     'addFile': { 'signature': 'string $file [, string $localname] | void', 'return_type': 'void'},
@@ -13363,12 +11540,6 @@ let g:phpcomplete_builtin['classes']['phar'] = {
 \},
 \'phardata': {
 \   'name': 'PharData',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addEmptyDir': { 'signature': 'string $dirname | void', 'return_type': 'void'},
 \     'addFile': { 'signature': 'string $file [, string $localname] | void', 'return_type': 'void'},
@@ -13432,15 +11603,11 @@ let g:phpcomplete_builtin['classes']['phar'] = {
 \},
 \'pharexception': {
 \   'name': 'PharException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -13453,17 +11620,9 @@ let g:phpcomplete_builtin['classes']['phar'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'pharfileinfo': {
 \   'name': 'PharFileInfo',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'chmod': { 'signature': 'int $permissions | void', 'return_type': 'void'},
 \     'compress': { 'signature': 'int $compression | bool', 'return_type': 'bool'},
@@ -13484,27 +11643,19 @@ let g:phpcomplete_builtin['classes']['phar'] = {
 \     'setMetadata': { 'signature': 'mixed $metadata | void', 'return_type': 'void'},
 \     'setUncompressed': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['streams'] = {
 \'php_user_filter': {
 \   'name': 'php_user_filter',
-\   'constants': {
-\   },
 \   'properties': {
 \     'filtername': { 'initializer': '', 'type': ''},
 \     'params': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'filter': { 'signature': 'resource $in, resource $out, int &$consumed, bool $closing | int', 'return_type': 'int'},
 \     'onClose': { 'signature': 'void | void', 'return_type': 'void'},
 \     'onCreate': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -13517,10 +11668,6 @@ let g:phpcomplete_builtin['classes']['quickhash'] = {
 \     'HASHER_NO_HASH': '256',
 \     'HASHER_JENKINS1': '512',
 \     'HASHER_JENKINS2': '1024',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'add': { 'signature': 'int $key [, int $value] | bool', 'return_type': 'bool'},
@@ -13548,10 +11695,6 @@ let g:phpcomplete_builtin['classes']['quickhash'] = {
 \     'HASHER_JENKINS1': '512',
 \     'HASHER_JENKINS2': '1024',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'int $key | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'int $size [, int $options]', 'return_type': ''},
@@ -13574,10 +11717,6 @@ let g:phpcomplete_builtin['classes']['quickhash'] = {
 \     'HASHER_NO_HASH': '256',
 \     'HASHER_JENKINS1': '512',
 \     'HASHER_JENKINS2': '1024',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'add': { 'signature': 'int $key, string $value | bool', 'return_type': 'bool'},
@@ -13602,10 +11741,6 @@ let g:phpcomplete_builtin['classes']['quickhash'] = {
 \     'CHECK_FOR_DUPES': '1',
 \     'DO_NOT_USE_ZEND_ALLOC': '2',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'string $key, int $value | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': 'int $size [, int $options = 0]', 'return_type': ''},
@@ -13627,12 +11762,6 @@ let g:phpcomplete_builtin['classes']['quickhash'] = {
 let g:phpcomplete_builtin['classes']['rar'] = {
 \'rararchive': {
 \   'name': 'RarArchive',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'getComment': { 'signature': 'void | string', 'return_type': 'string'},
@@ -13692,10 +11821,6 @@ let g:phpcomplete_builtin['classes']['rar'] = {
 \     'ATTRIBUTE_UNIX_SYM_LINK': '40960',
 \     'ATTRIBUTE_UNIX_SOCKET': '49152',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'extract': { 'signature': 'string $dir [, string $filepath = '''' [, string $password = NULL [, bool $extended_data = false]]] | bool', 'return_type': 'bool'},
 \     'getAttr': { 'signature': 'void | int', 'return_type': 'int'},
@@ -13712,17 +11837,9 @@ let g:phpcomplete_builtin['classes']['rar'] = {
 \     'isEncrypted': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'rarexception': {
 \   'name': 'RarException',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
@@ -13743,14 +11860,6 @@ let g:phpcomplete_builtin['classes']['rar'] = {
 let g:phpcomplete_builtin['classes']['reflection'] = {
 \'reflection': {
 \   'name': 'Reflection',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'export': { 'signature': 'Reflector $reflector [, bool $return = false] | string', 'return_type': 'string'},
 \     'getModifierNames': { 'signature': 'int $modifiers | array', 'return_type': 'array'},
@@ -13765,8 +11874,6 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'mixed $argument', 'return_type': ''},
@@ -13824,15 +11931,11 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \},
 \'reflectionexception': {
 \   'name': 'ReflectionException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -13845,17 +11948,11 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'reflectionextension': {
 \   'name': 'ReflectionExtension',
-\   'constants': {
-\   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
@@ -13884,8 +11981,6 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'mixed $name', 'return_type': ''},
@@ -13924,12 +12019,8 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \},
 \'reflectionfunctionabstract': {
 \   'name': 'ReflectionFunctionAbstract',
-\   'constants': {
-\   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
@@ -13957,8 +12048,6 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \     'returnsReference': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__toString': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'reflectionmethod': {
 \   'name': 'ReflectionMethod',
@@ -13973,8 +12062,6 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
 \     'class': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'mixed $class, string $name', 'return_type': ''},
@@ -14032,8 +12119,6 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'mixed $argument', 'return_type': ''},
 \     'getConstant': { 'signature': 'string $name | mixed', 'return_type': 'mixed'},
@@ -14090,12 +12175,8 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \},
 \'reflectionparameter': {
 \   'name': 'ReflectionParameter',
-\   'constants': {
-\   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'allowsNull': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -14133,8 +12214,6 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \     'name': { 'initializer': '', 'type': ''},
 \     'class': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \     '__construct': { 'signature': 'mixed $class, string $name', 'return_type': ''},
@@ -14158,12 +12237,8 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 \},
 \'reflectionzendextension': {
 \   'name': 'ReflectionZendExtension',
-\   'constants': {
-\   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
@@ -14183,63 +12258,33 @@ let g:phpcomplete_builtin['classes']['reflection'] = {
 let g:phpcomplete_builtin['classes']['rrd'] = {
 \'rrdcreator': {
 \   'name': 'RRDCreator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addArchive': { 'signature': 'string $description | void', 'return_type': 'void'},
 \     'addDataSource': { 'signature': 'string $description | void', 'return_type': 'void'},
 \     '__construct': { 'signature': 'string $path [, string $startTime [, int $step = 0]]', 'return_type': ''},
 \     'save': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'rrdgraph': {
 \   'name': 'RRDGraph',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $path', 'return_type': ''},
 \     'save': { 'signature': 'void | array', 'return_type': 'array'},
 \     'saveVerbose': { 'signature': 'void | array', 'return_type': 'array'},
 \     'setOptions': { 'signature': 'array $options | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'rrdupdater': {
 \   'name': 'RRDUpdater',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $path', 'return_type': ''},
 \     'update': { 'signature': 'array $values [, string $time = time()] | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['sessions'] = {
 \'sessionhandler': {
 \   'name': 'SessionHandler',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'destroy': { 'signature': 'string $session_id | bool', 'return_type': 'bool'},
@@ -14248,17 +12293,9 @@ let g:phpcomplete_builtin['classes']['sessions'] = {
 \     'read': { 'signature': 'string $session_id | string', 'return_type': 'string'},
 \     'write': { 'signature': 'string $session_id, string $session_data | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'sessionhandlerinterface': {
 \   'name': 'SessionHandlerInterface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'destroy': { 'signature': 'string $session_id | bool', 'return_type': 'bool'},
@@ -14267,19 +12304,11 @@ let g:phpcomplete_builtin['classes']['sessions'] = {
 \     'read': { 'signature': 'string $session_id | string', 'return_type': 'string'},
 \     'write': { 'signature': 'string $session_id, string $session_data | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['simplexml'] = {
 \'simplexmlelement': {
 \   'name': 'SimpleXMLElement',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $data [, int $options = 0 [, bool $data_is_url = false [, string $ns = "" [, bool $is_prefix = false]]]]', 'return_type': ''},
 \     'addAttribute': { 'signature': 'string $name [, string $value [, string $namespace]] | void', 'return_type': 'void'},
@@ -14292,19 +12321,12 @@ let g:phpcomplete_builtin['classes']['simplexml'] = {
 \     'getName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getNamespaces': { 'signature': '[ bool $recursive = false] | array', 'return_type': 'array'},
 \     'registerXPathNamespace': { 'signature': 'string $prefix, string $ns | bool', 'return_type': 'bool'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     'xpath': { 'signature': 'string $path | array', 'return_type': 'array'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'simplexmliterator': {
 \   'name': 'SimpleXMLIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'getChildren': { 'signature': 'void | SimpleXMLIterator', 'return_type': 'SimpleXMLIterator'},
@@ -14324,9 +12346,8 @@ let g:phpcomplete_builtin['classes']['simplexml'] = {
 \     'getName': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getNamespaces': { 'signature': '[ bool $recursive = false] | array', 'return_type': 'array'},
 \     'registerXPathNamespace': { 'signature': 'string $prefix, string $ns | bool', 'return_type': 'bool'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     'xpath': { 'signature': 'string $path | array', 'return_type': 'array'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -14357,8 +12378,6 @@ let g:phpcomplete_builtin['classes']['snmp'] = {
 \     'exceptions_enabled': { 'initializer': '', 'type': 'int'},
 \     'info': { 'initializer': '', 'type': 'array'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'int $version, string $hostname, string $community [, int $timeout = 1000000 [, int $retries = 5]]', 'return_type': ''},
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -14370,20 +12389,14 @@ let g:phpcomplete_builtin['classes']['snmp'] = {
 \     'setSecurity': { 'signature': 'string $sec_level [, string $auth_protocol = ] | bool', 'return_type': 'bool'},
 \     'walk': { 'signature': 'string $object_id [, bool $suffix_as_key = FALSE [, int $max_repetitions [, int $non_repeaters]]] | array', 'return_type': 'array'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'snmpexception': {
 \   'name': 'SNMPException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -14396,19 +12409,11 @@ let g:phpcomplete_builtin['classes']['snmp'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['soap'] = {
 \'soapclient': {
 \   'name': 'SoapClient',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__call': { 'signature': 'string $function_name, string $arguments | mixed', 'return_type': 'mixed'},
 \     'SoapClient': { 'signature': 'mixed $wsdl [, array $options]', 'return_type': ''},
@@ -14424,20 +12429,14 @@ let g:phpcomplete_builtin['classes']['soap'] = {
 \     '__setSoapHeaders': { 'signature': '[ mixed $soapheaders] | bool', 'return_type': 'bool'},
 \     '__soapCall': { 'signature': 'string $function_name, array $arguments [, array $options [, mixed $input_headers [, array &$output_headers]]] | mixed', 'return_type': 'mixed'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'soapfault': {
 \   'name': 'SoapFault',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $faultcode, string $faultstring [, string $faultactor [, string $detail [, string $faultname [, string $headerfault]]]]', 'return_type': ''},
@@ -14452,47 +12451,23 @@ let g:phpcomplete_builtin['classes']['soap'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'soapheader': {
 \   'name': 'SoapHeader',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $namespace, string $name [, mixed $data [, bool $mustunderstand [, string $actor]]]', 'return_type': ''},
 \     'SoapHeader': { 'signature': 'string $namespace, string $name [, mixed $data [, bool $mustunderstand = false [, string $actor]]]', 'return_type': ''},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'soapparam': {
 \   'name': 'SoapParam',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'mixed $data, string $name', 'return_type': ''},
 \     'SoapParam': { 'signature': 'mixed $data, string $name', 'return_type': ''},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'soapserver': {
 \   'name': 'SoapServer',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addFunction': { 'signature': 'mixed $functions | void', 'return_type': 'void'},
 \     'addSoapHeader': { 'signature': 'SoapHeader $object | void', 'return_type': 'void'},
@@ -14505,22 +12480,12 @@ let g:phpcomplete_builtin['classes']['soap'] = {
 \     'setPersistence': { 'signature': 'int $mode | void', 'return_type': 'void'},
 \     'SoapServer': { 'signature': 'mixed $wsdl [, array $options]', 'return_type': ''},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'soapvar': {
 \   'name': 'SoapVar',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $data, string $encoding [, string $type_name [, string $type_namespace [, string $node_name [, string $node_namespace]]]]', 'return_type': ''},
 \     'SoapVar': { 'signature': 'mixed $data, string $encoding [, string $type_name [, string $type_namespace [, string $node_name [, string $node_namespace]]]]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -14538,10 +12503,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'DEFAULT_THREADS_SERVLET': 'admin/threads',
 \     'DEFAULT_PING_SERVLET': 'admin/ping',
 \     'DEFAULT_TERMS_SERVLET': 'terms',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'addDocument': { 'signature': 'SolrInputDocument $doc [, bool $allowDups = false [, int $commitWithin = 0]] | SolrUpdateResponse', 'return_type': 'SolrUpdateResponse'},
@@ -14564,13 +12525,9 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'setServlet': { 'signature': 'int $type, string $value | bool', 'return_type': 'bool'},
 \     'threads': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrclientexception': {
 \   'name': 'SolrClientException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
@@ -14579,8 +12536,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'sourceline': { 'initializer': '', 'type': 'integer'},
 \     'sourcefile': { 'initializer': '', 'type': 'string'},
 \     'zif_name': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getInternalInfo': { 'signature': 'void | array', 'return_type': 'array'},
@@ -14594,8 +12549,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrdocument': {
 \   'name': 'SolrDocument',
@@ -14606,10 +12559,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'SORT_FIELD_NAME': '1',
 \     'SORT_FIELD_VALUE_COUNT': '2',
 \     'SORT_FIELD_BOOST_VALUE': '4',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'addField': { 'signature': 'string $fieldName, string $fieldValue | bool', 'return_type': 'bool'},
@@ -14643,31 +12592,21 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     '__unset': { 'signature': 'string $fieldName | bool', 'return_type': 'bool'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrdocumentfield': {
 \   'name': 'SolrDocumentField',
-\   'constants': {
-\   },
 \   'properties': {
 \     'name': { 'initializer': '', 'type': 'string'},
 \     'boost': { 'initializer': '', 'type': 'float'},
 \     'values': { 'initializer': '', 'type': 'array'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     '__destruct': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrexception': {
 \   'name': 'SolrException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'sourceline': { 'initializer': '', 'type': 'integer'},
 \     'sourcefile': { 'initializer': '', 'type': 'string'},
@@ -14676,8 +12615,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getInternalInfo': { 'signature': 'void | array', 'return_type': 'array'},
@@ -14690,8 +12627,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'solrgenericresponse': {
@@ -14714,8 +12649,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'http_raw_response': { 'initializer': '', 'type': 'string'},
 \     'http_digested_response': { 'initializer': '', 'type': 'string'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     '__destruct': { 'signature': 'void | void', 'return_type': 'void'},
@@ -14731,13 +12664,9 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'setParseMode': { 'signature': '[ int $parser_mode = 0] | bool', 'return_type': 'bool'},
 \     'success': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrillegalargumentexception': {
 \   'name': 'SolrIllegalArgumentException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
@@ -14746,8 +12675,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'sourceline': { 'initializer': '', 'type': 'integer'},
 \     'sourcefile': { 'initializer': '', 'type': 'string'},
 \     'zif_name': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getInternalInfo': { 'signature': 'void | array', 'return_type': 'array'},
@@ -14760,14 +12687,10 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'solrillegaloperationexception': {
 \   'name': 'SolrIllegalOperationException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
@@ -14776,8 +12699,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'sourceline': { 'initializer': '', 'type': 'integer'},
 \     'sourcefile': { 'initializer': '', 'type': 'string'},
 \     'zif_name': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getInternalInfo': { 'signature': 'void | array', 'return_type': 'array'},
@@ -14790,8 +12711,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'solrinputdocument': {
@@ -14803,10 +12722,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'SORT_FIELD_NAME': '1',
 \     'SORT_FIELD_VALUE_COUNT': '2',
 \     'SORT_FIELD_BOOST_VALUE': '4',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'addField': { 'signature': 'string $fieldName, string $fieldValue [, float $fieldBoostValue = 0.0] | bool', 'return_type': 'bool'},
@@ -14828,17 +12743,9 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'sort': { 'signature': 'int $sortOrderBy [, int $sortDirection = SolrInputDocument::SORT_ASC] | bool', 'return_type': 'bool'},
 \     'toArray': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrmodifiableparams': {
 \   'name': 'SolrModifiableParams',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     '__destruct': { 'signature': 'void | void', 'return_type': 'void'},
@@ -14854,17 +12761,9 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'toString': { 'signature': '[ bool $url_encode = false] | string', 'return_type': 'string'},
 \     'unserialize': { 'signature': 'string $serialized | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrobject': {
 \   'name': 'SolrObject',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     '__destruct': { 'signature': 'void | void', 'return_type': 'void'},
@@ -14874,17 +12773,9 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'offsetSet': { 'signature': 'string $property_name, string $property_value | void', 'return_type': 'void'},
 \     'offsetUnset': { 'signature': 'string $property_name | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrparams': {
 \   'name': 'SolrParams',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'string $name, string $value | SolrParams', 'return_type': 'SolrParams'},
 \     'addParam': { 'signature': 'string $name, string $value | SolrParams', 'return_type': 'SolrParams'},
@@ -14898,18 +12789,12 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'toString': { 'signature': '[ bool $url_encode = false] | string', 'return_type': 'string'},
 \     'unserialize': { 'signature': 'string $serialized | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrpingresponse': {
 \   'name': 'SolrPingResponse',
 \   'constants': {
 \     'PARSE_SOLR_OBJ': '0',
 \     'PARSE_SOLR_DOC': '1',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -14926,8 +12811,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'setParseMode': { 'signature': '[ int $parser_mode = 0] | bool', 'return_type': 'bool'},
 \     'success': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrquery': {
 \   'name': 'SolrQuery',
@@ -14938,10 +12821,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'FACET_SORT_COUNT': '1',
 \     'TERMS_SORT_INDEX': '0',
 \     'TERMS_SORT_COUNT': '1',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'addFacetDateField': { 'signature': 'string $dateField | SolrQuery', 'return_type': 'SolrQuery'},
@@ -15099,8 +12978,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'setTermsUpperBound': { 'signature': 'string $upperBound | SolrQuery', 'return_type': 'SolrQuery'},
 \     'setTimeAllowed': { 'signature': 'int $timeAllowed | SolrQuery', 'return_type': 'SolrQuery'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrqueryresponse': {
 \   'name': 'SolrQueryResponse',
@@ -15122,8 +12999,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'http_raw_response': { 'initializer': '', 'type': 'string'},
 \     'http_digested_response': { 'initializer': '', 'type': 'string'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     '__destruct': { 'signature': 'void | void', 'return_type': 'void'},
@@ -15138,8 +13013,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'getResponse': { 'signature': 'void | SolrObject', 'return_type': 'SolrObject'},
 \     'setParseMode': { 'signature': '[ int $parser_mode = 0] | bool', 'return_type': 'bool'},
 \     'success': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'solrresponse': {
@@ -15160,8 +13033,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'http_raw_response': { 'initializer': '', 'type': 'string'},
 \     'http_digested_response': { 'initializer': '', 'type': 'string'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getDigestedResponse': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getHttpStatus': { 'signature': 'void | int', 'return_type': 'int'},
@@ -15174,8 +13045,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'getResponse': { 'signature': 'void | SolrObject', 'return_type': 'SolrObject'},
 \     'setParseMode': { 'signature': '[ int $parser_mode = 0] | bool', 'return_type': 'bool'},
 \     'success': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'solrupdateresponse': {
@@ -15198,8 +13067,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'http_raw_response': { 'initializer': '', 'type': 'string'},
 \     'http_digested_response': { 'initializer': '', 'type': 'string'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     '__destruct': { 'signature': 'void | void', 'return_type': 'void'},
@@ -15215,19 +13082,9 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 \     'setParseMode': { 'signature': '[ int $parser_mode = 0] | bool', 'return_type': 'bool'},
 \     'success': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'solrutils': {
 \   'name': 'SolrUtils',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
 \   'static_methods': {
 \     'digestXmlResponse': { 'signature': 'string $xmlresponse [, int $parse_mode = 0] | SolrObject', 'return_type': 'SolrObject'},
 \     'escapeQueryChars': { 'signature': 'string $str | string', 'return_type': 'string'},
@@ -15239,12 +13096,6 @@ let g:phpcomplete_builtin['classes']['solr'] = {
 let g:phpcomplete_builtin['classes']['sphinx'] = {
 \'sphinxclient': {
 \   'name': 'SphinxClient',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addQuery': { 'signature': 'string $query [, string $index = "*" [, string $comment = ""]] | int', 'return_type': 'int'},
 \     'buildExcerpts': { 'signature': 'array $docs, string $index, string $words [, array $opts] | array', 'return_type': 'array'},
@@ -15282,8 +13133,6 @@ let g:phpcomplete_builtin['classes']['sphinx'] = {
 \     'status': { 'signature': 'void | array', 'return_type': 'array'},
 \     'updateAttributes': { 'signature': 'string $index, array $attributes, array $values [, bool $mva = false] | int', 'return_type': 'int'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['spl_types'] = {
@@ -15294,14 +13143,8 @@ let g:phpcomplete_builtin['classes']['spl_types'] = {
 \     'false': 'false',
 \     'true': 'true',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getConstList': { 'signature': '[ bool $include_default = false] | array', 'return_type': 'array'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'splenum': {
@@ -15309,15 +13152,9 @@ let g:phpcomplete_builtin['classes']['spl_types'] = {
 \   'constants': {
 \     '__default': 'null',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getConstList': { 'signature': '[ bool $include_default = false] | array', 'return_type': 'array'},
 \     '__construct': { 'signature': '[ mixed $initial_value [, bool $strict]]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'splfloat': {
@@ -15325,14 +13162,8 @@ let g:phpcomplete_builtin['classes']['spl_types'] = {
 \   'constants': {
 \     '__default': '0',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ mixed $initial_value [, bool $strict]]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'splint': {
@@ -15340,14 +13171,8 @@ let g:phpcomplete_builtin['classes']['spl_types'] = {
 \   'constants': {
 \     '__default': '0',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ mixed $initial_value [, bool $strict]]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'splstring': {
@@ -15355,14 +13180,8 @@ let g:phpcomplete_builtin['classes']['spl_types'] = {
 \   'constants': {
 \     '__default': '0',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ mixed $initial_value [, bool $strict]]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'spltype': {
@@ -15370,26 +13189,14 @@ let g:phpcomplete_builtin['classes']['spl_types'] = {
 \   'constants': {
 \     '__default': 'null',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ mixed $initial_value [, bool $strict]]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['sqlite3'] = {
 \'sqlite3': {
 \   'name': 'SQLite3',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'busyTimeout': { 'signature': 'int $msecs | bool', 'return_type': 'bool'},
 \     'changes': { 'signature': 'void | int', 'return_type': 'int'},
@@ -15415,12 +13222,6 @@ let g:phpcomplete_builtin['classes']['sqlite3'] = {
 \},
 \'sqlite3result': {
 \   'name': 'SQLite3Result',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'columnName': { 'signature': 'int $column_number | string', 'return_type': 'string'},
 \     'columnType': { 'signature': 'int $column_number | int', 'return_type': 'int'},
@@ -15429,17 +13230,9 @@ let g:phpcomplete_builtin['classes']['sqlite3'] = {
 \     'numColumns': { 'signature': 'void | int', 'return_type': 'int'},
 \     'reset': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'sqlite3stmt': {
 \   'name': 'SQLite3Stmt',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'bindParam': { 'signature': 'string $sql_param, mixed &$param [, int $type] | bool', 'return_type': 'bool'},
 \     'bindValue': { 'signature': 'string $sql_param, mixed $value [, int $type] | bool', 'return_type': 'bool'},
@@ -15449,19 +13242,11 @@ let g:phpcomplete_builtin['classes']['sqlite3'] = {
 \     'paramCount': { 'signature': 'void | int', 'return_type': 'int'},
 \     'reset': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['stomp'] = {
 \'stomp': {
 \   'name': 'Stomp',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'abort': { 'signature': 'string $transaction_id [, array $headers] | bool', 'return_type': 'bool'},
 \     'ack': { 'signature': 'mixed $msg [, array $headers] | bool', 'return_type': 'bool'},
@@ -15479,17 +13264,9 @@ let g:phpcomplete_builtin['classes']['stomp'] = {
 \     'subscribe': { 'signature': 'string $destination [, array $headers] | bool', 'return_type': 'bool'},
 \     'unsubscribe': { 'signature': 'string $destination [, array $headers] | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'stompexception': {
 \   'name': 'StompException',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
 \     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
@@ -15502,24 +13279,16 @@ let g:phpcomplete_builtin['classes']['stomp'] = {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \     'getDetails': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'stompframe': {
 \   'name': 'StompFrame',
-\   'constants': {
-\   },
 \   'properties': {
 \     'command': { 'initializer': '', 'type': ''},
 \     'headers': { 'initializer': '', 'type': ''},
 \     'body': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $command [, array $headers [, string $body]]]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -15551,10 +13320,6 @@ let g:phpcomplete_builtin['classes']['svm'] = {
 \     'OPT_CACHE_SIZE': '',
 \     'OPT_PROBABILITY': '',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'crossvalidate': { 'signature': 'array $problem, int $number_of_folds | float', 'return_type': 'float'},
@@ -15562,17 +13327,9 @@ let g:phpcomplete_builtin['classes']['svm'] = {
 \     'setOptions': { 'signature': 'array $params | bool', 'return_type': 'bool'},
 \     'train': { 'signature': 'array $problem [, array $weights] | SVMModel', 'return_type': 'SVMModel'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'svmmodel': {
 \   'name': 'SVMModel',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'checkProbabilityModel': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     '__construct': { 'signature': '[ string $filename]', 'return_type': ''},
@@ -15585,49 +13342,25 @@ let g:phpcomplete_builtin['classes']['svm'] = {
 \     'predict': { 'signature': 'array $data | float', 'return_type': 'float'},
 \     'save': { 'signature': 'string $filename | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['ming'] = {
 \'swfaction': {
 \   'name': 'SWFAction',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $script', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'swfbitmap': {
 \   'name': 'SWFBitmap',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'mixed $file [, mixed $alphafile]', 'return_type': ''},
 \     'getHeight': { 'signature': 'void | float', 'return_type': 'float'},
 \     'getWidth': { 'signature': 'void | float', 'return_type': 'float'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfbutton': {
 \   'name': 'SWFButton',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addAction': { 'signature': 'SWFAction $action, int $flags | void', 'return_type': 'void'},
 \     'addASound': { 'signature': 'SWFSound $sound, int $flags | SWFSoundInstance', 'return_type': 'SWFSoundInstance'},
@@ -15640,17 +13373,9 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'setOver': { 'signature': 'SWFShape $shape | void', 'return_type': 'void'},
 \     'setUp': { 'signature': 'SWFShape $shape | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfdisplayitem': {
 \   'name': 'SWFDisplayItem',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addAction': { 'signature': 'SWFAction $action, int $flags | void', 'return_type': 'void'},
 \     'addColor': { 'signature': 'int $red, int $green, int $blue [, int $a] | void', 'return_type': 'void'},
@@ -15680,17 +13405,9 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'skewY': { 'signature': 'float $ddegrees | void', 'return_type': 'void'},
 \     'skewYTo': { 'signature': 'float $degrees | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swffill': {
 \   'name': 'SWFFill',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'moveTo': { 'signature': 'float $x, float $y | void', 'return_type': 'void'},
 \     'rotateTo': { 'signature': 'float $angle | void', 'return_type': 'void'},
@@ -15698,17 +13415,9 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'skewXTo': { 'signature': 'float $x | void', 'return_type': 'void'},
 \     'skewYTo': { 'signature': 'float $y | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swffont': {
 \   'name': 'SWFFont',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $filename', 'return_type': ''},
 \     'getAscent': { 'signature': 'void | float', 'return_type': 'float'},
@@ -15718,63 +13427,31 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'getUTF8Width': { 'signature': 'string $string | float', 'return_type': 'float'},
 \     'getWidth': { 'signature': 'string $string | float', 'return_type': 'float'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swffontchar': {
 \   'name': 'SWFFontChar',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addChars': { 'signature': 'string $char | void', 'return_type': 'void'},
 \     'addUTF8Chars': { 'signature': 'string $char | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfgradient': {
 \   'name': 'SWFGradient',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addEntry': { 'signature': 'float $ratio, int $red, int $green, int $blue [, int $alpha = 255] | void', 'return_type': 'void'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfmorph': {
 \   'name': 'SWFMorph',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getShape1': { 'signature': 'void | SWFShape', 'return_type': 'SWFShape'},
 \     'getShape2': { 'signature': 'void | SWFShape', 'return_type': 'SWFShape'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfmovie': {
 \   'name': 'SWFMovie',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'object $instance | mixed', 'return_type': 'mixed'},
 \     'addExport': { 'signature': 'SWFCharacter $char, string $name | void', 'return_type': 'void'},
@@ -15797,31 +13474,15 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'streamMP3': { 'signature': 'mixed $mp3file [, float $skip = 0] | int', 'return_type': 'int'},
 \     'writeExports': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfprebuiltclip': {
 \   'name': 'SWFPrebuiltClip',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'mixed $file', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'swfshape': {
 \   'name': 'SWFShape',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addFill': { 'signature': 'int $red, int $green, int $blue [, int $alpha = 255] | SWFFill', 'return_type': 'SWFFill'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -15840,48 +13501,24 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'setLine': { 'signature': 'SWFShape $shape | void', 'return_type': 'void'},
 \     'setRightFill': { 'signature': 'SWFGradient $fill | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfsound': {
 \   'name': 'SWFSound',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $filename [, int $flags = 0]', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'swfsoundinstance': {
 \   'name': 'SWFSoundInstance',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'loopCount': { 'signature': 'int $point | void', 'return_type': 'void'},
 \     'loopInPoint': { 'signature': 'int $point | void', 'return_type': 'void'},
 \     'loopOutPoint': { 'signature': 'int $point | void', 'return_type': 'void'},
 \     'noMultiple': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfsprite': {
 \   'name': 'SWFSprite',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'object $object | void', 'return_type': 'void'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -15892,17 +13529,9 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'startSound': { 'signature': 'SWFSound $sount | SWFSoundInstance', 'return_type': 'SWFSoundInstance'},
 \     'stopSound': { 'signature': 'SWFSound $sount | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swftext': {
 \   'name': 'SWFText',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addString': { 'signature': 'string $string | void', 'return_type': 'void'},
 \     'addUTF8String': { 'signature': 'string $text | void', 'return_type': 'void'},
@@ -15918,17 +13547,9 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'setHeight': { 'signature': 'float $height | void', 'return_type': 'void'},
 \     'setSpacing': { 'signature': 'float $spacing | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swftextfield': {
 \   'name': 'SWFTextField',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addChars': { 'signature': 'string $chars | void', 'return_type': 'void'},
 \     'addString': { 'signature': 'string $string | void', 'return_type': 'void'},
@@ -15946,35 +13567,21 @@ let g:phpcomplete_builtin['classes']['ming'] = {
 \     'setPadding': { 'signature': 'float $padding | void', 'return_type': 'void'},
 \     'setRightMargin': { 'signature': 'float $width | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'swfvideostream': {
 \   'name': 'SWFVideoStream',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $file]', 'return_type': ''},
 \     'getNumFrames': { 'signature': 'void | int', 'return_type': 'int'},
 \     'setDimension': { 'signature': 'int $x, int $y | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['tidy'] = {
 \'tidy': {
 \   'name': 'tidy',
-\   'constants': {
-\   },
 \   'properties': {
 \     'errorBuffer': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'body': { 'signature': 'void | tidyNode', 'return_type': 'tidyNode'},
@@ -15997,13 +13604,9 @@ let g:phpcomplete_builtin['classes']['tidy'] = {
 \     'repairString': { 'signature': 'string $data [, mixed $config [, string $encoding]] | string', 'return_type': 'string'},
 \     'root': { 'signature': 'void | tidyNode', 'return_type': 'tidyNode'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'tidynode': {
 \   'name': 'tidyNode',
-\   'constants': {
-\   },
 \   'properties': {
 \     'value': { 'initializer': '', 'type': 'string'},
 \     'name': { 'initializer': '', 'type': 'string'},
@@ -16015,8 +13618,6 @@ let g:phpcomplete_builtin['classes']['tidy'] = {
 \     'attribute': { 'initializer': '', 'type': 'array'},
 \     'child': { 'initializer': '', 'type': 'array'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getParent': { 'signature': 'void | tidyNode', 'return_type': 'tidyNode'},
 \     'hasChildren': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -16027,8 +13628,6 @@ let g:phpcomplete_builtin['classes']['tidy'] = {
 \     'isJste': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isPhp': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'isText': { 'signature': 'void | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -16078,10 +13677,6 @@ let g:phpcomplete_builtin['classes']['tokyo_tyrant'] = {
 \     'RDBMS_DIFF': '2',
 \     'RDBT_RECON': '1',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'string $key, number $increment [, int $type = 0] | number', 'return_type': 'number'},
 \     'connect': { 'signature': 'string $host [, int $port = TokyoTyrant::RDBDEF_PORT [, array $options]] | TokyoTyrant', 'return_type': 'TokyoTyrant'},
@@ -16107,20 +13702,14 @@ let g:phpcomplete_builtin['classes']['tokyo_tyrant'] = {
 \     'tune': { 'signature': 'float $timeout [, int $options = TokyoTyrant::RDBT_RECON] | TokyoTyrant', 'return_type': 'TokyoTyrant'},
 \     'vanish': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'tokyotyrantexception': {
 \   'name': 'tokyotyrantexception',
-\   'constants': {
-\   },
 \   'properties': {
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
@@ -16133,17 +13722,9 @@ let g:phpcomplete_builtin['classes']['tokyo_tyrant'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'tokyotyrantiterator': {
 \   'name': 'TokyoTyrantIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $host [, int $port = TokyoTyrant::RDBDEF_PORT [, array $options]]]', 'return_type': ''},
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -16174,17 +13755,9 @@ let g:phpcomplete_builtin['classes']['tokyo_tyrant'] = {
 \     'tune': { 'signature': 'float $timeout [, int $options = TokyoTyrant::RDBT_RECON] | TokyoTyrant', 'return_type': 'TokyoTyrant'},
 \     'vanish': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'tokyotyrantquery': {
 \   'name': 'TokyoTyrantQuery',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'addCond': { 'signature': 'string $name, int $op, string $expr | mixed', 'return_type': 'mixed'},
 \     '__construct': { 'signature': 'TokyoTyrantTable $table', 'return_type': ''},
@@ -16201,17 +13774,9 @@ let g:phpcomplete_builtin['classes']['tokyo_tyrant'] = {
 \     'setOrder': { 'signature': 'string $name, int $type | mixed', 'return_type': 'mixed'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'tokyotyranttable': {
 \   'name': 'TokyoTyrantTable',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'string $key, number $increment [, int $type = 0] | number', 'return_type': 'number'},
 \     'genUid': { 'signature': 'void | int', 'return_type': 'int'},
@@ -16240,8 +13805,6 @@ let g:phpcomplete_builtin['classes']['tokyo_tyrant'] = {
 \     'tune': { 'signature': 'float $timeout [, int $options = TokyoTyrant::RDBT_RECON] | TokyoTyrant', 'return_type': 'TokyoTyrant'},
 \     'vanish': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['v8js'] = {
@@ -16251,10 +13814,6 @@ let g:phpcomplete_builtin['classes']['v8js'] = {
 \     'V8_VERSION': '',
 \     'FLAG_NONE': '1',
 \     'FLAG_FORCE_ARRAY': '2',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': '[ string $object_name = "PHP" [, array $variables = array() [, array $extensions = array() [, bool $report_uncaught_exceptions = TRUE]]]]', 'return_type': ''},
@@ -16268,8 +13827,6 @@ let g:phpcomplete_builtin['classes']['v8js'] = {
 \},
 \'v8jsexception': {
 \   'name': 'V8JsException',
-\   'constants': {
-\   },
 \   'properties': {
 \     'JsFileName': { 'initializer': '', 'type': ''},
 \     'JsLineNumber': { 'initializer': '', 'type': ''},
@@ -16279,8 +13836,6 @@ let g:phpcomplete_builtin['classes']['v8js'] = {
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'getJsFileName': { 'signature': 'void | string', 'return_type': 'string'},
@@ -16297,19 +13852,11 @@ let g:phpcomplete_builtin['classes']['v8js'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['varnish'] = {
 \'varnishadmin': {
 \   'name': 'VarnishAdmin',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'auth': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'ban': { 'signature': 'string $vcl_regex | int', 'return_type': 'int'},
@@ -16330,8 +13877,6 @@ let g:phpcomplete_builtin['classes']['varnish'] = {
 \     'setTimeout': { 'signature': 'int $timeout | void', 'return_type': 'void'},
 \     'start': { 'signature': 'void | int', 'return_type': 'int'},
 \     'stop': { 'signature': 'void | int', 'return_type': 'int'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'varnishlog': {
@@ -16390,10 +13935,6 @@ let g:phpcomplete_builtin['classes']['varnish'] = {
 \     'TAG_VCL_Log': '50',
 \     'TAG_Gzip': '51',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ array $args]', 'return_type': ''},
 \     'getLine': { 'signature': 'void | array', 'return_type': 'array'},
@@ -16404,29 +13945,15 @@ let g:phpcomplete_builtin['classes']['varnish'] = {
 \},
 \'varnishstat': {
 \   'name': 'VarnishStat',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ array $args]', 'return_type': ''},
 \     'getSnapshot': { 'signature': 'void | array', 'return_type': 'array'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['weakref'] = {
 \'weakmap': {
 \   'name': 'WeakMap',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
@@ -16440,17 +13967,9 @@ let g:phpcomplete_builtin['classes']['weakref'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'weakref': {
 \   'name': 'WeakRef',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ object $object]', 'return_type': ''},
 \     'acquire': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -16458,73 +13977,39 @@ let g:phpcomplete_builtin['classes']['weakref'] = {
 \     'release': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'valid': { 'signature': 'void | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['xmldiff'] = {
 \'xmldiff\base': {
 \   'name': 'XMLDiff\Base',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $nsname', 'return_type': ''},
 \     'diff': { 'signature': 'mixed $from, mixed $to | mixed', 'return_type': 'mixed'},
 \     'merge': { 'signature': 'mixed $src, mixed $diff | mixed', 'return_type': 'mixed'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'xmldiff\dom': {
 \   'name': 'XMLDiff\DOM',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'diff': { 'signature': 'mixed $from, mixed $to | mixed', 'return_type': 'mixed'},
 \     'merge': { 'signature': 'mixed $src, mixed $diff | mixed', 'return_type': 'mixed'},
 \     '__construct': { 'signature': 'string $nsname', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'xmldiff\file': {
 \   'name': 'XMLDiff\File',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'diff': { 'signature': 'mixed $from, mixed $to | mixed', 'return_type': 'mixed'},
 \     'merge': { 'signature': 'mixed $src, mixed $diff | mixed', 'return_type': 'mixed'},
 \     '__construct': { 'signature': 'string $nsname', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'xmldiff\memory': {
 \   'name': 'XMLDiff\Memory',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'diff': { 'signature': 'mixed $from, mixed $to | mixed', 'return_type': 'mixed'},
 \     'merge': { 'signature': 'mixed $src, mixed $diff | mixed', 'return_type': 'mixed'},
 \     '__construct': { 'signature': 'string $nsname', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -16571,8 +14056,6 @@ let g:phpcomplete_builtin['classes']['xmlreader'] = {
 \     'value': { 'initializer': '', 'type': 'string'},
 \     'xmlLang': { 'initializer': '', 'type': 'string'},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'close': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'expand': { 'signature': '[ DOMNode $basenode] | DOMNode', 'return_type': 'DOMNode'},
@@ -16600,19 +14083,11 @@ let g:phpcomplete_builtin['classes']['xmlreader'] = {
 \     'setSchema': { 'signature': 'string $filename | bool', 'return_type': 'bool'},
 \     'xml': { 'signature': 'string $source [, string $encoding [, int $options = 0]] | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['xsl'] = {
 \'xsltprocessor': {
 \   'name': 'XSLTProcessor',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getParameter': { 'signature': 'string $namespaceURI, string $localName | string', 'return_type': 'string'},
 \     'getSecurityPrefs': { 'signature': 'void | int', 'return_type': 'int'},
@@ -16627,19 +14102,13 @@ let g:phpcomplete_builtin['classes']['xsl'] = {
 \     'transformToURI': { 'signature': 'DOMDocument $doc, string $uri | int', 'return_type': 'int'},
 \     'transformToXML': { 'signature': 'DOMDocument $doc | string', 'return_type': 'string'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['yaf'] = {
 \'yaf_action_abstract': {
 \   'name': 'Yaf_Action_Abstract',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_controller': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'execute': { 'signature': '[ mixed $arg [, mixed $...]] | mixed', 'return_type': 'mixed'},
@@ -16661,13 +14130,9 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'render': { 'signature': 'string $tpl [, array $parameters] | string', 'return_type': 'string'},
 \     'setViewpath': { 'signature': 'string $view_directory | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_application': {
 \   'name': 'Yaf_Application',
-\   'constants': {
-\   },
 \   'properties': {
 \     'config': { 'initializer': '', 'type': ''},
 \     'dispatcher': { 'initializer': '', 'type': ''},
@@ -16703,26 +14168,12 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \},
 \'yaf_bootstrap_abstract': {
 \   'name': 'Yaf_Bootstrap_Abstract',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_config_abstract': {
 \   'name': 'Yaf_Config_Abstract',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_config': { 'initializer': '', 'type': ''},
 \     '_readonly': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'get': { 'signature': 'string $name, mixed $value | mixed', 'return_type': 'mixed'},
@@ -16730,17 +14181,9 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'set': { 'signature': 'void | Yaf_Config_Abstract', 'return_type': 'Yaf_Config_Abstract'},
 \     'toArray': { 'signature': 'void | array', 'return_type': 'array'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_config_ini': {
 \   'name': 'Yaf_Config_Ini',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $config_file [, string $section]', 'return_type': ''},
 \     'count': { 'signature': 'void | void', 'return_type': 'void'},
@@ -16761,17 +14204,11 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'get': { 'signature': 'string $name, mixed $value | mixed', 'return_type': 'mixed'},
 \     'set': { 'signature': 'void | Yaf_Config_Abstract', 'return_type': 'Yaf_Config_Abstract'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_config_simple': {
 \   'name': 'Yaf_Config_Simple',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_readonly': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'string $config_file [, string $section]', 'return_type': ''},
@@ -16793,13 +14230,9 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'get': { 'signature': 'string $name, mixed $value | mixed', 'return_type': 'mixed'},
 \     'set': { 'signature': 'void | Yaf_Config_Abstract', 'return_type': 'Yaf_Config_Abstract'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_controller_abstract': {
 \   'name': 'Yaf_Controller_Abstract',
-\   'constants': {
-\   },
 \   'properties': {
 \     'actions': { 'initializer': '', 'type': ''},
 \     '_module': { 'initializer': '', 'type': ''},
@@ -16808,8 +14241,6 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     '_response': { 'initializer': '', 'type': ''},
 \     '_invoke_args': { 'initializer': '', 'type': ''},
 \     '_view': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
@@ -16829,13 +14260,9 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'render': { 'signature': 'string $tpl [, array $parameters] | string', 'return_type': 'string'},
 \     'setViewpath': { 'signature': 'string $view_directory | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_dispatcher': {
 \   'name': 'Yaf_Dispatcher',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_router': { 'initializer': '', 'type': ''},
 \     '_view': { 'initializer': '', 'type': ''},
@@ -16882,150 +14309,74 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \},
 \'yaf_exception_dispatchfailed': {
 \   'name': 'Yaf_Exception_DispatchFailed',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_exception_loadfailed_action': {
 \   'name': 'Yaf_Exception_LoadFailed_Action',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_exception_loadfailed_controller': {
 \   'name': 'Yaf_Exception_LoadFailed_Controller',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_exception_loadfailed_module': {
 \   'name': 'Yaf_Exception_LoadFailed_Module',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_exception_loadfailed_view': {
 \   'name': 'Yaf_Exception_LoadFailed_View',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_exception_loadfailed': {
 \   'name': 'Yaf_Exception_LoadFailed',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_exception_routerfailed': {
 \   'name': 'Yaf_Exception_RouterFailed',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_exception_startuperror': {
 \   'name': 'Yaf_Exception_StartupError',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_exception_typeerror': {
 \   'name': 'Yaf_Exception_TypeError',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
 \     'getPrevious': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_exception': {
 \   'name': 'Yaf_Exception',
-\   'constants': {
-\   },
 \   'properties': {
 \     'message': { 'initializer': '', 'type': 'string'},
 \     'code': { 'initializer': '', 'type': 'int'},
 \     'file': { 'initializer': '', 'type': 'string'},
 \     'line': { 'initializer': '', 'type': 'int'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -17039,13 +14390,9 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_loader': {
 \   'name': 'Yaf_Loader',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_local_ns': { 'initializer': '', 'type': ''},
 \     '_library': { 'initializer': '', 'type': ''},
@@ -17074,12 +14421,6 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \},
 \'yaf_plugin_abstract': {
 \   'name': 'Yaf_Plugin_Abstract',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'dispatchLoopShutdown': { 'signature': 'Yaf_Request_Abstract $request, Yaf_Response_Abstract $response | void', 'return_type': 'void'},
 \     'dispatchLoopStartup': { 'signature': 'Yaf_Request_Abstract $request, Yaf_Response_Abstract $response | void', 'return_type': 'void'},
@@ -17089,13 +14430,9 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'routerShutdown': { 'signature': 'Yaf_Request_Abstract $request, Yaf_Response_Abstract $response | void', 'return_type': 'void'},
 \     'routerStartup': { 'signature': 'Yaf_Request_Abstract $request, Yaf_Response_Abstract $response | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_registry': {
 \   'name': 'Yaf_Registry',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_entries': { 'initializer': '', 'type': ''},
 \   },
@@ -17132,8 +14469,6 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'dispatched': { 'initializer': '', 'type': ''},
 \     'routed': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getActionName': { 'signature': 'void | void', 'return_type': 'void'},
 \     'getBaseUri': { 'signature': 'void | void', 'return_type': 'void'},
@@ -17165,17 +14500,9 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'setRequestUri': { 'signature': 'string $uir | void', 'return_type': 'void'},
 \     'setRouted': { 'signature': '[ string $flag] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_request_http': {
 \   'name': 'Yaf_Request_Http',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
 \     '__construct': { 'signature': 'void', 'return_type': ''},
@@ -17215,18 +14542,12 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'setRequestUri': { 'signature': 'string $uir | void', 'return_type': 'void'},
 \     'setRouted': { 'signature': '[ string $flag] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_request_simple': {
 \   'name': 'Yaf_Request_Simple',
 \   'constants': {
 \     'SCHEME_HTTP': 'http',
 \     'SCHEME_HTTPS': 'https',
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
@@ -17267,8 +14588,6 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'setRequestUri': { 'signature': 'string $uir | void', 'return_type': 'void'},
 \     'setRouted': { 'signature': '[ string $flag] | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_response_abstract': {
 \   'name': 'Yaf_Response_Abstract',
@@ -17279,8 +14598,6 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     '_header': { 'initializer': '', 'type': ''},
 \     '_body': { 'initializer': '', 'type': ''},
 \     '_sendheader': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'appendBody': { 'signature': 'string $content [, string $key] | bool', 'return_type': 'bool'},
@@ -17299,135 +14616,90 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'setRedirect': { 'signature': 'void | void', 'return_type': 'void'},
 \     '__toString': { 'signature': 'void | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_route_interface': {
 \   'name': 'Yaf_Route_Interface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
+\     'assemble': { 'signature': 'array $info [, array $query] | string', 'return_type': 'string'},
 \     'route': { 'signature': 'Yaf_Request_Abstract $request | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_route_map': {
 \   'name': 'Yaf_Route_Map',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_ctl_router': { 'initializer': '', 'type': ''},
 \     '_delimeter': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
+\     'assemble': { 'signature': 'array $info [, array $query] | string', 'return_type': 'string'},
 \     '__construct': { 'signature': '[ string $controller_prefer = false [, string $delimiter = '''']]', 'return_type': ''},
 \     'route': { 'signature': 'Yaf_Request_Abstract $request | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_route_regex': {
 \   'name': 'Yaf_Route_Regex',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_route': { 'initializer': '', 'type': ''},
 \     '_default': { 'initializer': '', 'type': ''},
 \     '_maps': { 'initializer': '', 'type': ''},
 \     '_verify': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
-\     '__construct': { 'signature': 'string $match, array $route [, array $map [, array $verify]]', 'return_type': ''},
+\     'assemble': { 'signature': 'array $info [, array $query] | string', 'return_type': 'string'},
+\     '__construct': { 'signature': 'string $match, array $route [, array $map [, array $verify [, string $reverse]]]', 'return_type': ''},
 \     'route': { 'signature': 'Yaf_Request_Abstract $request | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_route_rewrite': {
 \   'name': 'Yaf_Route_Rewrite',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_route': { 'initializer': '', 'type': ''},
 \     '_default': { 'initializer': '', 'type': ''},
 \     '_verify': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
+\     'assemble': { 'signature': 'array $info [, array $query] | string', 'return_type': 'string'},
 \     '__construct': { 'signature': 'string $match, array $route [, array $verify]', 'return_type': ''},
 \     'route': { 'signature': 'Yaf_Request_Abstract $request | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_route_simple': {
 \   'name': 'Yaf_Route_Simple',
-\   'constants': {
-\   },
 \   'properties': {
 \     'controller': { 'initializer': '', 'type': ''},
 \     'module': { 'initializer': '', 'type': ''},
 \     'action': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
+\     'assemble': { 'signature': 'array $info [, array $query] | string', 'return_type': 'string'},
 \     '__construct': { 'signature': 'string $module_name, string $controller_name, string $action_name', 'return_type': ''},
 \     'route': { 'signature': 'Yaf_Request_Abstract $request | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_route_static': {
 \   'name': 'Yaf_Route_Static',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
+\     'assemble': { 'signature': 'array $info [, array $query] | string', 'return_type': 'string'},
 \     'match': { 'signature': 'string $uri | void', 'return_type': 'void'},
 \     'route': { 'signature': 'Yaf_Request_Abstract $request | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_route_supervar': {
 \   'name': 'Yaf_Route_Supervar',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_var_name': { 'initializer': '', 'type': ''},
 \   },
-\   'static_properties': {
-\   },
 \   'methods': {
+\     'assemble': { 'signature': 'array $info [, array $query] | string', 'return_type': 'string'},
 \     '__construct': { 'signature': 'string $supervar_name', 'return_type': ''},
 \     'route': { 'signature': 'Yaf_Request_Abstract $request | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'yaf_router': {
 \   'name': 'Yaf_Router',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_routes': { 'initializer': '', 'type': ''},
 \     '_current': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'addConfig': { 'signature': 'Yaf_Config_Abstract $config | bool', 'return_type': 'bool'},
@@ -17438,13 +14710,9 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'getRoutes': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'route': { 'signature': 'Yaf_Request_Abstract $request | bool', 'return_type': 'bool'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_session': {
 \   'name': 'Yaf_Session',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_session': { 'initializer': '', 'type': ''},
 \     '_started': { 'initializer': '', 'type': ''},
@@ -17481,12 +14749,6 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \},
 \'yaf_view_interface': {
 \   'name': 'Yaf_View_Interface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'assign': { 'signature': 'string $name [, string $value] | bool', 'return_type': 'bool'},
 \     'display': { 'signature': 'string $tpl [, array $tpl_vars] | bool', 'return_type': 'bool'},
@@ -17494,18 +14756,12 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     'render': { 'signature': 'string $tpl [, array $tpl_vars] | string', 'return_type': 'string'},
 \     'setScriptPath': { 'signature': 'string $template_dir | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'yaf_view_simple': {
 \   'name': 'Yaf_View_Simple',
-\   'constants': {
-\   },
 \   'properties': {
 \     '_tpl_vars': { 'initializer': '', 'type': ''},
 \     '_tpl_dir': { 'initializer': '', 'type': ''},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'assign': { 'signature': 'string $name [, mixed $value] | bool', 'return_type': 'bool'},
@@ -17521,23 +14777,88 @@ let g:phpcomplete_builtin['classes']['yaf'] = {
 \     '__set': { 'signature': 'string $name, mixed $value | void', 'return_type': 'void'},
 \     'setScriptPath': { 'signature': 'string $template_dir | bool', 'return_type': 'bool'},
 \   },
+\},
+\}
+let g:phpcomplete_builtin['classes']['yar'] = {
+\'yar_client_exception': {
+\   'name': 'Yar_Client_Exception',
+\   'methods': {
+\     'getType': { 'signature': 'void | void', 'return_type': 'void'},
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
+\   },
+\},
+\'yar_client': {
+\   'name': 'Yar_Client',
+\   'properties': {
+\     '_protocol': { 'initializer': '', 'type': ''},
+\     '_uri': { 'initializer': '', 'type': ''},
+\     '_options': { 'initializer': '', 'type': ''},
+\     '_running': { 'initializer': '', 'type': ''},
+\   },
+\   'methods': {
+\     '__call': { 'signature': 'string $method, array $parameters | void', 'return_type': 'void'},
+\     '__construct': { 'signature': 'string $url', 'return_type': ''},
+\     'setOpt': { 'signature': 'number $name, mixed $value | boolean', 'return_type': 'boolean'},
+\   },
+\},
+\'yar_concurrent_client': {
+\   'name': 'Yar_Concurrent_Client',
+\   'static_properties': {
+\     '$_callstack': { 'initializer': '', 'type': ''},
+\     '$_callback': { 'initializer': '', 'type': ''},
+\     '$_error_callback': { 'initializer': '', 'type': ''},
+\   },
 \   'static_methods': {
+\     'call': { 'signature': 'string $uri, string $method, array $parameters [, callable $callback] | int', 'return_type': 'int'},
+\     'loop': { 'signature': '[ callable $callback [, callable $error_callback]] | boolean', 'return_type': 'boolean'},
+\   },
+\},
+\'yar_server_exception': {
+\   'name': 'Yar_Server_Exception',
+\   'properties': {
+\     '_type': { 'initializer': '', 'type': ''},
+\   },
+\   'methods': {
+\     'getType': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getMessage': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getPrevious': { 'signature': 'void | Exception', 'return_type': 'Exception'},
+\     'getCode': { 'signature': 'void | mixed', 'return_type': 'mixed'},
+\     'getFile': { 'signature': 'void | string', 'return_type': 'string'},
+\     'getLine': { 'signature': 'void | int', 'return_type': 'int'},
+\     'getTrace': { 'signature': 'void | array', 'return_type': 'array'},
+\     'getTraceAsString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
+\     '__clone': { 'signature': 'void | void', 'return_type': 'void'},
+\   },
+\},
+\'yar_server': {
+\   'name': 'Yar_Server',
+\   'properties': {
+\     '_executor': { 'initializer': '', 'type': ''},
+\   },
+\   'methods': {
+\     '__construct': { 'signature': 'Object $obj', 'return_type': ''},
+\     'handle': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \   },
 \},
 \}
 let g:phpcomplete_builtin['classes']['zip'] = {
 \'ziparchive': {
 \   'name': 'ZipArchive',
-\   'constants': {
-\   },
 \   'properties': {
 \     'status': { 'initializer': '', 'type': 'int'},
 \     'statusSys': { 'initializer': '', 'type': 'int'},
 \     'numFiles': { 'initializer': '', 'type': 'int'},
 \     'filename': { 'initializer': '', 'type': 'string'},
 \     'comment': { 'initializer': '', 'type': 'string'},
-\   },
-\   'static_properties': {
 \   },
 \   'methods': {
 \     'addEmptyDir': { 'signature': 'string $dirname | bool', 'return_type': 'bool'},
@@ -17570,8 +14891,6 @@ let g:phpcomplete_builtin['classes']['zip'] = {
 \     'unchangeArchive': { 'signature': 'void | bool', 'return_type': 'bool'},
 \     'unchangeIndex': { 'signature': 'int $index | bool', 'return_type': 'bool'},
 \     'unchangeName': { 'signature': 'string $name | bool', 'return_type': 'bool'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
@@ -17639,24 +14958,12 @@ let g:phpcomplete_builtin['classes']['0mq_messaging'] = {
 \     'DEVICE_QUEUE': '',
 \     'DEVICE_STREAMER': '',
 \   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'void', 'return_type': ''},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'zmqcontext': {
 \   'name': 'ZMQContext',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': '[ integer $io_threads = 1 [, boolean $is_persistent = true]]', 'return_type': ''},
 \     'getOpt': { 'signature': 'string $key | mixed', 'return_type': 'mixed'},
@@ -17664,17 +14971,9 @@ let g:phpcomplete_builtin['classes']['0mq_messaging'] = {
 \     'isPersistent': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \     'setOpt': { 'signature': 'integer $key, mixed $value | ZMQContext', 'return_type': 'ZMQContext'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'zmqdevice': {
 \   'name': 'ZMQDevice',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__construct': { 'signature': 'ZMQSocket $frontend, ZMQSocket $backend [, ZMQSocket $listener]', 'return_type': ''},
 \     'getIdleTimeout': { 'signature': 'void | ZMQDevice', 'return_type': 'ZMQDevice'},
@@ -17685,17 +14984,9 @@ let g:phpcomplete_builtin['classes']['0mq_messaging'] = {
 \     'setTimerCallback': { 'signature': 'callable $cb_func, integer $timeout [, mixed $user_data] | ZMQDevice', 'return_type': 'ZMQDevice'},
 \     'setTimerTimeout': { 'signature': 'integer $timeout | ZMQDevice', 'return_type': 'ZMQDevice'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'zmqpoll': {
 \   'name': 'ZMQPoll',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'add': { 'signature': 'mixed $entry, integer $type | string', 'return_type': 'string'},
 \     'clear': { 'signature': 'void | ZMQPoll', 'return_type': 'ZMQPoll'},
@@ -17704,17 +14995,9 @@ let g:phpcomplete_builtin['classes']['0mq_messaging'] = {
 \     'poll': { 'signature': 'array &$readable, array &$writable [, integer $timeout = -1] | integer', 'return_type': 'integer'},
 \     'remove': { 'signature': 'mixed $item | boolean', 'return_type': 'boolean'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'zmqsocket': {
 \   'name': 'ZMQSocket',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'bind': { 'signature': 'string $dsn [, boolean $force = false] | ZMQSocket', 'return_type': 'ZMQSocket'},
 \     'connect': { 'signature': 'string $dsn | ZMQSocket', 'return_type': 'ZMQSocket'},
@@ -17730,36 +15013,20 @@ let g:phpcomplete_builtin['classes']['0mq_messaging'] = {
 \     'setSockOpt': { 'signature': 'integer $key, mixed $value | ZMQSocket', 'return_type': 'ZMQSocket'},
 \     'unbind': { 'signature': 'string $dsn | ZMQSocket', 'return_type': 'ZMQSocket'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['interfaces']['predefined_interfaces_and_classes'] = {
 \'arrayaccess': {
 \   'name': 'ArrayAccess',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'offsetExists': { 'signature': 'mixed $offset | boolean', 'return_type': 'boolean'},
 \     'offsetGet': { 'signature': 'mixed $offset | mixed', 'return_type': 'mixed'},
 \     'offsetSet': { 'signature': 'mixed $offset, mixed $value | void', 'return_type': 'void'},
 \     'offsetUnset': { 'signature': 'mixed $offset | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'iterator': {
 \   'name': 'Iterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
 \     'key': { 'signature': 'void | scalar', 'return_type': 'scalar'},
@@ -17767,75 +15034,33 @@ let g:phpcomplete_builtin['interfaces']['predefined_interfaces_and_classes'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'iteratoraggregate': {
 \   'name': 'IteratorAggregate',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getIterator': { 'signature': 'void | Traversable', 'return_type': 'Traversable'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'serializable': {
 \   'name': 'Serializable',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'serialize': { 'signature': 'void | string', 'return_type': 'string'},
 \     'unserialize': { 'signature': 'string $serialized | void', 'return_type': 'void'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'traversable': {
 \   'name': 'Traversable',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
-\   'methods': {
-\   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['interfaces']['spl'] = {
 \'countable': {
 \   'name': 'Countable',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'count': { 'signature': 'void | int', 'return_type': 'int'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'outeriterator': {
 \   'name': 'OuterIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getInnerIterator': { 'signature': 'void | Iterator', 'return_type': 'Iterator'},
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -17844,17 +15069,9 @@ let g:phpcomplete_builtin['interfaces']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'recursiveiterator': {
 \   'name': 'RecursiveIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'getChildren': { 'signature': 'void | RecursiveIterator', 'return_type': 'RecursiveIterator'},
 \     'hasChildren': { 'signature': 'void | bool', 'return_type': 'bool'},
@@ -17864,17 +15081,9 @@ let g:phpcomplete_builtin['interfaces']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'seekableiterator': {
 \   'name': 'SeekableIterator',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'seek': { 'signature': 'int $position | void', 'return_type': 'void'},
 \     'current': { 'signature': 'void | mixed', 'return_type': 'mixed'},
@@ -17883,49 +15092,25 @@ let g:phpcomplete_builtin['interfaces']['spl'] = {
 \     'rewind': { 'signature': 'void | void', 'return_type': 'void'},
 \     'valid': { 'signature': 'void | boolean', 'return_type': 'boolean'},
 \   },
-\   'static_methods': {
-\   },
 \},
 \'splobserver': {
 \   'name': 'SplObserver',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'update': { 'signature': 'SplSubject $subject | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \'splsubject': {
 \   'name': 'SplSubject',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'attach': { 'signature': 'SplObserver $observer | void', 'return_type': 'void'},
 \     'detach': { 'signature': 'SplObserver $observer | void', 'return_type': 'void'},
 \     'notify': { 'signature': 'void | void', 'return_type': 'void'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['interfaces']['date_time'] = {
 \'datetimeinterface': {
 \   'name': 'DateTimeInterface',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'diff': { 'signature': 'DateTimeInterface $datetime2 [, bool $absolute = false] | DateInterval', 'return_type': 'DateInterval'},
 \     'format': { 'signature': 'string $format | string', 'return_type': 'string'},
@@ -17934,35 +15119,19 @@ let g:phpcomplete_builtin['interfaces']['date_time'] = {
 \     'getTimezone': { 'signature': 'void | DateTimeZone', 'return_type': 'DateTimeZone'},
 \     '__wakeup': { 'signature': 'void', 'return_type': ''},
 \   },
-\   'static_methods': {
-\   },
 \},
 \}
 let g:phpcomplete_builtin['interfaces']['json'] = {
 \'jsonserializable': {
 \   'name': 'JsonSerializable',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     'jsonSerialize': { 'signature': 'void | mixed', 'return_type': 'mixed'},
-\   },
-\   'static_methods': {
 \   },
 \},
 \}
 let g:phpcomplete_builtin['interfaces']['reflection'] = {
 \'reflector': {
 \   'name': 'Reflector',
-\   'constants': {
-\   },
-\   'properties': {
-\   },
-\   'static_properties': {
-\   },
 \   'methods': {
 \     '__toString': { 'signature': 'void | string', 'return_type': 'string'},
 \   },
@@ -18000,27 +15169,6 @@ let g:phpcomplete_builtin['constants']['common'] = {
 \ '__TRAIT__': '',
 \ '__METHOD__': '',
 \ '__NAMESPACE__': '',
-\ }
-let g:phpcomplete_builtin['constants']['amqp'] = {
-\ 'AMQP_AUTOACK': '',
-\ 'AMQP_NOPARAM': '',
-\ 'AMQP_DURABLE': '',
-\ 'AMQP_PASSIVE': '',
-\ 'AMQP_EXCLUSIVE': '',
-\ 'AMQP_AUTODELETE': '',
-\ 'AMQP_INTERNAL': '',
-\ 'AMQP_NOLOCAL': '',
-\ 'AMQP_IFEMPTY': '',
-\ 'AMQP_IFUNUSED': '',
-\ 'AMQP_MANDATORY': '',
-\ 'AMQP_IMMEDIATE': '',
-\ 'AMQP_MULTIPLE': '',
-\ 'AMQP_NOWAIT': '',
-\ 'AMQP_EX_TYPE_DIRECT': '',
-\ 'AMQP_EX_TYPE_FANOUT': '',
-\ 'AMQP_EX_TYPE_TOPIC': '',
-\ 'AMQP_EX_TYPE_HEADER': '',
-\ 'AMQP_NOACK': '',
 \ }
 let g:phpcomplete_builtin['constants']['apc'] = {
 \ 'APC_BIN_VERIFY_CRC32': '',
@@ -18279,6 +15427,8 @@ let g:phpcomplete_builtin['constants']['oci8'] = {
 \ 'SQLT_LNG': '',
 \ 'SQLT_LBI': '',
 \ 'SQLT_RSET': '',
+\ 'SQLT_BOL': '',
+\ 'OCI_B_BOL': '',
 \ 'OCI_NO_AUTO_COMMIT': '',
 \ 'OCI_COMMIT_ON_SUCCESS': '',
 \ 'TWO_TASK': '',
@@ -18617,6 +15767,12 @@ let g:phpcomplete_builtin['constants']['curl'] = {
 \ 'CURLSSH_AUTH_PASSWORD': '',
 \ 'CURLSSH_AUTH_PUBLICKEY': '',
 \ 'CURL_WRAPPERS_ENABLED': '',
+\ 'CURLPAUSE_ALL': '',
+\ 'CURLPAUSE_CONT': '',
+\ 'CURLPAUSE_RECV': '',
+\ 'CURLPAUSE_RECV_CONT': '',
+\ 'CURLPAUSE_SEND': '',
+\ 'CURLPAUSE_SEND_CONT': '',
 \ 'CURLM_XXX': '',
 \ 'CURLOPT_CERTINFO': '',
 \ 'CURLOPT_CONNECT_ONLY': '',
@@ -18674,6 +15830,8 @@ let g:phpcomplete_builtin['constants']['libxml'] = {
 \ 'LIBXML_DTDATTR': '',
 \ 'LIBXML_DTDLOAD': '',
 \ 'LIBXML_DTDVALID': '',
+\ 'LIBXML_HTML_NOIMPLIED': '',
+\ 'LIBXML_HTML_NODEFDTD': '',
 \ 'LIBXML_NOBLANKS': '',
 \ 'LIBXML_NOCDATA': '',
 \ 'LIBXML_NOEMPTYTAG': '',
@@ -18683,6 +15841,7 @@ let g:phpcomplete_builtin['constants']['libxml'] = {
 \ 'LIBXML_NOXMLDECL': '',
 \ 'LIBXML_NSCLEAN': '',
 \ 'LIBXML_PARSEHUGE': '',
+\ 'LIBXML_PEDANTIC': '',
 \ 'LIBXML_XINCLUDE': '',
 \ 'LIBXML_ERR_NONE': '',
 \ 'LIBXML_VERSION': '',
@@ -21178,13 +18337,14 @@ let g:phpcomplete_builtin['constants']['postgresql'] = {
 \ 'PGSQL_CONV_FORCE_NULL': '',
 \ 'PGSQL_CONV_IGNORE_NOT_NULL': '',
 \ 'PGSQL_DML_NO_CONV': '',
+\ 'PGSQL_DML_ESCAPE': '',
 \ 'PGSQL_DML_EXEC': '',
+\ 'PGSQL_DML_ASYNC': '',
 \ 'PGSQL_DML_STRING': '',
 \ 'PGSQL_ASSOC': '',
 \ 'PGSQL_NUM': '',
 \ 'PGSQL_BOTH': '',
 \ 'PGSQL_CONV_OPTS': '',
-\ 'PGSQL_DML_ASYNC': '',
 \ 'INV_READ': '',
 \ 'INV_WRITE': '',
 \ 'INV_ARCHIVE': '',
@@ -21458,6 +18618,7 @@ let g:phpcomplete_builtin['constants']['radius'] = {
 \ 'RADIUS_TERM_HOST_REQUEST': '',
 \ 'RADIUS_ACCT_MULTI_SESSION_ID': '',
 \ 'RADIUS_ACCT_LINK_COUNT': '',
+\ 'RADIUS_MPPE_KEY_LEN': '',
 \ 'RADIUS_ACCOUNTING_RESPONSE': '',
 \ 'RADIUS_COA_REQUEST': '',
 \ 'RADIUS_COA_ACK': '',
@@ -22670,6 +19831,12 @@ let g:phpcomplete_builtin['constants']['migrating_from_php_54x_to_php_55x'] = {
 \ 'JSON_ERROR_UNSUPPORTED_TYPE': '',
 \ 'MYSQLI_SERVER_PUBLIC_KEY': '',
 \ }
+let g:phpcomplete_builtin['constants']['migrating_from_php_55x_to_php_56x'] = {
+\ 'CURLOPT_SAFE_UPLOAD': '',
+\ 'LDAP_ESCAPE_DN': '',
+\ 'LDAP_ESCAPE_FILTER': '',
+\ 'STREAM_CRYPTO_METHOD_TLS_CLIENT': '',
+\ }
 let g:phpcomplete_builtin['constants']['ming'] = {
 \ 'MING_NEW': '',
 \ 'MING_ZLIB': '',
@@ -23460,4 +20627,20 @@ let g:phpcomplete_builtin['constants']['yaf'] = {
 \ 'YAF_ERR_NOTFOUND_VIEW': '',
 \ 'YAF_ERR_CALL_FAILED': '',
 \ 'YAF_ERR_TYPE_ERROR': '',
+\ }
+let g:phpcomplete_builtin['constants']['yar'] = {
+\ 'YAR_VERSION': '',
+\ 'YAR_CLIENT_PROTOCOL_HTTP': '',
+\ 'YAR_CLIENT_OPT_PACKAGER': '',
+\ 'YAR_CLIENT_OPT_TIMEOUT': '',
+\ 'YAR_CLIENT_OPT_CONNECT_TIMEOUT': '',
+\ 'YAR_PACKAGER_PHP': '',
+\ 'YAR_PACKAGER_JSON': '',
+\ 'YAR_ERR_OKEY': '',
+\ 'YAR_ERR_OUTPUT': '',
+\ 'YAR_ERR_TRANSPORT': '',
+\ 'YAR_ERR_REQUEST': '',
+\ 'YAR_ERR_PROTOCOL': '',
+\ 'YAR_ERR_PACKAGER': '',
+\ 'YAR_ERR_EXCEPTION': '',
 \ }

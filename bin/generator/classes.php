@@ -251,52 +251,154 @@ function handle_class_const($xpath, $node, $file) {
     return $re;
 }
 
-function write_class_signatures_to_vim_hash($signatures, $outpath, $keyname) {
+function write_class_signatures_to_vim_hash($signatures, $outpath, $keyname, $enabled_extensions = null, $prettyprint = true) {
     $fd = fopen($outpath, 'a');
+    if (!empty($enabled_extensions)) {
+        $enabled_extensions = array_flip($enabled_extensions);
+    }
     foreach ($signatures as $extension_name => $classes) {
         if (empty($classes)) {
             continue;
         }
-
-        fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."'] = {\n");
-        foreach ($classes as $classname => $class_info) {
-            fwrite($fd, "\\'".strtolower($classname)."': {\n");
-
-            fwrite($fd, "\\   'name': '".vimstring_escape($classname)."',\n");
-
-            fwrite($fd, "\\   'constants': {\n");
-            foreach ($class_info['constants'] as $constant => $constant_info) {
-                fwrite($fd, "\\     '{$constant}': '".vimstring_escape($constant_info['initializer'])."',\n");
-            }
-            fwrite($fd, "\\   },\n");
-
-            fwrite($fd, "\\   'properties': {\n");
-            foreach ($class_info['properties'] as $property => $property_info) {
-                fwrite($fd, "\\     '{$property}': { 'initializer': '".vimstring_escape($property_info['initializer'])."', 'type': '".vimstring_escape($property_info['type'])."'},\n");
-            }
-            fwrite($fd, "\\   },\n");
-
-            fwrite($fd, "\\   'static_properties': {\n");
-            foreach ($class_info['static_properties'] as $property => $property_info) {
-                fwrite($fd, "\\     '{$property}': { 'initializer': '".vimstring_escape($property_info['initializer'])."', 'type': '".vimstring_escape($property_info['type'])."'},\n");
-            }
-            fwrite($fd, "\\   },\n");
-
-            fwrite($fd, "\\   'methods': {\n");
-            foreach ($class_info['methods'] as $methodname => $method_info) {
-                fwrite($fd, "\\     '{$methodname}': { 'signature': '".format_method_signature($method_info)."', 'return_type': '".vimstring_escape($method_info['return_type'])."'},\n");
-            }
-            fwrite($fd, "\\   },\n");
-
-            fwrite($fd, "\\   'static_methods': {\n");
-            foreach ($class_info['static_methods'] as $methodname => $method_info) {
-                fwrite($fd, "\\     '{$methodname}': { 'signature': '".format_method_signature($method_info)."', 'return_type': '".vimstring_escape($method_info['return_type'])."'},\n");
-            }
-            fwrite($fd, "\\   },\n");
-
-            fwrite($fd, "\\},\n");
+        if ($enabled_extensions && !isset($enabled_extensions[filenameize($extension_name)])) {
+            continue;
         }
-        fwrite($fd, "\\}\n");
+
+        if ($prettyprint) {
+            fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."'] = {\n");
+        } else {
+            fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."']={");
+        }
+        foreach ($classes as $classname => $class_info) {
+            if ($prettyprint) {
+                fwrite($fd, "\\'".strtolower($classname)."': {\n");
+            } else {
+                fwrite($fd, "'".strtolower($classname)."':{");
+            }
+
+            if ($prettyprint) {
+                fwrite($fd, "\\   'name': '".vimstring_escape($classname)."',\n");
+            } else {
+                fwrite($fd, "'name':'".vimstring_escape($classname)."',");
+            }
+
+            if (!empty($class_info['constants'])) {
+                if ($prettyprint) {
+                    fwrite($fd, "\\   'constants': {\n");
+                } else {
+                    fwrite($fd, "'constants':{");
+                }
+                foreach ($class_info['constants'] as $constant => $constant_info) {
+                    if ($prettyprint) {
+                        fwrite($fd, "\\     '{$constant}': '".vimstring_escape($constant_info['initializer'])."',\n");
+                    } else {
+                        fwrite($fd, "'{$constant}':'".vimstring_escape($constant_info['initializer'])."',");
+                    }
+                }
+                // closing constants
+                if ($prettyprint) {
+                    fwrite($fd, "\\   },\n");
+                } else {
+                    fwrite($fd, "},");
+                }
+            }
+
+            if (!empty($class_info['properties'])) {
+                if ($prettyprint) {
+                    fwrite($fd, "\\   'properties': {\n");
+                } else {
+                    fwrite($fd, "'properties': {");
+                }
+                foreach ($class_info['properties'] as $property => $property_info) {
+                    if ($prettyprint) {
+                        fwrite($fd, "\\     '{$property}': { 'initializer': '".vimstring_escape($property_info['initializer'])."', 'type': '".vimstring_escape($property_info['type'])."'},\n");
+                    } else {
+                        fwrite($fd, "'{$property}':{'initializer':'".vimstring_escape($property_info['initializer'])."','type':'".vimstring_escape($property_info['type'])."'},");
+                    }
+                }
+                // closing properties
+                if ($prettyprint) {
+                    fwrite($fd, "\\   },\n");
+                } else {
+                    fwrite($fd, "},");
+                }
+            }
+
+            if (!empty($class_info['static_properties'])) {
+                if ($prettyprint) {
+                    fwrite($fd, "\\   'static_properties': {\n");
+                } else {
+                    fwrite($fd, "'static_properties':{");
+                }
+                foreach ($class_info['static_properties'] as $property => $property_info) {
+                    if ($prettyprint) {
+                        fwrite($fd, "\\     '{$property}': { 'initializer': '".vimstring_escape($property_info['initializer'])."', 'type': '".vimstring_escape($property_info['type'])."'},\n");
+                    } else {
+                        fwrite($fd, "'{$property}':{ 'initializer':'".vimstring_escape($property_info['initializer'])."','type':'".vimstring_escape($property_info['type'])."'},");
+                    }
+                }
+                // closing static_properties
+                if ($prettyprint) {
+                    fwrite($fd, "\\   },\n");
+                } else {
+                    fwrite($fd, "},");
+                }
+            }
+
+            if (!empty($class_info['methods'])) {
+                if ($prettyprint) {
+                    fwrite($fd, "\\   'methods': {\n");
+                } else {
+                    fwrite($fd, "'methods':{");
+                }
+                foreach ($class_info['methods'] as $methodname => $method_info) {
+                    if ($prettyprint) {
+                        fwrite($fd, "\\     '{$methodname}': { 'signature': '".format_method_signature($method_info)."', 'return_type': '".vimstring_escape($method_info['return_type'])."'},\n");
+                    } else {
+                        fwrite($fd, "'{$methodname}':{'signature':'".format_method_signature($method_info)."','return_type':'".vimstring_escape($method_info['return_type'])."'},");
+                    }
+                }
+                // closing methods
+                if ($prettyprint) {
+                    fwrite($fd, "\\   },\n");
+                } else {
+                    fwrite($fd, "},");
+                }
+            }
+
+            if (!empty($class_info['static_methods'])) {
+                if ($prettyprint) {
+                    fwrite($fd, "\\   'static_methods': {\n");
+                } else {
+                    fwrite($fd, "'static_methods':{");
+                }
+                foreach ($class_info['static_methods'] as $methodname => $method_info) {
+                    if ($prettyprint) {
+                        fwrite($fd, "\\     '{$methodname}': { 'signature': '".format_method_signature($method_info)."', 'return_type': '".vimstring_escape($method_info['return_type'])."'},\n");
+                    } else {
+                        fwrite($fd, "'{$methodname}':{'signature':'".format_method_signature($method_info)."','return_type':'".vimstring_escape($method_info['return_type'])."'},");
+                    }
+                }
+                // closing static_methods
+                if ($prettyprint) {
+                    fwrite($fd, "\\   },\n");
+                } else {
+                    fwrite($fd, "},");
+                }
+            }
+            // closing the class
+            if ($prettyprint) {
+                fwrite($fd, "\\},\n");
+            } else {
+                fwrite($fd, "},");
+            }
+        }
+        // closing the extension
+        if ($prettyprint) {
+            fwrite($fd, "\\}\n");
+        } else {
+            fwrite($fd, "}\n");
+        }
     }
     fclose($fd);
 }

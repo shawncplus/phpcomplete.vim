@@ -2464,7 +2464,17 @@ let g:php_builtin_object_functions = {}
 " for performance reasons we precompile this too
 let g:php_builtin_classnames = {}
 
+" In order to reduce file size, empty keys are omitted from class structures.
+" To make the structure of in-memory hashes normalized we will add them in runtime
+let required_class_hash_keys = ['constants', 'properties', 'static_properties', 'methods', 'static_methods']
+
 for [classname, class_info] in items(g:php_builtin_classes)
+	for property_name in required_class_hash_keys
+		if !has_key(class_info, property_name)
+			let class_info[property_name] = {}
+		endif
+	endfor
+
 	let g:php_builtin_classnames[class_info.name] = ''
 	for [method_name, method_info] in items(class_info.methods)
 		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
@@ -2476,6 +2486,12 @@ endfor
 
 let g:php_builtin_interfacenames = {}
 for [interfacename, info] in items(g:php_builtin_interfaces)
+	for property_name in required_class_hash_keys
+		if !has_key(class_info, property_name)
+			let class_info[property_name] = {}
+		endif
+	endfor
+
 	let g:php_builtin_interfacenames[interfacename] = ''
 	for [method_name, method_info] in items(class_info.methods)
 		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature

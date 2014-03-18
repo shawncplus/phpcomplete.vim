@@ -99,28 +99,50 @@ function handle_func_alias($xpath, $nodes, $file) {
     );
 }
 
-function write_function_signatures_to_vim_hash($signatures, $outpath, $keyname) {
+function write_function_signatures_to_vim_hash($signatures, $outpath, $keyname, $enabled_extensions = null, $prettyprint = true) {
     $fd = fopen($outpath, 'a');
+    if (!empty($enabled_extensions)) {
+        $enabled_extensions = array_flip($enabled_extensions);
+    }
     foreach ($signatures as $extension_name => $functions) {
         if (empty($functions)) {
+            continue;
+        }
+        if ($enabled_extensions && !isset($enabled_extensions[filenameize($extension_name)])) {
             continue;
         }
 
         // weed out duplicates, (like nthmac) only keep the first occurance
         $functions = array_index_by_col($functions, 'name', false);
 
-        fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."'] = {\n");
+        if ($prettyprint) {
+            fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."'] = {\n");
+        } else {
+            fwrite($fd, "let g:phpcomplete_builtin['".$keyname."']['".filenameize($extension_name)."']={");
+        }
         foreach ($functions as $function) {
             if ($function['type'] == 'function') {
-                fwrite($fd, "\\ '{$function['name']}(': '".format_method_signature($function)."',\n");
+                if ($prettyprint) {
+                    fwrite($fd, "\\ '{$function['name']}(': '".format_method_signature($function)."',\n");
+                } else {
+                    fwrite($fd, "'{$function['name']}(':'".format_method_signature($function)."',");
+                }
             } else if ($function['type'] == 'alias') {
-                fwrite($fd, "\\ '{$function['name']}(': '".vimstring_escape($function['full_signature'])."',\n");
+                if ($prettyprint) {
+                    fwrite($fd, "\\ '{$function['name']}(': '".vimstring_escape($function['full_signature'])."',\n");
+                } else {
+                    fwrite($fd, "'{$function['name']}(':'".vimstring_escape($function['full_signature'])."',");
+                }
             } else {
                 fwrite(STDERR, 'unknown signature type '.var_export($function, true));
                 exit;
             }
         }
-        fwrite($fd, "\\ }\n");
+        if ($prettyprint) {
+            fwrite($fd, "\\ }\n");
+        } else {
+            fwrite($fd, "}\n");
+        }
     }
     fclose($fd);
 }
