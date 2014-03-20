@@ -92,3 +92,5 @@ throw $foo-> // cursor here
 ;
 return $foo-> // cursor here
 ;
+
+class Foo extends Bar implements ArrayAccess, It

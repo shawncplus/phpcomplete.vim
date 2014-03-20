@@ -125,7 +125,7 @@ fun! TestCase_complete_classes_from_built_in_classes()
     \   'name': 'FindMeFoo'
     \ },
     \}
-    " the completion should give the value of the 'name' property regardeless
+    " the completion should give the value of the 'name' property regardless
     " of the outer dictionary keys
     let res = phpcomplete#CompleteClassName('tra', ['i'], '\', {})
     call VUAssertEquals([

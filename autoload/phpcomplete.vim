@@ -274,6 +274,8 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		" }}}
 	elseif context =~? 'implements'
 		return phpcomplete#CompleteClassName(a:base, ['i'], current_namespace, imports)
+	elseif context =~? 'extends\s\+.\+$'
+		return ['implements']
 	elseif context =~? 'extends'
 		let kinds = context =~? 'class\s' ? ['c'] : ['i']
 		return phpcomplete#CompleteClassName(a:base, kinds, current_namespace, imports)
@@ -1208,7 +1210,7 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 				\ '!', '@', '%', '^', '&',
 				\ '*', '/', '-', '+', '=',
 				\ ':', '>', '<', '.', '?',
-				\ ';', '(',  '|', '['
+				\ ';', '(', '|', '['
 				\ ]
 
 	let phpbegin_length = len(matchstr(getline(a:phpbegin[0]), '\zs<?\(php\)\?\ze'))
@@ -1317,8 +1319,8 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 
 	" there were a "naked" coma in the instruction
 	if first_coma_break_pos != -1
-		if instruction !~? '^use' " use ... statements should not be broken up
-			let pos = -1 * first_coma_break_pos + 1
+		if instruction !~? '^use' && instruction !~? '^class' " use ... statements and class delcarations should not be broken up by comas
+			let pos = (-1 * first_coma_break_pos) + 1
 			let instruction = instruction[pos :]
 		endif
 	endif

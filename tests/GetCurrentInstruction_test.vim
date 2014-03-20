@@ -139,5 +139,11 @@ fun! TestCase_returns_instuction_string()
     call VUAssertEquals(
                 \ '$foo->',
                 \ res)
+    call cursor(96, 48)
+    let res = phpcomplete#GetCurrentInstruction(96, 48, [1, 1])
+    call VUAssertEquals(
+                \ 'class Foo extends Bar implements ArrayAccess, It',
+                \ res)
+
     silent! bw! %
 endf
