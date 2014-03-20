@@ -921,7 +921,7 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 		if index(kinds, 'i') != -1
 			let builtin_interfaces = filter(keys(copy(g:php_builtin_interfaces)), 'v:val =~? "^'.substitute(a:base, '\\', '', 'g').'"')
 			for interfacename in builtin_interfaces
-				call add(res, {'word': leading_slash.interfacename, 'kind': 'i', 'menu': ''})
+				call add(res, {'word': leading_slash.g:php_builtin_interfaces[interfacename]['name'], 'kind': 'i', 'menu': ''})
 			endfor
 		endif
 	endif

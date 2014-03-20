@@ -104,9 +104,8 @@ fun! TestCase_complete_classes_from_built_in_classes()
 
     " set up example built-in list
     let g:php_builtin_interfaces = {
-    \'Traversable': {
-    \   'methods': {
-    \   },
+    \'traversable': {
+    \   'name': 'Traversable'
     \ },
     \}
 
@@ -115,12 +114,23 @@ fun! TestCase_complete_classes_from_built_in_classes()
                 \ {'word': 'Traversable', 'menu': '', 'kind': 'i'}],
                 \ res)
 
-    " user typed \ and hits <c-x><c-o> in a file starting with "namespace NS1;"
+    " user typed \T and hits <c-x><c-o> in a file starting with "namespace NS1;"
     let res = phpcomplete#CompleteClassName('\T', ['i'], 'NS1', {})
     call VUAssertEquals([
                 \ {'word': '\Traversable', 'menu': '', 'kind': 'i'}],
                 \ res)
 
+    let g:php_builtin_interfaces = {
+    \'traversable': {
+    \   'name': 'FindMeFoo'
+    \ },
+    \}
+    " the completion should give the value of the 'name' property regardeless
+    " of the outer dictionary keys
+    let res = phpcomplete#CompleteClassName('tra', ['i'], '\', {})
+    call VUAssertEquals([
+                \ {'word': 'FindMeFoo', 'menu': '', 'kind': 'i'}],
+                \ res)
 
     silent! bw! %
 endf
