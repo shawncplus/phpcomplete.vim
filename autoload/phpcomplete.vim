@@ -2539,4 +2539,4 @@ let g:php_builtin_vars ={
 endfunction
 " }}}
 
-" vim: foldmethod=marker:noexpandtab:ts=4:sts=4:tw=4
+" vim: foldmethod=marker:noexpandtab:ts=4:sts=4
