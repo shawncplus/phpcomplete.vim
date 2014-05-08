@@ -133,8 +133,12 @@ fun! TestCase_finds_classes_from_variable_equals_new_class_lines()
     call VUAssertEquals('Bar\FooClass', classname)
 
     exe ':8'
-    let classname = phpcomplete#GetClassName(8, '$foo->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
+    let classname = phpcomplete#GetClassName(8, '$foo2->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
+
+	exe ':12'
+    let classname = phpcomplete#GetClassName(12, '$foo3->', 'NS1', {})
+    call VUAssertEquals('NS2\Foo', classname)
 
     silent! bw! %
 endf
@@ -153,8 +157,12 @@ fun! TestCase_finds_common_singleton_getInstance_calls()
     call VUAssertEquals('Bar\FooClass', classname)
 
     exe ':8'
-    let classname = phpcomplete#GetClassName(8, '$foo->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
+    let classname = phpcomplete#GetClassName(8, '$foo2->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
+
+	exe ':10'
+    let classname = phpcomplete#GetClassName(12, '$foo3->', 'NS1', {})
+    call VUAssertEquals('NS2\Foo', classname)
 
     silent! bw! %
 endf

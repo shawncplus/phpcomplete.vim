@@ -4,5 +4,9 @@ $foo = new FooClass;
 $foo->
 
 
-$foo = new RenamedFoo;
-$foo->
+$foo2 = new RenamedFoo;
+$foo2->
+
+
+$foo3 = new \NS2\Foo;
+$foo3->
