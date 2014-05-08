@@ -1908,7 +1908,6 @@ function! phpcomplete#GetFunctionLocation(function_name, namespace) " {{{
 	if no_namespace_candidate != ''
 		return no_namespace_candidate
 	endif
-endif
 
 endfunction
 " }}}
