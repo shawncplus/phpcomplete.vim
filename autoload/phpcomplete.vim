@@ -224,7 +224,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		unlet! b:compl_context
 		" chop of the "base" from the end of the current instruction
 		if a:base != ""
-			let context = substitute(context, '[\n\r\t\v $a-zA-Z_0-9\x7f-\xff]*$', '', '')
+			let context = substitute(context, '\s*[$a-zA-Z_0-9\x7f-\xff]*$', '', '')
 		end
 	end
 
