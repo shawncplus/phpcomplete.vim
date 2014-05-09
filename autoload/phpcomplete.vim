@@ -193,13 +193,12 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 			" locate the start of the word
 			let line = getline('.')
 			let start = col('.') - 1
-			let curline = line('.')
 			let compl_begin = col('.') - 2
 			while start >= 0 && line[start - 1] =~ '[\\a-zA-Z_0-9\x7f-\xff$]'
 				let start -= 1
 			endwhile
 			let b:phpbegin = phpbegin
-			let b:compl_context = phpcomplete#GetCurrentInstruction(line('.'), col('.') - 2, phpbegin)
+			let b:compl_context = phpcomplete#GetCurrentInstruction(line('.'), max([0, col('.') - 2]), phpbegin)
 
 			return start
 			" We can be also inside of phpString with HTML tags. Deal with
