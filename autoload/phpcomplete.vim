@@ -945,6 +945,149 @@ function! phpcomplete#CompareCompletionRow(i1, i2) " {{{
 endfunction
 " }}}
 
+function! phpcomplete#JumpToDefinition() " {{{
+	if !exists('g:php_builtin_functions')
+		call phpcomplete#LoadData()
+	endif
+
+	let [symbol, symbol_context, symbol_namespace, current_imports] = phpcomplete#GetCurrentSymbolWithContext()
+	if symbol == ''
+		call feedkeys("\<C-]>", 'n')
+		return
+	endif
+
+	let [symbol_file, symbol_line, symbol_col] = phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, current_imports)
+	if symbol_file == ''
+		call feedkeys("\<C-]>", 'n')
+		return
+	endif
+
+	" location found, open the file and jump to it
+	silent! exec "e ".symbol_file
+	call cursor(symbol_line, symbol_col)
+
+endfunction " }}}
+
+function! phpcomplete#GetCurrentSymbolWithContext() " {{{
+	" Check if we are inside of PHP markup
+	let pos = getpos('.')
+	let phpbegin = searchpairpos('<?', '', '?>', 'bWn',
+			\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\|comment"')
+	let phpend = searchpairpos('<?', '', '?>', 'Wn',
+			\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\|comment"')
+
+	if (phpbegin == [0, 0] && phpend == [0, 0])
+		return ['', '', '', '']
+	endif
+
+	" locate the start of the word
+	let b:phpbegin = phpbegin
+
+	let line = getline('.')
+	let start = col('.') - 1
+	let end = start
+	if start < 0
+		let start = 0;
+	endif
+	if end < 0
+		let end = 0;
+	endif
+
+	while start >= 0 && line[start - 1] =~ '[\\a-zA-Z_0-9\x7f-\xff$]'
+		let start -= 1
+	endwhile
+	while end + 1 <= len(line) && line[end + 1] =~ '[\\a-zA-Z_0-9\x7f-\xff$]'
+		let end += 1
+	endwhile
+	let word = line[start : end]
+	" trim extra non-word chars from the end line "(" that can come from a
+	" function call
+	let word = substitute(word, '\v\c[^\\a-zA-Z_0-9$]*$', '', '')
+
+	let current_instruction = phpcomplete#GetCurrentInstruction(line('.'), max([0, col('.') - 2]), phpbegin)
+	let context = substitute(current_instruction, '\s*[$a-zA-Z_0-9\x7f-\xff]*$', '', '')
+
+	let [current_namespace, current_imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
+	let [symbol, symbol_namespace] = phpcomplete#ExpandClassName(word, current_namespace, current_imports)
+
+	return [symbol, context, symbol_namespace, current_imports]
+endfunction " }}}
+
+function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, current_imports) " {{{
+	let unknow_location = ['', '', '']
+
+	if a:symbol =~ '\\'
+		let symbol_parts = split(a:symbol, '\')
+		let search_symbol = symbol_parts[-1]
+	else
+		let search_symbol = a:symbol
+	endif
+
+	" are we looking for a method?
+	if a:symbol_context =~ '\(->\|::\)$'
+		" Get name of the class
+		let classname = phpcomplete#GetClassName(line('.'), a:symbol_context, a:symbol_namespace, a:current_imports)
+
+		" Get location of class definition, we have to iterate through all
+		if classname != ''
+			if classname =~ '\'
+				" split the last \ segment as a classname, everything else is the namespace
+				let classname_parts = split(classname, '\')
+				let namespace = join(classname_parts[0:-2], '\')
+				let classname = classname_parts[-1]
+			else
+				let namespace = '\'
+			endif
+			let classlocation = phpcomplete#GetClassLocation(classname, namespace)
+			if filereadable(classlocation)
+				" Method found in classlocation
+				silent! below 1new
+
+				silent! exec "e ".classlocation
+				call search('\cclass\_s\+\<'.classname.'\(\>\|$\)', 'wc')
+				call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
+
+				let line = line('.')
+				let col  = col('.')
+				silent! exec 'close!'
+				return [classlocation, line, col]
+			endif
+		endif
+	else
+		" it could be a function
+		let function_file = phpcomplete#GetFunctionLocation(a:symbol, a:symbol_namespace)
+		if function_file != '' && filereadable(function_file)
+			" Function found in function_file
+			silent! below 1new
+
+			silent! exec "e ".function_file
+			call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
+
+			let line = line('.')
+			let col  = col('.')
+			silent! exec 'close!'
+			return [function_file, line, col]
+		endif
+
+		let class_file = phpcomplete#GetClassLocation(a:symbol, a:symbol_namespace)
+		if class_file != '' && filereadable(class_file)
+			" Class or interface found in class_file
+			silent! below 1new
+
+			silent! exec "e ".class_file
+			call search('\c\(interface\|class\)\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
+
+			let line = line('.')
+			let col  = col('.')
+			silent! exec 'close!'
+			return [class_file, line, col]
+
+		endif
+	endif
+
+	return unknow_location
+endfunction " }}}
+
 function! phpcomplete#EvaluateModifiers(modifiers, required_modifiers, prohibited_modifiers) " {{{
 	" if theres no modifier, and no modifier is allowed and no modifier is required
 	if len(a:modifiers) == 0 && len(a:required_modifiers) == 0
