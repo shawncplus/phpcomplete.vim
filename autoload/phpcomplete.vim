@@ -2350,7 +2350,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 					if has_key(g:php_builtin_classnames, tolower(import.name))
 						let import['kind'] = 'c'
 						let import['builtin'] = 1
-					elseif has_key(g:php_builtin_interfaces, import.name)
+					elseif has_key(g:php_builtin_interfacenames, tolower(import.name))
 						let import['kind'] = 'i'
 						let import['builtin'] = 1
 					else
@@ -2477,7 +2477,7 @@ for [classname, class_info] in items(g:php_builtin_classes)
 		endif
 	endfor
 
-	let g:php_builtin_classnames[class_info.name] = ''
+	let g:php_builtin_classnames[classname] = ''
 	for [method_name, method_info] in items(class_info.methods)
 		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
 	endfor
@@ -2496,10 +2496,10 @@ for [interfacename, info] in items(g:php_builtin_interfaces)
 
 	let g:php_builtin_interfacenames[interfacename] = ''
 	for [method_name, method_info] in items(class_info.methods)
-		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
+		let g:php_builtin_object_functions[interfacename.'::'.method_name.'('] = method_info.signature
 	endfor
 	for [method_name, method_info] in items(class_info.static_methods)
-		let g:php_builtin_object_functions[classname.'::'.method_name.'('] = method_info.signature
+		let g:php_builtin_object_functions[interfacename.'::'.method_name.'('] = method_info.signature
 	endfor
 endfor
 
