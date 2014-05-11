@@ -1597,32 +1597,35 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 		endif
 	else
+		" extract the variable name from the context
+		let object = methodstack[0]
+		let object_is_array = (object =~ '\v^[^[]+\[' ? 1 : 0)
+		let object = matchstr(object, variable_name_pattern)
+
 		" check Constant lookup
 		let constant_object = matchstr(a:context, '\zs'.class_name_pattern.'\ze::')
 		if constant_object != ''
 			let classname_candidate = constant_object
 		endif
 
-		" extract the variable name from the context
-		let object = methodstack[0]
-		let object_is_array = (object =~ '\v^[^[]+\[' ? 1 : 0)
-		let object = matchstr(object, variable_name_pattern)
-
-		" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
-		let i = 1 " start from the current line - 1
-		while i < a:start_line
-			let line = getline(a:start_line - i)
-			" in file lookup for /* @var $foo Class */
-			if line =~# '@var\s\+'.object.'\s\+'.class_name_pattern
-				let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\(\[\]\)\?')
-				break
-			elseif line !~ '^\s*$'
-				" type indicator comments should be next to the variable
-				" non empty lines break the search
-				break
-			endif
-			let i += 1
-		endwhile
+		if classname_candidate == ''
+			" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
+			let i = 1 " start from the current line - 1
+			while i < a:start_line
+				let line = getline(a:start_line - i)
+				" in file lookup for /* @var $foo Class */
+				if line =~# '@var\s\+'.object.'\s\+'.class_name_pattern
+					let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\(\[\]\)\?')
+					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, a:current_namespace, a:imports)
+					break
+				elseif line !~ '^\s*$'
+					" type indicator comments should be next to the variable
+					" non empty lines break the search
+					break
+				endif
+				let i += 1
+			endwhile
+		endif
 
 		if classname_candidate != ''
 			let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
@@ -1632,7 +1635,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 		" scan the file backwards from the current line
 		let i = 1
-		while i < a:start_line
+		while i < a:start_line " {{{
 			let line = getline(a:start_line - i)
 
 			" do in-file lookup of $var = new Class
@@ -1796,7 +1799,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			endif
 
 			let i += 1
-		endwhile
+		endwhile " }}}
 
 		if classname_candidate != ''
 			let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
