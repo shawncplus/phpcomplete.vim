@@ -126,3 +126,5 @@ fun! TestCase_returns_empty_list_when_unknown_class_completion_disabled()
     let res = phpcomplete#CompleteUnknownClass("setDat", "$d->")
     call VUAssertEquals([], res)
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

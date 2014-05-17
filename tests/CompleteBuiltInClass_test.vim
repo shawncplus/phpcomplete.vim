@@ -136,3 +136,5 @@ fun! TestCase_returns_constants()
                 \ 'kind': 'd'}],
                 \ ret)
 endfun
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

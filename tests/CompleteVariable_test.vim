@@ -71,3 +71,5 @@ fun! TestCase_complete_variables_from_tags()
                 \ res)
     silent! bw! %
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

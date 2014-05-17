@@ -74,3 +74,5 @@ fun! TestCase_extracts_var_lines_with_type_and_description()
     call VUAssertEquals("Foo", ret.var.type)
     call VUAssertEquals("", ret.var.description)
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

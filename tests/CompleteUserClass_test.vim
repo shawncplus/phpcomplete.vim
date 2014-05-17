@@ -137,3 +137,5 @@ fun! TestCase_returns_static_properties_with_only_a_dollarsign_base()
                 \ {'word': '$public_static_property', 'info': '', 'menu': '', 'kind': 'v'}],
                 \ ret)
 endfun
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

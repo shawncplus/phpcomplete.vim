@@ -147,3 +147,5 @@ fun! TestCase_returns_instuction_string()
 
     silent! bw! %
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

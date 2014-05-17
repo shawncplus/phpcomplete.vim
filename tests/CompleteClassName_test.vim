@@ -286,3 +286,5 @@ fun! TestCase_completes_class_names_from_imported_namespaces_via_tags()
                 \ {'word': 'SUBNS\FooSubSub', 'menu': 'fixtures/common/fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/fixtures/common/namespaced_foo.php', 'kind': 'c'}],
                 \ res)
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

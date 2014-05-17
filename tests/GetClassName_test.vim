@@ -136,7 +136,7 @@ fun! TestCase_finds_classes_from_variable_equals_new_class_lines()
     let classname = phpcomplete#GetClassName(8, '$foo2->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
-	exe ':12'
+    exe ':12'
     let classname = phpcomplete#GetClassName(12, '$foo3->', 'NS1', {})
     call VUAssertEquals('NS2\Foo', classname)
 
@@ -160,7 +160,7 @@ fun! TestCase_finds_common_singleton_getInstance_calls()
     let classname = phpcomplete#GetClassName(8, '$foo2->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
-	exe ':10'
+    exe ':10'
     let classname = phpcomplete#GetClassName(12, '$foo3->', 'NS1', {})
     call VUAssertEquals('NS2\Foo', classname)
 
@@ -657,3 +657,5 @@ fun! TestCase_function_invocation_return_type()
 
     silent! bw! %
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

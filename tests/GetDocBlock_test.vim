@@ -26,3 +26,5 @@ fun! TestCase_returns_the_comment_block_without_last_and_first_line_and_without_
                 \ "@var Foo",
                 \ ret)
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

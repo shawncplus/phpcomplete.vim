@@ -67,3 +67,5 @@ fun! TestCase_return_class_location_from_tags()
 
     silent! bw! %
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

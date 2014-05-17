@@ -22,9 +22,9 @@ let g:phpcomplete_enhance_jump_to_definition = get(g:, 'phpcomplete_enhance_jump
 
 
 augroup phpcomplete
-    au!
+	au!
 	if g:phpcomplete_enhance_jump_to_definition
-		autocmd FileType php  silent! nnoremap <silent> <unique> <C-]> :<C-u>call phpcomplete#JumpToDefinition()<CR>
+		autocmd FileType php silent! nnoremap <silent> <unique> <C-]> :<C-u>call phpcomplete#JumpToDefinition()<CR>
 	endif
 augroup END
 

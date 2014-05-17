@@ -441,3 +441,5 @@ fun! TestCase_returns_tags_from_imported_namespaces() " {{{
                 \ {'word': 'SUB\SUBSUB\', 'menu': 'NS1\SUBNS\SUBSUB - fixtures/common/namespaced_foo.php', 'info': 'NS1\SUBNS\SUBSUB - fixtures/common/namespaced_foo.php', 'kind': 'n'}],
                 \ res)
 endf " }}}
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

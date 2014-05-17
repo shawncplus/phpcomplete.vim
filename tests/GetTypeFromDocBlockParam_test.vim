@@ -21,3 +21,5 @@ fun! TestCase_returns_the_first_type_if_only_primitives_found()
     let ret = phpcomplete#GetTypeFromDocBlockParam('string|bool')
     call VUAssertEquals('string', ret)
 endfun
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

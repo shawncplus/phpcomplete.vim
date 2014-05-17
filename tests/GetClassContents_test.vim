@@ -119,3 +119,5 @@ fun! TestCase_handles_matching_class_name_extends_with_different_namespaces()
 
     silent! bw! %
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

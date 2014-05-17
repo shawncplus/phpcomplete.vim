@@ -60,3 +60,5 @@ fun! TestCase_returns_imported_namespaces_and_classes_with_their_info_from_tags(
                 \ 'E': {'name': 'Exception', 'kind': 'c', 'builtin': 1}},
                 \ imports)
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4

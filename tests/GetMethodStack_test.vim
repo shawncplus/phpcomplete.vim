@@ -23,3 +23,5 @@ fun! TestCase_have_no_empty_element_on_the_end_if_the_context_ended_with_an_arro
     let res = phpcomplete#GetMethodStack('Foo::bar::')
     call VUAssertEquals(['Foo', 'bar'], res)
 endf
+
+" vim: foldmethod=marker:expandtab:ts=4:sts=4
