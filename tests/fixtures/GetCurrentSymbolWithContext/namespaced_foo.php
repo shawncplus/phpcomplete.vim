@@ -24,5 +24,5 @@ $f2 = new \NS2\Foo2;
 $f2->returnBaz2()->returnFoo2();
 
 
-$f2 = new RenamedFoo2;
-$f2->returnBaz2();
+$f3 = new RenamedFoo2;
+$f3->returnBaz2();
