@@ -1039,22 +1039,24 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 				let namespace = '\'
 			endif
 			let classlocation = phpcomplete#GetClassLocation(classname, namespace)
-			let classcontents = phpcomplete#GetCachedClassContents(classlocation, classname)
-			for classcontent in classcontents
-				if classcontent.content =~? '\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)' && filereadable(classcontent.file)
-					" Method found in classlocation
-					silent! below 1new
+			if filereadable(classlocation)
+				let classcontents = phpcomplete#GetCachedClassContents(classlocation, classname)
+				for classcontent in classcontents
+					if classcontent.content =~? '\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)' && filereadable(classcontent.file)
+						" Method found in classlocation
+						silent! below 1new
 
-					silent! exec "e ".classcontent.file
-					call search('\cclass\_s\+\<'.classcontent.class.'\(\>\|$\)', 'wc')
-					call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
+						silent! exec "e ".classcontent.file
+						call search('\cclass\_s\+\<'.classcontent.class.'\(\>\|$\)', 'wc')
+						call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
 
-					let line = line('.')
-					let col  = col('.')
-					silent! exec 'close!'
-					return [classcontent.file, line, col]
-				endif
-			endfor
+						let line = line('.')
+						let col  = col('.')
+						silent! exec 'close!'
+						return [classcontent.file, line, col]
+					endif
+				endfor
+			endif
 		endif
 	else
 		" it could be a function
