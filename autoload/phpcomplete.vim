@@ -1588,7 +1588,14 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 						else
 							let fullnamespace = class_candidate_namespace
 						endif
-						let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(returnclass, fullnamespace, a:imports)
+						" make @return self, static, $this the same way
+						" (not exactly what php means by these)
+						if returnclass == 'self' || returnclass == 'static' || returnclass == '$this'
+							let classname_candidate = a:classname_candidate
+							let class_candidate_namespace = a:class_candidate_namespace
+						else
+							let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(returnclass, fullnamespace, a:imports)
+						endif
 					endif
 
 					return phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, a:imports, methodstack)
