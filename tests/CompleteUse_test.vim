@@ -14,8 +14,17 @@ endf
 fun! TestCase_completes_builtin_classes()
     call SetUp()
     let g:php_builtin_classnames = {
-                \ 'ArrayAccess': '',
-                \ 'ArrayObject': '',
+                \ 'arrayaccess': '',
+                \ 'arrayobject': '',
+                \ }
+
+    let g:php_builtin_classes = {
+                \ 'arrayaccess':{
+                \   'name': 'ArrayAccess',
+                \ },
+                \ 'arrayobject':{
+                \   'name': 'ArrayObject',
+                \ },
                 \ }
 
     " returns every builtin class when nothing typed in

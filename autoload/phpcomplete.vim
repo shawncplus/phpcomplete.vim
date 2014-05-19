@@ -348,11 +348,11 @@ function! phpcomplete#CompleteUse(base) " {{{
 	if base !~ '\'
 		let builtin_classnames = filter(keys(copy(g:php_builtin_classnames)), 'v:val =~? "^'.classname_match_pattern.'"')
 		for classname in builtin_classnames
-			call add(res, {'word': classname, 'kind': 'c'})
+			call add(res, {'word': g:php_builtin_classes[tolower(classname)].name, 'kind': 'c'})
 		endfor
 		let builtin_interfacenames = filter(keys(copy(g:php_builtin_interfacenames)), 'v:val =~? "^'.classname_match_pattern.'"')
 		for interfacename in builtin_interfacenames
-			call add(res, {'word': interfacename, 'kind': 'i'})
+			call add(res, {'word': g:php_builtin_interfaces[tolower(interfacename)].name, 'kind': 'i'})
 		endfor
 	endif
 
@@ -542,7 +542,7 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 		" Add builtin class names
 		for [classname, info] in items(g:php_builtin_classnames)
 			if classname =~? '^'.base
-				let builtin_classnames[leading_slash.classname] = info
+				let builtin_classnames[leading_slash.g:php_builtin_classes[tolower(classname)].name] = info
 			endif
 		endfor
 		for [interfacename, info] in items(g:php_builtin_interfacenames)
@@ -915,7 +915,7 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 				if has_key(g:php_builtin_classes[tolower(classname)].methods, '__construct')
 					let menu = g:php_builtin_classes[tolower(classname)]['methods']['__construct']['signature']
 				endif
-				call add(res, {'word': leading_slash.classname, 'kind': 'c', 'menu': menu})
+				call add(res, {'word': leading_slash.g:php_builtin_classes[tolower(classname)].name, 'kind': 'c', 'menu': menu})
 			endfor
 		endif
 

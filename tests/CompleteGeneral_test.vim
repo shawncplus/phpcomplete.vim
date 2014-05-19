@@ -139,8 +139,17 @@ fun! TestCase_completes_builtin_class_names() " {{{
 
     " PDO should not be picked up
     let g:php_builtin_classnames = {
-                \ 'DateTime':'',
-                \ 'PDO':'',
+                \ 'datetime':'',
+                \ 'pdo':'',
+                \ }
+
+    let g:php_builtin_classes = {
+                \ 'datetime':{
+                \   'name': 'DateTime',
+                \ },
+                \ 'pdo':{
+                \   'name': 'PDO',
+                \ }
                 \ }
 
     let res = phpcomplete#CompleteGeneral('date', '\', {})
@@ -154,7 +163,12 @@ fun! TestCase_completes_builtin_interface_names() " {{{
 
     " PDO should not be picked up
     let g:php_builtin_interfacenames = {
-                \ 'Traversable':'',
+                \ 'traversable':'',
+                \ }
+    let g:php_builtin_interfaces = {
+                \ 'traversable':{
+                \   'name': 'Traversable',
+                \ }
                 \ }
 
     let res = phpcomplete#CompleteGeneral('Tr', '\', {})
@@ -233,8 +247,16 @@ fun! TestCase_completes_builtin_class_names_when_in_namespace_and_base_starts_wi
 
     " PDO should not be picked up
     let g:php_builtin_classnames = {
-                \ 'DateTime':'',
-                \ 'PDO':'',
+                \ 'datetime':'',
+                \ 'pdo':'',
+                \ }
+    let g:php_builtin_classes = {
+                \ 'datetime':{
+                \   'name': 'DateTime',
+                \ },
+                \ 'pdo':{
+                \   'name': 'PDO',
+                \ }
                 \ }
 
     let res = phpcomplete#CompleteGeneral('\date', 'SomeNameSpace', {})
