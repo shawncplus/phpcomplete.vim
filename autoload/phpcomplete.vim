@@ -1044,15 +1044,14 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 				for classcontent in classcontents
 					if classcontent.content =~? '\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)' && filereadable(classcontent.file)
 						" Method found in classlocation
-						silent! below 1new
+						call s:readfile_to_tmpbuffer(classcontent.file)
 
-						silent! exec "e ".classcontent.file
 						call search('\cclass\_s\+\<'.classcontent.class.'\(\>\|$\)', 'wc')
 						call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
 
 						let line = line('.')
 						let col  = col('.')
-						silent! exec 'close!'
+						silent! exe 'bw! %'
 						return [classcontent.file, line, col]
 					endif
 				endfor
@@ -1063,35 +1062,39 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 		let function_file = phpcomplete#GetFunctionLocation(a:symbol, a:symbol_namespace)
 		if function_file != '' && filereadable(function_file)
 			" Function found in function_file
-			silent! below 1new
+			call s:readfile_to_tmpbuffer(function_file)
 
-			silent! exec "e ".function_file
 			call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
 
 			let line = line('.')
 			let col  = col('.')
-			silent! exec 'close!'
+			silent! exe 'bw! %'
 			return [function_file, line, col]
 		endif
 
 		let class_file = phpcomplete#GetClassLocation(a:symbol, a:symbol_namespace)
 		if class_file != '' && filereadable(class_file)
 			" Class or interface found in class_file
-			silent! below 1new
+			call s:readfile_to_tmpbuffer(class_file)
 
-			silent! exec "e ".class_file
 			call search('\c\(interface\|class\)\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
 
 			let line = line('.')
 			let col  = col('.')
-			silent! exec 'close!'
+			silent! exe 'bw! %'
 			return [class_file, line, col]
-
 		endif
 	endif
 
 	return unknow_location
 endfunction " }}}
+
+function! s:readfile_to_tmpbuffer(file)
+	let cfile = join(readfile(a:file), "\n")
+	silent! below 1new
+	silent! 0put =cfile
+	return [bufnr('$'), bufname('%')]
+endfunction
 
 function! phpcomplete#EvaluateModifiers(modifiers, required_modifiers, prohibited_modifiers) " {{{
 	" if theres no modifier, and no modifier is allowed and no modifier is required
