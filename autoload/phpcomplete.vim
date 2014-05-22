@@ -962,10 +962,22 @@ function! phpcomplete#JumpToDefinition() " {{{
 		return
 	endif
 
-	" location found, open the file and jump to it
-	silent! exec "e ".symbol_file
-	call cursor(symbol_line, symbol_col)
+	" set up a dummy tag file with the the extracted symbol and use the built-in
+	" <C-]> to jump. This is a hack to make the tag stack work as expected.
+	let old_tags = &tags
+	let dummy_tags_file = phpcomplete#CreateDummyTagFile(symbol, symbol_file, symbol_line)
 
+	silent! exec 'set tags='.dummy_tags_file
+
+	" preform the jump with the built-in <C-]>
+	call feedkeys("\<C-]>", 'n')
+
+	" call the cleanup function with feedkeys, this is needed because the
+	" feedkeys() always the last thing that runs so we cant use exec or other
+	" commands here to manipulate the &tags settings because that would be
+	" done before the above "<C-]>" feedkeys() take effect. The echo is to
+	" hide the call in the command line
+	call feedkeys(":call phpcomplete#CleanUpAfterJump('".old_tags."', '".dummy_tags_file."')\<CR>:echo ''\<CR>", 'n')
 endfunction " }}}
 
 function! phpcomplete#GetCurrentSymbolWithContext() " {{{
@@ -1042,9 +1054,9 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 			if filereadable(classlocation)
 				let classcontents = phpcomplete#GetCachedClassContents(classlocation, classname)
 				for classcontent in classcontents
-					if classcontent.content =~? '\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)' && filereadable(classcontent.file)
+					if classcontent.content =~? 'function\_s\+\<'.search_symbol.'\(\>\|$\)' && filereadable(classcontent.file)
 						" Method found in classlocation
-						call s:readfile_to_tmpbuffer(classcontent.file)
+						call s:readfileToTmpbuffer(classcontent.file)
 
 						call search('\cclass\_s\+\<'.classcontent.class.'\(\>\|$\)', 'wc')
 						call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
@@ -1062,7 +1074,7 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 		let function_file = phpcomplete#GetFunctionLocation(a:symbol, a:symbol_namespace)
 		if function_file != '' && filereadable(function_file)
 			" Function found in function_file
-			call s:readfile_to_tmpbuffer(function_file)
+			call s:readfileToTmpbuffer(function_file)
 
 			call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
 
@@ -1075,7 +1087,7 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 		let class_file = phpcomplete#GetClassLocation(a:symbol, a:symbol_namespace)
 		if class_file != '' && filereadable(class_file)
 			" Class or interface found in class_file
-			call s:readfile_to_tmpbuffer(class_file)
+			call s:readfileToTmpbuffer(class_file)
 
 			call search('\c\(interface\|class\)\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
 
@@ -1089,12 +1101,28 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 	return unknow_location
 endfunction " }}}
 
-function! s:readfile_to_tmpbuffer(file)
+function! phpcomplete#CreateDummyTagFile(symbol, file, line_number) " {{{
+	let tempname = tempname()
+	let content = [
+				\ "!_TAG_FILE_FORMAT\t2",
+				\ "!_TAG_FILE_SORTED\t1",
+				\ a:symbol."\t".a:file."\t".a:line_number.';',
+				\ ]
+	call writefile(content, tempname)
+	return tempname
+endfunction " }}}
+
+function! phpcomplete#CleanUpAfterJump(old_tags, dummy_tags_file) " {{{
+	silent! exec 'set tags='.a:old_tags
+	silent! exec '!rm '.a:dummy_tags_file
+endfunction " }}}
+
+function! s:readfileToTmpbuffer(file) " {{{
 	let cfile = join(readfile(a:file), "\n")
 	silent! below 1new
 	silent! 0put =cfile
 	return [bufnr('$'), bufname('%')]
-endfunction
+endfunction " }}}
 
 function! phpcomplete#EvaluateModifiers(modifiers, required_modifiers, prohibited_modifiers) " {{{
 	" if theres no modifier, and no modifier is allowed and no modifier is required
