@@ -18,9 +18,8 @@ if g:phpcomplete_enhance_jump_to_definition
 	if !hasmapto('<Plug>PHPJump')
 		map <silent> <buffer> <unique> <C-]> <Plug>PHPJump
 	endif
-	noremap <silent> <buffer> <unique> <Plug>PHPJump :<C-u>call phpcomplete#JumpToDefinition()<CR>
+	nnoremap <silent> <buffer> <Plug>PHPJump :<C-u>call phpcomplete#JumpToDefinition()<CR>
 endif
-
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
