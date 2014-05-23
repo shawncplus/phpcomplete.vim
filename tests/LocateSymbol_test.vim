@@ -83,4 +83,22 @@ fun! TestCase_returns_location_for_inherited_methods()
     silent! bw! %
 endf
 
+fun! TestCase_returns_locations_for_reference_returning_functions()
+    call SetUp()
+
+    let path =  expand('%:p:h')."/".'fixtures/GetCurrentSymbolWithContext/foo_references.php'
+    below 1new
+    exe ":silent! edit ".path
+
+    call cursor(16, 5)
+    let res = phpcomplete#LocateSymbol('return_foo_ref', '', '', {})
+    call VUAssertEquals([path, 13, 11], res)
+
+    call cursor(16, 32)
+    let res = phpcomplete#LocateSymbol('return_foo_ref_method', 'return_foo_ref()->', '', {})
+    call VUAssertEquals([path, 4, 19], res)
+
+    silent! bw! %
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

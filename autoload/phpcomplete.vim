@@ -1075,7 +1075,7 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 			" Function found in function_file
 			call s:readfileToTmpbuffer(function_file)
 
-			call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
+			call search('\cfunction\_s\+&\=\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
 
 			let line = line('.')
 			let col  = col('.')
