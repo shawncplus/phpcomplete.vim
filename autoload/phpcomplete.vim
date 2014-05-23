@@ -1053,12 +1053,12 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 			if filereadable(classlocation)
 				let classcontents = phpcomplete#GetCachedClassContents(classlocation, classname)
 				for classcontent in classcontents
-					if classcontent.content =~? 'function\_s\+\<'.search_symbol.'\(\>\|$\)' && filereadable(classcontent.file)
+					if classcontent.content =~? 'function\_s\+&\=\<'.search_symbol.'\(\>\|$\)' && filereadable(classcontent.file)
 						" Method found in classlocation
 						call s:readfileToTmpbuffer(classcontent.file)
 
 						call search('\cclass\_s\+\<'.classcontent.class.'\(\>\|$\)', 'wc')
-						call search('\cfunction\_s\+\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
+						call search('\cfunction\_s\+&\=\zs\<'.search_symbol.'\(\>\|$\)', 'wc')
 
 						let line = line('.')
 						let col  = col('.')
