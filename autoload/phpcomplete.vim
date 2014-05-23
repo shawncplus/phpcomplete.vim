@@ -1766,7 +1766,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			let return_type = matchstr(g:php_builtin_functions[function_name.'('], '\v\|\s+\zs.+$')
 			let classname_candidate = return_type
 			let class_candidate_namespace = '\'
-		else
+		elseif function_file != '' && filereadable(function_file)
 			let file_lines = readfile(function_file)
 			let docblock_str = phpcomplete#GetDocBlock(file_lines, 'function\s*&\?\<'.function_name.'\>')
 			let docblock = phpcomplete#ParseDocBlock(docblock_str)
@@ -1934,7 +1934,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					let classname_candidate = return_type
 					let class_candidate_namespace = '\'
 					break
-				else
+				elseif function_file != '' && filereadable(function_file)
 					let file_lines = readfile(function_file)
 					let docblock_str = phpcomplete#GetDocBlock(file_lines, 'function\s*&\?\<'.function_name.'\>')
 					let docblock = phpcomplete#ParseDocBlock(docblock_str)
@@ -2101,6 +2101,7 @@ function! phpcomplete#GetFunctionLocation(function_name, namespace) " {{{
 		return no_namespace_candidate
 	endif
 
+	return ''
 endfunction
 " }}}
 
