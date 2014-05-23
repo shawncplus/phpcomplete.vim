@@ -1192,7 +1192,7 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 		if f_name != ''
 			let c_functions[f_name.'('] = f_args
 			if g:phpcomplete_parse_docblock_comments
-				let c_doc[f_name.'('] = phpcomplete#GetDocBlock(a:sccontent, 'function\s*\<'.f_name.'\>')
+				let c_doc[f_name.'('] = phpcomplete#GetDocBlock(a:sccontent, 'function\s*&\?\<'.f_name.'\>')
 			endif
 		endif
 	endfor
@@ -1588,7 +1588,7 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 			" Get Structured information of all classes and subclasses including namespace and includes
 			" try to find the method's return type in docblock comment
 			for classstructure in classcontents
-				let doclock_target_pattern = 'function\s\+'.method.'\|\(public\|private\|protected\|var\).\+\$'.method
+				let doclock_target_pattern = 'function\s\+&\?'.method.'\|\(public\|private\|protected\|var\).\+\$'.method
 				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), doclock_target_pattern)
 				if doc_str != ''
 					break
@@ -1768,7 +1768,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			let class_candidate_namespace = '\'
 		else
 			let file_lines = readfile(function_file)
-			let docblock_str = phpcomplete#GetDocBlock(file_lines, 'function\s*\<'.function_name.'\>')
+			let docblock_str = phpcomplete#GetDocBlock(file_lines, 'function\s*&\?\<'.function_name.'\>')
 			let docblock = phpcomplete#ParseDocBlock(docblock_str)
 			if has_key(docblock.return, 'type')
 				let classname_candidate = docblock.return.type
@@ -1936,7 +1936,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					break
 				else
 					let file_lines = readfile(function_file)
-					let docblock_str = phpcomplete#GetDocBlock(file_lines, 'function\s*\<'.function_name.'\>')
+					let docblock_str = phpcomplete#GetDocBlock(file_lines, 'function\s*&\?\<'.function_name.'\>')
 					let docblock = phpcomplete#ParseDocBlock(docblock_str)
 					if has_key(docblock.return, 'type')
 						let classname_candidate = docblock.return.type
@@ -2067,11 +2067,12 @@ function! phpcomplete#GetFunctionLocation(function_name, namespace) " {{{
 		return 'VIMPHP_BUILTINFUNCTION'
 	endif
 
+
 	" do in-file lookup for function definition
 	let i = 1
 	let buffer_lines = getline(1, line('$'))
 	for line in buffer_lines
-		if line =~? '^\s*function\s\+'.a:function_name.'\s*('
+		if line =~? '^\s*function\s\+&\?'.a:function_name.'\s*('
 			return expand('%:p')
 		endif
 	endfor
