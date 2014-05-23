@@ -975,9 +975,10 @@ function! phpcomplete#JumpToDefinition() " {{{
 	" call the cleanup function with feedkeys, this is needed because the
 	" feedkeys() always the last thing that runs so we cant use exec or other
 	" commands here to manipulate the &tags settings because that would be
-	" done before the above "<C-]>" feedkeys() take effect. The echo is to
-	" hide the call in the command line
-	call feedkeys(":call phpcomplete#CleanUpAfterJump('".old_tags."', '".dummy_tags_file."')\<CR>:echo ''\<CR>", 'n')
+	" done before the above "<C-]>" feedkeys() take effect.
+	call feedkeys(":call phpcomplete#CleanUpAfterJump('".old_tags."', '".dummy_tags_file."')\<CR>", 'n')
+	"The echo is to "hide" the call in the command line
+	call feedkeys(":echo ''\<CR>", 'n')
 endfunction " }}}
 
 function! phpcomplete#GetCurrentSymbolWithContext() " {{{
@@ -1106,7 +1107,7 @@ function! phpcomplete#CreateDummyTagFile(symbol, file, line_number) " {{{
 	let content = [
 				\ "!_TAG_FILE_FORMAT\t2",
 				\ "!_TAG_FILE_SORTED\t1",
-				\ a:symbol."\t".a:file."\t".a:line_number.';',
+				\ a:symbol."\t".fnamemodify(a:file, ':p')."\t".a:line_number.';',
 				\ ]
 	call writefile(content, tempname)
 	return tempname
