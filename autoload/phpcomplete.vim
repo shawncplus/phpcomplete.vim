@@ -977,8 +977,6 @@ function! phpcomplete#JumpToDefinition() " {{{
 	" commands here to manipulate the &tags settings because that would be
 	" done before the above "<C-]>" feedkeys() take effect.
 	call feedkeys(":call phpcomplete#CleanUpAfterJump('".old_tags."', '".dummy_tags_file."')\<CR>", 'n')
-	"The echo is to "hide" the call in the command line
-	call feedkeys(":echo ''\<CR>", 'n')
 endfunction " }}}
 
 function! phpcomplete#GetCurrentSymbolWithContext() " {{{
@@ -1116,6 +1114,8 @@ endfunction " }}}
 function! phpcomplete#CleanUpAfterJump(old_tags, dummy_tags_file) " {{{
 	silent! exec 'set tags='.a:old_tags
 	silent! exec '!rm '.a:dummy_tags_file
+	silent! redraw!
+	silent! redrawstatus!
 endfunction " }}}
 
 function! s:readfileToTmpbuffer(file) " {{{
