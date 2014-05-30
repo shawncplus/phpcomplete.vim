@@ -11,7 +11,6 @@ fun! TestCase_returns_everyting_instance_related_when_scope_is_in_class()
     let ret = phpcomplete#CompleteUserClass('$u->', '', g:fixture_class_content, 'private')
     call VUAssertEquals([
                 \{'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
-                \{'word': '__construct(', 'info': '__construct()', 'menu': ')', 'kind': 'f'},
                 \{'word': 'final_private_method(', 'info': 'final_private_method($foo = null)', 'menu': '$foo = null)', 'kind': 'f'},
                 \{'word': 'naked_public_method(', 'info': 'naked_public_method()', 'menu': ')', 'kind': 'f'},
                 \{'word': 'private_method(', 'info': 'private_method($foo)', 'menu': '$foo)', 'kind': 'f'},
@@ -32,7 +31,6 @@ fun! TestCase_returns_everyting_instance_related_when_scope_is_out_of_class()
     let ret = phpcomplete#CompleteUserClass('$u->', '', g:fixture_class_content, 'public')
     call VUAssertEquals([
                 \{'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
-                \{'word': '__construct(', 'info': '__construct()', 'menu': ')', 'kind': 'f'},
                 \{'word': 'naked_public_method(', 'info': 'naked_public_method()', 'menu': ')', 'kind': 'f'},
                 \{'word': 'public_final_method(', 'info': 'public_final_method($foo, $anotherfoo = '''')', 'menu': '$foo, $anotherfoo = '''')', 'kind': 'f'},
                 \{'word': 'public_method(', 'info': 'public_method($foo)', 'menu': '$foo)', 'kind': 'f'},
@@ -104,7 +102,6 @@ fun! TestCase_returns_non_explicit_static_methods_when_phpcomplete_relax_static_
     call VUAssertEquals([
                 \ {'word': '$public_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
-                \ {'word': '__construct(', 'info': '__construct()', 'menu': ')', 'kind': 'f'},
                 \ {'word': 'final_static_public_method(', 'info': 'final_static_public_method()', 'menu': ')', 'kind': 'f'},
                 \ {'word': 'naked_public_method(', 'info': 'naked_public_method()', 'menu': ')', 'kind': 'f'},
                 \ {'word': 'public_final_method(', 'info': 'public_final_method($foo, $anotherfoo = '''')', 'menu': '$foo, $anotherfoo = '''')', 'kind': 'f'},

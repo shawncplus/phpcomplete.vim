@@ -1189,7 +1189,7 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 					\ 'function\s*&\?\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		let f_args = matchstr(i,
 					\ 'function\s*&\?[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\s*(\zs.\{-}\ze)\_s*\({\|\_$\)')
-		if f_name != ''
+		if f_name != '' && stridx(f_name, '__') != 0
 			let c_functions[f_name.'('] = f_args
 			if g:phpcomplete_parse_docblock_comments
 				let c_doc[f_name.'('] = phpcomplete#GetDocBlock(a:sccontent, 'function\s*&\?\<'.f_name.'\>')
@@ -1312,7 +1312,7 @@ function! phpcomplete#CompleteBuiltInClass(context, classname, base) " {{{
 	if a:context =~ '->$' " complete for everything instance related
 		" methods
 		for [method_name, method_info] in items(class_info.methods)
-			if a:base == '' || method_name =~? '^'.a:base
+			if stridx(method_name, '__') != 0 && (a:base == '' || method_name =~? '^'.a:base)
 				call add(res, {'word':method_name.'(', 'kind': 'f', 'menu': method_info.signature, 'info': method_info.signature })
 			endif
 		endfor
