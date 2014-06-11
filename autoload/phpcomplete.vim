@@ -945,20 +945,27 @@ function! phpcomplete#CompareCompletionRow(i1, i2) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#JumpToDefinition() " {{{
+function! phpcomplete#JumpToDefinition(mode) " {{{
 	if !exists('g:php_builtin_functions')
 		call phpcomplete#LoadData()
 	endif
 
+	let keys = ""
+	if a:mode == 'normal'
+		let keys = "\<C-]>"
+	elseif a:mode == 'split'
+		let keys = "\<C-W>\<C-]>"
+	endif
+
 	let [symbol, symbol_context, symbol_namespace, current_imports] = phpcomplete#GetCurrentSymbolWithContext()
 	if symbol == ''
-		call feedkeys("\<C-]>", 'n')
+		call feedkeys(keys, 'n')
 		return
 	endif
 
 	let [symbol_file, symbol_line, symbol_col] = phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, current_imports)
 	if symbol_file == ''
-		call feedkeys("\<C-]>", 'n')
+		call feedkeys(keys, 'n')
 		return
 	endif
 
@@ -970,7 +977,7 @@ function! phpcomplete#JumpToDefinition() " {{{
 	silent! exec 'set tags='.dummy_tags_file
 
 	" preform the jump with the built-in <C-]>
-	call feedkeys("\<C-]>", 'n')
+	call feedkeys(keys, 'n')
 
 	" call the cleanup function with feedkeys, this is needed because the
 	" feedkeys() always the last thing that runs so we cant use exec or other
