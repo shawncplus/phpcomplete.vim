@@ -952,38 +952,51 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 
 	let keys = ""
 	if a:mode == 'normal'
-		let keys = "\<C-]>"
+		let notfound_commands = 'tag '
 	elseif a:mode == 'split'
-		let keys = "\<C-W>\<C-]>"
+		let notfound_commands = 'split | tag '
 	endif
 
 	let [symbol, symbol_context, symbol_namespace, current_imports] = phpcomplete#GetCurrentSymbolWithContext()
 	if symbol == ''
-		call feedkeys(keys, 'n')
+		silent! exec notfound_commands.expand('<cword>')
 		return
 	endif
 
 	let [symbol_file, symbol_line, symbol_col] = phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, current_imports)
 	if symbol_file == ''
-		call feedkeys(keys, 'n')
+		silent! exec notfound_commands.symbol
 		return
 	endif
 
-	" set up a dummy tag file with the the extracted symbol and use the built-in
-	" <C-]> to jump. This is a hack to make the tag stack work as expected.
-	let old_tags = &tags
-	let dummy_tags_file = phpcomplete#CreateDummyTagFile(symbol, symbol_file, symbol_line)
+	let symbol_file_lines = readfile(symbol_file)
+	let tag_line = get(symbol_file_lines, symbol_line - 1, -1)
+	if tag_line == -1
+		silent! exec notfound_commands.symbol
+		return
+	endif
 
-	silent! exec 'set tags='.dummy_tags_file
+	let tags = phpcomplete#GetTaglist(symbol)
 
-	" preform the jump with the built-in <C-]>
-	call feedkeys(keys, 'n')
+	let tag_position = -1
+	let i = 1
+	for tag in tags
+		if fnamemodify(tag.filename, ":p") == symbol_file && tag.cmd =~ tag_line
+			let tag_position = i
+			break
+		endif
+		let i += 1
+	endfor
 
-	" call the cleanup function with feedkeys, this is needed because the
-	" feedkeys() always the last thing that runs so we cant use exec or other
-	" commands here to manipulate the &tags settings because that would be
-	" done before the above "<C-]>" feedkeys() take effect.
-	call feedkeys(":call phpcomplete#CleanUpAfterJump('".old_tags."', '".dummy_tags_file."')\<CR>", 'n')
+	if tag_position == -1
+		silent! exec notfound_commands.symbol
+	else
+		if a:mode == 'split'
+			silent! exec 'split | '.tag_position.'tag '.symbol
+		elseif a:mode == 'normal'
+			silent! exec tag_position.'tag '.symbol
+		endif
+	endif
 endfunction " }}}
 
 function! phpcomplete#GetCurrentSymbolWithContext() " {{{
@@ -1116,13 +1129,6 @@ function! phpcomplete#CreateDummyTagFile(symbol, file, line_number) " {{{
 				\ ]
 	call writefile(content, tempname)
 	return tempname
-endfunction " }}}
-
-function! phpcomplete#CleanUpAfterJump(old_tags, dummy_tags_file) " {{{
-	silent! exec 'set tags='.a:old_tags
-	silent! exec '!rm '.a:dummy_tags_file
-	silent! redraw!
-	silent! redrawstatus!
 endfunction " }}}
 
 function! s:readfileToTmpbuffer(file) " {{{
