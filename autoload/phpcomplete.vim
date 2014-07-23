@@ -1722,6 +1722,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 	" Get class name
 	" Class name can be detected in few ways:
 	" @var $myVar class
+	" @var class $myVar
 	" in the same line (php 5.4 (new Class)-> syntax)
 	" line above
 	" or line in tags file
@@ -1817,6 +1818,12 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				" in file lookup for /* @var $foo Class */
 				if line =~# '@var\s\+'.object.'\s\+'.class_name_pattern
 					let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\(\[\]\)\?')
+					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, a:current_namespace, a:imports)
+					break
+				endif
+				" in file lookup for /* @var Class $foo */
+				if line =~# '@var\s\+'.class_name_pattern.'\s\+'.object
+					let classname_candidate = matchstr(line, '@var\s\+\zs'.class_name_pattern.'\(\[\]\)\?\ze'.'\s\+'.object)
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, a:current_namespace, a:imports)
 					break
 				endif
