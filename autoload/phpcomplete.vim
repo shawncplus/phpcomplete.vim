@@ -1359,7 +1359,6 @@ endfunction
 " }}}
 
 function! phpcomplete#GetTaglist(pattern) " {{{
-
 	let cache_checksum = ''
 	if g:phpcomplete_cache_taglists == 1
 		" build a string with  format of "<tagfile>:<mtime>$<tagfile2>:<mtime2>..."
@@ -1801,6 +1800,11 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 		let object_is_array = (object =~ '\v^[^[]+\[' ? 1 : 0)
 		let object = matchstr(object, variable_name_pattern)
 
+		let function_boundary = phpcomplete#GetCurrentFunctionBoundaries()
+		let search_end_line = max([1, function_boundary[0][0]])
+		" -1 makes us ignore the current line (where the completion was invoked
+		let lines = reverse(getline(search_end_line, line('.') - 1))
+
 		" check Constant lookup
 		let constant_object = matchstr(a:context, '\zs'.class_name_pattern.'\ze::')
 		if constant_object != ''
@@ -1809,21 +1813,14 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 		if classname_candidate == ''
 			" scan the file backwards from current line for explicit type declaration (@var $variable Classname)
-			let i = 1 " start from the current line - 1
-			while i < a:start_line
-				let line = getline(a:start_line - i)
+			for line in lines
 				" in file lookup for /* @var $foo Class */
 				if line =~# '@var\s\+'.object.'\s\+'.class_name_pattern
 					let classname_candidate = matchstr(line, '@var\s\+'.object.'\s\+\zs'.class_name_pattern.'\(\[\]\)\?')
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, a:current_namespace, a:imports)
 					break
-				elseif line !~ '^\s*$'
-					" type indicator comments should be next to the variable
-					" non empty lines break the search
-					break
 				endif
-				let i += 1
-			endwhile
+			endfor
 		endif
 
 		if classname_candidate != ''
@@ -1831,12 +1828,9 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			" return absolute classname, without leading \
 			return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 		endif
-
 		" scan the file backwards from the current line
 		let i = 1
-		while i < a:start_line " {{{
-			let line = getline(a:start_line - i)
-
+		for line in lines " {{{
 			" do in-file lookup of $var = new Class
 			if line =~# '^\s*'.object.'\s*=\s*new\s\+'.class_name_pattern && !object_is_array
 				let classname_candidate = matchstr(line, object.'\c\s*=\s*new\s*\zs'.class_name_pattern.'\ze')
@@ -1998,7 +1992,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			endif
 
 			let i += 1
-		endwhile " }}}
+		endfor " }}}
 
 		if classname_candidate != ''
 			let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
@@ -2627,6 +2621,40 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 		let sorted_imports[name] = imports[name]
 	endfor
 	return [current_namespace, sorted_imports]
+endfunction
+" }}}
+
+function! phpcomplete#GetCurrentFunctionBoundaries() " {{{
+	let old_cursor_pos = [line('.'), col('.')]
+	let current_line_no = old_cursor_pos[0]
+	let function_pattern = '\c\(.*\%#\)\@!\_^\s*\zs\(abstract\s\+\|final\s\+\|private\s\+\|protected\s\+\|public\s\+\|static\s\+\)*function\_.\{-}(\_.\{-})\_.\{-}{'
+
+	let func_start_pos = searchpos(function_pattern, 'Wbc')
+	if func_start_pos == [0, 0]
+		call cursor(old_cursor_pos[0], old_cursor_pos[1])
+		return 0
+	endif
+
+	" get the line where the function declaration actually started
+	call search('\cfunction\_.\{-}(\_.\{-})\_.\{-}{', 'Wce')
+
+	" get the position of the function block's closing "}"
+	let func_end_pos = searchpairpos('{', '', '}', 'W')
+	if func_end_pos == [0, 0]
+		" there is a function start but no end found, assume that we are in a
+		" function but the user did not typed the closing "}" yet and the
+		" function runs to the end of the file
+		let func_end_pos = [line('$'), len(getline(line('$')))]
+	endif
+
+	" Decho func_start_pos[0].' <= '.current_line_no.' && '.current_line_no.' <= '.func_end_pos[0]
+	if func_start_pos[0] <= current_line_no && current_line_no <= func_end_pos[0]
+		call cursor(old_cursor_pos[0], old_cursor_pos[1])
+		return [func_start_pos, func_end_pos]
+	endif
+
+	call cursor(old_cursor_pos[0], old_cursor_pos[1])
+	return 0
 endfunction
 " }}}
 
