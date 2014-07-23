@@ -361,7 +361,7 @@ endfunction
 " }}}
 
 function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
-	" Complete everything else -
+	" Complete everything
 	"  + functions,  DONE
 	"  + keywords of language DONE
 	"  + defines (constant definitions), DONE
@@ -1226,12 +1226,11 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 		endif
 	endfor
 
-	let jvars = join(variables, ' ')
-	let svars = split(jvars, '\$')
+	let static_vars = split(join(variables, ' '), '\$')
 	let c_variables = {}
 
 	let var_index = 0
-	for i in svars
+	for i in static_vars
 		let c_var = matchstr(i,
 					\ '^\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*\ze')
 		if c_var != ''
