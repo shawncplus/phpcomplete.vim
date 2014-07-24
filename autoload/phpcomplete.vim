@@ -1120,17 +1120,6 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 	return unknow_location
 endfunction " }}}
 
-function! phpcomplete#CreateDummyTagFile(symbol, file, line_number) " {{{
-	let tempname = tempname()
-	let content = [
-				\ "!_TAG_FILE_FORMAT\t2",
-				\ "!_TAG_FILE_SORTED\t1",
-				\ a:symbol."\t".fnamemodify(a:file, ':p')."\t".a:line_number.';',
-				\ ]
-	call writefile(content, tempname)
-	return tempname
-endfunction " }}}
-
 function! s:readfileToTmpbuffer(file) " {{{
 	let cfile = join(readfile(a:file), "\n")
 	silent! below 1new
