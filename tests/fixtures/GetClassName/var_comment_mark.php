@@ -26,3 +26,13 @@ function baz() {
 }
 
 $foo2-> // should find the @var on line 17
+;
+
+/* @var FooClass2 $baz */
+$baz->
+
+/** @var FooClass2 $baz2 */
+$baz2->
+
+// @var FooClass2 $baz3
+$baz3->

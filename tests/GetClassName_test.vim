@@ -128,6 +128,18 @@ fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
     let classname = phpcomplete#GetClassName(28, '$foo2->', '\', {})
     call VUAssertEquals('Foo2', classname)
 
+    exe ':32'
+    let classname = phpcomplete#GetClassName(32, '$baz->', '\', {})
+    call VUAssertEquals('FooClass2', classname)
+
+    exe ':35'
+    let classname = phpcomplete#GetClassName(35, '$baz2->', '\', {})
+    call VUAssertEquals('FooClass2', classname)
+
+    exe ':38'
+    let classname = phpcomplete#GetClassName(38, '$baz3->', 'Bar', {})
+    call VUAssertEquals('Bar\FooClass2', classname)
+
     silent! bw! %
 endf
 
