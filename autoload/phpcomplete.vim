@@ -978,6 +978,7 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 
 	let tags = phpcomplete#GetTaglist(symbol)
 
+	let symbol_file = fnamemodify(symbol_file, ':p')
 	let tag_position = -1
 	let i = 1
 	for tag in tags
