@@ -17,8 +17,8 @@ let g:phpcomplete_enhance_jump_to_definition = get(g:, 'phpcomplete_enhance_jump
 
 if g:phpcomplete_enhance_jump_to_definition
 	if !hasmapto('<Plug>PHPJump')
-		map <silent> <buffer> <unique> <C-]> <Plug>PHPJump
-		map <silent> <buffer> <unique> <C-W><C-]> <Plug>PHPJumpW
+		map! <silent> <buffer> <unique> <C-]> <Plug>PHPJump
+		map! <silent> <buffer> <unique> <C-W><C-]> <Plug>PHPJumpW
 	endif
 	nnoremap <silent> <buffer> <Plug>PHPJump :<C-u>call phpcomplete#JumpToDefinition('normal')<CR>
 	nnoremap <silent> <buffer> <Plug>PHPJumpW :<C-u>call phpcomplete#JumpToDefinition('split')<CR>
