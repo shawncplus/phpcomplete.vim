@@ -39,6 +39,11 @@ fun! TestCase_complete_classes_from_tags()
     below 1new
     exe ":silent! edit ".path
 
+    let res = phpcomplete#CompleteClassName('LowerCase', ['c', 'i'], '\', {})
+    call VUAssertEquals([
+                \ {'word': 'lowercasetagclass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],
+                \ res, "should match tag classes case insensitive")
+
     let res = phpcomplete#CompleteClassName('T', ['c', 'i'], '\', {})
     call VUAssertEquals([
                 \ {'word': 'TagClass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],

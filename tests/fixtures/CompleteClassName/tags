@@ -14,3 +14,4 @@ NameSpacedFooInterface	namespaced.foo.php	/^interface NameSpacedFooInterface {$/
 SubNameSpaced	subnamespace.php	/^class SubNameSpaced {$/;"	c	namespace:NS1\SubNS
 SubNameSpacedInterface	subnamespace.php	/^interface SubNameSpacedInterface {$/;"	i	namespace:NS1\SubNS
 TagClass	tagclass.php	/^class TagClass {$/;"	c
+lowercasetagclass	tagclass.php	/^class lowercasetagclass {$/;"	c

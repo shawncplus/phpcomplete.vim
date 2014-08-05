@@ -887,7 +887,7 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 			endif
 			let relative_name = namespace_part.tag.name
 			" match base without the namespace part for namespaced base but not namespaced tags, for tagfiles with old ctags
-			if !has_key(tag, 'namespace') && index(kinds, tag.kind) != -1 && stridx(tag.name, base[len(namespace_part):]) == 0
+			if !has_key(tag, 'namespace') && index(kinds, tag.kind) != -1 && stridx(tolower(tag.name), tolower(base[len(namespace_part):])) == 0
 				call add(no_namespace_matches, {'word': leading_slash.relative_name, 'kind': tag.kind, 'menu': tag.filename, 'info': tag.filename })
 			endif
 			if has_key(tag, 'namespace') && index(kinds, tag.kind) != -1 && tag.namespace ==? namespace_for_class

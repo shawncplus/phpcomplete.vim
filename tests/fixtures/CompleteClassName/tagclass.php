@@ -2,3 +2,6 @@
 
 class TagClass {
 }
+
+class lowercasetagclass {
+}
