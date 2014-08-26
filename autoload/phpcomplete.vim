@@ -2209,7 +2209,7 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	else
 		let extends_class = ''
 	endif
-	call searchpair('{', '', '}', 'W')
+	call searchpair('{','', '}', 'W', 'getline(".") =~? "\\v[\"'."\\'".'].*\\}"')
 	let classcontent = join(getline(cfline, line('.')), "\n")
 	silent! bw! %
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file_lines[0:cfline])
