@@ -1874,6 +1874,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				for arg in args
 					if arg =~# object.'\(,\|$\)'
 						let classname_candidate = matchstr(arg, '\s*\zs'.class_name_pattern.'\ze\s\+'.object)
+						let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, a:current_namespace, a:imports)
 						break
 					endif
 				endfor
