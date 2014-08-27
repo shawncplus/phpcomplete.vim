@@ -178,9 +178,9 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		" Check if we are inside of PHP markup
 		let pos = getpos('.')
 		let phpbegin = searchpairpos('<?', '', '?>', 'bWn',
-				\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\|comment"')
+				\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
 		let phpend = searchpairpos('<?', '', '?>', 'Wn',
-				\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\|comment"')
+				\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
 
 		if phpbegin == [0,0] && phpend == [0,0]
 			" We are outside of any PHP markup. Complete HTML
@@ -1004,9 +1004,9 @@ function! phpcomplete#GetCurrentSymbolWithContext() " {{{
 	" Check if we are inside of PHP markup
 	let pos = getpos('.')
 	let phpbegin = searchpairpos('<?', '', '?>', 'bWn',
-			\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\|comment"')
+			\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
 	let phpend = searchpairpos('<?', '', '?>', 'Wn',
-			\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\|comment"')
+			\ 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
 
 	if (phpbegin == [0, 0] && phpend == [0, 0])
 		return ['', '', '', '']
@@ -1125,6 +1125,7 @@ function! s:readfileToTmpbuffer(file) " {{{
 	let cfile = join(readfile(a:file), "\n")
 	silent! below 1new
 	silent! 0put =cfile
+	silent! exec "set ft=phpcompletetempbuffer"
 	return [bufnr('$'), bufname('%')]
 endfunction " }}}
 
@@ -2197,6 +2198,8 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 
 	silent! below 1new
 	silent! 0put =cfile
+	silent! exec "set ft=phpcompletetempbuffer"
+
 	call search('\(class\|interface\)\_s\+'.a:class_name.'\(\>\|$\)')
 	let cfline = line('.')
 	call search('{')
@@ -2209,7 +2212,7 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	else
 		let extends_class = ''
 	endif
-	call searchpair('{','', '}', 'W', 'getline(".") =~? "\\v[\"'."\\'".'].*\\}"')
+	call searchpair('{', '', '}', 'W', 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
 	let classcontent = join(getline(cfline, line('.')), "\n")
 	silent! bw! %
 	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(a:file_lines[0:cfline])
@@ -2637,7 +2640,7 @@ function! phpcomplete#GetCurrentFunctionBoundaries() " {{{
 	call search('\cfunction\_.\{-}(\_.\{-})\_.\{-}{', 'Wce')
 
 	" get the position of the function block's closing "}"
-	let func_end_pos = searchpairpos('{', '', '}', 'W')
+	let func_end_pos = searchpairpos('{', '', '}', 'W', 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
 	if func_end_pos == [0, 0]
 		" there is a function start but no end found, assume that we are in a
 		" function but the user did not typed the closing "}" yet and the
