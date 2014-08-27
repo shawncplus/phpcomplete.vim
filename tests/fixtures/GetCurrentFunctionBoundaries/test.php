@@ -18,5 +18,16 @@ class FooBar {
 	}
 }
 
+function comments_and_strings() {
+	// {
+	/*
+	{
+	*/
+	$a = '{'."{";
+
+	$baz3 = 42; // search here
+}
+
 function unfinished() {
 	$baz2 = 42; // search here
+

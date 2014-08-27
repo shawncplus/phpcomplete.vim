@@ -3,6 +3,7 @@ fun! SetUp()
     let g:php_builtin_classes = {}
 
 endf
+
 fun! TestCase_reads_in_the_class_from_the_list_of_lines()
     call SetUp()
 
@@ -116,6 +117,20 @@ fun! TestCase_handles_matching_class_name_extends_with_different_namespaces()
     exe ':7'
     let structure = phpcomplete#GetClassContentsStructure(location, class_contents, 'Foo')
     call VUAssertEquals(expected, structure[0].content."\n".structure[1].content)
+
+    silent! bw! %
+endf
+
+fun! TestCase_returns_contents_of_a_class_regardless_of_comments_or_strings()
+    let path1 =  expand('%:p:h')."/".'fixtures/GetClassContents/foo2.class.php'
+    let expected1 = join(readfile(path1)[2:12], "\n")
+    let contents1 = readfile(path1)
+
+    below 1new
+    exe ":silent! edit ".path1
+
+    let structure = phpcomplete#GetClassContentsStructure(path1, contents1, 'Foo2')
+    call VUAssertEquals(expected1, structure[0].content)
 
     silent! bw! %
 endf

@@ -2198,14 +2198,14 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 
 	silent! below 1new
 	silent! 0put =cfile
-	silent! exec "set ft=phpcompletetempbuffer"
+	silent! exec "setlocal ft=phpcompletetempbuffer"
 
 	call search('\(class\|interface\)\_s\+'.a:class_name.'\(\>\|$\)')
 	let cfline = line('.')
 	call search('{')
 	let endline = line('.')
 
-	let content = join(getline(cfline, endline),"\n")
+	let content = join(getline(cfline, endline), "\n")
 	" Catch extends
 	if content =~? 'extends'
 		let extends_class = matchstr(content, 'class\_s\+'.a:class_name.'\_s\+extends\_s\+\zs'.class_name_pattern.'\ze')
