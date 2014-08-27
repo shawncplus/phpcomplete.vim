@@ -1894,6 +1894,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					for param in docblock.params
 						if param.name =~? object
 							let classname_candidate = matchstr(param.type, class_name_pattern.'\(\[\]\)\?')
+							let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, a:current_namespace, a:imports)
 							break
 						endif
 					endfor
