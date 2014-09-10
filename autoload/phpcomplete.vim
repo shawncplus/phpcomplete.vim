@@ -17,7 +17,7 @@
 "			The completion list generated this way is only filtered by the completion base
 "			and generally not much more accurate then simple keyword completion.
 "
-"		let	g:phpcomplete_search_tags_for_variables = 1/0 [default 0]
+"		let g:phpcomplete_search_tags_for_variables = 1/0 [default 0]
 "			Enables use of tags when the plugin tries to find variables.
 "			When enabled the plugin will search for the variables in the tag files with kind 'v',
 "			lines like $some_var = new Foo; but these usually yield highly inaccurate results and
@@ -2821,4 +2821,4 @@ let g:php_builtin_vars ={
 endfunction
 " }}}
 
-" vim: foldmethod=marker:noexpandtab:ts=4:sts=4
+" vim: foldmethod=marker:noexpandtab:ts=4:sts=4:sw=4

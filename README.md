@@ -85,6 +85,26 @@ which will try to make a more educated guess of the current
 symbol's location than simple tag search. If the symbol's location
 cannot be found the original `<C-]>` functionality will be invoked
 
+**let g:phpcomplete\_mappings = {..} <br>**
+Defines the mappings for the enhanced jump-to-definition.
+
+**Recognized keys:**
+
+ - **jump\_to\_def**: Jumps to the definition in the current buffer
+ - **jump\_to\_def\_split**: Jumps to the definition in a new split buffer
+
+You change any of them like this in your `vimrc`:
+
+    let g:phpcomplete_mappings = {
+      \ 'jump_to_def': ',g',
+      \ }
+The keys you don't specify will be mapped the defaults. The defaults are:
+
+    let g:phpcomplete_mappings = {
+       \ 'jump_to_def': '<C-]>',
+       \ 'jump_to_def_split': '<C-W><C-]>',
+       \}
+
 **let g:phpcomplete\_add\_function\_extensions = [...]**<br>
 **let g:phpcomplete\_add\_class\_extensions = [...]**<br>
 **let g:phpcomplete\_add\_interface\_extensions = [...]**<br>
@@ -115,3 +135,4 @@ If you want to disable an otherwise enabled one, use the ..._remove_... version 
     let g:phpcomplete_remove_constant_extensions = ['xslt_php_4']
 
 For the available extension files, check the directories under `misc/`
+
