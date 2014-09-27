@@ -2614,6 +2614,9 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 						endfor
 					endif
 				endif
+				if exists('no_namespace_candidate')
+					unlet no_namespace_candidate
+				endif
 			endfor
 		endif
 		let i += 1
