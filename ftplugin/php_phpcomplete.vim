@@ -15,6 +15,7 @@
 "			Keys:
 "				jump_to_def: Jumps to the definition in the current buffer
 "				jump_to_def_split: Jumps to the definition in a new split buffer
+"				jump_to_def_vsplit: Jumps to the definition in a new vertical split buffer
 "
 "			You change any of them like this in your vimrc:
 "				let g:phpcomplete_mappings = {
@@ -25,6 +26,7 @@
 "				let g:phpcomplete_mappings = {
 "				 	\ 'jump_to_def': '<C-]>',
 "				 	\ 'jump_to_def_split': '<C-W><C-]>',
+"				 	\ 'jump_to_def_vsplit': '<C-W><C-[>',
 "					\}
 "
 "
@@ -36,14 +38,18 @@ let g:phpcomplete_enhance_jump_to_definition = get(g:, 'phpcomplete_enhance_jump
 let g:phpcomplete_mappings = extend({
 			\ 'jump_to_def': '<C-]>',
 			\ 'jump_to_def_split': '<C-W><C-]>',
+			\ 'jump_to_def_vsplit': '<C-W><C-[>',
 			\}, get(g:, 'phpcomplete_mappings', {}))
 
 if g:phpcomplete_enhance_jump_to_definition
 	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def'])
 		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def']." :<C-u>call phpcomplete#JumpToDefinition('normal')<CR>"
 	endif
-	if '' == mapcheck("<C-W><C-]>")
+	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def_split'])
 		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_split']." :<C-u>call phpcomplete#JumpToDefinition('split')<CR>"
+	endif
+	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def_vsplit'])
+		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_vsplit']." :<C-u>call phpcomplete#JumpToDefinition('vsplit')<CR>"
 	endif
 endif
 

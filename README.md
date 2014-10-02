@@ -92,6 +92,7 @@ Defines the mappings for the enhanced jump-to-definition.
 
  - **jump\_to\_def**: Jumps to the definition in the current buffer
  - **jump\_to\_def\_split**: Jumps to the definition in a new split buffer
+ - **jump\_to\_def\_vsplit**: Jumps to the definition in a new vertical split buffer
 
 You change any of them like this in your `vimrc`:
 
@@ -103,6 +104,7 @@ The keys you don't specify will be mapped the defaults. The defaults are:
     let g:phpcomplete_mappings = {
        \ 'jump_to_def': '<C-]>',
        \ 'jump_to_def_split': '<C-W><C-]>',
+       \ 'jump_to_def_vsplit': '<C-W><C-[>',
        \}
 
 **let g:phpcomplete\_add\_function\_extensions = [...]**<br>

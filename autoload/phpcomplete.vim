@@ -955,6 +955,8 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 		let notfound_commands = 'tag '
 	elseif a:mode == 'split'
 		let notfound_commands = 'split | tag '
+	elseif a:mode == 'vsplit'
+		let notfound_commands = 'vsplit | tag '
 	endif
 
 	let [symbol, symbol_context, symbol_namespace, current_imports] = phpcomplete#GetCurrentSymbolWithContext()
