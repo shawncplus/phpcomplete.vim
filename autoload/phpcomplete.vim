@@ -996,6 +996,8 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 	else
 		if a:mode == 'split'
 			silent! exec 'split | '.tag_position.'tag '.symbol
+		elseif a:mode == 'vsplit'
+			silent! exec 'vsplit | '.tag_position.'tag '.symbol
 		elseif a:mode == 'normal'
 			silent! exec tag_position.'tag '.symbol
 		endif
