@@ -104,7 +104,7 @@ The keys you don't specify will be mapped the defaults. The defaults are:
     let g:phpcomplete_mappings = {
        \ 'jump_to_def': '<C-]>',
        \ 'jump_to_def_split': '<C-W><C-]>',
-       \ 'jump_to_def_vsplit': '<C-W><C-[>',
+       \ 'jump_to_def_vsplit': '<C-W>}',
        \}
 
 **let g:phpcomplete\_add\_function\_extensions = [...]**<br>

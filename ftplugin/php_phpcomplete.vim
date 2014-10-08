@@ -26,7 +26,7 @@
 "				let g:phpcomplete_mappings = {
 "				 	\ 'jump_to_def': '<C-]>',
 "				 	\ 'jump_to_def_split': '<C-W><C-]>',
-"				 	\ 'jump_to_def_vsplit': '<C-W><C-[>',
+"				 	\ 'jump_to_def_vsplit': '<C-W>}',
 "					\}
 "
 "
@@ -38,7 +38,7 @@ let g:phpcomplete_enhance_jump_to_definition = get(g:, 'phpcomplete_enhance_jump
 let g:phpcomplete_mappings = extend({
 			\ 'jump_to_def': '<C-]>',
 			\ 'jump_to_def_split': '<C-W><C-]>',
-			\ 'jump_to_def_vsplit': '<C-W><C-[>',
+			\ 'jump_to_def_vsplit': '<C-W>}',
 			\}, get(g:, 'phpcomplete_mappings', {}))
 
 if g:phpcomplete_enhance_jump_to_definition
