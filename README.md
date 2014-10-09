@@ -99,12 +99,12 @@ You change any of them like this in your `vimrc`:
     let g:phpcomplete_mappings = {
       \ 'jump_to_def': ',g',
       \ }
-The keys you don't specify will be mapped the defaults. The defaults are:
+The keys you don't specify will be mapped to the defaults:
 
     let g:phpcomplete_mappings = {
        \ 'jump_to_def': '<C-]>',
        \ 'jump_to_def_split': '<C-W><C-]>',
-       \ 'jump_to_def_vsplit': '<C-W>}',
+       \ 'jump_to_def_vsplit': '<C-W><C-\>',
        \}
 
 **let g:phpcomplete\_add\_function\_extensions = [...]**<br>
