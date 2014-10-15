@@ -33,9 +33,9 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
  1. Install and configure the [Vundle](https://github.com/gmarik/vundle) plugin manager, [follow the instructions here](https://github.com/gmarik/vundle#quick-start)
  2. Add the following line to your `.vimrc`:
 
-         Bundle 'shawncplus/phpcomplete.vim'
+         Plugin 'shawncplus/phpcomplete.vim'
  3. Source your `.vimrc` with `:so %` or otherwise reload your vim
- 4. Run the `:BundleInstall` commmand
+ 4. Run the `:PluginInstall` commmand
 
 ## ctags
 In order to support some php features introduced in PHP 5.3 you will have to use
