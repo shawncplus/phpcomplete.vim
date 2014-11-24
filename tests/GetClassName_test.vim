@@ -705,4 +705,20 @@ fun! TestCase_resolves_self_this_static_in_return_docblock()
     silent! bw! %
 endf
 
+fun! TestCase_resolves_classnames_with_multiple_methods_recursively()
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/multi_hoops.php"
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':16'
+    let classname = phpcomplete#GetClassName(16, '$result->', '', {})
+    call VUAssertEquals('Model', classname)
+
+    silent! bw! %
+
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

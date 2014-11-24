@@ -1799,7 +1799,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 		let function_boundary = phpcomplete#GetCurrentFunctionBoundaries()
 		let search_end_line = max([1, function_boundary[0][0]])
 		" -1 makes us ignore the current line (where the completion was invoked
-		let lines = reverse(getline(search_end_line, line('.') - 1))
+		let lines = reverse(getline(search_end_line, a:start_line - 1))
 
 		" check Constant lookup
 		let constant_object = matchstr(a:context, '\zs'.class_name_pattern.'\ze::')
