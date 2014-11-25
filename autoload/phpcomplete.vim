@@ -1133,6 +1133,39 @@ function! s:readfileToTmpbuffer(file) " {{{
 	return [bufnr('$'), bufname('%')]
 endfunction " }}}
 
+function! s:getNextCharWithPos(filelines, current_pos) " {{{
+	let line_no   = a:current_pos[0]
+	let col_no    = a:current_pos[1]
+	let last_line = a:filelines[len(a:filelines) - 1]
+	let end_pos   = [len(a:filelines) - 1, strlen(last_line) - 1]
+	if line_no > end_pos[0] || line_no == end_pos[0] && col_no > end_pos[1]
+		return 'EOF'
+	endif
+
+	" we've not reached the end of the current line break
+	if col_no + 1 < strlen(a:filelines[line_no])
+		let col_no += 1
+	else
+		" we've reached the end of the current line, jump to the next
+		" non-blank line (blank lines have no position where we can read from,
+		" not even a whitespace. The newline char does not positionable by vim
+		let line_no += 1
+		while strlen(a:filelines[line_no]) == 0
+			let line_no += 1
+		endwhile
+
+		let col_no = 0
+	endif
+
+	" return 'EOF' string to signal end of file, normal results only one char
+	" in length
+	if line_no == end_pos[0] && col_no > end_pos[1]
+		return 'EOF'
+	endif
+
+	return [[line_no, col_no], a:filelines[line_no][col_no]]
+endfunction " }}}
+
 function! phpcomplete#EvaluateModifiers(modifiers, required_modifiers, prohibited_modifiers) " {{{
 	" if theres no modifier, and no modifier is allowed and no modifier is required
 	if len(a:modifiers) == 0 && len(a:required_modifiers) == 0
@@ -1444,11 +1477,11 @@ function! phpcomplete#GetCurrentInstruction(line_number, col_number, phpbegin) "
 			" break if we are on a "naked" stop_char (operators, colon, openparent...)
 			if index(stop_chars, current_char) != -1
 				let do_break = 1
-				" dont break does not look like a "->"
+				" dont break if it does look like a "->"
 				if (prev_char == '-' && current_char == '>') || (current_char == '-' && next_char == '>')
 					let do_break = 0
 				endif
-				" dont break if its looks like a "::"
+				" dont break if it does look like a "::"
 				if (prev_char == ':' && current_char == ':') || (current_char == ':' && next_char == ':')
 					let do_break = 0
 				endif
@@ -1910,9 +1943,32 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 			" assignment for the variable in question with a variable on the right hand side
 			if line =~# '^\s*'.object.'\s*=&\?\s*'.variable_name_pattern
-				let tailing_semicolon = match(line, ';\s*$')
-				let tailing_semicolon = tailing_semicolon != -1 ? tailing_semicolon : strlen(getline(a:start_line - i))
-				let prev_context = phpcomplete#GetCurrentInstruction(a:start_line - i, tailing_semicolon - 1, b:phpbegin)
+
+				" try to find the next non-comment or string ";" char
+				let start_col = match(line, '^\s*'.object.'\C\s*=\zs&\?\s*'.variable_name_pattern)
+				let filelines = reverse(lines)
+				let [pos, char] = s:getNextCharWithPos(filelines, [a:start_line - i - 1, start_col])
+				let chars_read = 1
+				" read while end of the file
+				while char != 'EOF' && chars_read < 1000
+					let last_pos = pos
+					let [pos, char] = s:getNextCharWithPos(filelines, pos)
+					let chars_read += 1
+					" we got a candidate
+					if char == ';'
+						let synIDName = synIDattr(synID(pos[0] + 1, pos[1] + 1, 0), 'name')
+						" it's not a comment or string, end search
+						if synIDName !~? 'comment\|string'
+							break
+						endif
+					endif
+				endwhile
+
+				let prev_context = phpcomplete#GetCurrentInstruction(last_pos[0] + 1, last_pos[1], b:phpbegin)
+				if prev_context == ''
+					" cannot get previous context give up
+					return
+				endif
 				let prev_class = phpcomplete#GetClassName(a:start_line - i, prev_context, a:current_namespace, a:imports)
 
 				if stridx(prev_class, '\') != -1
@@ -1928,9 +1984,32 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 			" assignment for the variable in question with a function on the right hand side
 			if line =~# '^\s*'.object.'\s*=&\?\s*'.function_invocation_pattern
-				let tailing_semicolon = match(line, ';\s*$')
-				let tailing_semicolon = tailing_semicolon != -1 ? tailing_semicolon : strlen(getline(a:start_line - i))
-				let prev_context = phpcomplete#GetCurrentInstruction(a:start_line - i, tailing_semicolon - 1, b:phpbegin)
+
+				" try to find the next non-comment or string ";" char
+				let start_col = match(line, '\C^\s*'.object.'\s*=\zs&\?\s*'.function_invocation_pattern)
+				let filelines = reverse(lines)
+				let [pos, char] = s:getNextCharWithPos(filelines, [a:start_line - i - 1, start_col])
+				let chars_read = 1
+				" read while end of the file
+				while char != 'EOF' && chars_read < 1000
+					let last_pos = pos
+					let [pos, char] = s:getNextCharWithPos(filelines, pos)
+					let chars_read += 1
+					" we got a candidate
+					if char == ';'
+						let synIDName = synIDattr(synID(pos[0] + 1, pos[1] + 1, 0), 'name')
+						" it's not a comment or string, end search
+						if synIDName !~? 'comment\|string'
+							break
+						endif
+					endif
+				endwhile
+
+				let prev_context = phpcomplete#GetCurrentInstruction(last_pos[0] + 1, last_pos[1], b:phpbegin)
+				if prev_context == ''
+					" cannot get previous context give up
+					return
+				endif
 
 				let function_name = matchstr(prev_context, '^'.function_invocation_pattern.'\ze')
 				let function_name = matchstr(function_name, '^\zs.\+\ze\s*($') " strip the trailing (
