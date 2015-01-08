@@ -144,7 +144,7 @@ function handle_method_def($xpath, $classname, $node, $file) {
 
     $params = array();
     $optional = false;
-    foreach ($methodparams as $i => $param_node) {
+    foreach ($methodparams as $param_node) {
         if (!$optional
             && $param_node->previousSibling->nodeType == XML_TEXT_NODE
             && strpos($param_node->previousSibling->textContent, '[') !== false) {
@@ -180,13 +180,12 @@ function extract_class_name($xpath) {
         return array(false, $is_interface);
     }
     $classname = trim($class->textContent);
-
     $title = $xpath->query('//div[@class="classsynopsis"]/preceding-sibling::h2[@class="title"]')->item(0);
-    if (stripos(trim($title->textContent), 'interface') === 0) {
+    if ($title && stripos(trim($title->textContent), 'interface') === 0) {
         $is_interface = true;
     }
     $title2 = $xpath->query('//div[@class="reference"]/h1[@class="title"]')->item(0);
-    if (preg_match('/interface$/i', trim($title2->textContent))) {
+    if ($title2 && preg_match('/interface$/i', trim($title2->textContent))) {
         $is_interface = true;
     }
     return array($classname, $is_interface);

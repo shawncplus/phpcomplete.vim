@@ -1,7 +1,6 @@
 <?php
 
-function extract_function_signatures($files, $extensions) {
-    $signatures = array();
+function extract_function_signatures($files, $extensions, $signatures = array()) {
     foreach ($files as $file) {
         $extension_name = get_extension_name($file, $extensions);
         if (!isset($signatures[$extension_name])) {
@@ -19,7 +18,12 @@ function extract_function_signatures($files, $extensions) {
                 $signatures[$extension_name][] = handle_func_alias($xpath, $nodes, $file);
             }
         } else if ($nodes->length == 1) {
-            $signatures[$extension_name][] = handle_func_def($xpath, $nodes->item(0), $file);
+            if (!preg_match('/\w+::\w+/', $nodes->item(0)->textContent)) {
+                $signatures[$extension_name][] = handle_func_def($xpath, $nodes->item(0), $file);
+            } else {
+                fwrite(STDERR, "WARNING: Only class-like function definition found in ".$file."\n");
+                continue;
+            }
         } else if ($nodes->length > 1) {
             // more than one signature for a single function name
             // maybe its a procedural style of a method like  xmlwriter_text -> XMLWriter::text
@@ -35,20 +39,39 @@ function extract_function_signatures($files, $extensions) {
     return $signatures;
 }
 
+function list_procedural_style_files($dir) {
+    $files = array();
+    $dir = rtrim($dir, '/');
+    $dh  = opendir($dir);
+
+    $doc = new DOMDocument();
+    while (false !== ($filename = readdir($dh))) {
+        if (preg_match('/\.html$/', $filename)) {
+            $doc->loadHTMLFile($dir.'/'.$filename);
+            $xpath = new DOMXPath($doc);
+            $nodes = $xpath->query('//p[contains(@class, "para") and contains(translate(text(), "P", "p"), "procedural style")]');
+            if ($nodes && $nodes->length !== 0) {
+                $files[] = $dir.'/'.$filename;
+            }
+        }
+    }
+    return array_unique($files);
+}
+
 function handle_func_def($xpath, $nodes, $file) {
     $type = $xpath->query('span[@class="type"]', $nodes);
     $methodname = $xpath->query('*[@class="methodname"]/*', $nodes);
     $methodparams = $xpath->query('*[@class="methodparam"]', $nodes);
-
     if ($type->length === 0) {
-        fwrite(STDERR, 'extraction error, cant find return type in '.$file);
-        exit;
+        fwrite(STDERR, "WARNING: can't find return type in ".$file."\n");
+        $return_type = 'void';
+    } else {
+        $return_type = trim($type->item(0)->textContent);
     }
     if ($methodname->length === 0) {
-        fwrite(STDERR, 'extraction error, cant find method name in '.$file);
+        fwrite(STDERR, "Extraction error, can't find method name in ".$file."\n");
         exit;
     }
-
     $params = array();
     $optional = false;
     foreach ($methodparams as $param) {
@@ -79,7 +102,7 @@ function handle_func_def($xpath, $nodes, $file) {
     return array(
         'type' => 'function',
         'full_signature' => $full_signature,
-        'return_type' => trim($type->item(0)->textContent),
+        'return_type' => $return_type,
         'name' => trim($methodname->item(0)->textContent),
         'params' => $params
     );

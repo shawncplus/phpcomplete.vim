@@ -1,7 +1,6 @@
 Available function extensions:
 	math
 	strings
-	object_aggregation
 	apache
 	apc
 	apd
@@ -43,7 +42,6 @@ Available function extensions:
 	error_handling
 	direct_io
 	dom
-	net
 	eio
 	enchant
 	posix_regex
@@ -64,7 +62,6 @@ Available function extensions:
 	fribidi
 	semaphore
 	ftp
-	gearman
 	gd
 	geoip
 	gmp
@@ -75,7 +72,6 @@ Available function extensions:
 	zlib
 	hash
 	http
-	hyperwave
 	hyperwave_api
 	firebird_interbase
 	iconv
@@ -89,7 +85,6 @@ Available function extensions:
 	inotify
 	soap
 	taint
-	java
 	json
 	judy
 	kadm5
@@ -116,7 +111,6 @@ Available function extensions:
 	mysqlnd_uh
 	ncurses
 	newt
-	lotus_notes
 	nsapi
 	oauth
 	tidy
@@ -125,7 +119,6 @@ Available function extensions:
 	opcache
 	openal
 	openssl
-	ovrimos_sql
 	parsekit
 	password_hashing
 	pcntl
@@ -133,11 +126,9 @@ Available function extensions:
 	postgresql
 	posix
 	pcre
-	printer
 	ps
 	pspell
 	paradox
-	qtdom
 	radius
 	rar
 	readline
@@ -161,15 +152,14 @@ Available function extensions:
 	statistics
 	stomp
 	svn
-	swf
 	sybase
 	tcp
 	tokenizer
 	trader
 	mnogosearch
+	uopz
 	xml_parser
 	vpopmail
-	w32api
 	wddx
 	win32service
 	win32ps
@@ -179,7 +169,6 @@ Available function extensions:
 	xhprof
 	xml_rpc
 	xmlwriter
-	xslt_php_4
 	yaml
 	yaz
 	yp_nis
@@ -202,10 +191,13 @@ Available Class extensions:
 	ev
 	event
 	fann
+	fileinfo
 	gearman
 	gender
 	gmagick
+	gmp
 	haru
+	hrtime
 	http
 	imagemagick
 	judy
@@ -237,6 +229,7 @@ Available Class extensions:
 	stomp
 	svm
 	ming
+	sync
 	tidy
 	tokyo_tyrant
 	v8js
@@ -348,7 +341,6 @@ Available Constant extensions:
 	postgresql
 	posix
 	pcre
-	printer
 	program_execution
 	pspell
 	paradox
@@ -363,19 +355,15 @@ Available Constant extensions:
 	ssh2
 	streams
 	svn
-	swf
 	mnogosearch
-	w32api
 	win32service
 	xattr
 	xdiff
 	xhprof
 	xml_parser
-	xslt_php_4
 	yaml
 	gearman
 	geoip
-	hyperwave
 	hyperwave_api
 	ibm_db2
 	iconv
@@ -395,6 +383,7 @@ Available Constant extensions:
 	migrating_from_php_54x_to_php_55x
 	migrating_from_php_55x_to_php_56x
 	ming
+	mongo
 	mysqlnd_memcache
 	mysqlnd_mux
 	mysqlnd_uh
@@ -419,6 +408,7 @@ Available Constant extensions:
 	list_of_parser_tokens
 	trader
 	php_type_comparison_tables
+	uopz
 	varnish
 	supported_protocols_and_wrappers
 	xsl

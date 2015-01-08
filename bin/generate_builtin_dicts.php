@@ -78,6 +78,9 @@ function main($argv){
     $function_files = glob("{$argv[1]}/function.*.html");
     $functions = extract_function_signatures($function_files, $extensions);
 
+    $extra_function_files = list_procedural_style_files("{$argv[1]}");
+    $functions = extract_function_signatures($extra_function_files, $extensions, $functions);
+
     $class_files = glob("{$argv[1]}/class.*.html", GLOB_BRACE);
     list($classes, $interfaces) = extract_class_signatures($class_files, $extensions);
 

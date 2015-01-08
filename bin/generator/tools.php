@@ -91,7 +91,7 @@ function get_extension_name($file, $extensions) {
 
         $up_link = $xpath->query('//div[@class="up"]/a');
         if ($up_link->length == 0) {
-            fwrite(STDERR, "\ncan't find up link in ".$current_file.' started ascending from '.$file);
+            fwrite(STDERR, "\nCan't find up link in ".$current_file.' started ascending from '.$file);
             exit;
         }
 
@@ -106,7 +106,7 @@ function get_extension_name($file, $extensions) {
 
     } while ($current_file != 'index.html');
 
-    fwrite(STDERR, "\nNOTICE: can't find extension name for ".$file." files checked: ".join(", ", $files_checked));
+    fwrite(STDERR, "\nNOTICE: Can't find extension name for ".$file." files checked: ".join(", ", $files_checked));
     return '_unknow';
 }
 

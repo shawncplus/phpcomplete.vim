@@ -126,9 +126,9 @@ let g:phpcomplete_active_function_extensions = [
 			\'openssl', 'output_control', 'parsekit', 'password_hashing', 'pcntl', 'pcre', 'php_options_info', 'posix', 'posix_regex', 'postgresql',
 			\'program_execution', 'ps', 'pspell', 'readline', 'recode', 'runkit', 'sessions', 'shared_memory', 'simplexml', 'snmp', 'soap', 'sockets',
 			\'solr', 'spl', 'sqlite', 'sqlsrv', 'streams', 'strings', 'tidy', 'tokenizer', 'urls', 'variable_handling', 'wddx', 'xml_parser',
-			\'xmlwriter', 'xslt_php_4', 'zip', 'zlib']
+			\'xmlwriter', 'zip', 'zlib']
 let g:phpcomplete_active_class_extensions = [
-			\'apc', 'curl', 'date_time', 'directories', 'dom', 'imagemagick', 'libxml', 'memcache', 'memcached', 'mongo', 'mysqli', 'pdo', 'phar',
+			\'apc', 'curl', 'date_time', 'directories', 'dom', 'fileinfo', 'imagemagick', 'libxml', 'memcache', 'memcached', 'mongo', 'mysqli', 'pdo', 'phar',
 			\'predefined_exceptions', 'predefined_interfaces_and_classes', 'reflection', 'sessions', 'simplexml', 'snmp', 'soap', 'solr', 'sphinx',
 			\'spl', 'sqlite3', 'streams', 'tidy', 'varnish', 'xmlreader', 'xmlwriter', 'xsl', 'zip']
 let g:phpcomplete_active_interface_extensions = [
@@ -140,7 +140,7 @@ let g:phpcomplete_active_constant_extensions = [
 			\'msql', 'mssql', 'multibyte_string', 'mysql', 'mysql_pdo', 'mysqli', 'network', 'odbc', 'openssl', 'output_control', 'parsekit', 'password_hashing',
 			\'pcntl', 'pcre', 'pdo', 'php_options_info', 'phpini_directives', 'posix', 'posix_regex', 'postgresql', 'program_execution', 'pspell', 'runkit',
 			\'sessions', 'snmp', 'soap', 'sockets', 'solr', 'sphinx', 'spl', 'sqlite', 'sqlite3', 'sqlsrv', 'streams', 'strings', 'tidy', 'types', 'urls',
-			\'variable_handling', 'varnish', 'xml_parser', 'xsl', 'xslt_php_4', 'zlib']
+			\'variable_handling', 'varnish', 'xml_parser', 'xsl', 'zlib']
 
 if exists('g:phpcomplete_add_function_extensions')
 	let g:phpcomplete_active_function_extensions += g:phpcomplete_add_function_extensions
