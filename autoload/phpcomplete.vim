@@ -1946,10 +1946,10 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 			endif
 
 			" assignment for the variable in question with a variable on the right hand side
-			if line =~# '^\s*'.object.'\s*=&\?\s*'.variable_name_pattern
+			if line =~# '^\s*'.object.'\s*=&\?\s\+\(clone\)\?\s*'.variable_name_pattern
 
 				" try to find the next non-comment or string ";" char
-				let start_col = match(line, '^\s*'.object.'\C\s*=\zs&\?\s*'.variable_name_pattern)
+				let start_col = match(line, '^\s*'.object.'\C\s*=\zs&\?\s\+\(clone\)\?\s*'.variable_name_pattern)
 				let filelines = reverse(lines)
 				let [pos, char] = s:getNextCharWithPos(filelines, [a:start_line - i - 1, start_col])
 				let chars_read = 1

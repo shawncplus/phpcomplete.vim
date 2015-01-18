@@ -758,4 +758,19 @@ fun! TestCase_resolves_classnames_with_multiple_methods_recursively_even_with_ex
     silent! bw! %
 endf
 
+fun! TestCase_resolves_classnames_from_cloned_variables()
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/clone.php"
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':5'
+    let classname = phpcomplete#GetClassName(5, '$d->', '', {})
+    call VUAssertEquals('DateTime', classname)
+
+    silent! bw! %
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4
