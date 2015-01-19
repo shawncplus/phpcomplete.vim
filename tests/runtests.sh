@@ -14,7 +14,7 @@ elif [ -f "$DIR/../../vimunit/vutest.sh" ]; then
 
 else
 	# no vimunit found, just grab it from github
-    git clone https://github.com/dsummersl/vimunit.git "$DIR/../vimunit"
+    git clone https://github.com/complex857/vimunit.git "$DIR/../vimunit"
 	VU="$DIR/../vimunit/vutest.sh"
 fi
 
