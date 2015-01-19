@@ -1,0 +1,11 @@
+language: bash
+
+before_script:
+    - sudo apt-get update -qq
+    - sudo apt-get install -y vim
+    - sudo apt-get install -y git
+    - git clone https://github.com/dsummersl/vimunit.git vimunit
+    - cp tests/vimrc ~/.vimrc
+
+script:
+    - cd tests/; bash runtests.sh
