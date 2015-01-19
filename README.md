@@ -1,5 +1,8 @@
 ## About
 Improved PHP omni-completion. Based on the default phpcomplete.vim.
+
+ [![Build Status](https://travis-ci.org/shawncplus/phpcomplete.vim.svg?branch=master)](https://travis-ci.org/shawncplus/phpcomplete.vim)
+
 ## Features
  * Correct restriction of static or standard methods based on context ( show only static methods with `::` and only standard with `->`)
  * Real support for `self::` and `$this->` with the aforementioned context restriction
@@ -137,4 +140,3 @@ If you want to disable an otherwise enabled one, use the ..._remove_... version 
     let g:phpcomplete_remove_constant_extensions = ['xslt_php_4']
 
 For the available extension files, check the directories under `misc/`
-
