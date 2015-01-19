@@ -121,6 +121,7 @@ fun! TestCase_handles_matching_class_name_extends_with_different_namespaces()
     silent! bw! %
 endf
 
+" fails with the dist version
 fun! TestCase_returns_contents_of_a_class_regardless_of_comments_or_strings()
     let path1 =  expand('%:p:h')."/".'fixtures/GetClassContents/foo2.class.php'
     let expected1 = join(readfile(path1)[2:12], "\n")

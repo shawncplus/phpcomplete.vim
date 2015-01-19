@@ -728,6 +728,7 @@ fun! TestCase_resolves_self_this_static_in_return_docblock_in_array_situation()
     silent! bw! %
 endf
 
+" fails with the dist version
 fun! TestCase_resolves_classnames_with_multiple_methods_recursively()
     let g:php_builtin_classes = {}
     let g:php_builtin_classnames = {}

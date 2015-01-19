@@ -20,13 +20,14 @@ fun! TestCase_returns_zero_when_no_function_found_above()
     let res4 = phpcomplete#GetCurrentFunctionBoundaries()
     call VUAssertEquals([[14, 2], [18, 2]], res4)
 
-	exe ':28'
-    let res5 = phpcomplete#GetCurrentFunctionBoundaries()
-    call VUAssertEquals([[21, 1], [29, 1]], res5)
-
 	exe ':32'
     let res6 = phpcomplete#GetCurrentFunctionBoundaries()
     call VUAssertEquals([[31, 1], [33, 0]], res6)
+
+    " fails with the dist version
+    exe ':28'
+    let res5 = phpcomplete#GetCurrentFunctionBoundaries()
+    call VUAssertEquals([[21, 1], [29, 1]], res5)
 
     silent! bw! %
 endf
