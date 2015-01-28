@@ -6,4 +6,5 @@
 !_TAG_PROGRAM_VERSION	Development	//
 Foo	foo.class.php	/^class Foo {$/;"	c
 FooInterface	foo.class.php	/^interface Foo {$/;"	i
+FooTrait	foo.class.php	/^trait FooTrait {$/;"	t
 bar	foo.class.php	/^    public function bar() {$/;"	f	class:Foo	access:public	signature:()

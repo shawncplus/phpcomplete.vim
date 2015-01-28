@@ -61,4 +61,18 @@ fun! TestCase_returns_imported_namespaces_and_classes_with_their_info_from_tags(
                 \ imports)
 endf
 
+fun! TestCase_does_not_pick_up_trait_uses_inside_classes()
+    call SetUp()
+
+    let file_lines = readfile(expand('%:p:h').'/'.'fixtures/GetCurrentNameSpace/traits.php')
+    call phpcomplete#LoadData()
+
+    let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
+    call VUAssertEquals('NS1', namespace)
+    call VUAssertEquals({
+                \ 'DateTime': {'name': 'DateTime', 'kind': 'c', 'builtin': 1},
+                \}, imports)
+
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

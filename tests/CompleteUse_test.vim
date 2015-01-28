@@ -76,6 +76,12 @@ fun! TestCase_completes_namespaces_from_tags()
                 \ {'word': 'Assetic\Asset\Iterator', 'menu': 'fixtures/CompleteUse/foo.oho', 'info': 'fixtures/CompleteUse/foo.oho', 'kind': 'n'},
                 \ {'word': 'Assetic\Cache', 'menu': 'fixtures/CompleteUse/foo.php', 'info': 'fixtures/CompleteUse/foo.php', 'kind': 'n'}],
                 \ res)
+
+    " Should return traits too (tags with kind "t")
+    let res = phpcomplete#CompleteUse('Some')
+    call VUAssertEquals([
+                \ {'word': 'SomeTrait', 'menu': 'fixtures/CompleteUse/foo.php', 'info': 'fixtures/CompleteUse/foo.php', 'kind': 't'}],
+                \ res)
 endf
 
 fun! TestCase_completes_namespaces_and_classes_from_tags_when_a_leading_namespace_is_already_typed_in()

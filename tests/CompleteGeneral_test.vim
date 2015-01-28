@@ -38,13 +38,15 @@ fun! TestCase_completes_functions_from_local_file() " {{{
     silent! bw! %
 endf " }}}
 
-fun! TestCase_completes_functions_classes_constants_from_tags() " {{{
+fun! TestCase_completes_functions_classes_constants_constants_from_tags() " {{{
     call SetUp()
     exe ':set tags='.expand('%:p:h').'/'.'fixtures/CompleteGeneral/tags'
-    let res = phpcomplete#CompleteGeneral('COMMON_', '\', {})
+    let res = phpcomplete#CompleteGeneral('common', '\', {})
 
     call VUAssertEquals([
                 \ {'word': 'COMMON_FOO',                                'info': 'COMMON_FOO - fixtures/CompleteGeneral/foo.php',                                          'menu': ' - fixtures/CompleteGeneral/foo.php',           'kind': 'd'},
+                \ {'word': 'CommonFoo',                                 'info': 'CommonFoo - fixtures/CompleteGeneral/foo.php',                                           'menu': ' - fixtures/CompleteGeneral/foo.php',           'kind': 'c'},
+                \ {'word': 'CommonTrait',                               'info': ' - fixtures/CompleteGeneral/foo.php',                                                    'menu': ' - fixtures/CompleteGeneral/foo.php',           'kind': 't'},
                 \ {'word': 'common_plain_old_function(',                'info': 'common_plain_old_function() - fixtures/CompleteGeneral/foo.php',                         'menu': ') - fixtures/CompleteGeneral/foo.php',          'kind': 'f'},
                 \ {'word': 'common_plain_old_function_with_arguments(', 'info': "common_plain_old_function_with_arguments($a, $b='') - fixtures/CompleteGeneral/foo.php", 'menu': "$a, $b='') - fixtures/CompleteGeneral/foo.php", 'kind': 'f'},
                 \ {'word': 'common_private_method(',                    'info': 'common_private_method($foo) - fixtures/CompleteGeneral/foo.php',                         'menu': '$foo) - fixtures/CompleteGeneral/foo.php',      'kind': 'f'},

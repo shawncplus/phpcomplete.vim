@@ -10,5 +10,7 @@ class CommonFoo {
     protected static function common_protected_static_method($foo) { }
 }
 
+trait CommonTrait {}
+
 function common_plain_old_function(){}
 function common_plain_old_function_with_arguments($a, $b=''){}

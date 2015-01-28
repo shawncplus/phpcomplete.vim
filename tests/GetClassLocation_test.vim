@@ -56,6 +56,9 @@ fun! TestCase_return_class_location_from_tags()
     let res = phpcomplete#GetClassLocation('FooInterface', '')
     call VUAssertEquals('fixtures/GetClassLocation/foo.class.php', res)
 
+    let res = phpcomplete#GetClassLocation('FooTrait', '')
+    call VUAssertEquals('fixtures/GetClassLocation/foo.class.php', res)
+
     " when there are no namespaces to match for the classes from the tags file
     " should return the first class's location where the name matches
     exe ':set tags='.old_style_tags_path

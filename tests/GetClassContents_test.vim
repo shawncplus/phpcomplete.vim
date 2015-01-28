@@ -136,4 +136,21 @@ fun! TestCase_returns_contents_of_a_class_regardless_of_comments_or_strings()
     silent! bw! %
 endf
 
+fun! TestCase_retrns_contents_of_used_traits_too()
+    call SetUp()
+
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/tags'
+    let path1 =  expand('%:p:h')."/".'fixtures/GetClassContents/foo3.class.php'
+    let path2 =  expand('%:p:h')."/".'fixtures/GetClassContents/foo.trait.php'
+    let expected = join(readfile(path1)[2:7], "\n")."\n".join(readfile(path2)[2:4], "\n")
+
+    below 1new
+    exe ":silent! edit ".path1
+
+    let contents = phpcomplete#GetClassContents(path1, 'Foo3')
+    call VUAssertEquals(expected, contents)
+
+    silent! bw! %
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

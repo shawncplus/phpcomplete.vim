@@ -7,17 +7,34 @@
 BarClass	extends/bar.class.php	/^class BarClass { }$/;"	c
 BarClass2	extends_extends/bar2_extends_baz.class.php	/^class BarClass2 extends BazClass { }$/;"	c	inherits:BazClass
 BazClass	extends_extends/baz.class.php	/^class BazClass { }$/;"	c
+Foo	same_classname/foo.class.php	/^class Foo extends \\NS1\\Foo {$/;"	c	inherits:NS1,Foo
+Foo	same_classname/ns1_foo.class.php	/^class Foo { }$/;"	c	namespace:NS1
+Foo2	foo2.class.php	/^class Foo2 {$/;"	c
+Foo3	foo3.class.php	/^class Foo3 {$/;"	c
 FooClass	extends/foo_extends_bar.class.php	/^class FooClass extends BarClass { }$/;"	c	inherits:BarClass
 FooClass	foo.class.php	/^class FooClass {$/;"	c
+FooClass	foo_whitespace.class.php	/^class FooClass$/;"	c
 FooClass	foo_with_extra_content.class.php	/^class FooClass {$/;"	c
 FooClass2	extends_extends/foo2_extends_bar2.class.php	/^class FooClass2 extends BarClass2 { }$/;"	c	inherits:BarClass2
+FooClassNotThisOne	foo_whitespace.class.php	/^class FooClassNotThisOne {$/;"	c
+FooInterface	foo.interface.php	/^interface FooInterface {$/;"	i
+FooTrait	foo.trait.php	/^trait FooTrait {$/;"	t
+NS1	import/ns1_foo2.php	/^namespace NS1;$/;"	n
 NS1	ns1_foo2.php	/^namespace NS1;$/;"	n
+NS1	same_classname/ns1_foo.class.php	/^namespace NS1;$/;"	n
+NS2	import/ns2_foo.php	/^namespace NS2;$/;"	n
 NS2	ns2_foo.php	/^namespace NS2;$/;"	n
-NamespacedFoo	ns2_foo.php	/^class NamespacedFoo {$/;"	c	namespace:NS2
-NamespacedFoo2	ns1_foo2.php	/^class NamespacedFoo2 extends \\NS2\\NamespacedFoo {$/;"	c	namespace:NS1	inherits:NS2,NamespacedFoo
-a	t.php	/^$a = new NamespacedFoo2;$/;"	v
+NamespacedFoo	import/ns2_foo.php	/^class NamespacedFoo {}$/;"	c	namespace:NS2
+NamespacedFoo	ns2_foo.php	/^class NamespacedFoo {}$/;"	c	namespace:NS2
+NamespacedFoo2	import/ns1_foo2.php	/^class NamespacedFoo2 extends NamespacedFoo {}$/;"	c	namespace:NS1	inherits:NamespacedFoo
+NamespacedFoo2	ns1_foo2.php	/^class NamespacedFoo2 extends \\NS2\\NamespacedFoo {}$/;"	c	namespace:NS1	inherits:NS2,NamespacedFoo
+SOME_CONTENT	foo.interface.php	/^    const SOME_CONTENT = 'bar';$/;"	d	class:FooInterface
 bar	foo.class.php	/^    public function bar( $baz = 'foo') {$/;"	f	class:FooClass	access:public	signature:($baz = 'foo')
+bar	foo2.class.php	/^	public function bar() {$/;"	f	class:Foo2	access:public	signature:()
+bar	foo3.class.php	/^	public function bar() {$/;"	f	class:Foo3	access:public	signature:()
+bar	foo_whitespace.class.php	/^    public function bar( $baz = 'foo')$/;"	f	class:FooClass	access:public	signature:($baz = 'foo')
 bar	foo_with_extra_content.class.php	/^    public function bar( $baz = 'foo') {$/;"	f	class:FooClass	access:public	signature:($baz = 'foo')
 bar	foo_with_extra_content.class.php	/^function bar() {$/;"	f	signature:()
+bar	same_classname/foo.class.php	/^    public function bar()$/;"	f	class:Foo	access:public	signature:()
 foo	foo_with_extra_content.class.php	/^function foo() {$/;"	f	signature:()
-foo	ns2_foo.php	/^    public function foo(){}$/;"	f	class:NS2::NamespacedFoo	access:public	signature:()
+prop	foo.trait.php	/^	public $prop = 'baz';$/;"	v	trait:FooTrait	access:public

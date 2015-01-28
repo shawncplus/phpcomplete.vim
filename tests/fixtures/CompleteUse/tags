@@ -9,3 +9,4 @@ Assetic\Asset	foo.php	/^namespace Assetic\\Asset;$/;"	n
 Assetic\Asset\Iterator	foo.oho	/^namespace Assetic\\Asset\\Iterator;$/;"	n
 Assetic\Cache	foo.php	/^namespace Assetic\\Cache;$/;"	n
 BaseAsset	foo.php	/^abstract class BaseAsset implements AssetInterface$/;"	c	namespace:Assetic\Asset	inherits:AssetInterface	implementation:abstract
+SomeTrait	foo.php	/^Trait SomeTrait {$/;"	t

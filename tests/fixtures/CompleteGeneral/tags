@@ -6,6 +6,7 @@
 !_TAG_PROGRAM_VERSION	5.8	//
 COMMON_FOO	foo.php	/^define('COMMON_FOO', 42);$/;"	d
 CommonFoo	foo.php	/^class CommonFoo {$/;"	c
+CommonTrait	foo.php	/^trait CommonTrait {}$/;"	t
 common_plain_old_function	foo.php	/^function common_plain_old_function(){}$/;"	f
 common_plain_old_function_with_arguments	foo.php	/^function common_plain_old_function_with_arguments($a, $b=''){}$/;"	f
 common_private_method	foo.php	/^    private function common_private_method($foo) { }$/;"	f
