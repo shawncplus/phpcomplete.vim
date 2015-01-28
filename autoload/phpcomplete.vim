@@ -1154,7 +1154,7 @@ function! s:getNextCharWithPos(filelines, current_pos) " {{{
 	let last_line = a:filelines[len(a:filelines) - 1]
 	let end_pos   = [len(a:filelines) - 1, strlen(last_line) - 1]
 	if line_no > end_pos[0] || line_no == end_pos[0] && col_no > end_pos[1]
-		return 'EOF'
+		return ['EOF', 'EOF']
 	endif
 
 	" we've not reached the end of the current line break
@@ -1175,7 +1175,7 @@ function! s:getNextCharWithPos(filelines, current_pos) " {{{
 	" return 'EOF' string to signal end of file, normal results only one char
 	" in length
 	if line_no == end_pos[0] && col_no > end_pos[1]
-		return 'EOF'
+		return ['EOF', 'EOF']
 	endif
 
 	return [[line_no, col_no], a:filelines[line_no][col_no]]
@@ -1968,6 +1968,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				let filelines = reverse(lines)
 				let [pos, char] = s:getNextCharWithPos(filelines, [a:start_line - i - 1, start_col])
 				let chars_read = 1
+				let last_pos = pos
 				" read while end of the file
 				while char != 'EOF' && chars_read < 1000
 					let last_pos = pos
@@ -2009,6 +2010,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				let filelines = reverse(lines)
 				let [pos, char] = s:getNextCharWithPos(filelines, [a:start_line - i - 1, start_col])
 				let chars_read = 1
+				let last_pos = pos
 				" read while end of the file
 				while char != 'EOF' && chars_read < 1000
 					let last_pos = pos
