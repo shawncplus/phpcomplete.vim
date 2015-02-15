@@ -2676,7 +2676,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 		let line = file_lines[i]
 
 		if line =~? '^\s*namespace\s*'.namespace_name_pattern
-			let current_namespace = matchstr(line, '^\s*namespace\s*\zs'.namespace_name_pattern.'\ze')
+			let current_namespace = matchstr(line, '\c^\s*namespace\s*\zs'.namespace_name_pattern.'\ze')
 			break
 		endif
 
@@ -2697,7 +2697,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 					let use_line .= ' '.substitute(search_line, '\(^\s\+\|\s\+$\)', '', 'g')
 				endwhile
 			endif
-			let use_expression = matchstr(use_line, '^\s*use\s\+\zs.\{-}\ze;')
+			let use_expression = matchstr(use_line, '^\c\s*use\s\+\zs.\{-}\ze;')
 			let use_parts = map(split(use_expression, '\s*,\s*'), 'substitute(v:val, "\\s+", " ", "g")')
 			for part in use_parts
 				if part =~? '\s\+as\s\+'

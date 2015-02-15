@@ -75,4 +75,16 @@ fun! TestCase_does_not_pick_up_trait_uses_inside_classes()
 
 endf
 
+fun! TestCase_should_pick_up_imports_regardeless_the_upperlower_case_of_keywords()
+    call SetUp()
+    call phpcomplete#LoadData()
+
+    let file_lines = readfile(expand('%:p:h').'/'.'fixtures/GetCurrentNameSpace/single_namespace_uppercase.php')
+    let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
+    call VUAssertEquals('Mahou', namespace)
+    call VUAssertEquals({
+                \ 'DT': {'name': 'DateTime', 'kind': 'c', 'builtin': 1}},
+                \ imports)
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4
