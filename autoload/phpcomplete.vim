@@ -555,7 +555,7 @@ function! phpcomplete#CompleteGeneral(base, current_namespace, imports) " {{{
 		endfor
 		for [interfacename, info] in items(g:php_builtin_interfacenames)
 			if interfacename =~? '^'.base
-				let builtin_interfaces[leading_slash.interfacename] = info
+				let builtin_interfaces[leading_slash.g:php_builtin_interfaces[tolower(interfacename)].name] = info
 			endif
 		endfor
 	endif
@@ -883,7 +883,7 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 
 	let tags = []
 	if len(tag_match_pattern) >= g:phpcomplete_min_num_of_chars_for_namespace_completion
-		let tags = phpcomplete#GetTaglist('^'.tag_match_pattern)
+		let tags = phpcomplete#GetTaglist('^\c'.tag_match_pattern)
 	endif
 
 	if len(tags)

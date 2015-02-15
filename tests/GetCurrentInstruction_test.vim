@@ -72,7 +72,7 @@ fun! TestCase_returns_instuction_string()
     call cursor(65, 46)
     let res = phpcomplete#GetCurrentInstruction(65, 46, [1, 1])
     call VUAssertEquals(
-                \ '(new Foo)->',
+                \ '(new foo)->',
                 \ res)
     call cursor(68, 8)
     let res = phpcomplete#GetCurrentInstruction(68, 8, [1, 1])
