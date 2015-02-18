@@ -1009,6 +1009,8 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 	if tag_position == -1
 		silent! exec notfound_commands.symbol
 	else
+		let oldcscopetag = &cscopetag
+		set nocscopetag
 		if a:mode == 'split'
 			silent! exec 'split | '.tag_position.'tag '.symbol
 		elseif a:mode == 'vsplit'
@@ -1016,6 +1018,8 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 		elseif a:mode == 'normal'
 			silent! exec tag_position.'tag '.symbol
 		endif
+		let &cscopetag = oldcscopetag
+		unlet oldcscopetag
 	endif
 endfunction " }}}
 
