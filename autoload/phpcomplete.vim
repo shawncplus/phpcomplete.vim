@@ -2307,7 +2307,7 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	" remember the window we started at
 	let phpcomplete_original_window = winnr()
 
-	silent! below 1new
+	silent! tab 1new
 	silent! 0put =cfile
 	silent! exec "setlocal ft=phpcompletetempbuffer"
 
@@ -2648,7 +2648,7 @@ endfunction!
 function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 	let original_window = winnr()
 
-	silent! below 1new
+	silent! tab 1new
 	silent! 0put =a:file_lines
 	silent! exec "setlocal ft=phpcompletetempbuffer"
 	normal! G
