@@ -38,3 +38,19 @@ function foo2($bar1, $bar2, $bar3) {
 $foo = function($bar3, \Some\Class $foo) {
     $bar3->
 }
+
+
+/**
+ * baz3
+ *
+ * @param DateTime $docblocked
+ */
+function baz3(
+	$docblocked,
+	$multi,
+	$line,
+	$arguments
+) {
+	$docblocked->
+}
+

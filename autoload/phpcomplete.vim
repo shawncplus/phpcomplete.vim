@@ -1926,26 +1926,26 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				endif
 			endif
 
-			" in-file lookup for typehinted function arguments
-			"   - the function can have a name or be anonymous (e.g., function qux() { ... } vs. function () { ... })
-			"   - the type-hinted argument can be anywhere in the arguments list.
-			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+'.object && !object_is_array
-				let f_args = matchstr(line, '\cfunction\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
-				let args = split(f_args, '\s*\zs,\ze\s*')
-				for arg in args
-					if arg =~# object.'\(,\|$\)'
-						let classname_candidate = matchstr(arg, '\s*\zs'.class_name_pattern.'\ze\s\+'.object)
-						let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, a:current_namespace, a:imports)
+			" function declaration line
+			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*('
+				let function_lines = join(reverse(lines), " ")
+				" search for type hinted arguments
+				if function_lines =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+'.object && !object_is_array
+					let f_args = matchstr(function_lines, '\cfunction\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
+					let args = split(f_args, '\s*\zs,\ze\s*')
+					for arg in args
+						if arg =~# object.'\(,\|$\)'
+							let classname_candidate = matchstr(arg, '\s*\zs'.class_name_pattern.'\ze\s\+'.object)
+							let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, a:current_namespace, a:imports)
+							break
+						endif
+					endfor
+					if classname_candidate != ''
 						break
 					endif
-				endfor
-				if classname_candidate != ''
-					break
 				endif
-			endif
 
-			" if we see a function declaration, try loading the docblock for it and look for matching @params
-			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.object
+				" search for docblock for the function
 				let match_line = substitute(line, '\\', '\\\\', 'g')
 				let sccontent = getline(0, a:start_line - i)
 				let doc_str = phpcomplete#GetDocBlock(sccontent, match_line)

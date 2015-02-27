@@ -301,6 +301,10 @@ fun! TestCase_extract_typehint_from_function_calls()
     let classname = phpcomplete#GetClassName(50, '$bar->', '\', {'RenamedFoo': {'name': 'OriginalFoo', 'kind': 'c', 'builtin':0,}})
     call VUAssertEquals('OriginalFoo', classname)
 
+    exe ':58'
+    let classname = phpcomplete#GetClassName(58, '$multi->', '\', {})
+    call VUAssertEquals('DateTime', classname)
+
     silent! bw! %
 endf
 
@@ -324,6 +328,10 @@ fun! TestCase_extract_parameter_type_from_docblock()
     exe ':39'
     let classname = phpcomplete#GetClassName(39, '$bar3->', '\', {})
     call VUAssertEquals('BarClass3', classname)
+
+    exe ':54'
+    let classname = phpcomplete#GetClassName(54, '$docblocked->', '\', {})
+    call VUAssertEquals('DateTime', classname)
 
     silent! bw! %
 endf

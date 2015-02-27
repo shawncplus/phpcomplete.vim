@@ -49,3 +49,13 @@ class BazClass
 function baz2(RenamedFoo $bar) {
     $bar->
 }
+
+
+function(
+	DateTime $multi,
+	mysqli $mysqli
+) {
+	$mysli = $foo;
+	$multi->
+}
+
