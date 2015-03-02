@@ -225,71 +225,80 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		if a:base != ""
 			let context = substitute(context, '\s*[$a-zA-Z_0-9\x7f-\xff]*$', '', '')
 		end
+	else
+		let context = ''
 	end
 
-	let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
+	try
+		let winheight = winheight(0)
+		let winnr = winnr()
 
-	if context =~? '^use\s' || context ==? 'use'
-		return phpcomplete#CompleteUse(a:base)
-	endif
+		let [current_namespace, imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
 
-	if context =~ '\(->\|::\)$'
-		" {{{
-		" Get name of the class
-		let classname = phpcomplete#GetClassName(line('.'), context, current_namespace, imports)
+		if context =~? '^use\s' || context ==? 'use'
+			return phpcomplete#CompleteUse(a:base)
+		endif
 
-		" Get location of class definition, we have to iterate through all
-		if classname != ''
-			if classname =~ '\'
-				" split the last \ segment as a classname, everything else is the namespace
-				let classname_parts = split(classname, '\')
-				let namespace = join(classname_parts[0:-2], '\')
-				let classname = classname_parts[-1]
+		if context =~ '\(->\|::\)$'
+			" {{{
+			" Get name of the class
+			let classname = phpcomplete#GetClassName(line('.'), context, current_namespace, imports)
+
+			" Get location of class definition, we have to iterate through all
+			if classname != ''
+				if classname =~ '\'
+					" split the last \ segment as a classname, everything else is the namespace
+					let classname_parts = split(classname, '\')
+					let namespace = join(classname_parts[0:-2], '\')
+					let classname = classname_parts[-1]
+				else
+					let namespace = '\'
+				endif
+				let classlocation = phpcomplete#GetClassLocation(classname, namespace)
 			else
-				let namespace = '\'
+				let classlocation = ''
 			endif
-			let classlocation = phpcomplete#GetClassLocation(classname, namespace)
+
+			if classlocation != ''
+				if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, tolower(classname))
+					return phpcomplete#CompleteBuiltInClass(context, classname, a:base)
+				endif
+
+				if filereadable(classlocation)
+					let classfile = readfile(classlocation)
+					let classcontent = ''
+					let classcontent .= "\n".phpcomplete#GetClassContents(classlocation, classname)
+					let sccontent = split(classcontent, "\n")
+					let visibility = expand('%:p') == fnamemodify(classlocation, ':p') ? 'private' : 'public'
+
+					return phpcomplete#CompleteUserClass(context, a:base, sccontent, visibility)
+				endif
+			endif
+
+			return phpcomplete#CompleteUnknownClass(a:base, context)
+			" }}}
+		elseif context =~? 'implements'
+			return phpcomplete#CompleteClassName(a:base, ['i'], current_namespace, imports)
+		elseif context =~? 'extends\s\+.\+$' && a:base == ''
+			return ['implements']
+		elseif context =~? 'extends'
+			let kinds = context =~? 'class\s' ? ['c'] : ['i']
+			return phpcomplete#CompleteClassName(a:base, kinds, current_namespace, imports)
+		elseif context =~? 'class [a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
+			" special case when you've typed the class keyword and the name too, only extends and implements allowed there
+			return filter(['extends', 'implements'], 'stridx(v:val, a:base) == 0')
+		elseif context =~? 'new'
+			return phpcomplete#CompleteClassName(a:base, ['c'], current_namespace, imports)
+		endif
+
+		if a:base =~ '^\$'
+			return phpcomplete#CompleteVariable(a:base)
 		else
-			let classlocation = ''
+			return phpcomplete#CompleteGeneral(a:base, current_namespace, imports)
 		endif
-
-		if classlocation != ''
-			if classlocation == 'VIMPHP_BUILTINOBJECT' && has_key(g:php_builtin_classes, tolower(classname))
-				return phpcomplete#CompleteBuiltInClass(context, classname, a:base)
-			endif
-
-			if filereadable(classlocation)
-				let classfile = readfile(classlocation)
-				let classcontent = ''
-				let classcontent .= "\n".phpcomplete#GetClassContents(classlocation, classname)
-				let sccontent = split(classcontent, "\n")
-				let visibility = expand('%:p') == fnamemodify(classlocation, ':p') ? 'private' : 'public'
-
-				return phpcomplete#CompleteUserClass(context, a:base, sccontent, visibility)
-			endif
-		endif
-
-		return phpcomplete#CompleteUnknownClass(a:base, context)
-		" }}}
-	elseif context =~? 'implements'
-		return phpcomplete#CompleteClassName(a:base, ['i'], current_namespace, imports)
-	elseif context =~? 'extends\s\+.\+$' && a:base == ''
-		return ['implements']
-	elseif context =~? 'extends'
-		let kinds = context =~? 'class\s' ? ['c'] : ['i']
-		return phpcomplete#CompleteClassName(a:base, kinds, current_namespace, imports)
-	elseif context =~? 'class [a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
-		" special case when you've typed the class keyword and the name too, only extends and implements allowed there
-		return filter(['extends', 'implements'], 'stridx(v:val, a:base) == 0')
-	elseif context =~? 'new'
-		return phpcomplete#CompleteClassName(a:base, ['c'], current_namespace, imports)
-	endif
-
-	if a:base =~ '^\$'
-		return phpcomplete#CompleteVariable(a:base)
-	else
-		return phpcomplete#CompleteGeneral(a:base, current_namespace, imports)
-	endif
+	finally
+		silent! exec winnr.'resize '.winheight
+	endtry
 endfunction
 " }}}
 
@@ -2307,7 +2316,7 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	" remember the window we started at
 	let phpcomplete_original_window = winnr()
 
-	silent! tab 1new
+	silent! below 1new
 	silent! 0put =cfile
 	silent! exec "setlocal ft=phpcompletetempbuffer"
 
@@ -2648,7 +2657,7 @@ endfunction!
 function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 	let original_window = winnr()
 
-	silent! tab 1new
+	silent! below 1new
 	silent! 0put =a:file_lines
 	silent! exec "setlocal ft=phpcompletetempbuffer"
 	normal! G
