@@ -1813,9 +1813,6 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				let extended_class = matchstr(line, '\cclass\s\+'.class_name_pattern.'\s\+extends\s\+\zs'.class_name_pattern.'\ze')
 
 				let classname_candidate = a:context =~? 'parent::' ? extended_class : class_name
-			endif
-
-			if classname_candidate != ''
 				let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(classname_candidate, class_candidate_namespace, class_candidate_imports, methodstack)
 				" return absolute classname, without leading \
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
