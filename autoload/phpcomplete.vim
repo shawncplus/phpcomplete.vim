@@ -1808,14 +1808,11 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				return ''
 			endif
 
-			if line =~? '\v^\s*(abstract\s+|final\s+)*\s*class'
+			if line =~? '\v^\s*(abstract\s+|final\s+)*\s*class\s'
 				let class_name = matchstr(line, '\c\s*class\s*\zs'.class_name_pattern.'\ze')
 				let extended_class = matchstr(line, '\cclass\s\+'.class_name_pattern.'\s\+extends\s\+\zs'.class_name_pattern.'\ze')
 
 				let classname_candidate = a:context =~? 'parent::' ? extended_class : class_name
-			else
-				let i += 1
-				continue
 			endif
 
 			if classname_candidate != ''
@@ -1823,6 +1820,8 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				" return absolute classname, without leading \
 				return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 			endif
+
+			let i += 1
 		endwhile
 	elseif a:context =~? '(\s*new\s\+'.class_name_pattern.'\s*)->'
 		let classname_candidate = matchstr(a:context, '\cnew\s\+\zs'.class_name_pattern.'\ze')
