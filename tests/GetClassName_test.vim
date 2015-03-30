@@ -782,4 +782,28 @@ fun! TestCase_resolves_classnames_from_cloned_variables()
     silent! bw! %
 endf
 
+fun! TestCase_should_not_loop_forever_around_stuff_having_the_word_class_class_in_them()
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/stuff_with_the_word_class_in_them.php"
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':8'
+    let classname = phpcomplete#GetClassName(8, '$this->', '', {})
+    call VUAssertEquals('will', classname) " the result in itself is wrong, the plugin picks up the class word inside of a string
+
+    exe ':13'
+    let classname = phpcomplete#GetClassName(12, 'self::', '', {})
+    call VUAssertEquals('will', classname) " the result in itself is wrong, the plugin picks up the class word inside of a string
+
+    exe ':16'
+    let classname = phpcomplete#GetClassName(15, 'parent::', '', {})
+    call VUAssertEquals('DateTime', classname)
+
+    silent!
+    bw! %
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4
