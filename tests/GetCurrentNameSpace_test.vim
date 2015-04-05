@@ -13,6 +13,10 @@ fun! TestCase_returns_namespace_from_file_lines()
     let file_lines = readfile(expand('%:p:h').'/'.'fixtures/GetCurrentNameSpace/single_namespace.php')
     let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
     call VUAssertEquals('Mahou', namespace)
+
+    let file_lines = readfile(expand('%:p:h').'/'.'fixtures/GetCurrentNameSpace/single_namespace2.php')
+    let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
+    call VUAssertEquals('Mahou', namespace)
 endf
 
 fun! TestCase_returns_closest_namespace_from_the_current_line()

@@ -2686,8 +2686,8 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 	while i < file_length
 		let line = file_lines[i]
 
-		if line =~? '^\s*namespace\s*'.namespace_name_pattern
-			let current_namespace = matchstr(line, '\c^\s*namespace\s*\zs'.namespace_name_pattern.'\ze')
+		if line =~? '^\(<?php\)\?\s*namespace\s*'.namespace_name_pattern
+			let current_namespace = matchstr(line, '\c^\(<?php\)\?\s*namespace\s*\zs'.namespace_name_pattern.'\ze')
 			break
 		endif
 
