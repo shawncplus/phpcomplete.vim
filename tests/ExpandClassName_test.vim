@@ -40,9 +40,13 @@ fun! TestCase_matches_classname_from_imported_names()
     let [classname, namespace] = phpcomplete#ExpandClassName('Foo', 'Mahou', {'Foo': {'name': 'Foo', 'kind': 'c', 'builtin': 0, 'namespace': 'NS1'}})
     call VUAssertEquals(['Foo', 'NS1'], [classname, namespace])
 
-    " imported user Interface
+    " imported user interface
     let [classname, namespace] = phpcomplete#ExpandClassName('FooInterface', 'Mahou', {'FooInterface': {'name': 'FooInterface', 'kind': 'i', 'builtin': 0, 'namespace': 'NS1'}})
     call VUAssertEquals(['FooInterface', 'NS1'], [classname, namespace])
+
+    " imported user trait
+    let [classname, namespace] = phpcomplete#ExpandClassName('FooTrait', 'Mahou', {'FooTrait': {'name': 'FooTrait', 'kind': 't', 'builtin': 0, 'namespace': 'NS2'}})
+    call VUAssertEquals(['FooTrait', 'NS2'], [classname, namespace])
 endf
 
 fun! TestCase_matches_namespace_from_imported_names()
