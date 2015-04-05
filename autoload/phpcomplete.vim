@@ -2401,7 +2401,7 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 			elseif classlocation != '' && filereadable(classlocation)
 				let full_file_path = fnamemodify(classlocation, ':p')
 				let result += phpcomplete#GetClassContentsStructure(full_file_path, readfile(full_file_path), class)
-			elseif tolower(current_namespace) == tolower(namespace)
+			elseif tolower(current_namespace) == tolower(namespace) && match(join(a:file_lines, "\n"), '\c\(class\|interface\|trait\)\_s\+'.class.'\(\>\|$\)') != -1
 				" try to find the declaration in the same file.
 				let result += phpcomplete#GetClassContentsStructure(full_file_path, a:file_lines, class)
 			endif

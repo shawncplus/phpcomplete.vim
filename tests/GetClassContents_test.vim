@@ -1,7 +1,8 @@
 fun! SetUp()
     exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/tags'
     let g:php_builtin_classes = {}
-
+    let g:php_builtin_classnames = {}
+    let g:php_builtin_interfacenames = {}
 endf
 
 fun! TestCase_reads_in_the_class_from_the_list_of_lines()
@@ -136,7 +137,7 @@ fun! TestCase_returns_contents_of_a_class_regardless_of_comments_or_strings()
     silent! bw! %
 endf
 
-fun! TestCase_retrns_contents_of_used_traits_too()
+fun! TestCase_returns_contents_of_used_traits_too()
     call SetUp()
 
     exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/tags'
@@ -149,6 +150,33 @@ fun! TestCase_retrns_contents_of_used_traits_too()
 
     let contents = phpcomplete#GetClassContents(path1, 'Foo3')
     call VUAssertEquals(expected, contents)
+
+    silent! bw! %
+endf
+
+fun! TestCase_returns_class_content_from_inside_the_same_file()
+    call SetUp()
+
+    let location = expand('%:p:h')."/".'fixtures/GetClassContents/same_file_class.php'
+    let class_contents = readfile(location)[4:6]
+    let expected  = join(class_contents, "\n")."\n"
+    let expected .= readfile(location)[2]
+    let expected2 = join(readfile(location)[8:10], "\n")
+
+    below 1new
+    exe ":silent! edit ".location
+
+    " Even if there's no tags or other help to locate the extended class, the
+    " plugin should try to find it in the same file that the extending class
+    " located
+    exe ':8'
+    let structure = phpcomplete#GetClassContentsStructure(location, readfile(location), 'SomeTraitedClass')
+    call VUAssertEquals(expected, structure[0].content."\n".structure[1].content)
+
+    " The function should just skip any non-locatable extended class
+    exe ':12'
+    let structure = phpcomplete#GetClassContentsStructure(location, readfile(location), 'ExtendsNonExistsing')
+    call VUAssertEquals(expected2, structure[0].content)
 
     silent! bw! %
 endf
