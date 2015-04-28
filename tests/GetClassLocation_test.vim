@@ -35,6 +35,10 @@ fun! TestCase_return_current_file_path_when_classname_found_in_previous_lines_of
     let res = phpcomplete#GetClassLocation('Foo2', '')
     call VUAssertEquals(path, res)
 
+    exe ':21'
+    let res = phpcomplete#GetClassLocation('Foo3', '')
+    call VUAssertEquals(path, res)
+
     silent! bw! %
 endf
 

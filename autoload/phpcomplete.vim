@@ -2152,7 +2152,7 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 	let i = 1
 	while i < line('.')
 		let line = getline(line('.')-i)
-		if line =~? '^\s*\(abstract\s\+\|final\s\+\)*\s*\(class\|interface\|trait\)\s*'.a:classname.'\(\s\+\|$\)' && tolower(current_namespace) == search_namespace
+		if line =~? '^\s*\(abstract\s\+\|final\s\+\)*\s*\(class\|interface\|trait\)\s*'.a:classname.'\(\s\+\|$\|{\)' && tolower(current_namespace) == search_namespace
 			return expand('%:p')
 		else
 			let i += 1
