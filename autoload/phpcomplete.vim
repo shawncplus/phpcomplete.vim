@@ -1935,7 +1935,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 			" function declaration line
 			if line =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*('
-				let function_lines = join(reverse(lines), " ")
+				let function_lines = join(reverse(copy(lines)), " ")
 				" search for type hinted arguments
 				if function_lines =~? 'function\(\s\+'.function_name_pattern.'\)\?\s*(.\{-}'.class_name_pattern.'\s\+'.object && !object_is_array
 					let f_args = matchstr(function_lines, '\cfunction\(\s\+'.function_name_pattern.'\)\?\s*(\zs.\{-}\ze)')
@@ -1976,7 +1976,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 				" try to find the next non-comment or string ";" char
 				let start_col = match(line, '^\s*'.object.'\C\s*=\zs&\?\s\+\(clone\)\?\s*'.variable_name_pattern)
-				let filelines = reverse(lines)
+				let filelines = reverse(copy(lines))
 				let [pos, char] = s:getNextCharWithPos(filelines, [a:start_line - i - 1, start_col])
 				let chars_read = 1
 				let last_pos = pos
