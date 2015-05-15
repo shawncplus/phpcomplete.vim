@@ -1655,8 +1655,8 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 			" Get Structured information of all classes and subclasses including namespace and includes
 			" try to find the method's return type in docblock comment
 			for classstructure in classcontents
-				let doclock_target_pattern = 'function\s\+&\?'.method.'\|\(public\|private\|protected\|var\).\+\$'.method
-				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), doclock_target_pattern)
+				let docblock_target_pattern = 'function\s\+&\?'.method.'\|\(public\|private\|protected\|var\).\+\$'.method
+				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), docblock_target_pattern)
 				if doc_str != ''
 					break
 				endif
@@ -2482,8 +2482,11 @@ function! phpcomplete#GetDocBlock(sccontent, search) " {{{
 			" start backward serch for the comment block
 			while l != 0
 				let line = a:sccontent[l]
-				" if comment end found save line position and end search
-				if line =~? '^\s*\*/'
+				" if it's a one line docblock like comment and we can just return it right away
+				if line =~? '^\s*\/\*\*.\+\*\/\s*$'
+					return substitute(line, '\v^\s*(\/\*\*\s*)|(\s*\*\/)\s*$', '', 'g')
+				"... or if comment end found save line position and end search
+				elseif line =~? '^\s*\*/'
 					let comment_end = l
 					break
 				" ... or the line doesn't blank (only whitespace or nothing) end search
@@ -2505,6 +2508,7 @@ function! phpcomplete#GetDocBlock(sccontent, search) " {{{
 				endif
 				let l -= 1
 			endwhile
+
 			" no docblock comment start found
 			if comment_start == -1
 				return ''

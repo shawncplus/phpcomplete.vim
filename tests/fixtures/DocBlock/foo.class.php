@@ -45,4 +45,7 @@ class Foo {
      */
     public function minimally_commented() {
     }
+
+    /** @var Bar */
+    public $onliner;
 }
