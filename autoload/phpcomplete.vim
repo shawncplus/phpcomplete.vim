@@ -2671,7 +2671,15 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 			break
 		endif
 		let block_end_pos = searchpairpos('{', '', '}\|\%$', 'W', 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
-		silent! exec block_start_pos[0].','.block_end_pos[0].'d'
+
+		if block_end_pos != [0, 0]
+			" end of the block found, just delete it
+			silent! exec block_start_pos[0].','.block_end_pos[0].'d'
+		else
+			" block pair not found, use block start as beginning and the end
+			" of the buffer instead
+			silent! exec block_start_pos[0].',$d'
+		endif
 	endwhile
 	normal! G
 

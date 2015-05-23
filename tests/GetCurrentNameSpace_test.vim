@@ -91,4 +91,16 @@ fun! TestCase_should_pick_up_imports_regardeless_the_upperlower_case_of_keywords
                 \ imports)
 endf
 
+fun! TestCase_should_find_imports_when_called_with_non_balanced_braces()
+    call SetUp()
+
+    let file_lines = readfile(expand('%:p:h').'/'.'fixtures/GetCurrentNameSpace/code_blocks.php')[0:7]
+    call phpcomplete#LoadData()
+
+    let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
+    call VUAssertEquals({
+                \ 'SomeChildNS': {'name': 'SomeChildNS', 'namespace': 'SomeParentNS', 'kind': '', 'builtin': 0}
+                \}, imports)
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4
