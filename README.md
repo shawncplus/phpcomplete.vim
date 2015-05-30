@@ -139,4 +139,4 @@ If you want to disable an otherwise enabled one, use the ..._remove_... version 
     let g:phpcomplete_remove_function_extensions = ['xslt_php_4']
     let g:phpcomplete_remove_constant_extensions = ['xslt_php_4']
 
-For the available extension files, check the directories under `misc/`
+For the available extension files, check the [`misc/available_extensions`](https://github.com/shawncplus/phpcomplete.vim/blob/master/misc/available_extensions). file
