@@ -2330,6 +2330,15 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	else
 		let extends_class = ''
 	endif
+
+	" Catch implements
+	if content =~? 'implements'
+		let implements_string = matchstr(content, 'class\_s\+'.a:class_name.'\_.\+implements\_s\+\zs\('.class_name_pattern.'\(,\|\_s\)*\)\+\ze')
+		let implemented_interfaces = map(split(implements_string, '\(,\|\_s\)\+'), 'substitute(v:val, "\\_s\\+", "", "g")')
+	else
+		let implemented_interfaces = []
+	endif
+
 	call searchpair('{', '', '}', 'W', 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
 	let class_closing_bracket_line = line('.')
 	let classcontent = join(getline(cfline, class_closing_bracket_line), "\n")
@@ -2388,6 +2397,9 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	let all_extends = used_traits
 	if extends_class != ''
 		call add(all_extends, extends_class)
+	endif
+	if len(implemented_interfaces) > 0
+		call extend(all_extends, implemented_interfaces)
 	endif
 	if len(all_extends) > 0
 		for class in all_extends

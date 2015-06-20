@@ -181,4 +181,25 @@ fun! TestCase_returns_class_content_from_inside_the_same_file()
     silent! bw! %
 endf
 
+fun! TestCase_returns_contents_of_implemented_interfaces()
+    call SetUp()
+
+    exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassContents/interface_tags'
+    let path1 =  expand('%:p:h')."/".'fixtures/GetClassContents/interfaces.php'
+    let path2 =  expand('%:p:h')."/".'fixtures/GetClassContents/implements.php'
+    let expected  = join(readfile(path2)[2:3], "\n")."\n".join(readfile(path1)[2:3], "\n")
+    let expected2 = join(readfile(path2)[5:6], "\n")."\n".join(readfile(path1)[2:3], "\n")."\n".join(readfile(path1)[5:6], "\n")
+
+    below 1new
+    exe ":silent! edit ".path2
+
+    let contents = phpcomplete#GetClassContents(path2, 'X')
+    call VUAssertEquals(expected, contents)
+
+    let contents2 = phpcomplete#GetClassContents(path2, 'Y')
+    call VUAssertEquals(expected2, contents2)
+
+    silent! bw! %
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4
