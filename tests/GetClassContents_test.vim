@@ -3,6 +3,7 @@ fun! SetUp()
     let g:php_builtin_classes = {}
     let g:php_builtin_classnames = {}
     let g:php_builtin_interfacenames = {}
+    let g:php_builtin_interfaces = {}
 endf
 
 fun! TestCase_reads_in_the_class_from_the_list_of_lines()

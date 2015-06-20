@@ -2140,6 +2140,9 @@ function! phpcomplete#GetClassLocation(classname, namespace) " {{{
 	if has_key(g:php_builtin_classes, tolower(a:classname)) && (a:namespace == '' || a:namespace == '\')
 		return 'VIMPHP_BUILTINOBJECT'
 	endif
+	if has_key(g:php_builtin_interfaces, tolower(a:classname)) && (a:namespace == '' || a:namespace == '\')
+		return 'VIMPHP_BUILTINOBJECT'
+	endif
 
 	if a:namespace == '' || a:namespace == '\'
 		let search_namespace = '\'
@@ -2409,7 +2412,12 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 			endif
 			let classlocation = phpcomplete#GetClassLocation(class, namespace)
 			if classlocation == "VIMPHP_BUILTINOBJECT"
-				let result += [phpcomplete#GenerateBuiltinClassStub(g:php_builtin_classes[tolower(class)])]
+				if has_key(g:php_builtin_classes, tolower(class))
+					let result += [phpcomplete#GenerateBuiltinClassStub('class', g:php_builtin_classes[tolower(class)])]
+				endif
+				if has_key(g:php_builtin_interfaces, tolower(class))
+					let result += [phpcomplete#GenerateBuiltinClassStub('interface', g:php_builtin_interfaces[tolower(class)])]
+				endif
 			elseif classlocation != '' && filereadable(classlocation)
 				let full_file_path = fnamemodify(classlocation, ':p')
 				let result += phpcomplete#GetClassContentsStructure(full_file_path, readfile(full_file_path), class)
@@ -2434,43 +2442,53 @@ function! phpcomplete#GetClassContents(classlocation, class_name) " {{{
 endfunction
 " }}}
 
-function! phpcomplete#GenerateBuiltinClassStub(class_info) " {{{
-	let re = 'class '.a:class_info['name']." {"
-	for [name, initializer] in items(a:class_info.constants)
-		let re .= "\n\tconst ".name." = ".initializer.";"
-	endfor
-	for [name, info] in items(a:class_info.properties)
-		let re .= "\n\t// @var $".name." ".info.type
-		let re .= "\n\tpublic $".name.";"
-	endfor
-	for [name, info] in items(a:class_info.static_properties)
-		let re .= "\n\t// @var ".name." ".info.type
-		let re .= "\n\tpublic static ".name." = ".info.initializer.";"
-	endfor
-	for [name, info] in items(a:class_info.methods)
-		if name =~ '^__'
-			continue
-		endif
-		let re .= "\n\t/**"
-		let re .= "\n\t * ".name
-		let re .= "\n\t *"
-		let re .= "\n\t * @return ".info.return_type
-		let re .= "\n\t */"
-		let re .= "\n\tpublic function ".name."(".info.signature."){"
-		let re .= "\n\t}"
-	endfor
-	for [name, info] in items(a:class_info.static_methods)
-		let re .= "\n\t/**"
-		let re .= "\n\t * ".name
-		let re .= "\n\t *"
-		let re .= "\n\t * @return ".info.return_type
-		let re .= "\n\t */"
-		let re .= "\n\tpublic static function ".name."(".info.signature."){"
-		let re .= "\n\t}"
-	endfor
+function! phpcomplete#GenerateBuiltinClassStub(type, class_info) " {{{
+	let re = a:type.' '.a:class_info['name']." {"
+	if has_key(a:class_info, 'constants')
+		for [name, initializer] in items(a:class_info.constants)
+			let re .= "\n\tconst ".name." = ".initializer.";"
+		endfor
+	endif
+	if has_key(a:class_info, 'properties')
+		for [name, info] in items(a:class_info.properties)
+			let re .= "\n\t// @var $".name." ".info.type
+			let re .= "\n\tpublic $".name.";"
+		endfor
+	endif
+	if has_key(a:class_info, 'static_properties')
+		for [name, info] in items(a:class_info.static_properties)
+			let re .= "\n\t// @var ".name." ".info.type
+			let re .= "\n\tpublic static ".name." = ".info.initializer.";"
+		endfor
+	endif
+	if has_key(a:class_info, 'methods')
+		for [name, info] in items(a:class_info.methods)
+			if name =~ '^__'
+				continue
+			endif
+			let re .= "\n\t/**"
+			let re .= "\n\t * ".name
+			let re .= "\n\t *"
+			let re .= "\n\t * @return ".info.return_type
+			let re .= "\n\t */"
+			let re .= "\n\tpublic function ".name."(".info.signature."){"
+			let re .= "\n\t}"
+		endfor
+	endif
+	if has_key(a:class_info, 'static_methods')
+		for [name, info] in items(a:class_info.static_methods)
+			let re .= "\n\t/**"
+			let re .= "\n\t * ".name
+			let re .= "\n\t *"
+			let re .= "\n\t * @return ".info.return_type
+			let re .= "\n\t */"
+			let re .= "\n\tpublic static function ".name."(".info.signature."){"
+			let re .= "\n\t}"
+		endfor
+	endif
 	let re .= "\n}"
 
-	return { 'class': a:class_info['name'],
+	return { a:type : a:class_info['name'],
 				\ 'content': re,
 				\ 'namespace': '',
 				\ 'imports': {},

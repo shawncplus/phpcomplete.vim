@@ -2,6 +2,8 @@ fun! SetUp()
     " disable builtin information
     let g:php_builtin_classnames = {}
     let g:php_builtin_classes = {}
+    let g:php_builtin_interfaces = {}
+    let g:php_builtin_interfacenames = {}
     " disable tag files
     exe ':set tags='
 endf

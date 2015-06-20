@@ -1,4 +1,13 @@
+fun! SetUp()
+    let g:php_builtin_classes = {}
+    let g:php_builtin_classnames = {}
+    let g:php_builtin_interfacenames = {}
+    let g:php_builtin_interfaces = {}
+endf
+
 fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo.class.php"
     below 1new
     exe ":silent! edit ".path
@@ -34,6 +43,8 @@ fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
 endf
 
 fun! TestCase_returns_empty_when_sees_curlyclose_on_line_start()
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_outside.class.php"
     below 1new
     exe ":silent! edit ".path
@@ -50,6 +61,8 @@ fun! TestCase_returns_empty_when_sees_curlyclose_on_line_start()
 endf
 
 fun! TestCase_finds_abstract_classes()
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_abstract.class.php"
     below 1new
     exe ":silent! edit ".path
@@ -82,6 +95,8 @@ fun! TestCase_finds_abstract_classes()
 endf
 
 fun! TestCase_finds_new_keyword_instantiations_in_parentheses_from_php5_4()
+    call SetUp()
+
     let classname = phpcomplete#GetClassName(1, '$a = (new FooClass)->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
@@ -93,6 +108,8 @@ fun! TestCase_finds_new_keyword_instantiations_in_parentheses_from_php5_4()
 endf
 
 fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/var_comment_mark.php"
     below 1new
     exe ":silent! edit ".path
@@ -144,6 +161,8 @@ fun! TestCase_finds_variables_marked_with_AT_VAR_comments()
 endf
 
 fun! TestCase_finds_classes_from_variable_equals_new_class_lines()
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_equals_new_foo.php"
     below 1new
     exe ":silent! edit ".path
@@ -168,6 +187,8 @@ fun! TestCase_finds_classes_from_variable_equals_new_class_lines()
 endf
 
 fun! TestCase_finds_common_singleton_getInstance_calls()
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/singleton_getinstance.php"
     below 1new
     exe ":silent! edit ".path
@@ -192,6 +213,8 @@ fun! TestCase_finds_common_singleton_getInstance_calls()
 endf
 
 fun! TestCase_returns_return_type_of_built_in_objects_static_methods()
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/builtin_static_return_type.php"
     below 1new
     exe ":silent! edit ".path
@@ -216,6 +239,8 @@ fun! TestCase_returns_return_type_of_built_in_objects_static_methods()
 endf
 
 fun! TestCase_returns_class_from_static_method_call()
+    call SetUp()
+
     let classname = phpcomplete#GetClassName(1, 'FooClass::', '\', {})
     call VUAssertEquals('FooClass', classname)
 
@@ -227,6 +252,8 @@ fun! TestCase_returns_class_from_static_method_call()
 endf
 
 fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_cmd()
+    call SetUp()
+
     " see TAGS file in the tests/fixtures/GetClassName directory
     exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassName/TAGS'
     " enable variable search in tags
@@ -248,6 +275,8 @@ fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_
 endf
 
 fun! TestCase_extract_typehint_from_function_calls()
+    call SetUp()
+
     call phpcomplete#LoadData()
     let path = expand('%:p:h')."/"."fixtures/GetClassName/typehinted_functions.php"
     below 1new
@@ -309,6 +338,8 @@ fun! TestCase_extract_typehint_from_function_calls()
 endf
 
 fun! TestCase_extract_parameter_type_from_docblock()
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/function_docblock.php"
     below 1new
     exe ":silent! edit ".path
@@ -337,6 +368,8 @@ fun! TestCase_extract_parameter_type_from_docblock()
 endf
 
 fun! TestCase_returns_static_function_calls_return_type()
+    call SetUp()
+
     exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassName/static_docblock_return_tags'
     let path = expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_return.php'
     below 1new
@@ -350,9 +383,9 @@ fun! TestCase_returns_static_function_calls_return_type()
 endf
 
 fun! TestCase_returns_static_function_calls_retun_type_with_namespaces()
+    call SetUp()
+
     let imports = {'P':{'name': 'Foo\Page', 'builtin': 0, 'kind': 'c'}, 'RenamedFoo':{'name': 'Foo', 'kind': 'n', 'builtin': 0, }}
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
     exe 'set tags='.expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_return_tags'
     let path = expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_namespaced.php'
     below 1new
@@ -390,8 +423,7 @@ fun! TestCase_returns_static_function_calls_retun_type_with_namespaces()
 endf
 
 fun! TestCase_resolves_call_chains_return_type_with_this()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
 
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_method_chains.php"
     below 1new
@@ -413,8 +445,7 @@ fun! TestCase_resolves_call_chains_return_type_with_this()
 endf
 
 fun! TestCase_resolves_call_chains_return_type_with_tags()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
 
     exe 'set tags='.expand('%:p:h')."/".'fixtures/GetClassName/tags_inheritance'
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_inheritance_level1.php"
@@ -437,8 +468,7 @@ fun! TestCase_resolves_call_chains_return_type_with_tags()
 endf
 
 fun! TestCase_resolves_call_chains_return_type_with_php5_4_new()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
 
     let path = expand('%:p:h')."/"."fixtures/GetClassName/foo_new_oneline_chain.php"
 
@@ -453,8 +483,7 @@ fun! TestCase_resolves_call_chains_return_type_with_php5_4_new()
 endf
 
 fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detectable()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
 
     let path = expand('%:p:h')."/"."fixtures/GetClassName/call_chains.php"
 
@@ -691,8 +720,8 @@ fun! TestCase_function_invocation_return_type()
 endf
 
 fun! TestCase_resolves_self_this_static_in_return_docblock()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/self_return_type.php"
     below 1new
     exe ":silent! edit ".path
@@ -714,8 +743,8 @@ fun! TestCase_resolves_self_this_static_in_return_docblock()
 endf
 
 fun! TestCase_resolves_self_this_static_in_return_docblock_in_array_situation()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/self_return_type_array.php"
     below 1new
     exe ":silent! edit ".path
@@ -738,8 +767,8 @@ endf
 
 " fails with the dist version
 fun! TestCase_resolves_classnames_with_multiple_methods_recursively()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/multi_hoops.php"
     below 1new
     exe ":silent! edit ".path
@@ -753,8 +782,8 @@ fun! TestCase_resolves_classnames_with_multiple_methods_recursively()
 endf
 
 fun! TestCase_resolves_classnames_with_multiple_methods_recursively_even_with_extra_whitespace()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/multi_hoops_extra_whitespace.php"
     below 1new
     exe ":silent! edit ".path
@@ -768,8 +797,8 @@ fun! TestCase_resolves_classnames_with_multiple_methods_recursively_even_with_ex
 endf
 
 fun! TestCase_resolves_classnames_from_cloned_variables()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/clone.php"
     below 1new
     exe ":silent! edit ".path
@@ -783,8 +812,8 @@ fun! TestCase_resolves_classnames_from_cloned_variables()
 endf
 
 fun! TestCase_should_not_loop_forever_around_stuff_having_the_word_class_class_in_them()
-    let g:php_builtin_classes = {}
-    let g:php_builtin_classnames = {}
+    call SetUp()
+
     let path = expand('%:p:h')."/"."fixtures/GetClassName/stuff_with_the_word_class_in_them.php"
     below 1new
     exe ":silent! edit ".path
