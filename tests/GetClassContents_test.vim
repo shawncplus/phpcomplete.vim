@@ -203,4 +203,21 @@ fun! TestCase_returns_contents_of_implemented_interfaces()
     silent! bw! %
 endf
 
+fun! TestCase_returns_the_contents_of_extended_interfaces()
+    call SetUp()
+
+    exe 'set tags='
+    let path = expand('%:p:h')."/".'fixtures/GetClassContents/interfaces.php'
+
+    below 1new
+    exe ":silent! edit ".path
+
+    let contents = phpcomplete#GetClassContentsStructure(path, readfile(path), 'FooFoo2')
+    call VUAssertEquals('FooFoo2', contents[0].class)
+    call VUAssertEquals('Foo',     contents[1].class)
+    call VUAssertEquals('Foo2',    contents[2].class)
+
+    silent! bw! %
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

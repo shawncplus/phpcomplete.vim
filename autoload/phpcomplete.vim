@@ -2329,9 +2329,10 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	let content = join(getline(cfline, endline), "\n")
 	" Catch extends
 	if content =~? 'extends'
-		let extends_class = matchstr(content, 'class\_s\+'.a:class_name.'\_s\+extends\_s\+\zs'.class_name_pattern.'\ze')
+		let extends_string = matchstr(content, '\(class\|interface\)\_s\+'.a:class_name.'\_.\+extends\_s\+\zs\('.class_name_pattern.'\(,\|\_s\)*\)\+\ze\(extends\|{\)')
+		let extended_classes = map(split(extends_string, '\(,\|\_s\)\+'), 'substitute(v:val, "\\_s\\+", "", "g")')
 	else
-		let extends_class = ''
+		let extended_classes = ''
 	endif
 
 	" Catch implements
@@ -2398,8 +2399,8 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 				\ })
 
 	let all_extends = used_traits
-	if extends_class != ''
-		call add(all_extends, extends_class)
+	if len(extended_classes) > 0
+		call extend(all_extends, extended_classes)
 	endif
 	if len(implemented_interfaces) > 0
 		call extend(all_extends, implemented_interfaces)
