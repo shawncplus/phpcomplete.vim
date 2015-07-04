@@ -135,4 +135,14 @@ fun! TestCase_returns_static_properties_with_only_a_dollarsign_base()
                 \ ret)
 endfun
 
+fun! TestCase_gets_functions_from_implemented_interfaces()
+    call SetUp()
+
+    let fixture_content = readfile(expand('%:p:h').'/'.'fixtures/CompleteUserClass/user_interface_implemented.php')[4:7]
+    let ret = phpcomplete#CompleteUserClass('$f->', '', fixture_content, 'public')
+    call VUAssertEquals([
+                \ {'word': 'bar(', 'info': 'bar($baz = 42)', 'menu': '$baz = 42)', 'kind': 'f'}],
+                \ ret)
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4
