@@ -2705,11 +2705,11 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 
 		if block_end_pos != [0, 0]
 			" end of the block found, just delete it
-			silent! exec block_start_pos[0].','.block_end_pos[0].'d'
+			silent! exec block_start_pos[0].','.block_end_pos[0].'d _'
 		else
 			" block pair not found, use block start as beginning and the end
 			" of the buffer instead
-			silent! exec block_start_pos[0].',$d'
+			silent! exec block_start_pos[0].',$d _'
 		endif
 	endwhile
 	normal! G
