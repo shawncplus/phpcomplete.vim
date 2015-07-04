@@ -1977,9 +1977,11 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				" try to find the next non-comment or string ";" char
 				let start_col = match(line, '^\s*'.object.'\C\s*=\zs&\?\s\+\(clone\)\?\s*'.variable_name_pattern)
 				let filelines = reverse(copy(lines))
-				let [pos, char] = s:getNextCharWithPos(filelines, [a:start_line - i - 1, start_col])
+				let [pos, char] = s:getNextCharWithPos(filelines, [len(filelines) - i, start_col])
 				let chars_read = 1
 				let last_pos = pos
+				" function_boundary == 0 if we are not in a function
+				let real_lines_offset = len(function_boundary) == 1 ? 1 : function_boundary[0][0]
 				" read while end of the file
 				while char != 'EOF' && chars_read < 1000
 					let last_pos = pos
@@ -1987,7 +1989,11 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					let chars_read += 1
 					" we got a candidate
 					if char == ';'
-						let synIDName = synIDattr(synID(pos[0] + 1, pos[1] + 1, 0), 'name')
+						" pos values is relative to the function's lines,
+						" line 0 need to be offsetted with the line number
+						" where te function was started to get the line number
+						" in real buffer terms
+						let synIDName = synIDattr(synID(real_lines_offset + pos[0], pos[1] + 1, 0), 'name')
 						" it's not a comment or string, end search
 						if synIDName !~? 'comment\|string'
 							break
@@ -1995,7 +2001,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					endif
 				endwhile
 
-				let prev_context = phpcomplete#GetCurrentInstruction(last_pos[0] + 1, last_pos[1], b:phpbegin)
+				let prev_context = phpcomplete#GetCurrentInstruction(real_lines_offset + last_pos[0], last_pos[1], b:phpbegin)
 				if prev_context == ''
 					" cannot get previous context give up
 					return
@@ -2015,13 +2021,14 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 
 			" assignment for the variable in question with a function on the right hand side
 			if line =~# '^\s*'.object.'\s*=&\?\s*'.function_invocation_pattern
-
 				" try to find the next non-comment or string ";" char
 				let start_col = match(line, '\C^\s*'.object.'\s*=\zs&\?\s*'.function_invocation_pattern)
-				let filelines = reverse(lines)
-				let [pos, char] = s:getNextCharWithPos(filelines, [a:start_line - i - 1, start_col])
+				let filelines = reverse(copy(lines))
+				let [pos, char] = s:getNextCharWithPos(filelines, [len(filelines) - i, start_col])
 				let chars_read = 1
 				let last_pos = pos
+				" function_boundary == 0 if we are not in a function
+				let real_lines_offset = len(function_boundary) == 1 ? 1 : function_boundary[0][0]
 				" read while end of the file
 				while char != 'EOF' && chars_read < 1000
 					let last_pos = pos
@@ -2029,7 +2036,11 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					let chars_read += 1
 					" we got a candidate
 					if char == ';'
-						let synIDName = synIDattr(synID(pos[0] + 1, pos[1] + 1, 0), 'name')
+						" pos values is relative to the function's lines,
+						" line 0 need to be offsetted with the line number
+						" where te function was started to get the line number
+						" in real buffer terms
+						let synIDName = synIDattr(synID(real_lines_offset + pos[0], pos[1] + 1, 0), 'name')
 						" it's not a comment or string, end search
 						if synIDName !~? 'comment\|string'
 							break
@@ -2037,7 +2048,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					endif
 				endwhile
 
-				let prev_context = phpcomplete#GetCurrentInstruction(last_pos[0] + 1, last_pos[1], b:phpbegin)
+				let prev_context = phpcomplete#GetCurrentInstruction(real_lines_offset + last_pos[0], last_pos[1], b:phpbegin)
 				if prev_context == ''
 					" cannot get previous context give up
 					return

@@ -3,6 +3,7 @@ fun! SetUp()
     let g:php_builtin_classnames = {}
     let g:php_builtin_interfacenames = {}
     let g:php_builtin_interfaces = {}
+    let g:php_builtin_functions = {}
 endf
 
 fun! TestCase_extract_class_from_the_same_file_when_line_referes_to_this()
@@ -831,8 +832,31 @@ fun! TestCase_should_not_loop_forever_around_stuff_having_the_word_class_class_i
     let classname = phpcomplete#GetClassName(15, 'parent::', '', {})
     call VUAssertEquals('DateTime', classname)
 
-    silent!
-    bw! %
+    silent! bw! %
+endf
+
+
+fun! TestCase_resolves_inside_a_function_body()
+    call SetUp()
+
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/completion_in_function_insides.php"
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':11'
+    let classname = phpcomplete#GetClassName(11, '$d->', '', {})
+    call VUAssertEquals('DateTime', classname) " the result in itself is wrong, the plugin picks up the class word inside of a string
+
+    exe ':20'
+    let classname = phpcomplete#GetClassName(20, '$d->', '', {})
+    call VUAssertEquals('DateTime', classname) " the result in itself is wrong, the plugin picks up the class word inside of a string
+
+    exe ':25'
+    let classname = phpcomplete#GetClassName(25, '$d->', '', {})
+    call VUAssertEquals('DateTime', classname) " the result in itself is wrong, the plugin picks up the class word inside of a string
+
+    silent! bw! %
 endf
 
 " vim: foldmethod=marker:expandtab:ts=4:sts=4
