@@ -5,3 +5,4 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
 foo_only_in_tags	irrelevant.php	/^$foo_only_in_tags = new FooClass;$/;"	v
+namespaced_foo_only_in_tags	irrelevant.php	/^$namespaced_foo_only_in_tags = new Test\\FooClass;$/;"	v

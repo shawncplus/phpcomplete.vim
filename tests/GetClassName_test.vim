@@ -268,8 +268,12 @@ fun! TestCase_returns_class_from_tags_with_tag_of_v_kind_and_a_new_equals_class_
     let classname = phpcomplete#GetClassName(3, '$foo_only_in_tags->', '\', {})
     call VUAssertEquals('FooClass', classname)
 
+    exe ':4'
+    let classname = phpcomplete#GetClassName(4, '$namespaced_foo_only_in_tags->', '\', {})
+    call VUAssertEquals('Test\FooClass', classname)
+
     " TODO
-    " exe ':5'
+    " exe ':6'
     " let classname = phpcomplete#GetClassName('$foo_only_in_tags::')
     " call VUAssertEquals('FooClass', classname)
     silent! bw! %

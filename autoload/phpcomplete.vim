@@ -2137,6 +2137,8 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				for tag in tags
 					if tag.kind ==? 'v' && tag.cmd =~? '=\s*new\s\+\zs'.class_name_pattern.'\ze'
 						let classname = matchstr(tag.cmd, '=\s*new\s\+\zs'.class_name_pattern.'\ze')
+						" unescape the classname, it would have "\" doubled since it is an ex command
+						let classname = substitute(classname, '\\\(\_.\)', '\1', 'g')
 						return classname
 					endif
 				endfor
