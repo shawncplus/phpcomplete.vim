@@ -1830,6 +1830,9 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 	elseif get(methodstack, 0) =~# function_invocation_pattern
 		let function_name = matchstr(methodstack[0], '^\s*\zs'.function_name_pattern)
 		let function_file = phpcomplete#GetFunctionLocation(function_name, a:current_namespace)
+		if function_file == ''
+			let function_file = phpcomplete#GetFunctionLocation(function_name, '\')
+		endif
 
 		if function_file == 'VIMPHP_BUILTINFUNCTION'
 			" built in function, grab the return type from the info string
@@ -1845,7 +1848,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				let [class_candidate_namespace, function_imports] = phpcomplete#GetCurrentNameSpace(file_lines)
 				" try to expand the classname of the returned type with the context got from the function's source file
 
-				let [classname_candidate, unused] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, function_imports)
+				let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, function_imports)
 			endif
 		endif
 		if classname_candidate != ''
@@ -2059,6 +2062,9 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 				let [function_name, function_namespace] = phpcomplete#ExpandClassName(function_name, a:current_namespace, a:imports)
 
 				let function_file = phpcomplete#GetFunctionLocation(function_name, function_namespace)
+				if function_file == ''
+					let function_file = phpcomplete#GetFunctionLocation(function_name, '\')
+				endif
 
 				if function_file == 'VIMPHP_BUILTINFUNCTION'
 					" built in function, grab the return type from the info string
@@ -2074,7 +2080,7 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 						let classname_candidate = docblock.return.type
 						let [class_candidate_namespace, function_imports] = phpcomplete#GetCurrentNameSpace(file_lines)
 						" try to expand the classname of the returned type with the context got from the function's source file
-						let [classname_candidate, unused] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, function_imports)
+						let [classname_candidate, class_candidate_namespace] = phpcomplete#ExpandClassName(classname_candidate, class_candidate_namespace, function_imports)
 						break
 					endif
 				endif
@@ -2780,6 +2786,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 						let	name = matchstr(name, '\\\zs[^\\]\+\ze$')
 					endif
 				endif
+
 				" leading slash is not required use imports are always absolute
 				let imports[name] = {'name': object, 'kind': ''}
 			endfor
@@ -2815,6 +2822,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 								elseif !exists('no_namespace_candidate')
 									" save the first namespacless match to be used if no better
 									" candidate found later on
+									let tag.namespace = namespace_for_classes
 									let no_namespace_candidate = tag
 								endif
 							endif

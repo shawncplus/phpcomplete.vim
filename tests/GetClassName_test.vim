@@ -678,6 +678,10 @@ fun! TestCase_function_return_type()
     let classname = phpcomplete#GetClassName(32, '$foo2->', 'Foo', {'F': {'cmd': '/^class FooClass {$/', 'static': 0, 'name': 'FooClass', 'namespace': 'Foo', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/GetClassName/function_return_type.php'}})
     call VUAssertEquals('Foo\FooClass', classname)
 
+    exe ':35'
+    let classname = phpcomplete#GetClassName(35, '$foo3->', 'Foo', {'F': {'cmd': '/^class FooClass {$/', 'static': 0, 'name': 'FooClass', 'namespace': 'Foo', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/GetClassName/function_return_type.php'}})
+    call VUAssertEquals('Foo\FooClass', classname)
+
     " the same should work with old style tags too, namespaces are extracted
     " from the source
     exe 'set tags='.old_style_tags_path
@@ -705,24 +709,30 @@ fun! TestCase_function_invocation_return_type()
     exe 'let b:phpbegin = [0, 0]'
 
     " built-in function with class return type
-    exe ':35'
-    let classname = phpcomplete#GetClassName(35, 'simplexml_load_string()->', 'Foo', {})
+    exe ':38'
+    let classname = phpcomplete#GetClassName(38, 'simplexml_load_string()->', 'Foo', {})
     call VUAssertEquals('SimpleXMLElement', classname)
 
-    exe ':38'
-    let classname = phpcomplete#GetClassName(38, 'make_a_foo()->', 'Foo', {})
+    exe ':41'
+    let classname = phpcomplete#GetClassName(41, 'make_a_foo()->', 'Foo', {})
     call VUAssertEquals('Foo\FooClass', classname)
 
     " renamed imports need tags to locate the renamed class
     exe 'set tags='.tags_path
-    exe ':41'
-    let classname = phpcomplete#GetClassName(41, 'make_a_renamed_foo()->', 'Foo', {})
+    exe ':44'
+    let classname = phpcomplete#GetClassName(44, 'make_a_renamed_foo()->', 'Foo', {})
+    call VUAssertEquals('Foo\FooClass', classname)
+
+    " renamed imports need tags to locate the renamed class
+    exe 'set tags='.tags_path
+    exe ':47'
+    let classname = phpcomplete#GetClassName(47, 'no_ns_make_a_foo()->', 'Foo', {})
     call VUAssertEquals('Foo\FooClass', classname)
 
     " same import should work with old style tags too (namespace is ignored)
-    exe 'set tags='.old_style_tags_path
-    exe ':41'
-    let classname = phpcomplete#GetClassName(41, 'make_a_renamed_foo()->', 'Foo', {})
+    exe 'set tags='.tags_path
+    exe ':44'
+    let classname = phpcomplete#GetClassName(44, 'make_a_renamed_foo()->', 'Foo', {})
     call VUAssertEquals('Foo\FooClass', classname)
 
     silent! bw! %

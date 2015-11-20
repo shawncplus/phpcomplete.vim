@@ -10,3 +10,4 @@ foo	function_return_type.php	/^$foo = make_a_foo();$/;"	v
 foo2	function_return_type.php	/^$foo2 = make_a_renamed_foo();$/;"	v
 make_a_foo	function_return_type.php	/^function make_a_foo(){$/;"	f
 make_a_renamed_foo	function_return_type.php	/^function make_a_renamed_foo(){$/;"	f
+no_ns_make_a_foo	non_namespaced_function.php	/^function no_ns_make_a_foo(){ $/;"	f

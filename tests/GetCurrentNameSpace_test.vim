@@ -47,13 +47,14 @@ fun! TestCase_returns_imported_namespaces_and_classes_with_their_info_from_tags(
                 \ 'E': {'name': 'Exception', 'kind': 'c', 'builtin': 1}},
                 \ imports)
 
-    " with old style tags, no namespace matches will be returned and the first
-    " and the class tags are matched regardeless of their namespace while
+    " with old style tags, matching tags with no namespace matches will be returned
+    " matching is done regardeless of the namespace we are actually looking
+    " for however the desired namespace will be added to the tag
     " namespace import just not recognized with the kind 'n' and filename
     exe 'set tags='.expand('%:p:h')."/".'fixtures/common/old_style_namespaced_foo_tags'
     let [namespace, imports] = phpcomplete#GetCurrentNameSpace(file_lines)
     call VUAssertEquals({
-                \ 'Foo': {'cmd': '/^class Foo {$/', 'static': 0, 'name': 'Foo', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/common/fixtures/common/namespaced_foo.php'},
+                \ 'Foo': {'cmd': '/^class Foo {$/', 'static': 0, 'name': 'Foo', 'namespace': 'NS1', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/common/fixtures/common/namespaced_foo.php'},
                 \ 'ArrayAccess': {'name': 'ArrayAccess', 'kind': 'i', 'builtin': 1},
                 \ 'AO': {'name': 'ArrayObject', 'kind': 'c', 'builtin': 1},
                 \ 'DateTimeZone': {'name': 'DateTimeZone', 'kind': 'c', 'builtin': 1},

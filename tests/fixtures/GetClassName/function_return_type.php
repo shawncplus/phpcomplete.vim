@@ -31,6 +31,9 @@ $foo->
 $foo2 = make_a_renamed_foo();
 $foo2->
 
+$foo3 = no_ns_make_a_foo();
+$foo3->
+
 ;
 simplexml_load_string()->
 
@@ -39,4 +42,7 @@ make_a_foo()->
 
 ;
 make_a_renamed_foo()->
+
+;
+no_ns_make_a_foo()->
 

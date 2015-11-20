@@ -11,3 +11,4 @@ foo	function_return_type.php	/^}$/;"	v	namespace:Foo
 foo2	function_return_type.php	/^$foo->$/;"	v	namespace:Foo
 make_a_foo	function_return_type.php	/^function make_a_foo(){$/;"	f	namespace:Foo	signature:()
 make_a_renamed_foo	function_return_type.php	/^function make_a_renamed_foo(){$/;"	f	namespace:Foo	signature:()
+no_ns_make_a_foo	non_namespaced_function.php	/^function no_ns_make_a_foo(){ $/;"	f	signature:()
