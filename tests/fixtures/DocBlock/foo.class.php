@@ -13,6 +13,11 @@ class Foo {
     public $foo;
 
     /**
+     * @type Bar
+     */
+    public $bar;
+
+    /**
      * description, here i come
      *
      * @var string

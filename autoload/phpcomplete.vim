@@ -2580,7 +2580,7 @@ function! phpcomplete#ParseDocBlock(docblock) " {{{
 		\ 'var': {},
 		\ }
 
-	let res.description = substitute(matchstr(a:docblock, '\zs\_.\{-}\ze\(@var\|@param\|@return\|$\)'), '\(^\_s*\|\_s*$\)', '', 'g')
+	let res.description = substitute(matchstr(a:docblock, '\zs\_.\{-}\ze\(@type\|@var\|@param\|@return\|$\)'), '\(^\_s*\|\_s*$\)', '', 'g')
 	let docblock_lines = split(a:docblock, "\n")
 
 	let param_lines = filter(copy(docblock_lines), 'v:val =~? "^@param"')
@@ -2615,13 +2615,13 @@ function! phpcomplete#ParseDocBlock(docblock) " {{{
 		endif
 	endfor
 
-	let var_line = filter(copy(docblock_lines), 'v:val =~? "^@var"')
+	let var_line = filter(copy(docblock_lines), 'v:val =~? "^\\(@var\\|@type\\)"')
 	if len(var_line) > 0
-		let var_parts = matchlist(var_line[0], '@var\s\+\(\S\+\)\s*\(.*\)')
+		let var_parts = matchlist(var_line[0], '\(@var\|@type\)\s\+\(\S\+\)\s*\(.*\)')
 		let res['var'] = {
 					\ 'line': var_parts[0],
-					\ 'type': phpcomplete#GetTypeFromDocBlockParam(get(var_parts, 1, '')),
-					\ 'description': get(var_parts, 2, '')}
+					\ 'type': phpcomplete#GetTypeFromDocBlockParam(get(var_parts, 2, '')),
+					\ 'description': get(var_parts, 3, '')}
 	endif
 
 	return res

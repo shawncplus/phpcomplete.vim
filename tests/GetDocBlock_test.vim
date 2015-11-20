@@ -25,6 +25,11 @@ fun! TestCase_returns_the_comment_block_without_last_and_first_line_and_without_
     call VUAssertEquals(
                 \ "@var Foo",
                 \ ret)
+
+    let ret = phpcomplete#GetDocBlock(g:fixture_class_content, '    public $bar;')
+    call VUAssertEquals(
+                \ "@type Bar",
+                \ ret)
 endf
 
 fun! TestCase_recognizes_a_oneline_comment_block_for_properties()
