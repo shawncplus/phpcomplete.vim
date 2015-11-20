@@ -29,9 +29,9 @@ class Baz3 {
 }
 
 $b3 = new Baz3;
-$selfs = $b3->return_self();
-$thises = $b3->return_this();
-$statics = $b3->return_static();
+$selfs = $b3->return_self_array();
+$thises = $b3->return_this_array();
+$statics = $b3->return_static_array();
 
 
 foreach ($selfs as $self) {

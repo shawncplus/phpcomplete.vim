@@ -107,3 +107,26 @@ $bar2->
 $foo3 = new Foo;
 $bar3 = $foo3->return_bar();
 $bar3->return_foo()->
+
+// --
+
+class SimilarNames {
+	/**
+	 * return_self
+	 *
+	 * @return self
+	 */
+	public function return_self() {
+	}
+	/**
+	 * return_
+	 *
+	 * @return Foo
+	 */
+	public function return_() {
+
+	}
+}
+
+$foo3 = new SimilarNames;
+$foo3->return_self()->return_()->
