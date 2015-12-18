@@ -1655,7 +1655,7 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 			" Get Structured information of all classes and subclasses including namespace and includes
 			" try to find the method's return type in docblock comment
 			for classstructure in classcontents
-				let docblock_target_pattern = 'function\s\+&\?'.method.'\>\|\(public\|private\|protected\|var\).\+\$'.method.'\>'
+				let docblock_target_pattern = 'function\s\+&\?'.method.'\>\|\(public\|private\|protected\|var\).\+\$'.method.'\>\|@property.\+\$'.method.'\>'
 				let doc_str = phpcomplete#GetDocBlock(split(classstructure.content, '\n'), docblock_target_pattern)
 				if doc_str != ''
 					break
@@ -1663,8 +1663,17 @@ function! phpcomplete#GetCallChainReturnType(classname_candidate, class_candidat
 			endfor
 			if doc_str != ''
 				let docblock = phpcomplete#ParseDocBlock(doc_str)
-				if has_key(docblock.return, 'type') || has_key(docblock.var, 'type')
-					let type = has_key(docblock.return, 'type') ? docblock.return.type : docblock.var.type
+				if has_key(docblock.return, 'type') || has_key(docblock.var, 'type') || len(docblock.properties) > 0
+					let type = has_key(docblock.return, 'type') ? docblock.return.type : has_key(docblock.var, 'type') ? docblock.var.type : ''
+
+					if type == ''
+						for property in docblock.properties
+							if property.description =~? method
+								let type = property.type
+								break
+							endif
+						endfor
+					endif
 
 					" there's a namespace in the type, threat the type as FQCN
 					if type =~ '\\'
@@ -2364,6 +2373,19 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 
 	call searchpair('{', '', '}', 'W', 'synIDattr(synID(line("."), col("."), 0), "name") =~? "string\\|comment"')
 	let class_closing_bracket_line = line('.')
+
+	" Include class docblock
+	let doc_line = cfline - 1
+	if getline(doc_line) =~? '^\s*\*/'
+		while doc_line != 0
+			if getline(doc_line) =~? '^\s*/\*\*'
+				let cfline = doc_line
+				break
+			endif
+			let doc_line -= 1
+		endwhile
+	endif
+
 	let classcontent = join(getline(cfline, class_closing_bracket_line), "\n")
 
 	let used_traits = []
@@ -2528,7 +2550,18 @@ function! phpcomplete#GetDocBlock(sccontent, search) " {{{
 		let line = a:sccontent[i]
 		" search for a function declaration
 		if line =~? a:search
-			let l = i - 1
+			if line =~? '@property'
+				let doc_line = i
+				while doc_line != sccontent_len - 1
+					if a:sccontent[doc_line] =~? '^\s*\*/'
+						let l = doc_line
+						break
+					endif
+					let doc_line += 1
+				endwhile
+			else
+				let l = i - 1
+			endif
 			" start backward serch for the comment block
 			while l != 0
 				let line = a:sccontent[l]
@@ -2550,7 +2583,7 @@ function! phpcomplete#GetDocBlock(sccontent, search) " {{{
 				return ''
 			end
 
-			while l != 0
+			while l >= 0
 				let line = a:sccontent[l]
 				if line =~? '^\s*/\*\*'
 					let comment_start = l
@@ -2584,6 +2617,7 @@ function! phpcomplete#ParseDocBlock(docblock) " {{{
 		\ 'return': {},
 		\ 'throws': [],
 		\ 'var': {},
+		\ 'properties': [],
 		\ }
 
 	let res.description = substitute(matchstr(a:docblock, '\zs\_.\{-}\ze\(@type\|@var\|@param\|@return\|$\)'), '\(^\_s*\|\_s*$\)', '', 'g')
@@ -2629,6 +2663,17 @@ function! phpcomplete#ParseDocBlock(docblock) " {{{
 					\ 'type': phpcomplete#GetTypeFromDocBlockParam(get(var_parts, 2, '')),
 					\ 'description': get(var_parts, 3, '')}
 	endif
+
+	let property_lines = filter(copy(docblock_lines), 'v:val =~? "^@property"')
+	for property_line in property_lines
+		let parts = matchlist(property_line, '\(@property\)\s\+\(\S\+\)\s*\(.*\)')
+		if len(parts) > 0
+			call add(res.properties, {
+						\ 'line': parts[0],
+						\ 'type': phpcomplete#GetTypeFromDocBlockParam(get(parts, 2, '')),
+						\ 'description': get(parts, 3, '')})
+		endif
+	endfor
 
 	return res
 endfunction
