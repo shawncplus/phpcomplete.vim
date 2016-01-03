@@ -119,6 +119,7 @@ fun! TestCase_returns_types_for_properties_and_return_types_from_docblock_commen
 
     let ret = phpcomplete#CompleteUserClass('$u->', 'commented', g:commented_fixture_class_content, 'public')
     call VUAssertEquals([
+                \ {'word': 'commented_from_docblock', 'info': "Description:\n	Foo\n	\n	@property DateTime $commented_from_docblock\n", 'menu': '', 'kind': 'v'},
                 \ {'word': 'commented_method(', 'info': "commented_method($foo, $bar, $baz = '')\n\nReturn:\n\tstring: description of return\n", 'menu': "$foo, $bar, $baz = '') | string", 'kind': 'f'},
                 \ {'word': 'commented_property', 'info': "Type:\n\tFoo\n", 'menu': 'Foo', 'kind': 'v'}],
                 \ ret)

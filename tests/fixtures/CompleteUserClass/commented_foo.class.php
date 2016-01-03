@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Foo
+ *
+ * @property DateTime $commented_from_docblock
+ */
 class Foo {
 
     /**

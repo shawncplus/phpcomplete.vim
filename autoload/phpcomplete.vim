@@ -1272,7 +1272,7 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 		let required_modifiers += ['static']
 	endif
 	let all_variable = filter(deepcopy(a:sccontent),
-					\ 'v:val =~ "^\\s*\\(var\\s\\+\\|public\\s\\+\\|protected\\s\\+\\|private\\s\\+\\|final\\s\\+\\|abstract\\s\\+\\|static\\s\\+\\)\\+\\$"')
+					\ 'v:val =~ "\\(^\\s*\\(var\\s\\+\\|public\\s\\+\\|protected\\s\\+\\|private\\s\\+\\|final\\s\\+\\|abstract\\s\\+\\|static\\s\\+\\)\\+\\$\\|^\\s*\\(\\/\\|\\*\\)*\\s*@property\\s\\+\\S\\+\\s\\S\\{-}\\s*$\\)"')
 
 	let variables = []
 	for i in all_variable
