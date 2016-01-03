@@ -220,4 +220,20 @@ fun! TestCase_returns_the_contents_of_extended_interfaces()
     silent! bw! %
 endf
 
+fun! TestCase_returns_the_contents_of_extended_interfaces()
+    call SetUp()
+
+    exe 'set tags='
+    let path = expand('%:p:h')."/".'fixtures/GetClassContents/docblocked_foo.php'
+    let expected  = join(readfile(path)[2:], "\n")
+
+    below 1new
+    exe ":silent! edit ".path
+
+    let contents = phpcomplete#GetClassContentsStructure(path, readfile(path), 'DocBlockedFoo')
+    call VUAssertEquals(expected, contents[0].content, "Should read class contents with it's docblock")
+
+    silent! bw! %
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

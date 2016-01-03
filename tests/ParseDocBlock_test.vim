@@ -75,4 +75,11 @@ fun! TestCase_extracts_var_lines_with_type_and_description()
     call VUAssertEquals("", ret.var.description)
 endf
 
+fun! TestCase_extracts_AT_properties_from_docblock_of_a_class()
+    call SetUp()
+
+    let ret = phpcomplete#ParseDocBlock("Foo\n\n@property DateTime $baz Some comments here")
+    call VUAssertEquals([{'description': '$baz Some comments here', 'line': '@property DateTime $baz Some comments here', 'type': 'DateTime'}], ret.properties)
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

@@ -41,4 +41,13 @@ fun! TestCase_recognizes_a_oneline_comment_block_for_properties()
                 \ ret)
 endf
 
+fun! TestCase_retuns_docblock_for_the_class_itself()
+    call SetUp()
+
+    let ret = phpcomplete#GetDocBlock(g:fixture_class_content, 'class Foo')
+    call VUAssertEquals(
+                \ "Foo\n\n@property DateTime $baz",
+                \ ret)
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

@@ -2562,7 +2562,7 @@ function! phpcomplete#GetDocBlock(sccontent, search) " {{{
 			else
 				let l = i - 1
 			endif
-			" start backward serch for the comment block
+			" start backward search for the comment block
 			while l != 0
 				let line = a:sccontent[l]
 				" if it's a one line docblock like comment and we can just return it right away
