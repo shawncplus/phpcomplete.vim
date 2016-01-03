@@ -130,3 +130,16 @@ class SimilarNames {
 
 $foo3 = new SimilarNames;
 $foo3->return_self()->return_()->
+
+// ----
+
+/**
+ * CommentedFoo
+ *
+ * @property DateTime $docBlockProperty
+ */
+class CommentedFoo {
+
+}
+$commentedFoo = new CommentedFoo;
+$commentedFoo->docBlockProperty->

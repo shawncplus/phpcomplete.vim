@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Foo
+ *
+ * @property DateTime $baz
+ */
 class Foo {
 
     /**

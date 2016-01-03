@@ -527,6 +527,10 @@ fun! TestCase_resolves_call_chains_return_type_with_when_chain_head_class_detect
     let classname = phpcomplete#GetClassName(132, '$foo3->return_self()->return_()->', '\', {})
     call VUAssertEquals('Foo', classname)
 
+    exe ':145'
+    let classname = phpcomplete#GetClassName(145, '$commentedFoo->docBlockProperty->', '\', {})
+    call VUAssertEquals('DateTime', classname)
+
     silent! bw! %
 endf
 
