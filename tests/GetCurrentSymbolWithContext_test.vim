@@ -80,6 +80,14 @@ fun! TestCase_returns_current_symbol_with_the_current_namespace_and_imports()
     let res = phpcomplete#GetCurrentSymbolWithContext()
     call VUAssertEquals(['Foo2', 'new', 'NS2', {'RenamedFoo2': {'cmd': '/^class Foo2 {$/', 'static': 0, 'name': 'Foo2', 'namespace': 'NS2', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/GetCurrentSymbolWithContext/namespaced_foo2.php'}}], res)
 
+    call cursor(3, 10)
+    let res = phpcomplete#GetCurrentSymbolWithContext()
+    call VUAssertEquals(['Foo2', 'use NS2\', 'NS2', {'RenamedFoo2': {'cmd': '/^class Foo2 {$/', 'static': 0, 'name': 'Foo2', 'namespace': 'NS2', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/GetCurrentSymbolWithContext/namespaced_foo2.php'}}], res)
+
+    call cursor(3, 20)
+    let res = phpcomplete#GetCurrentSymbolWithContext()
+    call VUAssertEquals(['Foo2', 'use NS2\Foo2 as', 'NS2', {'RenamedFoo2': {'cmd': '/^class Foo2 {$/', 'static': 0, 'name': 'Foo2', 'namespace': 'NS2', 'kind': 'c', 'builtin': 0, 'filename': 'fixtures/GetCurrentSymbolWithContext/namespaced_foo2.php'}}], res)
+
     silent! bw! %
 endf
 

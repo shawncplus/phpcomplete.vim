@@ -1072,7 +1072,14 @@ function! phpcomplete#GetCurrentSymbolWithContext() " {{{
 	let context = substitute(current_instruction, '\s*[$a-zA-Z_0-9\x7f-\xff]*$', '', '')
 
 	let [current_namespace, current_imports] = phpcomplete#GetCurrentNameSpace(getline(0, line('.')))
-	let [symbol, symbol_namespace] = phpcomplete#ExpandClassName(word, current_namespace, current_imports)
+
+	" imports by definition always absolute so they don't need expanding with
+	" current namespace but with \ as if we are in the global namespace
+	if context =~? '^use\s\+'
+		let [symbol, symbol_namespace] = phpcomplete#ExpandClassName(word, '\', current_imports)
+	else
+		let [symbol, symbol_namespace] = phpcomplete#ExpandClassName(word, current_namespace, current_imports)
+	endif
 
 	return [symbol, context, symbol_namespace, current_imports]
 endfunction " }}}
@@ -1122,6 +1129,7 @@ function! phpcomplete#LocateSymbol(symbol, symbol_context, symbol_namespace, cur
 			endif
 		endif
 	else
+
 		" it could be a function
 		let function_file = phpcomplete#GetFunctionLocation(a:symbol, a:symbol_namespace)
 		if function_file != '' && filereadable(function_file)
