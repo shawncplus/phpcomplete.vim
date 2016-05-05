@@ -1946,9 +1946,10 @@ function! phpcomplete#GetClassName(start_line, context, current_namespace, impor
 					let sub_methodstack = phpcomplete#GetMethodStack(matchstr(line, '^\s*'.object.'\s*=&\?\s*\s\+\zs.*'))
 					let [classname_candidate, class_candidate_namespace] = phpcomplete#GetCallChainReturnType(
 						\ classname,
-						\ a:current_namespace,
+						\ namespace_for_class,
 						\ a:imports,
 						\ sub_methodstack)
+
 					return (class_candidate_namespace == '\' || class_candidate_namespace == '') ? classname_candidate : class_candidate_namespace.'\'.classname_candidate
 				endif
 			endif

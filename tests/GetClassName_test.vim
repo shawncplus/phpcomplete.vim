@@ -390,7 +390,7 @@ endf
 fun! TestCase_returns_static_function_calls_retun_type_with_namespaces()
     call SetUp()
 
-    let imports = {'P':{'name': 'Foo\Page', 'builtin': 0, 'kind': 'c'}, 'RenamedFoo':{'name': 'Foo', 'kind': 'n', 'builtin': 0, }}
+    let imports = {'P': {'name': 'Page', 'namespace': 'Foo', 'kind': 'c', 'builtin': 0}, 'RenamedFoo': {'name': 'Foo', 'kind': 'n', 'builtin': 0}}
     exe 'set tags='.expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_return_tags'
     let path = expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_namespaced.php'
     below 1new
@@ -422,6 +422,22 @@ fun! TestCase_returns_static_function_calls_retun_type_with_namespaces()
 
     exe ':50'
     let classname = phpcomplete#GetClassName(50, '$p->', 'Foo', imports)
+    call VUAssertEquals('Foo\Page', classname)
+
+    silent! bw! %
+endf
+
+fun! TestCase_returns_static_function_calls_retun_type_with_namespaces_from_the_global_scope()
+    call SetUp()
+
+    let imports = {'Page': {'name': 'Page', 'namespace': 'Foo', 'kind': 'c', 'builtin': 0}}
+    exe 'set tags='.expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_namespaced_tags'
+    let path = expand('%:p:h').'/'.'fixtures/GetClassName/static_docblock_namespaced_imported.php'
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':5'
+    let classname = phpcomplete#GetClassName(5, '$p->', '', imports)
     call VUAssertEquals('Foo\Page', classname)
 
     silent! bw! %
