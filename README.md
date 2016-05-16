@@ -42,9 +42,9 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
 
 ## ctags
 In order to support some php features introduced in PHP 5.3 you will have to use
-a ctags binary that can generate the appropriate tags files. At this moment there's no
-offical build of ctags that would do the job, so you will have to build one for yourself.<br>
-Check out the **[wiki page about the patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Patched-ctags)** for more information.
+a ctags binary that can generate the appropriate tags files. Most unix like systems 
+have a ctags version built in that's really outdated. For the best results use the
+[ctags.io](https://ctags.io/) version of the exuberant-ctags project.
 
 ## Options
 
