@@ -1444,6 +1444,14 @@ function! phpcomplete#GetTaglist(pattern) " {{{
 	endif
 
 	let tags = taglist(a:pattern)
+	for tag in tags
+		for prop in keys(tag)
+			if prop == 'cmd' || prop == 'static' || prop == 'kind' || prop == 'builtin'
+				continue
+			endif
+			let tag[prop] = substitute(tag[prop], '\\\\', '\\', 'g')
+		endfor
+	endfor
 	let s:cache_tags[a:pattern] = tags
 	let has_key = has_key(s:cache_tags, a:pattern)
 	let s:cache_tags_checksum = cache_checksum
