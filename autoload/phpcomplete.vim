@@ -279,6 +279,8 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 			" }}}
 		elseif context =~? 'implements'
 			return phpcomplete#CompleteClassName(a:base, ['i'], current_namespace, imports)
+		elseif context =~? 'instanceof'
+			return phpcomplete#CompleteClassName(a:base, ['c', 'n'], current_namespace, imports)
 		elseif context =~? 'extends\s\+.\+$' && a:base == ''
 			return ['implements']
 		elseif context =~? 'extends'
@@ -871,6 +873,8 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 
 	if kinds == ['c', 'i']
 		let filterstr = 'v:val =~? "\\(class\\|interface\\)\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*"'
+	elseif kinds == ['c', 'n']
+		let filterstr = 'v:val =~? "\\(class\\|namespace\\)\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*"'
 	elseif kinds == ['c']
 		let filterstr = 'v:val =~? "class\\s\\+[a-zA-Z_\\x7f-\\xff][a-zA-Z_0-9\\x7f-\\xff]*\\s*"'
 	elseif kinds == ['i']
