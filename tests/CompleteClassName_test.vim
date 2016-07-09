@@ -19,9 +19,9 @@ fun! TestCase_complete_classes_from_current_file()
 
     let res = phpcomplete#CompleteClassName('', ['c', 'i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'BarClass', 'kind': 'c'},
-                \ {'word': 'BarInterface', 'kind': 'i'},
-                \ {'word': 'FooClass', 'kind': 'c'}],
+                \ {'word': 'BarClass', 'file': path, 'kind': 'c'},
+                \ {'word': 'BarInterface', 'file': path, 'kind': 'i'},
+                \ {'word': 'FooClass', 'file': path, 'kind': 'c'}],
                 \ res)
     silent! bw! %
 endf
@@ -41,37 +41,37 @@ fun! TestCase_complete_classes_from_tags()
 
     let res = phpcomplete#CompleteClassName('LowerCase', ['c', 'i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'lowercasetagclass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],
+                \ {'word': 'lowercasetagclass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'file': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],
                 \ res, "should match tag classes case insensitive")
 
     let res = phpcomplete#CompleteClassName('T', ['c', 'i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'TagClass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],
+                \ {'word': 'TagClass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'file': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],
                 \ res)
     let res = phpcomplete#CompleteClassName('B', ['i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'BarInterface', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'i'}],
+                \ {'word': 'BarInterface', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'file': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'i'}],
                 \ res, "should find only interfaces")
     let res = phpcomplete#CompleteClassName('B', ['c', 'i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'BarClass', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'c'},
-                \ {'word': 'BarInterface', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'i'}],
+                \ {'word': 'BarClass', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'file': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'c'},
+                \ {'word': 'BarInterface', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'file': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'i'}],
                 \ res, "should find both classes and interfaces in tags")
 
     " should work just the same with old ctags generated tag files
     exe ':set tags='.old_style_tags_path
     let res = phpcomplete#CompleteClassName('T', ['c', 'i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'TagClass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],
+                \ {'word': 'TagClass', 'menu': 'fixtures/CompleteClassName/tagclass.php', 'file': 'fixtures/CompleteClassName/tagclass.php', 'info': 'fixtures/CompleteClassName/tagclass.php', 'kind': 'c'}],
                 \ res)
     let res = phpcomplete#CompleteClassName('B', ['i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'BarInterface', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'i'}],
+                \ {'word': 'BarInterface', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'file': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'i'}],
                 \ res, "should find only interfaces")
     let res = phpcomplete#CompleteClassName('B', ['c', 'i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'BarClass', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'c'},
-                \ {'word': 'BarInterface', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'i'}],
+                \ {'word': 'BarClass', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'file': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'c'},
+                \ {'word': 'BarInterface', 'menu': 'fixtures/CompleteClassName/foo.class.php', 'file': 'fixtures/CompleteClassName/foo.class.php', 'info': 'fixtures/CompleteClassName/foo.class.php', 'kind': 'i'}],
                 \ res, "should find both classes and interfaces in tags")
 
     silent! bw! %
@@ -97,13 +97,13 @@ fun! TestCase_complete_classes_from_built_in_classes()
 
     let res = phpcomplete#CompleteClassName('', ['c'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'DateTime', 'menu': '', 'kind': 'c'}],
+                \ {'word': 'DateTime', 'menu': '', 'file': '', 'kind': 'c'}],
                 \ res)
 
     " user typed \ and hits <c-x><c-o> in a file starting with "namespace NS1;"
     let res = phpcomplete#CompleteClassName('\', ['c'], 'NS1', {})
     call VUAssertEquals([
-                \ {'word': '\DateTime', 'menu': '', 'kind': 'c'}],
+                \ {'word': '\DateTime', 'menu': '', 'file': '', 'kind': 'c'}],
                 \ res)
 
 
@@ -116,13 +116,13 @@ fun! TestCase_complete_classes_from_built_in_classes()
 
     let res = phpcomplete#CompleteClassName('T', ['i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'Traversable', 'menu': '', 'kind': 'i'}],
+                \ {'word': 'Traversable', 'menu': '', 'file': '', 'kind': 'i'}],
                 \ res)
 
     " user typed \T and hits <c-x><c-o> in a file starting with "namespace NS1;"
     let res = phpcomplete#CompleteClassName('\T', ['i'], 'NS1', {})
     call VUAssertEquals([
-                \ {'word': '\Traversable', 'menu': '', 'kind': 'i'}],
+                \ {'word': '\Traversable', 'menu': '', 'file': '', 'kind': 'i'}],
                 \ res)
 
     let g:php_builtin_interfaces = {
@@ -134,7 +134,7 @@ fun! TestCase_complete_classes_from_built_in_classes()
     " of the outer dictionary keys
     let res = phpcomplete#CompleteClassName('tra', ['i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'FindMeFoo', 'menu': '', 'kind': 'i'}],
+                \ {'word': 'FindMeFoo', 'menu': '', 'file': '', 'kind': 'i'}],
                 \ res)
 
     silent! bw! %
@@ -161,7 +161,7 @@ fun! TestCase_adds_arguments_of_constructors_for_built_in_classes()
 
     let res = phpcomplete#CompleteClassName('', ['c'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'DateTime', 'menu': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'kind': 'c'}],
+                \ {'word': 'DateTime', 'menu': '[ string $time = "now" [, DateTimeZone $timezone = NULL]]', 'file': '', 'kind': 'c'}],
                 \ res)
     silent! bw! %
 endf
@@ -176,12 +176,12 @@ fun! TestCase_filters_class_names_with_the_namespaces_typed_in_base()
 
     let res = phpcomplete#CompleteClassName('NS1\N', ['c'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'NS1\NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
+                \ {'word': 'NS1\NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
                 \ res)
 
     let res = phpcomplete#CompleteClassName('NS1\N', ['i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'NS1\NameSpacedFooInterface', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'i'}],
+                \ {'word': 'NS1\NameSpacedFooInterface', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'i'}],
                 \ res)
 
     " with old style ctags, just complete every classame that matches the
@@ -190,11 +190,11 @@ fun! TestCase_filters_class_names_with_the_namespaces_typed_in_base()
 
     let res = phpcomplete#CompleteClassName('NS1\N', ['c'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'NS1\NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
+                \ {'word': 'NS1\NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
                 \ res)
     let res = phpcomplete#CompleteClassName('NS1\N', ['i'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'NS1\NameSpacedFooInterface', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'i'}],
+                \ {'word': 'NS1\NameSpacedFooInterface', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'i'}],
                 \ res)
 
     " test for when there are namespaces in the matched tags the non-namespaced
@@ -202,7 +202,7 @@ fun! TestCase_filters_class_names_with_the_namespaces_typed_in_base()
     exe ':set tags='.old_style_tags_path.','.tags_path
     let res = phpcomplete#CompleteClassName('NS1\NameSpacedF', ['c'], '\', {})
     call VUAssertEquals([
-                \ {'word': 'NS1\NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
+                \ {'word': 'NS1\NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
                 \ res)
 endf
 
@@ -216,12 +216,12 @@ fun! TestCase_filters_class_names_with_the_current_namespace_but_doesnt_add_the_
 
     let res = phpcomplete#CompleteClassName('N', ['c'], 'NS1', {})
     call VUAssertEquals([
-                \ {'word': 'NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
+                \ {'word': 'NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
                 \ res)
 
     let res = phpcomplete#CompleteClassName('N', ['i'], 'NS1', {})
     call VUAssertEquals([
-                \ {'word': 'NameSpacedFooInterface', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'i'}],
+                \ {'word': 'NameSpacedFooInterface', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'i'}],
                 \ res)
 
     " old style tags
@@ -229,12 +229,12 @@ fun! TestCase_filters_class_names_with_the_current_namespace_but_doesnt_add_the_
 
     let res = phpcomplete#CompleteClassName('N', ['c'], 'NS1', {})
     call VUAssertEquals([
-                \ {'word': 'NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
+                \ {'word': 'NameSpacedFoo', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'c'}],
                 \ res)
 
     let res = phpcomplete#CompleteClassName('N', ['i'], 'NS1', {})
     call VUAssertEquals([
-                \ {'word': 'NameSpacedFooInterface', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'i'}],
+                \ {'word': 'NameSpacedFooInterface', 'menu': 'fixtures/CompleteClassName/namespaced.foo.php', 'file': 'fixtures/CompleteClassName/namespaced.foo.php', 'info': 'fixtures/CompleteClassName/namespaced.foo.php', 'kind': 'i'}],
                 \ res)
 endf
 
@@ -264,19 +264,19 @@ fun! TestCase_completes_class_names_from_imported_namespaces_via_tags()
     " comlete classes from imported namespace
     let res = phpcomplete#CompleteClassName('SUBNS\F', ['c'], '\', {'SUBNS': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0,}})
     call VUAssertEquals([
-                \ {'word': 'SUBNS\FooSub', 'menu': 'fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/namespaced_foo.php', 'kind': 'c'}],
+                \ {'word': 'SUBNS\FooSub', 'menu': 'fixtures/common/namespaced_foo.php', 'file': 'fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/namespaced_foo.php', 'kind': 'c'}],
                 \ res)
 
     " comlete classes from imported and renamed namespace, leaving typed in part as-is
     let res = phpcomplete#CompleteClassName('SUB\Fo', ['c'], '\', {'SUB': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0,}})
     call VUAssertEquals([
-                \ {'word': 'SUB\FooSub', 'menu': 'fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/namespaced_foo.php', 'kind': 'c'}],
+                \ {'word': 'SUB\FooSub', 'menu': 'fixtures/common/namespaced_foo.php', 'file': 'fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/namespaced_foo.php', 'kind': 'c'}],
                 \ res)
 
     " comlete classes from absolute namespace prefixes
     let res = phpcomplete#CompleteClassName('\NS1\SUBNS\Fo', ['c'], 'NS1', {})
     call VUAssertEquals([
-                \ {'word': '\NS1\SUBNS\FooSub', 'menu': 'fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/namespaced_foo.php', 'kind': 'c'}],
+                \ {'word': '\NS1\SUBNS\FooSub', 'menu': 'fixtures/common/namespaced_foo.php', 'file': 'fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/namespaced_foo.php', 'kind': 'c'}],
                 \ res)
 
     " set old tags to a fixture
@@ -286,10 +286,28 @@ fun! TestCase_completes_class_names_from_imported_namespaces_via_tags()
     " last \ will be returned
     let res = phpcomplete#CompleteClassName('SUBNS\F', ['c'], '\', {'SUBNS': {'name': 'NS1\SUBNS', 'kind': 'n', 'builtin': 0,}})
     call VUAssertEquals([
-                \ {'word': 'SUBNS\Foo', 'menu': 'fixtures/common/fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/fixtures/common/namespaced_foo.php', 'kind': 'c'},
-                \ {'word': 'SUBNS\FooSub', 'menu': 'fixtures/common/fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/fixtures/common/namespaced_foo.php', 'kind': 'c'},
-                \ {'word': 'SUBNS\FooSubSub', 'menu': 'fixtures/common/fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/fixtures/common/namespaced_foo.php', 'kind': 'c'}],
+                \ {'word': 'SUBNS\Foo', 'menu': 'fixtures/common/fixtures/common/namespaced_foo.php', 'file': 'fixtures/common/fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/fixtures/common/namespaced_foo.php', 'kind': 'c'},
+                \ {'word': 'SUBNS\FooSub', 'menu': 'fixtures/common/fixtures/common/namespaced_foo.php', 'file': 'fixtures/common/fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/fixtures/common/namespaced_foo.php', 'kind': 'c'},
+                \ {'word': 'SUBNS\FooSubSub', 'menu': 'fixtures/common/fixtures/common/namespaced_foo.php', 'file': 'fixtures/common/fixtures/common/namespaced_foo.php', 'info': 'fixtures/common/fixtures/common/namespaced_foo.php', 'kind': 'c'}],
                 \ res)
+endf
+
+fun! TestCase_completes_class_names_from_imported_namespaces_via_tags()
+    call SetUp()
+    let g:phpcomplete_parse_docblock_comments = 1
+
+    let path =  expand('%:p:h')."/".'fixtures/CompleteClassName/constructor_docblock.php'
+    below 1new
+    exe ":silent! edit ".path
+
+    exe ':29'
+    let res = phpcomplete#CompleteClassName('Foobar', ['c'], '\', {})
+    call VUAssertEquals([
+                \ {'word': 'Foobar', 'file': '/home/dudu/.vim/bundle/phpcomplete.vim/tests/fixtures/CompleteClassName/constructor_docblock.php', 'info': "Description:\n\tConstructor\n\t\n\tSome docs\n", 'kind': 'c'},
+                \ {'word': 'Foobar2', 'file': '/home/dudu/.vim/bundle/phpcomplete.vim/tests/fixtures/CompleteClassName/constructor_docblock.php', 'info': "Description:\n\tConstructor\n\t\n\tSome docs2\n", 'kind': 'c'}],
+                \ res)
+
+    silent! bw! %
 endf
 
 " vim: foldmethod=marker:expandtab:ts=4:sts=4

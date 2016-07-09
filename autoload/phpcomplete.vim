@@ -887,7 +887,7 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 		let c_name = matchstr(line, '\c\(class\|interface\)\s*\zs[a-zA-Z_\x7f-\xff][a-zA-Z_0-9\x7f-\xff]*')
 		let kind = (line =~? '^\s*class' ? 'c' : 'i')
 		if c_name != '' && c_name =~? '^'.base
-			call add(res, {'word': c_name, 'kind': kind})
+			call add(res, {'word': c_name, 'kind': kind, 'file': expand('%')})
 		endif
 	endfor
 
@@ -916,11 +916,11 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 			let relative_name = namespace_part.tag.name
 			" match base without the namespace part for namespaced base but not namespaced tags, for tagfiles with old ctags
 			if !has_key(tag, 'namespace') && index(kinds, tag.kind) != -1 && stridx(tolower(tag.name), tolower(base[len(namespace_part):])) == 0
-				call add(no_namespace_matches, {'word': leading_slash.relative_name, 'kind': tag.kind, 'menu': tag.filename, 'info': tag.filename })
+				call add(no_namespace_matches, {'word': leading_slash.relative_name, 'kind': tag.kind, 'menu': tag.filename, 'info': tag.filename, 'file': tag.filename })
 			endif
 			if has_key(tag, 'namespace') && index(kinds, tag.kind) != -1 && tag.namespace ==? namespace_for_class
 				let full_name = tag.namespace.'\'.tag.name " absolute namespaced name (without leading '\')
-				call add(namespaced_matches, {'word': leading_slash == '\' ? leading_slash.full_name : relative_name, 'kind': tag.kind, 'menu': tag.filename, 'info': tag.filename })
+				call add(namespaced_matches, {'word': leading_slash == '\' ? leading_slash.full_name : relative_name, 'kind': tag.kind, 'menu': tag.filename, 'info': tag.filename, 'file': tag.filename })
 			endif
 		endfor
 		" if there was a tag with namespace field, assume tag files with namespace support, so the matches
@@ -943,14 +943,14 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 				if has_key(g:php_builtin_classes[tolower(classname)].methods, '__construct')
 					let menu = g:php_builtin_classes[tolower(classname)]['methods']['__construct']['signature']
 				endif
-				call add(res, {'word': leading_slash.g:php_builtin_classes[tolower(classname)].name, 'kind': 'c', 'menu': menu})
+				call add(res, {'word': leading_slash.g:php_builtin_classes[tolower(classname)].name, 'kind': 'c', 'menu': menu, 'file': ''})
 			endfor
 		endif
 
 		if index(kinds, 'i') != -1
 			let builtin_interfaces = filter(keys(copy(g:php_builtin_interfaces)), 'v:val =~? "^'.substitute(a:base, '\\', '', 'g').'"')
 			for interfacename in builtin_interfaces
-				call add(res, {'word': leading_slash.g:php_builtin_interfaces[interfacename]['name'], 'kind': 'i', 'menu': ''})
+				call add(res, {'word': leading_slash.g:php_builtin_interfaces[interfacename]['name'], 'kind': 'i', 'menu': '', 'file': ''})
 			endfor
 		endif
 	endif
@@ -962,6 +962,20 @@ function! phpcomplete#CompleteClassName(base, kinds, current_namespace, imports)
 			call add(res, {'word': imported_name, 'kind': import.kind, 'menu': menu})
 		endif
 	endfor
+
+	if g:phpcomplete_parse_docblock_comments
+		for item in res
+			if get(item, 'file') != '' && get(item, 'kind') == 'c'
+				let name_parts = split(item.word, '\')
+				let name = name_parts[len(name_parts) - 1]
+				let class_contents = split(phpcomplete#GetClassContents(item.file, name), "\\(\r\n\\\n\r|\\|\n\\)")
+				let docblock = phpcomplete#GetDocBlock(class_contents, '__construct')
+				if docblock != ''
+					let item.info = phpcomplete#FormatDocBlock(phpcomplete#ParseDocBlock(docblock))
+				endif
+			endif
+		endfor
+	endif
 
 	let res = sort(res, 'phpcomplete#CompareCompletionRow')
 	return res
