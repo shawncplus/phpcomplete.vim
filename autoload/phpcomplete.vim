@@ -230,6 +230,8 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 	end
 
 	try
+		let eventignore = &eventignore
+		let &eventignore = 'all'
 		let winheight = winheight(0)
 		let winnr = winnr()
 
@@ -300,6 +302,7 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 		endif
 	finally
 		silent! exec winnr.'resize '.winheight
+		let &eventignore = eventignore
 	endtry
 endfunction
 " }}}
