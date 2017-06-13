@@ -41,7 +41,7 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
  4. Run the `:PluginInstall` commmand
 
 ## Usage
-If you're new to auto-completion in Vim, we recommend reading our ("Beginner's Guide")[GUIDE.md].
+If you're new to auto-completion in Vim, we recommend reading our ["Beginner's Guide"](GUIDE.md).
 
 ## ctags
 In order to support some php features introduced in PHP 5.3 you will have to use
