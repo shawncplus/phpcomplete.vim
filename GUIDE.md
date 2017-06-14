@@ -29,13 +29,13 @@ You may want to add that file to your `.gitignore`. If you're working with non-V
 
 ### Making sure Vim can read your `tags` file
 
-By default, Vim will look for your `tags` file in the directory from which it's opened. To help Vim find your `tags` file. Place the following in your `.vimrc`:
+By default, Vim will look for your `tags` file in your `cwd` under the following files: `./tags,tags`, this default behaviour is usually good enough. 
+The file lookup is controlled by the option `tags`. Some plugins like fugitive will add your project's `.git/tags` file to this list. If for some reason you need to add an another path you can do it like this:
 
 ```
-set tags=./tags;/
+set tags+=./some/path/to/extra/tags
 ```
-
-This tells Vim to search the current directory, then traverse up your directory tree looking for a `./tags` file; it will stop at the first `tags` file found.
+See more under `:help 'tags'`
 
 ### Getting completions
 
