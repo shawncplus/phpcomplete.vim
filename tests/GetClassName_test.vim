@@ -897,4 +897,27 @@ fun! TestCase_resolves_inside_a_function_body()
     silent! bw! %
 endf
 
+fun! TestCase_resolves_return_type_hints()
+    call SetUp()
+
+    let path = expand('%:p:h')."/"."fixtures/GetClassName/return_typehinted_functions.php"
+    below 1new
+    exe ":silent! edit ".path
+    exe 'let b:phpbegin = [0, 0]'
+
+    exe ':24'
+    let classname = phpcomplete#GetClassName(24, '$f->', '', {})
+    call VUAssertEquals('FooReturnBars', classname)
+
+    exe ':26'
+    let classname = phpcomplete#GetClassName(26, '$f->returnBar()->', '', {})
+    call VUAssertEquals('Bar', classname)
+
+    exe ':28'
+    let classname = phpcomplete#GetClassName(28, '$f->returnBar2()->', '', {})
+    call VUAssertEquals('Bar2', classname)
+
+    silent! bw! %
+endf
+
 " vim: foldmethod=marker:expandtab:ts=4:sts=4
