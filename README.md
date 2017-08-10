@@ -20,7 +20,7 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
  * Updated built-in class support with constants, methods and properties
  * Updated list of PHP constants
  * Updated list of built-in PHP functions
- * Namespace support ( **Requires** [patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Patched-ctags) )
+ * Namespace support ( **Requires** [patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Getting-better-tags) )
  * Enhanced jump-to-definition on <kbd>ctrl</kbd>+<kbd>]</kbd>
 
 ## Install
