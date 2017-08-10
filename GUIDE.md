@@ -8,7 +8,7 @@ phpcomplete.vim does **not** generate that file for you, so before using phpcomp
 
 ### Generating a `tags` file
 
-First, you'll need a program that can parse your PHP project and output a tags file. There are a few choices for doing so and they're outlined here: [Getting Better Tags](/shawncplus/phpcomplete.vim/wiki/Getting-better-tags).
+First, you'll need a program that can parse your PHP project and output a tags file. There are a few choices for doing so and they're outlined here: [Getting Better Tags](https://github.com/shawncplus/phpcomplete.vim/wiki/Getting-better-tags).
 
 Once you have a `ctags` or `phpctags` program installed, make sure it's in your `$PATH` ([relevant StackExchange post](https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path)).
 
