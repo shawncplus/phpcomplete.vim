@@ -67,7 +67,7 @@ When enabled the plugin will search for the variables in the tag files with kind
 lines like `$some_var = new Foo;` but these usually yield highly inaccurate results and
 can	be fairly slow.
 
-**let g:phpcomplete\_min\_num\_of\_chars\_for\_namespace\_completion = n [default 1]** *Requires [patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Patched-ctags)* <br>
+**let g:phpcomplete\_min\_num\_of\_chars\_for\_namespace\_completion = n [default 1]** *Requires [patched ctags](https://github.com/shawncplus/phpcomplete.vim/wiki/Getting-better-tags)* <br>
 This option controls the number of characters the user needs to type before
 the tags will be searched for namespaces and classes in typed out namespaces in
 "use ..." context. Setting this to 0 is not recommended because that means the code
