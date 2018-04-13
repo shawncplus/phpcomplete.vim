@@ -26,21 +26,22 @@ syn region phpBacktick matchgroup=phpStringDelimiter start=+`+ skip=+\\\\\|\\"+ 
 syn region phpStringSingle matchgroup=phpStringDelimiter start=+'+ skip=+\\\\\|\\'+ end=+'+  contains=phpStrEsc contained keepend extend
 
 " HereDoc
-syn case match
-syn region phpHereDoc matchgroup=Delimiter start="\(<<<\)\@<=\z(\I\i*\)$" end="^\z1\(;\=$\)\@=" contained contains=phpSpecialChar,phpStrEsc keepend extend
-syn region phpHereDoc matchgroup=Delimiter start=+\(<<<\)\@<="\z(\I\i*\)"$+ end="^\z1\(;\=$\)\@=" contained contains=phpSpecialChar,phpStrEsc keepend extend
-" including HTML,JavaScript,SQL even if not enabled via options
-syn region phpHereDoc matchgroup=Delimiter start="\(<<<\)\@<=\z(\(\I\i*\)\=\(html\)\c\(\i*\)\)$" end="^\z1\(;\=$\)\@="  contained contains=phpSpecialChar,phpStrEsc keepend extend
-syn region phpHereDoc matchgroup=Delimiter start="\(<<<\)\@<=\z(\(\I\i*\)\=\(sql\)\c\(\i*\)\)$" end="^\z1\(;\=$\)\@=" contained contains=phpSpecialChar,phpStrEsc keepend extend
-syn region phpHereDoc matchgroup=Delimiter start="\(<<<\)\@<=\z(\(\I\i*\)\=\(javascript\)\c\(\i*\)\)$" end="^\z1\(;\=$\)\@="  contained contains=phpSpecialChar,phpStrEsc keepend extend
-syn case ignore
+" syn case match
+" syn region phpHereDoc matchgroup=Delimiter start="\(<<<\)\@<=\z(\I\i*\)$" end="^\z1\(;\=$\)\@=" contained contains=phpSpecialChar,phpStrEsc keepend extend
+" syn region phpHereDoc matchgroup=Delimiter start=+\(<<<\)\@<="\z(\I\i*\)"$+ end="^\z1\(;\=$\)\@=" contained contains=phpSpecialChar,phpStrEsc keepend extend
+" " including HTML,JavaScript,SQL even if not enabled via options
+" syn region phpHereDoc matchgroup=Delimiter start="\(<<<\)\@<=\z(\(\I\i*\)\=\(html\)\c\(\i*\)\)$" end="^\z1\(;\=$\)\@="  contained contains=phpSpecialChar,phpStrEsc keepend extend
+" syn region phpHereDoc matchgroup=Delimiter start="\(<<<\)\@<=\z(\(\I\i*\)\=\(sql\)\c\(\i*\)\)$" end="^\z1\(;\=$\)\@=" contained contains=phpSpecialChar,phpStrEsc keepend extend
+" syn region phpHereDoc matchgroup=Delimiter start="\(<<<\)\@<=\z(\(\I\i*\)\=\(javascript\)\c\(\i*\)\)$" end="^\z1\(;\=$\)\@="  contained contains=phpSpecialChar,phpStrEsc keepend extend
+" syn case ignore
 
 " NowDoc
-syn region phpNowDoc matchgroup=Delimiter start=+\(<<<\)\@<='\z(\I\i*\)'$+ end="^\z1\(;\=$\)\@=" contained keepend extend
+" syn region phpNowDoc matchgroup=Delimiter start=+\(<<<\)\@<='\z(\I\i*\)'$+ end="^\z1\(;\=$\)\@=" contained keepend extend
 
 " Clusters
 syn cluster phpClConst contains=phpStringSingle,phpStringDouble,phpBacktick
-syn cluster phpClInside contains=@phpClConst,phpComment,phpDocComment,phpHereDoc,phpNowDoc
+syn cluster phpClInside contains=@phpClConst,phpComment,phpDocComment
+",phpHereDoc,phpNowDoc
 
 syn region phpRegion matchgroup=Delimiter start="<?\(php\)\=" end="?>" contains=@phpClInside keepend
 
