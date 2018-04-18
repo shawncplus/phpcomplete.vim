@@ -988,6 +988,8 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 		let notfound_commands = 'split | tag '
 	elseif a:mode == 'vsplit'
 		let notfound_commands = 'vsplit | tag '
+	elseif a:mode == 'tabnew'
+		let notfound_commands = 'tabnew | tag '
 	endif
 
 	let [symbol, symbol_context, symbol_namespace, current_imports] = phpcomplete#GetCurrentSymbolWithContext()
@@ -1029,6 +1031,8 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 		set nocscopetag
 		if a:mode == 'split'
 			silent! exec 'split | '.tag_position.'tag '.symbol
+		elseif a:mode == 'tabnew'
+			silent! exec 'tabnew | '.tag_position.'tag '.symbol
 		elseif a:mode == 'vsplit'
 			silent! exec 'vsplit | '.tag_position.'tag '.symbol
 		elseif a:mode == 'normal'
