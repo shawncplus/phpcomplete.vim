@@ -39,6 +39,7 @@ let g:phpcomplete_mappings = extend({
 			\ 'jump_to_def': '<C-]>',
 			\ 'jump_to_def_split': '<C-W><C-]>',
 			\ 'jump_to_def_vsplit': '<C-W><C-\>',
+			\ 'jump_to_def_tabnew': '<C-W><C-[>',
 			\}, get(g:, 'phpcomplete_mappings', {}))
 
 if g:phpcomplete_enhance_jump_to_definition
@@ -50,6 +51,9 @@ if g:phpcomplete_enhance_jump_to_definition
 	endif
 	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def_vsplit'])
 		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_vsplit']." :<C-u>call phpcomplete#JumpToDefinition('vsplit')<CR>"
+	endif
+	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def_tabnew'])
+		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_tabnew']." :<C-u>call phpcomplete#JumpToDefinition('tabnew')<CR>"
 	endif
 endif
 
