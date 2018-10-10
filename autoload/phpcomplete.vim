@@ -1226,7 +1226,7 @@ function! phpcomplete#EvaluateModifiers(modifiers, required_modifiers, prohibite
 		endfor
 
 		for modifier in a:modifiers
-			" if the modifier is prohibited its a no match
+			" if the modifier is prohibited it's a no match
 			if index(a:prohibited_modifiers, modifier) != -1
 				return 0
 			endif
@@ -1779,7 +1779,7 @@ function! phpcomplete#GetMethodStack(line) " {{{
 			continue
 		endif
 
-		" if it's looks like a string
+		" if it looks like a string
 		if current_char == "'" || current_char == '"'
 			" and it is not escaped
 			if prev_char != '\' || (prev_char == '\' && prev_prev_char == '\')
@@ -2914,7 +2914,7 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 			" find kind flags from tags or built in methods for the objects we extracted
 			" they can be either classes, interfaces or namespaces, no other thing is importable in php
 			for [key, import] in items(imports)
-				" if theres a \ in the name we have it's definetly not a built in thing, look for tags
+				" if theres a \ in the name we have it's definitely not a built in thing, look for tags
 				if import.name =~ '\\'
 					let patched_ctags_detected = 0
 					let [classname, namespace_for_classes] = phpcomplete#ExpandClassName(import.name, '\', {})
