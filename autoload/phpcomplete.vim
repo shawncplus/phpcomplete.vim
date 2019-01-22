@@ -1017,7 +1017,7 @@ function! phpcomplete#JumpToDefinition(mode) " {{{
 	let tag_position = -1
 	let i = 1
 	for tag in tags
-		if fnamemodify(tag.filename, ":p") == symbol_file && tag.cmd =~ tag_line
+		if fnamemodify(tag.filename, ":p") == symbol_file && tag_line =~ tag.cmd[1:-2]
 			let tag_position = i
 			break
 		endif
