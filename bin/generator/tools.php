@@ -89,16 +89,18 @@ function get_extension_name($file, $extensions) {
         $doc->loadHTMLFile($doc_dir.'/'.$current_file);
         $xpath = new DOMXPath($doc);
 
-        $up_link = $xpath->query('//div[@class="up"]/a');
+
+
+        $up_link = $xpath->query('//ul[@class="breadcrumbs-container"]/li[position()>=2 and position() <= (last() - 1)]/a');
         if ($up_link->length == 0) {
-            fwrite(STDERR, "\nCan't find up link in ".$current_file.' started ascending from '.$file);
-            exit;
+            fwrite(STDERR, "\nWARNING: Can't find up link in ".$current_file.' started ascending from '.$file);
+            return null;
         }
 
         $up_href = $up_link->item(0)->getAttribute('href');
         if ($current_file == $up_href) {
-            fwrite(STDERR, "\nup link traversal got stuck at ".$current_file." started ascending from ".$file);
-            exit;
+            fwrite(STDERR, "\nWARNING: up link traversal got stuck at ".$current_file." started ascending from ".$file);
+            return null;
         }
 
         $files_checked[] = $current_file;

@@ -3,6 +3,9 @@
 function extract_function_signatures($files, $extensions, $signatures = array()) {
     foreach ($files as $file) {
         $extension_name = get_extension_name($file, $extensions);
+        if ($extension_name === null){
+            continue;
+        }
         if (!isset($signatures[$extension_name])) {
             $signatures[$extension_name] = array();
         }
