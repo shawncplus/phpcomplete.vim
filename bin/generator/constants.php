@@ -26,6 +26,9 @@ function extract_constant_names($files, $extensions) {
                     continue;
                 }
                 $extension_name = get_extension_name($file, $extensions);
+                if ($extension_name === null){
+                    continue;
+                }
                 if (strpos($constant, "::") !== false) {
                     if (!isset($class_constants[$extension_name])) {
                          $class_constants[$extension_name] = array();

@@ -3,6 +3,9 @@
 function extract_function_signatures($files, $extensions, $signatures = array()) {
     foreach ($files as $file) {
         $extension_name = get_extension_name($file, $extensions);
+        if ($extension_name === null){
+            continue;
+        }
         if (!isset($signatures[$extension_name])) {
             $signatures[$extension_name] = array();
         }
@@ -10,6 +13,12 @@ function extract_function_signatures($files, $extensions, $signatures = array())
         $doc = new DOMDocument;
         $doc->loadHTMLFile($file);
         $xpath = new DOMXpath($doc);
+
+        $removed_warning = $xpath->query('//div[contains(@id, "-refsynopsisdiv")]/div[@class="warning"]');
+        if ($removed_warning->length > 0 && preg_match('/REMOVED\s+in\s+PHP\s+7\.\d+\.\d+/i', $removed_warning->item(0)->textContent)) {
+          continue;
+        }
+
         $nodes = $xpath->query('//div[contains(@class, "methodsynopsis")]');
         if ($nodes->length == 0) {
             // no signature found, maybe its an alias?

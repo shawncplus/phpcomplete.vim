@@ -18,6 +18,9 @@ function extract_class_signatures($files, $extensions) {
         $methods   = extract_class_methods($xpath, $classname, $file);
 
         $extension_name = get_extension_name($file, $extensions);
+        if ($extension_name === null){
+            continue;
+        }
 
         if (!isset($class_signatures[$extension_name][$classname])) {
             if ($is_interface) {
@@ -91,6 +94,9 @@ function extract_class_methods($xpath, $classname, $file) {
     $method_nodes = $xpath->query('//div[@class="classsynopsis"]//div[contains(@class, "constructorsynopsis") or contains(@class, "methodsynopsis")]');
     foreach ($method_nodes as $method_node) {
         $method_info = handle_method_def($xpath, $classname, $method_node, $file);
+        if ($method_info === null) {
+            continue;
+        }
         if (in_array('static', $method_info['modifiers'])) {
             $re['static_methods'][$method_info['name']] = $method_info;
         } else {
@@ -130,10 +136,11 @@ function handle_method_def($xpath, $classname, $node, $file) {
 
     // constructors and destructors dont have return types
     if ($type->length === 0 && !($name == '__construct' || $name == '__destruct' || $name == '__wakeup' || $name == $classname)) {
-        var_dump($name);
-        var_dump($xpath->document->saveHTML($node));
-        fwrite(STDERR, "\nextraction error, cant find return type in $file\n");
-        exit;
+        // var_dump($name);
+        // var_dump($xpath->document->saveHTML($node));
+        fwrite(STDERR, "WARNING: extraction error, cant find return type in $file\n");
+
+        return null;
     }
     $re['return_type'] = $type->length ? trim($type->item(0)->textContent) : null;
 
