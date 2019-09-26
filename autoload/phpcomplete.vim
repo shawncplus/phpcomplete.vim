@@ -3088,25 +3088,33 @@ runtime! misc/builtin_manual.vim
 " Built in functions
 let g:php_builtin_functions = {}
 for ext in g:phpcomplete_active_function_extensions
-	call extend(g:php_builtin_functions, g:phpcomplete_builtin['functions'][ext])
+	if has_key(g:phpcomplete_builtin['functions'], ext)
+		call extend(g:php_builtin_functions, g:phpcomplete_builtin['functions'][ext])
+	endif
 endfor
 
 " Built in classs
 let g:php_builtin_classes = {}
 for ext in g:phpcomplete_active_class_extensions
-	call extend(g:php_builtin_classes, g:phpcomplete_builtin['classes'][ext])
+	if has_key(g:phpcomplete_builtin['classes'], ext)
+		call extend(g:php_builtin_classes, g:phpcomplete_builtin['classes'][ext])
+	endif
 endfor
 
 " Built in interfaces
 let g:php_builtin_interfaces = {}
 for ext in g:phpcomplete_active_interface_extensions
-	call extend(g:php_builtin_interfaces, g:phpcomplete_builtin['interfaces'][ext])
+	if has_key(g:phpcomplete_builtin['interfaces'], ext)
+		call extend(g:php_builtin_interfaces, g:phpcomplete_builtin['interfaces'][ext])
+	endif
 endfor
 
 " Built in constants
 let g:php_constants = {}
 for ext in g:phpcomplete_active_constant_extensions
-	call extend(g:php_constants, g:phpcomplete_builtin['constants'][ext])
+	if has_key(g:phpcomplete_builtin['constants'], ext)
+		call extend(g:php_constants, g:phpcomplete_builtin['constants'][ext])
+	endif
 endfor
 
 " When the classname not found or found but the tags dosen't contain that
