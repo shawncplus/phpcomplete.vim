@@ -1313,7 +1313,7 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 				let c_var = '$'.c_var
 			endif
 			let c_variables[c_var] = ''
-			if g:phpcomplete_parse_docblock_comments && len(get(variables, var_index)) > 0
+			if g:phpcomplete_parse_docblock_comments && len(get(variables, var_index, '')) > 0
 				let c_doc[c_var] = phpcomplete#GetDocBlock(a:sccontent, variables[var_index])
 			endif
 			let var_index += 1
