@@ -45,15 +45,19 @@ let g:phpcomplete_mappings = extend({
 if g:phpcomplete_enhance_jump_to_definition
 	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def'])
 		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def']." :<C-u>call phpcomplete#JumpToDefinition('normal')<CR>"
+		silent! exe "vnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def']." :<C-u>call phpcomplete#JumpToDefinition('normal')<CR>"
 	endif
 	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def_split'])
 		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_split']." :<C-u>call phpcomplete#JumpToDefinition('split')<CR>"
+		silent! exe "vnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_split']." :<C-u>call phpcomplete#JumpToDefinition('split')<CR>"
 	endif
 	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def_vsplit'])
 		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_vsplit']." :<C-u>call phpcomplete#JumpToDefinition('vsplit')<CR>"
+		silent! exe "vnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_vsplit']." :<C-u>call phpcomplete#JumpToDefinition('vsplit')<CR>"
 	endif
 	if '' == mapcheck(g:phpcomplete_mappings['jump_to_def_tabnew'])
 		silent! exe "nnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_tabnew']." :<C-u>call phpcomplete#JumpToDefinition('tabnew')<CR>"
+		silent! exe "vnoremap <silent> <unique> <buffer> ".g:phpcomplete_mappings['jump_to_def_tabnew']." :<C-u>call phpcomplete#JumpToDefinition('tabnew')<CR>"
 	endif
 endif
 
