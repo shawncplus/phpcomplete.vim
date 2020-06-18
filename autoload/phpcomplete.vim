@@ -2333,7 +2333,7 @@ function! phpcomplete#GetCachedClassContents(classlocation, class_name) " {{{
 
 	" cache miss, fetch the content from the files itself
 	let classfile = readfile(a:classlocation)
-	let classcontents = phpcomplete#GetClassContentsStructure(full_file_path, classfile, a:class_name)
+	let classcontents = phpcomplete#GetClassContentsStructure(full_file_path, classfile, a:class_name, {})
 	let s:cache_classstructures[cache_key] = classcontents
 
 	return classcontents
@@ -2347,7 +2347,7 @@ function! phpcomplete#ClearCachedClassContents(full_file_path) " {{{
 	endfor
 endfunction " }}}
 
-function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_name) " {{{
+function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_name, files_classes_loaded) " {{{
 	" returns dictionary containing content, namespace and imports for the class and all parent classes.
 	" Example:
 	" [
@@ -2369,11 +2369,21 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 	"	},
 	"	...
 	" ]
-	"
+
 	let full_file_path = fnamemodify(a:file_path, ':p')
 	let class_name_pattern = '[a-zA-Z_\x7f-\xff\\][a-zA-Z_0-9\x7f-\xff\\]*'
 	let cfile = join(a:file_lines, "\n")
 	let result = []
+
+	" Check against recursion picking up a circular dependecy
+	if has_key(a:files_classes_loaded, full_file_path) && a:files_classes_loaded[full_file_path] == a:class_name
+		echom "circular load in phpcomplete#GetClassContentsStructure detected for "+a:class_name+" in "+full_file_path
+		return result
+	end
+	let files_classes_loaded = a:files_classes_loaded
+	let files_classes_loaded[full_file_path] = a:class_name
+	" echom files_classes_loaded
+
 	" We use new buffer and (later) normal! because
 	" this is the most efficient way. The other way
 	" is to go through the looong string looking for
@@ -2499,10 +2509,10 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 				endif
 			elseif classlocation != '' && filereadable(classlocation)
 				let full_file_path = fnamemodify(classlocation, ':p')
-				let result += phpcomplete#GetClassContentsStructure(full_file_path, readfile(full_file_path), class)
+				let result += phpcomplete#GetClassContentsStructure(full_file_path, readfile(full_file_path), class, files_classes_loaded)
 			elseif tolower(current_namespace) == tolower(namespace) && match(join(a:file_lines, "\n"), '\c\(class\|interface\|trait\)\_s\+'.class.'\(\>\|$\)') != -1
 				" try to find the declaration in the same file.
-				let result += phpcomplete#GetClassContentsStructure(full_file_path, a:file_lines, class)
+				let result += phpcomplete#GetClassContentsStructure(full_file_path, a:file_lines, class, files_classes_loaded)
 			endif
 		endfor
 	endif
