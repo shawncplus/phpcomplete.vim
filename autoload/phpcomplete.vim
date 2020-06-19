@@ -2377,7 +2377,7 @@ function! phpcomplete#GetClassContentsStructure(file_path, file_lines, class_nam
 
 	" Check against recursion picking up a circular dependecy
 	if has_key(a:files_classes_loaded, full_file_path) && a:files_classes_loaded[full_file_path] == a:class_name
-		echom "circular load in phpcomplete#GetClassContentsStructure detected for "+a:class_name+" in "+full_file_path
+		echom "circular load in phpcomplete#GetClassContentsStructure detected for ".a:class_name." in ".full_file_path
 		return result
 	end
 	let files_classes_loaded = a:files_classes_loaded
