@@ -18,16 +18,18 @@ else
 	VU="$DIR/../vimunit/vutest.sh"
 fi
 
+VIM='vim'
+
 if [ ! -f "$VU" ]; then
 	echo "Could not run tests. Vimunit executeable not found at: '$VU'"
 else
     if [[ $# > 0 ]]; then
         for f in $@; do
-            $VU -e "vim -u $DIR/vimrc" $f
+            $VU -e "$VIM -u $DIR/vimrc" $f
         done
     else
         for f in "$DIR/"*.vim; do
-            $VU -e "vim -u $DIR/vimrc"  $f
+            $VU -e "$VIM -u $DIR/vimrc" $f
         done
     fi
 fi

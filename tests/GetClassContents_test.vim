@@ -220,7 +220,7 @@ fun! TestCase_returns_the_contents_of_extended_interfaces()
     silent! bw! %
 endf
 
-fun! TestCase_returns_the_contents_of_extended_interfaces()
+fun! TestCase_returns_dockblock_contents()
     call SetUp()
 
     exe 'set tags='
