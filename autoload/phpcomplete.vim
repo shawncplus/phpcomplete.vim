@@ -264,7 +264,6 @@ function! phpcomplete#CompletePHP(findstart, base) " {{{
 				endif
 
 				if filereadable(classlocation)
-					let classfile = readfile(classlocation)
 					let classcontent = ''
 					let classcontent .= "\n".phpcomplete#GetClassContents(classlocation, classname)
 					let sccontent = split(classcontent, "\n")
@@ -1164,7 +1163,7 @@ endfunction " }}}
 function! s:readfileToTmpbuffer(file) " {{{
 	let popup_id = popup_create(readfile(a:file), {'hidden': v:true})
 	call win_execute(popup_id, 'normal! G')
-	call win_execute(popup_id, 'syntax on')
+	call win_execute(popup_id, 'syntax enable')
 	call win_execute(popup_id, 'set ft=phpcompletetempbuffer')
 	return popup_id
 endfunction " }}}
@@ -2807,7 +2806,7 @@ endfunction
 
 function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 	let popup_id = popup_create(a:file_lines, {'hidden': v:true})
-	call win_execute(popup_id, 'syntax on')
+	call win_execute(popup_id, 'syntax enable')
 	call win_execute(popup_id, 'set ft=phpcompletetempbuffer')
 	call win_execute(popup_id, 'normal! G')
 
@@ -2821,11 +2820,11 @@ function! phpcomplete#GetCurrentNameSpace(file_lines) " {{{
 
 		if block_end_pos != [0, 0]
 			" end of the block found, just delete it
-			call win_execute(popup_id, 'exec "'.block_start_pos[0].','.block_end_pos[0].'d _"')
+			call win_execute(popup_id, '"'.block_start_pos[0].','.block_end_pos[0].'d _"')
 		else
 			" block pair not found, use block start as beginning and the end
 			" of the buffer instead
-			call win_execute(popup_id, 'exec "'.block_start_pos[0].',$d _"')
+			call win_execute(popup_id, '"'.block_start_pos[0].',$d _"')
 		endif
 	endwhile
 	call win_execute(popup_id, 'normal! G', 'silent!')
