@@ -126,7 +126,7 @@ function handle_method_def($xpath, $classname, $node, $file) {
         // if even that failed, just give up
         if ($name->length === 0) {
             var_dump($node->textContent);
-            fwrite(STDERR, "\nextraction error, cant find method name in $file\n");
+            fwrite(STDERR, "\nextraction error, can't find method name in $file\n");
             exit;
         }
     }
@@ -138,7 +138,7 @@ function handle_method_def($xpath, $classname, $node, $file) {
     if ($type->length === 0 && !($name == '__construct' || $name == '__destruct' || $name == '__wakeup' || $name == $classname)) {
         // var_dump($name);
         // var_dump($xpath->document->saveHTML($node));
-        fwrite(STDERR, "WARNING: extraction error, cant find return type in $file\n");
+        fwrite(STDERR, "WARNING: extraction error, can't find return type in $file\n");
 
         return null;
     }
@@ -223,7 +223,7 @@ function handle_class_property($xpath, $node, $file) {
     $name = $xpath->query('var[@class="varname"]', $node)->item(0);
     if (!$name) {
         print $xpath->document->saveHTML($node);
-        fwrite(STDERR, "\nextraction error, cant find field name in $file\n");
+        fwrite(STDERR, "\nextraction error, can't find field name in $file\n");
         exit;
     }
     if (in_array('static', $re['modifiers'])) {
@@ -244,7 +244,7 @@ function handle_class_const($xpath, $node, $file) {
     $name = $xpath->query('var//var[@class="varname"]', $node)->item(0);
     if (!$name) {
         print $xpath->document->saveHTML($node);
-        fwrite(STDERR, "\nextraction error, cant find const name in $file\n");
+        fwrite(STDERR, "\nextraction error, can't find const name in $file\n");
         exit;
     }
     $re['name'] = trim($name->textContent);

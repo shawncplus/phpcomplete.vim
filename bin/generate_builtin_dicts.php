@@ -3,7 +3,7 @@
 /**
  * Create dictionaries for phpcomlete.vim to use in autocompletion
  *
- * Uses the offical PHP documentation html files to extract function
+ * Uses the official PHP documentation html files to extract function
  * and method names with parameter signatures. The extracted info
  * dumped into vim dictionaries that phpcomlete.vim plugin loads in
  * for omnicomplete.

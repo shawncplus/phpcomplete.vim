@@ -38,7 +38,7 @@ Improved PHP omni-completion. Based on the default phpcomplete.vim.
 
          Plugin 'shawncplus/phpcomplete.vim'
  3. Source your `.vimrc` with `:so %` or otherwise reload your vim
- 4. Run the `:PluginInstall` commmand
+ 4. Run the `:PluginInstall` command
 
 ## Usage
 If you're new to auto-completion in Vim, we recommend reading our ["Beginner's Guide"](GUIDE.md).
@@ -52,7 +52,7 @@ have a ctags version built in that's really outdated. Please read the "[getting 
 
 **let g:phpcomplete\_relax\_static\_constraint = 1/0  [default 0]** <br>
 Enables completion for non-static methods when completing for static context (`::`).
-This generates `E_STRICT` level warning, but php calls these methods nontheless.
+This generates `E_STRICT` level warning, but php calls these methods nonetheless.
 
 **let g:phpcomplete\_complete\_for\_unknown\_classes = 1/0 [default 0]** <br>
 Enables completion of variables and functions in "everything under the sun" fashion
@@ -71,7 +71,7 @@ can	be fairly slow.
 This option controls the number of characters the user needs to type before
 the tags will be searched for namespaces and classes in typed out namespaces in
 "use ..." context. Setting this to 0 is not recommended because that means the code
-have to scan every tag, and vim's taglist() function runs extremly slow with a
+have to scan every tag, and vim's taglist() function runs extremely slow with a
 "match everything" pattern.<br>
 
 **let g:phpcomplete\_parse\_docblock\_comments = 1/0 [default 0]**<br>

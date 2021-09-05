@@ -3,7 +3,7 @@
 " Maintainer: Dávid Szabó ( complex857 AT gmail DOT com )
 " URL: https://github.com/shawncplus/phpcomplete.vim
 " Thanks: Paul Garvin <paul@paulgarvin.net>
-"         Whos php.vim project where I've got all the code from.
+"         Whose php.vim project where I've got all the code from.
 
 
 if exists("b:current_syntax")
