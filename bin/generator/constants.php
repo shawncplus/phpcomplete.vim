@@ -11,7 +11,7 @@ function extract_constant_names($files, $extensions) {
 
         // Unfortunately, the constatns are not marked with classes in code,
         // only a <strong><code>UPPERCASE_LETTER</code></strong> seem to be universal among them
-        // xpath1 doesn't have uppercase so but fortunetly the alphabet is pretty limited
+        // xpath1 doesn't have uppercase so but fortunately the alphabet is pretty limited
         // so translate() will do for uppercasing content so we only select full uppercased contents
         $nodes = $xpath->query('//strong/code[translate(text(), "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ") = text()]');
         foreach ($nodes as $node) {
@@ -72,7 +72,7 @@ function inject_class_constants(&$class_groups, $class_constant_groups, $generat
                 }
             }
 
-            // this line only reached if the previous loop fails to place the constatn
+            // this line only reached if the previous loop fails to place the constant
             if ($generate_warnings) {
                 fwrite(STDERR, "\nNOTICE: can't place class constant: '{$constant}', no such class found: '{$classname}' 2");
             }

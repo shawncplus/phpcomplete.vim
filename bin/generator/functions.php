@@ -144,7 +144,7 @@ function write_function_signatures_to_vim_hash($signatures, $outpath, $keyname, 
             continue;
         }
 
-        // weed out duplicates, (like nthmac) only keep the first occurance
+        // weed out duplicates, (like nthmac) only keep the first occurrence
         $functions = array_index_by_col($functions, 'name', false);
 
         if ($prettyprint) {
