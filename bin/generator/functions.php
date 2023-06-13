@@ -95,8 +95,13 @@ function handle_func_def($xpath, $nodes, $file) {
         $paramdefault = $xpath->query('*[@class="initializer"]', $param);
         if ($paramname->length) {
             // regular parameter
+            // there can be more than one type nodes denote "?" in front of types
+            $type = '';
+            foreach ($paramtype as $type_node) {
+              $type .= $type_node->textContent;
+            }
             $p = array(
-                'type' => $paramtype->item(0)->textContent,
+                'type' => $type,
                 'name' => $paramname->item(0)->textContent,
                 'optional' => $optional,
             );

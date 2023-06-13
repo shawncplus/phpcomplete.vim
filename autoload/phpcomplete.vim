@@ -119,28 +119,28 @@ endif
 
 
 let g:phpcomplete_active_function_extensions = [
-			\'apache', 'apc', 'apd', 'arrays', 'bc_math', 'bzip2', 'calendar', 'classes_objects', 'ctype', 'curl', 'date_time', 'dba', 'dbase',
+			\'apache', 'apd', 'arrays', 'bc_math', 'bzip2', 'calendar', 'classes_objects', 'ctype', 'curl', 'date_time', 'dba', 'dbase',
 			\'directories', 'dom', 'enchant', 'error_handling', 'exif', 'fastcgi_process_manager', 'fileinfo', 'filesystem', 'filter', 'ftp',
-			\'function_handling', 'gd', 'geoip', 'gettext', 'gmp', 'hash', 'iconv', 'iis', 'json', 'ldap', 'libxml', 'mail', 'math', 'mcrypt',
-			\'memcache', 'mhash', 'misc', 'mongo', 'msql', 'mssql', 'multibyte_string', 'mysql', 'mysqli', 'network', 'nsapi', 'oci8', 'odbc',
-			\'openssl', 'output_control', 'parsekit', 'password_hashing', 'pcntl', 'pcre', 'php_options_info', 'posix', 'posix_regex', 'postgresql',
-			\'program_execution', 'ps', 'pspell', 'readline', 'recode', 'runkit', 'sessions', 'shared_memory', 'simplexml', 'snmp', 'soap', 'sockets',
-			\'solr', 'spl', 'sqlite', 'sqlsrv', 'streams', 'strings', 'tidy', 'tokenizer', 'urls', 'variable_handling', 'wddx', 'xml_parser',
+			\'function_handling', 'gd', 'geoip', 'gettext', 'gmp', 'hash', 'iconv', 'json', 'ldap', 'libxml', 'mail', 'math', 'mcrypt',
+			\'memcache', 'mhash', 'misc', 'multibyte_string', 'mysqli', 'mysql_xdevapi', 'network', 'oci8', 'odbc',
+			\'openssl', 'output_control', 'password_hashing', 'pcntl', 'pcre', 'php_options_info', 'posix', 'postgresql',
+			\'program_execution', 'ps', 'pspell', 'readline', 'random', 'recode', 'sessions', 'shared_memory', 'simplexml', 'snmp', 'soap', 'sockets',
+			\'solr', 'spl', 'sqlsrv', 'streams', 'strings', 'runkit7', 'tidy', 'tokenizer', 'urls', 'variable_handling', 'var_representation', 'vendor_specific_database_extensions', 'wddx', 'xml_parser',
 			\'xmlwriter', 'zip', 'zlib']
 let g:phpcomplete_active_class_extensions = [
-			\'apc', 'curl', 'date_time', 'directories', 'dom', 'fileinfo', 'imagemagick', 'libxml', 'memcache', 'memcached', 'mongo', 'mysqli', 'pdo', 'phar',
-			\'predefined_exceptions', 'predefined_interfaces_and_classes', 'reflection', 'sessions', 'simplexml', 'snmp', 'soap', 'solr', 'sphinx',
-			\'spl', 'sqlite3', 'streams', 'tidy', 'varnish', 'xmlreader', 'xmlwriter', 'xsl', 'zip']
+			\'curl', 'date_time', 'directories', 'dom', 'fileinfo', 'imagemagick', 'libxml', 'memcache', 'memcached', 'mysqli', 'mysql_xdevapi', 'pdo', 'phar',
+			\'predefined_exceptions', 'phar', 'predefined_interfaces_and_classes', 'reflection', 'sessions', 'simplexml', 'snmp', 'soap', 'solr', 'sphinx',
+			\'spl', 'sqlite3', 'streams', 'tidy', 'varnish', 'vendor_specific_database_extensions', 'xmlreader', 'xmlwriter', 'xsl', 'zip']
 let g:phpcomplete_active_interface_extensions = [
-			\'json', 'predefined_interfaces_and_classes', 'spl', 'date_time', 'reflection']
+			\'mysql_xdevapi', 'predefined_interfaces_and_classes', 'spl', 'data_structures', 'vendor_specific_database_extensions', 'random', 'reflection']
 let g:phpcomplete_active_constant_extensions = [
-			\'apc', 'apd', 'arrays', 'calendar', 'classkit', 'command_line_usage', 'common', 'curl', 'date_time', 'directories', 'dom', 'error_handling', 'exif',
-			\'fileinfo', 'filesystem', 'filter', 'ftp', 'gd', 'geoip', 'gmp', 'handling_file_uploads', 'hash', 'iconv', 'iis', 'imagemagick', 'imap',
-			\'json', 'ldap', 'libxml', 'list_of_parser_tokens', 'list_of_reserved_words', 'math', 'mcrypt', 'memcache', 'mhash', 'misc', 'ms_sql_server_pdo',
-			\'msql', 'mssql', 'multibyte_string', 'mysql', 'mysql_pdo', 'mysqli', 'network', 'odbc', 'openssl', 'output_control', 'parsekit', 'password_hashing',
-			\'pcntl', 'pcre', 'pdo', 'php_options_info', 'phpini_directives', 'posix', 'posix_regex', 'postgresql', 'program_execution', 'pspell', 'runkit',
-			\'sessions', 'snmp', 'soap', 'sockets', 'solr', 'sphinx', 'spl', 'sqlite', 'sqlite3', 'sqlsrv', 'streams', 'strings', 'tidy', 'types', 'urls',
-			\'variable_handling', 'varnish', 'xml_parser', 'xsl', 'zlib']
+			\'apd', 'arrays', 'calendar', 'command_line_usage', 'common', 'curl', 'date_time', 'directories', 'dom', 'error_handling', 'exif',
+			\'fileinfo', 'filesystem', 'filter', 'ftp', 'gd', 'geoip', 'gmp', 'handling_file_uploads', 'hash', 'iconv', 'imagemagick', 'imap',
+			\'json', 'ldap', 'libxml', 'list_of_parser_tokens', 'list_of_reserved_words', 'math', 'mcrypt', 'memcache', 'memcachedd', 'mhash', 'misc',
+			\'multibyte_string', 'mysql_pdo', 'mysql_xdevapi', 'mysqli', 'network', 'oci8', 'phar', 'odbc', 'openssl', 'output_control', 'password_hashing',
+			\'pcntl', 'pcre', 'pdo', 'php_options_info', 'phpini_directives', 'posix', 'phar', 'postgresql', 'program_execution', 'pspell', 'runkit7',
+			\'sessions', 'snmp', 'soap', 'sockets', 'solr', 'simplexml', 'sphinx', 'spl', 'sqlite3', 'sqlsrv', 'streams', 'strings', 'tidy', 'types', 'urls',
+			\'variable_handling', 'random', 'reflection', 'varnish', 'var_representation', 'vendor_specific_database_extensions', 'xml_parser', 'xsl', 'zlib']
 
 if exists('g:phpcomplete_add_function_extensions')
 	let g:phpcomplete_active_function_extensions += g:phpcomplete_add_function_extensions

@@ -2,117 +2,78 @@ Available function extensions:
 	math
 	strings
 	apache
-	apc
 	apcu
-	apd
 	arrays
 	php_options_info
 	classes_objects
 	urls
 	filesystem
-	bbcode
 	bc_math
-	bcompiler
 	gettext
-	blenc
 	variable_handling
-	mongo
 	bzip2
-	cairo
 	calendar
 	function_handling
-	chdb
 	directories
 	date_time
 	network
 	spl
-	classkit
 	com
 	commonmark
 	misc
-	crack
 	ctype
 	cubrid
 	curl
-	cyrus
 	ibm_db2
 	dba
 	dbase
-	db_
-	dbx
 	error_handling
 	zlib
 	direct_io
 	dom
 	eio
 	enchant
-	posix_regex
 	program_execution
-	libevent
 	exif
 	expect
 	mail
-	fam
 	fann
 	fastcgi_process_manager
 	firebird_interbase
-	frontbase
 	fdf
-	filepro
 	filter
 	fileinfo
 	output_control
-	fribidi
 	semaphore
 	ftp
 	gd
 	geoip
+	random
 	gmp
 	gnupg
-	gopher
 	intl
-	gupnp
 	hash
-	hyperwave_api
 	iconv
-	id3
-	informix
-	iis
+	igbinary
 	imap
 	control_structures
-	inclued
-	ingres
 	inotify
 	soap
 	taint
 	json
-	judy
-	kadm5
 	ldap
 	libxml
 	lzf
-	mcve
 	mailparse
-	maxdb
 	multibyte_string
 	mcrypt
 	memcache
 	mhash
-	ming
 	vendor_specific_database_extensions
 	mqseries
-	msession
-	msql
-	mssql
 	mysql_original
+	mysql_xdevapi
 	mysqli
-	mysqlnd_memcache
-	mysqlnd_ms
-	mysqlnd_qc
-	mysqlnd_uh
-	ncurses
-	newt
-	nsapi
 	oauth
 	tidy
 	oci8
@@ -120,150 +81,149 @@ Available function extensions:
 	opcache
 	openal
 	openssl
-	parsekit
 	password_hashing
 	pcntl
-	pdf
 	postgresql
 	phpdbg
 	posix
 	pcre
 	ps
 	pspell
-	paradox
 	radius
-	csprng
 	rar
 	readline
 	recode
-	rpm_reader
+	rnp
+	rpminfo
 	rrd
-	runkit
+	runkit7
+	scoutapm
 	seaslog
 	sessions
-	session_pgsql
-	streams
-	proctitle
 	shared_memory
+	simdjson
 	simplexml
 	snmp
 	sockets
 	sodium
 	solr
-	sqlite
 	sqlsrv
 	ssdeep
 	ssh2
 	statistics
 	stomp
+	streams
 	svn
 	swoole
-	sybase
 	tcp
 	tokenizer
 	trader
-	mnogosearch
 	ui
 	uopz
-	xml_parser
-	vpopmail
+	var_representation
 	wddx
 	win32service
-	win32ps
 	wincache
 	xattr
 	xdiff
 	xhprof
+	xml_parser
 	xml_rpc
-	xmlwriter
 	yaml
 	yaz
-	yp_nis
 	zip
 	zookeeper
+	xmlwriter
 
 Available Class extensions:
-	oci8
-	apc
+	sockets
+	predefined_attributes
 	apcu
 	spl
 	predefined_exceptions
-	cairo
-	chdb
 	predefined_interfaces_and_classes
 	intl
 	com
 	commonmark
 	componere
-	pthreads
 	curl
 	date_time
+	zlib
 	directories
 	dom
 	data_structures
+	enchant
 	ev
 	event
 	fann
 	ffi
 	fileinfo
+	ftp
+	gd
 	gearman
 	gender
 	gmagick
 	gmp
-	haru
 	hash
 	hrtime
 	imagemagick
+	imap
 	json
-	judy
-	ktaglib
-	lapack
+	ldap
 	libxml
 	lua
 	luasandbox
 	memcache
 	memcached
-	mongo
 	vendor_specific_database_extensions
+	mysql_xdevapi
 	mysqli
-	mysqlnd_uh
 	oauth
+	oci8
+	openssl
 	parallel
 	parle
 	pdo
+	postgresql
 	phar
-	phdfs
 	streams
-	pht
+	tokenizer
+	pthreads
+	pspell
 	quickhash
+	random
 	rar
 	reflection
+	rnp
 	rrd
 	seaslog
 	sessions
+	shared_memory
+	simdjson
 	simplexml
 	snmp
 	soap
+	sodium
 	solr
-	sphinx
-	spl_types
 	sqlite3
 	stomp
 	svm
-	ming
 	swoole
 	sync
+	semaphore
 	tidy
-	tokyo_tyrant
 	ui
 	v8js
 	varnish
 	xlswriter
-	weakref
+	win32service
 	wkhtmltox
 	xmldiff
+	xml_parser
 	xmlreader
+	xmlwriter
 	xsl
+	yac
 	yaconf
 	yaf
 	yar
@@ -273,66 +233,58 @@ Available Class extensions:
 
 Available Interface extensions:
 	predefined_interfaces_and_classes
-	pthreads
 	commonmark
-	spl
-	date_time
 	data_structures
-	json
-	mongo
 	vendor_specific_database_extensions
-	pht
+	mysql_xdevapi
+	spl
+	random
 	reflection
-	sessions
 
 Available Constant extensions:
-	common
-	apc
 	apcu
-	apd
 	arrays
-	bbcode
-	blenc
-	cairo
+	common
+	spl
 	calendar
-	oci8
+	com
 	curl
 	date_time
+	dom
 	ev
 	event
+	fileinfo
+	intl
 	json
 	libxml
 	vendor_specific_database_extensions
 	mysqli
 	oauth
+	oci8
+	phar
+	random
 	rar
-	spl
+	reflection
 	snmp
+	sqlite3
 	tidy
-	classkit
-	com
-	dbx
-	newt
 	context_options_and_parameters
-	cyrus
+	dba
 	dbase
-	db_
 	direct_io
 	directories
-	dom
 	eio
 	enchant
 	exif
 	expect
 	fann
-	frontbase
 	fdf
 	command_line_usage
 	handling_file_uploads
-	fileinfo
+	garbage_collection
+	ffi
 	filesystem
 	filter
-	fribidi
 	ftp
 	php_options_info
 	strings
@@ -340,41 +292,26 @@ Available Constant extensions:
 	ibm_db2
 	error_handling
 	math
-	network
 	zlib
-	posix_regex
-	libevent
+	network
 	gmp
 	gnupg
-	gupnp
 	hash
 	urls
 	firebird_interbase
 	iconv
-	id3
-	intl
-	informix
 	gd
 	imap
-	ingres
 	inotify
-	kadm5
 	ldap
-	maxdb
 	multibyte_string
 	mcrypt
 	semaphore
-	msql
-	mssql
 	mysql_original
-	mysqlnd_ms
-	mysqlnd_qc
-	ncurses
 	output_control
 	odbc
 	openal
 	openssl
-	parsekit
 	password_hashing
 	pcntl
 	postgresql
@@ -382,23 +319,22 @@ Available Constant extensions:
 	pcre
 	program_execution
 	pspell
-	paradox
 	radius
-	csprng
-	runkit
+	rnp
+	runkit7
 	misc
 	sessions
 	variable_handling
 	sockets
 	sodium
-	sqlite
 	sqlsrv
 	ssh2
 	streams
 	svn
+	swoole
 	tokenizer
-	mnogosearch
 	uopz
+	var_representation
 	win32service
 	xattr
 	xdiff
@@ -407,58 +343,45 @@ Available Constant extensions:
 	yaml
 	gearman
 	geoip
-	hyperwave_api
-	iis
 	imagemagick
 	phpini_directives
 	mhash
+	enumerations
 	types
 	luasandbox
 	mailparse
-	mcve
 	memcache
-	migrating_from_php_4_to_php_50x
-	migrating_from_php_50x_to_php_51x
-	migrating_from_php_51x_to_php_52x
-	migrating_from_php_52x_to_php_53x
-	migrating_from_php_53x_to_php_54x
-	migrating_from_php_54x_to_php_55x
+	memcached
 	migrating_from_php_55x_to_php_56x
 	migrating_from_php_56x_to_php_70x
 	migrating_from_php_70x_to_php_71x
 	migrating_from_php_71x_to_php_72x
 	migrating_from_php_72x_to_php_73x
-	ming
-	mongo
-	mysqlnd_memcache
-	mysqlnd_mux
-	mysqlnd_uh
+	migrating_from_php_73x_to_php_74x
+	migrating_from_php_74x_to_php_80x
+	migrating_from_php_80x_to_php_81x
+	migrating_from_php_81x_to_php_82x
+	mysql_xdevapi
 	mysqlnd
-	gopher
-	yp_nis
-	oggvorbis
 	pdo
-	phdfs
 	phpdbg
 	pthreads
 	readline
 	mysql_pdo
 	odbc_and_db2_pdo
-	reflection
 	list_of_reserved_words
-	rpm_reader
-	sam
+	rpminfo
 	seaslog
+	simdjson
+	simplexml
 	soap
 	solr
-	sphinx
-	sqlite3
-	swoole
 	list_of_parser_tokens
 	trader
 	php_type_comparison_tables
 	varnish
 	supported_protocols_and_wrappers
 	xsl
+	yac
 	yaf
 	yar
