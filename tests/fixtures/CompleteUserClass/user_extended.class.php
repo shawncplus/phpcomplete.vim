@@ -13,6 +13,17 @@ class UserClass {
     protected static $protected_static_property;
     private static $private_static_property;
 
+    public static readonly $public_readonly_static_property;
+    protected static readonly $protected_readonly_static_property;
+    private static readonly $private_readonly_static_property;
+
+    public readonly $public_readonly_property;
+    protected readonly $protected_readonly_property;
+    private readonly string $private_readonly_property;
+
+    public string $typed_property;
+    public ?string $nullable_typed_property;
+
     public function __construct() {
     }
 

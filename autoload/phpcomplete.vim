@@ -1278,8 +1278,9 @@ function! phpcomplete#CompleteUserClass(context, base, sccontent, visibility) " 
 		" variables must have static to be accessed as static unlike functions
 		let required_modifiers += ['static']
 	endif
+
 	let all_variable = filter(deepcopy(a:sccontent),
-					\ 'v:val =~ "\\(^\\s*\\(var\\s\\+\\|public\\s\\+\\|protected\\s\\+\\|private\\s\\+\\|final\\s\\+\\|abstract\\s\\+\\|static\\s\\+\\)\\+\\$\\|^\\s*\\(\\/\\|\\*\\)*\\s*@property\\s\\+\\S\\+\\s\\S\\{-}\\s*$\\)"')
+					\ 'v:val =~ "\\(^\\s*\\(var\\s\\+\\|readonly\\s\\+\\|public\\s\\+\\|protected\\s\\+\\|private\\s\\+\\|final\\s\\+\\|abstract\\s\\+\\|static\\s\\+\\)\\+\\(?*[a-zA-Z_\\x7f-\\xff\\\\][a-zA-Z_0-9\\x7f-\\xff\\\\]*\\s\\+\\)*\\$\\|^\\s*\\(\\/\\|\\*\\)*\\s*@property\\s\\+\\S\\+\\s\\S\\{-}\\s*$\\)"')
 
 	let variables = []
 	for i in all_variable

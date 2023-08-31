@@ -13,15 +13,20 @@ fun! TestCase_returns_everyting_instance_related_when_scope_is_in_class()
                 \{'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
                 \{'word': 'final_private_method(', 'info': 'final_private_method($foo = null)', 'menu': '$foo = null)', 'kind': 'f'},
                 \{'word': 'naked_public_method(', 'info': 'naked_public_method()', 'menu': ')', 'kind': 'f'},
+                \{'word': 'nullable_typed_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \{'word': 'private_method(', 'info': 'private_method($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \{'word': 'private_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \{'word': 'private_readonly_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \{'word': 'protected_method(', 'info': 'protected_method($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \{'word': 'protected_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \{'word': 'protected_readonly_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \{'word': 'public_final_method(', 'info': 'public_final_method($foo, $anotherfoo = '''')', 'menu': '$foo, $anotherfoo = '''')', 'kind': 'f'},
                 \{'word': 'public_method(', 'info': 'public_method($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \{'word': 'public_method_with_amp(', 'info': 'public_method_with_amp($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \{'word': 'public_property1', 'info': '', 'menu': '', 'kind': 'v'},
-                \{'word': 'public_property2', 'info': '', 'menu': '', 'kind': 'v'}],
+                \{'word': 'public_property2', 'info': '', 'menu': '', 'kind': 'v'},
+                \{'word': 'public_readonly_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \{'word': 'typed_property', 'info': '', 'menu': '', 'kind': 'v'}],
                 \ ret)
 endfun
 
@@ -32,11 +37,14 @@ fun! TestCase_returns_everyting_instance_related_when_scope_is_out_of_class()
     call VUAssertEquals([
                 \{'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
                 \{'word': 'naked_public_method(', 'info': 'naked_public_method()', 'menu': ')', 'kind': 'f'},
+                \{'word': 'nullable_typed_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \{'word': 'public_final_method(', 'info': 'public_final_method($foo, $anotherfoo = '''')', 'menu': '$foo, $anotherfoo = '''')', 'kind': 'f'},
                 \{'word': 'public_method(', 'info': 'public_method($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \{'word': 'public_method_with_amp(', 'info': 'public_method_with_amp($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \{'word': 'public_property1', 'info': '', 'menu': '', 'kind': 'v'},
-                \{'word': 'public_property2', 'info': '', 'menu': '', 'kind': 'v'}],
+                \{'word': 'public_property2', 'info': '', 'menu': '', 'kind': 'v'},
+                \{'word': 'public_readonly_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \{'word': 'typed_property', 'info': '', 'menu': '', 'kind': 'v'}],
                 \ ret)
 endfun
 
@@ -45,8 +53,11 @@ fun! TestCase_returns_everyting_static_when_scope_is_in_class()
 
     let ret = phpcomplete#CompleteUserClass('UserClass::', '', g:fixture_class_content, 'private')
     call VUAssertEquals([
+                \ {'word': '$private_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$private_static_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \ {'word': '$protected_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$protected_static_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \ {'word': '$public_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$public_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
                 \ {'word': 'final_static_public_method(', 'info': 'final_static_public_method()', 'menu': ')', 'kind': 'f'},
@@ -59,7 +70,7 @@ fun! TestCase_returns_everyting_static_when_scope_is_in_class()
                 \ ret)
 endfun
 
-fun! TestCase_filters_for_instane_level_prefix()
+fun! TestCase_filters_for_instance_level_prefix()
     call SetUp()
 
     let ret = phpcomplete#CompleteUserClass('$u->', 'public_', g:fixture_class_content, 'private')
@@ -68,7 +79,8 @@ fun! TestCase_filters_for_instane_level_prefix()
                 \ {'word': 'public_method(', 'info': 'public_method($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \ {'word': 'public_method_with_amp(', 'info': 'public_method_with_amp($foo)', 'menu': '$foo)', 'kind': 'f'},
                 \ {'word': 'public_property1', 'info': '', 'menu': '', 'kind': 'v'},
-                \ {'word': 'public_property2', 'info': '', 'menu': '', 'kind': 'v'}],
+                \ {'word': 'public_property2', 'info': '', 'menu': '', 'kind': 'v'},
+                \ {'word': 'public_readonly_property', 'info': '', 'menu': '', 'kind': 'v'}],
                 \ ret)
 endfun
 
@@ -77,6 +89,7 @@ fun! TestCase_filters_for_static_property_names()
 
     let ret = phpcomplete#CompleteUserClass('UserClass::', '$private_', g:fixture_class_content, 'private')
     call VUAssertEquals([
+                \ {'word': '$private_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$private_static_property', 'info': '', 'menu': '', 'kind': 'v'}],
                 \ ret)
 endfun
@@ -86,6 +99,7 @@ fun! TestCase_returns_everyting_static_when_scope_is_out_of_class()
 
     let ret = phpcomplete#CompleteUserClass('UserClass::', '', g:fixture_class_content, 'public')
     call VUAssertEquals([
+                \ {'word': '$public_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$public_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
                 \ {'word': 'final_static_public_method(', 'info': 'final_static_public_method()', 'menu': ')', 'kind': 'f'},
@@ -100,6 +114,7 @@ fun! TestCase_returns_non_explicit_static_methods_when_phpcomplete_relax_static_
     let g:phpcomplete_relax_static_constraint = 1
     let ret = phpcomplete#CompleteUserClass('UserClass::', '', g:fixture_class_content, 'public')
     call VUAssertEquals([
+                \ {'word': '$public_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$public_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': 'A_CONST', 'info': 'A_CONST', 'menu': '', 'kind': 'd'},
                 \ {'word': 'final_static_public_method(', 'info': 'final_static_public_method()', 'menu': ')', 'kind': 'f'},
@@ -130,10 +145,14 @@ fun! TestCase_returns_static_properties_with_only_a_dollarsign_base()
 
     let ret = phpcomplete#CompleteUserClass('self::', '$', g:fixture_class_content, 'private')
     call VUAssertEquals([
+                \ {'word': '$private_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$private_static_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \ {'word': '$protected_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$protected_static_property', 'info': '', 'menu': '', 'kind': 'v'},
+                \ {'word': '$public_readonly_static_property', 'info': '', 'menu': '', 'kind': 'v'},
                 \ {'word': '$public_static_property', 'info': '', 'menu': '', 'kind': 'v'}],
                 \ ret)
+
 endfun
 
 fun! TestCase_gets_functions_from_implemented_interfaces()
